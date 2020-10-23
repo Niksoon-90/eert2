@@ -1,1 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+  background-color: #333;
+  margin: 0;
+  padding: 0;
+  font-family: 'RussianRail_G_Regular', "Arial", sans-serif !important;
+}
+@font-face {
+  font-family: 'RussianRail_G_Regular';
+  src: url('app/resources/RussianRail_G_Regular.otf') format('opentype');
+}
+@media (min-width: 1380px){
+  .body-content {
+    min-width: 1380px;
+    max-width: 1600px;
+  }
+
+}
