@@ -1,0 +1,37 @@
+<!-- <div class="p-d-flex icons-list">-->
+<!--    <div class="p-coll-12 p-mr-2" (click)="test()">-->
+<!--      <i class="pi pi-upload" style="font-size: 3rem"></i>-->
+<!--      <div>Загрузить данные</div>-->
+<!--    </div>-->
+<!--    <div class="p-coll-12 p-mr-2">-->
+<!--      <i class="pi pi-check-square" style="font-size: 3rem"></i>-->
+<!--      <div>История загрузок</div>-->
+<!--    </div>-->
+<!--  </div>-->
+<div class="p-d-flex p-jc-center" >
+  <div style="padding-right: 200px">
+    <form [formGroup]="uploadFiles" (ngSubmit)="onUpload()">
+      <div class=" p-d-flex p-jc-center">
+        <h3 >ИАС «Грузоперевозки»</h3>
+      </div>
+      <div class="p-d-flex p-jc-center">
+        <p>Обращаю Ваше внимание, что файл должен быть...</p>
+      </div>
+      <div class="p-d-flex p-jc-center" *ngIf="progress > 0">
+        <p>Ожидайте окончания Загрузки. Прогресс: {{progress}}%</p>
+      </div>
+      <span class="p-float-label" style="margin-top: 10px">
+      <input id="float-input" formControlName="nameFile" type="text" pInputText class="p-inputtext-lg">
+      <label for="float-input">Введите имя</label>
+        <small id="float-input-help" class="p-invalid"*ngIf="uploadFiles.controls['nameFile'].invalid && uploadFiles.controls['nameFile'].touched">Укажите наименование файла</small>
+    </span>
+      <div class="p-d-flex p-jc-center">
+        <input  type="file" (change)="onFileSelected($event)" class="choose" [disabled]="progress > 0">
+      </div>
+      <div *ngIf="progress > 0" class="p-jc-center" style="margin-top: 5px; margin-bottom: 5px">
+        <p-progressBar  [value]="progress"  [showValue]="false"></p-progressBar>
+      </div>
+      <button pButton pRipple type="submit" label="Загрузить" [disabled]="progress > 0 || selectedFile === null" style="width: 100%; margin-bottom: 18px" class="p-button-success"></button>
+    </form>
+  </div>
+</div>

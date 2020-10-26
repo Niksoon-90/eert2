@@ -7,6 +7,8 @@ input {
   border-radius: 3px;
 
 }
+//input.ng-touched.ng-invalid {border:solid #e21a1a 2px;}
+input.ng-touched.ng-valid {border:solid green 2px;}
 
 .choose::-webkit-file-upload-button {
   color: white;
@@ -19,4 +21,7 @@ input {
   cursor: pointer;
   font-size: 1rem;
   padding: 0.5rem 1rem;
+}
+.icons-list{
+  text-align: center;
 }
