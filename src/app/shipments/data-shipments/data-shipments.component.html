@@ -3,29 +3,33 @@
   <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text"></p-button>
   <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
 </div>
-<p-table [value]="this.products" styleClass="p-datatable-sm" [paginator]="true" [rows]="rows" [showCurrentPageReport]="true" [(first)]="first"
-         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[10,25,50]">
+<p-table [value]="shipmentsSession" styleClass="p-datatable-sm" [paginator]="true" [rows]="rows" [showCurrentPageReport]="true" [(first)]="first"
+         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]">
   <ng-template pTemplate="header">
-    <tr>
+    <tr >
       <th pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
       <th pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
       <th pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
       <th pSortableColumn="userLoginAdd">Логин<p-sortIcon field="userLoginAdd"></p-sortIcon></th>
       <th pSortableColumn="userFioAdd">ФИО<p-sortIcon field="userFioAdd"></p-sortIcon></th>
+      <th pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
       <th>Действия</th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-product>
+  <ng-template pTemplate="body" let-itemShipmentsSession >
     <tr>
-      <td>{{product.id}}</td>
-      <td>{{product.name}}</td>
-      <td>{{product.year}}</td>
-      <td>{{product.userLoginAdd}}</td>
-      <td>{{product.userFioAdd}}</td>
+      <td>{{itemShipmentsSession.id}}</td>
+      <td>{{itemShipmentsSession.name}}</td>
+      <td>{{itemShipmentsSession.year}}</td>
+      <td>{{itemShipmentsSession .userLoginAdd}}</td>
+      <td>{{itemShipmentsSession .userFioAdd}}</td>
+      <td>{{itemShipmentsSession .dateWrite}}</td>
       <td>
-        <button pButton pRipple type="button" icon="pi pi-bookmark" class="p-button-rounded p-button-secondary p-button-outlined"></button>
-        <button pButton pRipple type="button" icon="pi pi-times" class="p-button-rounded p-button-danger p-button-outlined"></button>
+        <button pButton pRipple type="button" icon="pi pi-search" pTooltip="Просмотреть" tooltipPosition="bottom" class="p-button-rounded p-button-success p-button-outlined"></button>
+        <button pButton pRipple type="button" icon="pi pi-bookmark" pTooltip="Редактировать" tooltipPosition="bottom" class="p-button-rounded p-button-secondary p-button-outlined" (click)="openShipItemSession(itemShipmentsSession.id)"></button>
+        <button pButton pRipple type="button" icon="pi pi-times" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-danger p-button-outlined" (click)="removeShipSession(itemShipmentsSession.id)"></button>
       </td>
     </tr>
   </ng-template>
 </p-table>
+

@@ -20,7 +20,7 @@ export class AppComponent implements OnInit{
       {
       label: 'Исходные данные',
       items: [
-        {label: 'Исторические данные объемов перевозок', routerLink: ['/shipments']},
+        {label: 'Исторические данные объемов перевозок', routerLink: ['/shipments/upload']},
         {label: 'Макроэкономические показатели', routerLink: ['/']},
         {label: 'Заявки компаний-грузовладельцев', routerLink: ['/']},
         {label: 'Данные о перспективных кореспонденциях',  routerLink: ['/']}
@@ -28,6 +28,9 @@ export class AppComponent implements OnInit{
     },
       {
         label: 'Расчеты'
+      },
+      {
+        label: 'Справочники'
       }];
   }
 

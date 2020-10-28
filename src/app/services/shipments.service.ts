@@ -21,7 +21,14 @@ export class ShipmentsService {
     });
   }
 
-  getSession(): Observable<ISession[]> {
-    return this.http.get<ISession[]>(this.url + `api/session`);
+  getShipSession(): Observable<ISession[]> {
+    return this.http.get<ISession[]>(this.url + `api/session/`);
+  }
+
+  deleteShipSession(id: number){
+    return this.http.delete(this.url + `api/session/${id}`)
+  }
+  getShipments(id: number): Observable<any[]>{
+    return this.http.get<any[]>(this.url + `api/file/shipments?sessionId=${id}`)
   }
 }

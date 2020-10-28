@@ -15,7 +15,7 @@ import {MenubarModule} from 'primeng/menubar';
 import { ShipmentsComponent } from './shipments/shipments.component';
 import { DataShipmentsComponent } from './shipments/data-shipments/data-shipments.component';
 import {TableModule} from 'primeng/table';
-
+import {TooltipModule} from 'primeng/tooltip';
 
 const itemRoutesShipments: Routes = [
   {path: 'upload', component: UploadFileComponent},
@@ -44,6 +44,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes),
     MenubarModule,
     TableModule,
+    TooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]

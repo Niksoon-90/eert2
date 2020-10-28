@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {ShipmentsService} from "../../services/shipments.service";
+import {ISession} from "../../models/shipmenst.model";
 
 @Component({
   selector: 'app-data-shipments',
@@ -6,20 +8,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./data-shipments.component.scss']
 })
 export class DataShipmentsComponent implements OnInit {
-  products: any[]
+  shipmentsSession: ISession[];
   customers: any[];
-
   first = 0;
-
-  rows = 10;
-  constructor() { }
+  rows = 25;
+  error: '';
+  constructor(
+    private shipmentsService: ShipmentsService
+  ) { }
 
   ngOnInit(): void {
-    this.products = [
-      {id: 1, name: 'ОМК', year: '2015', userLoginAdd: 'Lol',  userFioAdd: 'Смирнов Иван Анатольевич'},
-      {id: 2, name: 'ОМК2', year: '2016', userLoginAdd: 'Lol',  userFioAdd: 'Смирнов Иван Анатольевич'},
-      {id: 3, name: 'ОМК3', year: '2015', userLoginAdd: 'Lol',  userFioAdd: 'Смирнов Иван Анатольевич'}
-    ];
+    this.getShipmentsSession();
   }
 
 
@@ -33,6 +32,7 @@ export class DataShipmentsComponent implements OnInit {
 
   reset() {
     this.first = 0;
+    this.getShipmentsSession();
   }
 
   isLastPage(): boolean {
@@ -43,4 +43,26 @@ export class DataShipmentsComponent implements OnInit {
     return this.customers ? this.first === 0 : true;
   }
 
+  getShipmentsSession() {
+    this.shipmentsService.getShipSession().subscribe(
+      res => this.shipmentsSession = res,
+      err => console.log('HTTP Error', err.message),
+      () => console.log('HTTP request completed.')
+  )}
+
+  removeShipSession(id: number) {
+    this.shipmentsService.deleteShipSession(id).subscribe(
+      res => {console.log('ShipSession Del', res), this.getShipmentsSession();},
+      err => console.log('HTTP Error', err.message),
+      () => console.log('HTTP request completed.')
+    )
+  }
+
+  openShipItemSession(id: number) {
+    this.shipmentsService.getShipments(id).subscribe(
+      res => {console.log('res', res)},
+      err => console.log('HTTP Error', err.message),
+      () => console.log('HTTP request completed.')
+    )
+  }
 }
