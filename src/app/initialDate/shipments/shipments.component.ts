@@ -13,8 +13,8 @@ export class ShipmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.shipmentsMenu = [
-      { label: 'Загрузить данные', routerLink: ['/shipments/upload'] },
-      { label: 'Просмотреть данные', routerLink: ['/shipments/data'] },
+      { label: 'Загрузить данные', routerLink: ['shipmentsUpload'] },
+      { label: 'Просмотреть данные', routerLink: ['data'] },
     ];
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {ShipmentsService} from "../../services/shipments.service";
-import {ISession} from "../../models/shipmenst.model";
+import {ShipmentsService} from "../../../services/shipments.service";
+import {ISession} from "../../../models/shipmenst.model";
 
 @Component({
   selector: 'app-data-shipments',
@@ -48,7 +48,8 @@ export class DataShipmentsComponent implements OnInit {
       res => this.shipmentsSession = res,
       err => console.log('HTTP Error', err.message),
       () => console.log('HTTP request completed.')
-  )}
+  )
+  }
 
   removeShipSession(id: number) {
     this.shipmentsService.deleteShipSession(id).subscribe(

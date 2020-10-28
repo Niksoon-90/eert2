@@ -1,13 +1,3 @@
-<!-- <div class="p-d-flex icons-list">-->
-<!--    <div class="p-coll-12 p-mr-2" (click)="test()">-->
-<!--      <i class="pi pi-upload" style="font-size: 3rem"></i>-->
-<!--      <div>Загрузить данные</div>-->
-<!--    </div>-->
-<!--    <div class="p-coll-12 p-mr-2">-->
-<!--      <i class="pi pi-check-square" style="font-size: 3rem"></i>-->
-<!--      <div>История загрузок</div>-->
-<!--    </div>-->
-<!--  </div>-->
 <div class="p-d-flex p-jc-center" >
   <div style="padding-right: 200px">
     <form [formGroup]="uploadFiles" (ngSubmit)="onUpload()">
@@ -31,7 +21,7 @@
       <div *ngIf="progress > 0" class="p-jc-center" style="margin-top: 5px; margin-bottom: 5px">
         <p-progressBar  [value]="progress"  [showValue]="false"></p-progressBar>
       </div>
-      <button pButton pRipple type="submit" label="Загрузить" [disabled]="progress > 0 || selectedFile === null" style="width: 100%; margin-bottom: 18px" class="p-button-success"></button>
+      <button pButton pRipple type="submit" label="Загрузить" [disabled]="progress > 0 || this.selectedFile === null" style="width: 100%; margin-bottom: 18px" class="p-button-success"></button>
     </form>
   </div>
 </div>

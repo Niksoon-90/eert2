@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ShipmentsService} from "../../services/shipments.service";
 import {HttpEventType} from "@angular/common/http";
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-upload-file',
@@ -13,10 +14,17 @@ export class UploadFileComponent implements OnInit {
   selectedFile: File = null;
   progress = 0;
   error: '';
+  initialDateType: string
 
-  constructor(private shipmentsService: ShipmentsService) { this.createForm(); }
+  constructor(
+    private shipmentsService: ShipmentsService,
+    private activateRoute: ActivatedRoute) {
+    this.initialDateType = activateRoute.snapshot.params['initialDateType'];
+    this.createForm();
+  }
 
   ngOnInit(): void {
+    console.log(this.selectedFile)
   }
   createForm(){
     this.uploadFiles = new FormGroup({
@@ -29,6 +37,17 @@ export class UploadFileComponent implements OnInit {
   onUpload(){
     const formData = new FormData()
     formData.append('file', this.selectedFile, this.selectedFile.name);
+    if(this.initialDateType === 'shipmentsUpload'){
+      this.shipmensUpload(formData)
+    }else if(this.initialDateType === 'cargoUpload'){
+      this.cargoUpload(formData)
+    }else if(this.initialDateType === 'correspondUpload'){
+      this.correspondUpload(formData)
+    }else{
+     console.log('error onUpload')
+    }
+  }
+  shipmensUpload(formData){
     this.shipmentsService.postUploadFile(formData, this.uploadFiles.value.nameFile)
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress){
@@ -44,5 +63,11 @@ export class UploadFileComponent implements OnInit {
         this.selectedFile = null;
         this.error = error.message;
       });
+  }
+  cargoUpload(formData){
+    console.log('cargoUpload')
+  }
+  correspondUpload(formData){
+    console.log('correspondUpload')
   }
 }
