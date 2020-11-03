@@ -16,7 +16,7 @@
         <small id="float-input-help" class="p-invalid"*ngIf="uploadFiles.controls['nameFile'].invalid && uploadFiles.controls['nameFile'].touched">Укажите наименование файла</small>
     </span>
       <div class="p-d-flex p-jc-center">
-        <input  type="file" (change)="onFileSelected($event)" class="choose" [disabled]="progress > 0">
+        <input  type="file" (change)="onFileSelected($event)" class="choose" [disabled]="progress > 0" #fileUploader>
       </div>
       <div *ngIf="progress > 0" class="p-jc-center" style="margin-top: 5px; margin-bottom: 5px">
         <p-progressBar  [value]="progress"  [showValue]="false"></p-progressBar>
@@ -25,3 +25,7 @@
     </form>
   </div>
 </div>
+
+<p-dialog header="Успех!" [(visible)]="displayModal" [style]="{width: '30vw'}" [baseZIndex]="10000">
+  <p>Файл успешно загружен на сервер!<p>
+</p-dialog>

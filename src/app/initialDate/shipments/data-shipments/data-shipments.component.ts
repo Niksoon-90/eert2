@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ShipmentsService} from "../../../services/shipments.service";
-import {ISession} from "../../../models/shipmenst.model";
+import {ISession, IShipment} from "../../../models/shipmenst.model";
 
 @Component({
   selector: 'app-data-shipments',
@@ -10,9 +10,12 @@ import {ISession} from "../../../models/shipmenst.model";
 export class DataShipmentsComponent implements OnInit {
   shipmentsSession: ISession[];
   customers: any[];
+  shipmentsListSessionId: IShipment[];
   first = 0;
   rows = 25;
   error: '';
+  dialogVisible: boolean;
+
   constructor(
     private shipmentsService: ShipmentsService
   ) { }
@@ -61,9 +64,12 @@ export class DataShipmentsComponent implements OnInit {
 
   openShipItemSession(id: number) {
     this.shipmentsService.getShipments(id).subscribe(
-      res => {console.log('res', res)},
+      res => {this.shipmentsListSessionId = res;},
       err => console.log('HTTP Error', err.message),
-      () => console.log('HTTP request completed.')
+      () => this.showDialog()
     )
+  }
+  showDialog() {
+    this.dialogVisible = true;
   }
 }

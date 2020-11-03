@@ -1,0 +1,21 @@
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-template pTemplate="title">
+      <h5></h5>
+
+        <ng-template pTemplate="header">
+
+        </ng-template>
+        <ng-template pTemplate="body" let-customer>
+
+        </ng-template>
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <div class="p-grid p-nogutter p-justify-between">
+        <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
+        <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

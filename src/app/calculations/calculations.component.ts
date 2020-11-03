@@ -14,10 +14,10 @@ export class CalculationsComponent implements OnInit {
 
   ngOnInit() {
     this.forecastingModel = [
-      {label: 'Шаг 1'},
-      {label: 'Шаг 2'},
-      {label: 'Шаг 3'},
-      {label: 'Шаг 4'},
+      {label: 'Шаг 1', routerLink: 'import'},
+      {label: 'Шаг 2', routerLink: 'mathForecast'},
+      {label: 'Шаг 3', routerLink: 'forecast'},
+      {label: 'Шаг 4', routerLink: 'payment'},
       {label: 'Шаг 5'},
       {label: 'Шаг 6'},
     ];

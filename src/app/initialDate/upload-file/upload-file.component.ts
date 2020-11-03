@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ShipmentsService} from "../../services/shipments.service";
 import {HttpEventType} from "@angular/common/http";
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -9,12 +9,17 @@ import {ActivatedRoute} from "@angular/router";
   templateUrl: './upload-file.component.html',
   styleUrls: ['./upload-file.component.scss']
 })
+
+
 export class UploadFileComponent implements OnInit {
+  @ViewChild('fileUploader') fileUploader:ElementRef;
+
   uploadFiles: FormGroup
   selectedFile: File = null;
   progress = 0;
   error: '';
-  initialDateType: string
+  initialDateType: string;
+  displayModal: boolean = false;
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -24,8 +29,10 @@ export class UploadFileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.selectedFile)
   }
+
+
+
   createForm(){
     this.uploadFiles = new FormGroup({
       nameFile: new FormControl('', [Validators.required, Validators.minLength(1)])
@@ -47,6 +54,9 @@ export class UploadFileComponent implements OnInit {
      console.log('error onUpload')
     }
   }
+  showModalDialog() {
+    this.displayModal = true;
+  }
   shipmensUpload(formData){
     this.shipmentsService.postUploadFile(formData, this.uploadFiles.value.nameFile)
       .subscribe(event => {
@@ -54,14 +64,15 @@ export class UploadFileComponent implements OnInit {
           this.progress = Math.round(event.loaded / event.total * 100);
           // console.log('Прогресс загрузки: ' + Math.round(event.loaded / event.total * 100)  + '%')
         }else if (event.type === HttpEventType.Response){
-          this.progress = 0
-          this.selectedFile = null;
-          this.error = '';
+
         }
       }, error => {
-        this.progress = 0
-        this.selectedFile = null;
+        this.clearForm();
         this.error = error.message;
+      },() => {
+        this.error = '';
+        this.clearForm();
+        this.showModalDialog();
       });
   }
   cargoUpload(formData){
@@ -69,5 +80,10 @@ export class UploadFileComponent implements OnInit {
   }
   correspondUpload(formData){
     console.log('correspondUpload')
+  }
+  clearForm(){
+    this.uploadFiles.reset({ nameFile: ''});
+    this.fileUploader.nativeElement.value = null;
+    this.progress = 0;
   }
 }

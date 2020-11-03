@@ -8,7 +8,7 @@ import {ButtonModule} from 'primeng/button';
 import {HttpClientModule} from "@angular/common/http";
 import {ProgressBarModule} from "primeng/progressbar";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MenuModule} from 'primeng/menu';
 import {Routes, RouterModule} from '@angular/router';
 import {MenubarModule} from 'primeng/menubar';
@@ -25,6 +25,15 @@ import { CalculationsComponent } from './calculations/calculations.component';
 import {PanelMenuModule} from "primeng/panelmenu";
 import {StepsModule} from 'primeng/steps';
 import {ToastModule} from "primeng/toast";
+import { ImportStepsOneComponent } from './calculations/import-steps-one/import-steps-one.component';
+import {CardModule} from "primeng/card";
+import {DropdownModule} from "primeng/dropdown";
+import { MathForecastComponent } from './calculations/math-forecast/math-forecast.component';
+import {DialogModule} from "primeng/dialog";
+import { ForecastCorrespondenceComponent } from './calculations/forecast-correspondence/forecast-correspondence.component';
+import { PaymentComponent } from './calculations/payment/payment.component';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
+import {CalendarModule} from 'primeng/calendar';
 
 
 const itemRoutesShipments: Routes = [
@@ -41,12 +50,20 @@ const itemRoutesCorrespondence: Routes = [
   {path: ':initialDateType', component: UploadFileComponent}
 ]
 
+const itemRoutesCalculations: Routes = [
+  {path: 'import', component: ImportStepsOneComponent},
+  {path: 'mathForecast', component: MathForecastComponent},
+  {path: 'forecast', component: ForecastCorrespondenceComponent},
+  {path: 'payment', component: PaymentComponent},
+]
+
 const appRoutes: Routes = [
   {path: 'shipments', component: ShipmentsComponent, children: itemRoutesShipments},
   {path: 'cargo', component: CargoComponent, children: itemRoutesCargo},
   {path: 'correspondence', component: CorrespondenceComponent, children: itemRoutesCorrespondence},
   {path: 'macroPok', component: MacroPokComponent},
-  {path: 'calculations', component: CalculationsComponent},
+  {path: 'steps', component: CalculationsComponent, children: itemRoutesCalculations},
+  {path: '', component: ShipmentsComponent},
 
 ]
 registerLocaleData(localeRu, 'ru');
@@ -60,6 +77,10 @@ registerLocaleData(localeRu, 'ru');
     CorrespondenceComponent,
     MacroPokComponent,
     CalculationsComponent,
+    ImportStepsOneComponent,
+    MathForecastComponent,
+    ForecastCorrespondenceComponent,
+    PaymentComponent,
   ],
   imports: [
     BrowserModule,
@@ -77,7 +98,13 @@ registerLocaleData(localeRu, 'ru');
     TooltipModule,
     PanelMenuModule,
     StepsModule,
-    ToastModule
+    ToastModule,
+    CardModule,
+    DropdownModule,
+    FormsModule,
+    DialogModule,
+    OverlayPanelModule,
+    CalendarModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'ru' }

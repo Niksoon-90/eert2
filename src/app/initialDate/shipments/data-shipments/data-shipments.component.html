@@ -32,3 +32,79 @@
   </ng-template>
 </p-table>
 
+<div class="card">
+
+  <p-dialog header="Загруженные данные" [(visible)]="dialogVisible" [style]="{width: '50vw'}" [baseZIndex]="10000" [maximizable]="true" [modal]="true" [resizable]="true" [contentStyle]="{height: '300px'}" >
+    <p-table [value]="shipmentsListSessionId" [scrollable]="true" scrollHeight="flex" scrollHeight="80vh">
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+          <col style="width:250px">
+          <col style="width:100px">
+          <col style="width:250px">
+          <col style="width:100px">
+          <col style="width:250px">
+          <col style="width:250px">
+          <col style="width:250px">
+          <col style="width:250px">
+          <col style="width:100px">
+          <col style="width:250px">
+          <col style="width:100px">
+          <col style="width:250px">
+          <ng-container *ngIf="shipmentsListSessionId">
+            <col style="width:70px" *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs">
+          </ng-container>
+          <col style="width:150px">
+        </colgroup>
+      </ng-template>
+      <ng-template pTemplate="header" >
+        <tr>
+          <th>Группа груза</th>
+          <th>Дорога отпр.</th>
+          <th>Станция отпр.</th>
+          <th>Код станции отпр.</th>
+          <th>Субъект отпр.</th>
+          <th>Имя получателя</th>
+          <th>Имя отправителя</th>
+          <th>Тип</th>
+          <th>Дорога наз.</th>
+          <th>Станция наз.</th>
+          <th>Код станции наз.</th>
+          <th>Субъект наз.</th>
+          <ng-container *ngIf="shipmentsListSessionId">
+            <th *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs">
+              {{data.year}}
+            </th>
+          </ng-container>
+          <th>Действия</th>
+      </ng-template>
+      <ng-template pTemplate="body" let-item let-ri="rowIndex">
+        <tr>
+          <td>{{item.cargoGroup}}</td>
+          <td>{{item.fromRoad}}</td>
+          <td>{{item.fromStation}}</td>
+          <td>{{item.fromStationCode}}</td>
+          <td>{{item.fromSubject}}</td>
+          <td>{{item.receiverName}}</td>
+          <td>{{item.senderName}}</td>
+          <td>{{item.shipmentType}}</td>
+          <td>{{item.toRoad}}</td>
+          <td>{{item.toStation}}</td>
+          <td>{{item.toStationCode}}</td>
+          <td>{{item.toSubject}}</td>
+          <td *ngFor="let data of item.shipmentYearValuePairs">
+            {{data.value}}
+          </td>
+        <td>
+          <button pButton pRipple type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" class="p-button-rounded p-button-success p-mr-2 p-button p-component p-button-icon-only"></button>
+          <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-warning p-button p-component p-button-icon-only"></button>
+        </td>
+        </tr>
+
+      </ng-template>
+    </p-table>
+    <ng-template pTemplate="footer">
+      <button type="button" pButton pRipple icon="pi pi-times" (click)="dialogVisible=false" label="Закрыть" class="p-button-text"></button>
+    </ng-template>
+  </p-dialog>
+  </div>
+
