@@ -1,0 +1,58 @@
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-template pTemplate="title">
+      Прогноз корреспонденций
+    </ng-template>
+    <ng-template pTemplate="body">
+      <div class="p-d-flex">
+        <label>Выбор кореспонденций: </label>
+        <button pButton pRipple type="button" label="Все"></button>
+        <button pButton pRipple type="button" label="Устойчивые" class="p-button-success"></button>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Стратегия прогнозирования:</label>
+          <p-dropdown [options]="methodUsers" optionLabel="name" [(ngModel)]="methodItemUsers" (ngModelChange)="test($event)"></p-dropdown>
+        </div>
+      </div>
+      <button pButton pRipple type="button" label="Расчитать" class="p-button-success"></button>
+        <h5>Таблица 1 (млн.т)</h5>
+        <p-table  [scrollable]="true" scrollHeight="200px">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>№_п.п.</th>
+              <th>Группа груза</th>
+              <th>Виды перевозок</th>
+              <th>Дор. отпр.</th>
+              <th>Ст. отпр.</th>
+              <th>Код станции отпр. РФ</th>
+              <th>Грузоотпр.</th>
+              <th>Дор. назн.</th>
+              <th>Ст. назн.</th>
+              <th>Код станции назн. РФ</th>
+              <th>Грузополуч.</th>
+              <th>Объем перевозки 1-й год</th>
+              <th>Объем перевозки 2-й год</th>
+              <th>Объем перевозки n-й год</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-customer>
+            <tr>
+
+            </tr>
+          </ng-template>
+        </p-table>
+      <button pButton pRipple type="button" label="Сохранить"></button>
+      <button pButton pRipple type="button" label="Увязка с прогнозом"></button>
+      <button pButton pRipple type="button" label="Учет заявок"></button>
+    </ng-template>
+
+
+    <ng-template pTemplate="footer">
+      <div class="p-grid p-nogutter p-justify-between">
+        <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left" class="p-button-sm"></p-button>
+        <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right" class="p-button-sm"></p-button>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

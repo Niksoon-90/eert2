@@ -1,0 +1,76 @@
+<div style="background-color: #fff">
+  <h3>Макроэкономические показатели</h3>
+</div>
+<p-toast></p-toast>
+
+<p-button label="Добавить показатель" icon="pi pi-plus" (click)="op.toggle($event)"></p-button>
+
+<p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '450px'}">
+  <ng-template pTemplate="subtitle">
+    Все поля обязательны для заполнения!
+  </ng-template>
+  <ng-template pTemplate="content">
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12">
+        <label>Группа груза:</label>
+        <p-dropdown optionLabel="name" [options]="cargoGroup"  placeholder="Выберите один из вариантов:"></p-dropdown>
+      </div>
+    </div>
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12">
+        <label>Тип Груза:</label>
+        <p-dropdown optionLabel="name" [options]="shipmentType"  placeholder="Выберите один из вариантов:"></p-dropdown>
+      </div>
+    </div>
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12">
+        <label>Год:</label>
+        <p-calendar [(ngModel)]="year" [showIcon]="true" inputId="icon" view="month" dateFormat="yy" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+      </div>
+    </div>
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12">
+        <label for="firstname">Макро индекс</label>
+        <input [(ngModel)]="macroIndex" id="firstname" type="text" required pInputText>
+      </div>
+    </div>
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12">
+        <label for="valueMacros">Значение</label>
+        <input [(ngModel)]="valueMacro" id="valueMacros" type="text" required pInputText>
+      </div>
+    </div>
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12">
+        <button pButton pRipple type="button" label="Сохранить" class="p-button-success" ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-overlayPanel>
+
+<div class="card">
+  <p-table [value]="macroPokList" [scrollable]="true" scrollHeight="200px">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>id</th>
+        <th>Номенклатура грузов</th>
+        <th>Тип</th>
+        <th>Макро</th>
+        <th>Год</th>
+        <th>Значение</th>
+        <th>Действия</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>{{item.id}}</td>
+        <td>{{item.cargoGroup}}</td>
+        <td>{{item.shipmentType}}</td>
+        <td>{{item.macroIndex}}</td>
+        <td>{{item.year}}</td>
+        <td>{{item.value}}</td>
+        <td> <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-warning p-button p-component p-button-icon-only" ></button></td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

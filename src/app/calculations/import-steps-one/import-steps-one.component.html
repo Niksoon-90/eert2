@@ -1,0 +1,53 @@
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-template pTemplate="title">
+      Импорт данных
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+      Все поля обязательны для заполнения!
+    </ng-template>
+    <ng-template pTemplate="content">
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Исходные данные:</label>
+          <p-dropdown optionLabel="name" [options]="initialDate" [(ngModel)]="stepOne.id" (onChange)="setInitialDate($event)" placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Прогноз грузоотправителей:</label>
+          <p-dropdown optionLabel="name" [options]="initialDate" placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Прогноз грузополучателей:</label>
+          <p-dropdown optionLabel="name" [options]="initialDate" placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Стратегия прогнозирования:</label>
+          <p-dropdown optionLabel="name" [options]="initialDate" placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Показатели макроэкономики:</label>
+          <p-dropdown optionLabel="name" [options]="initialDate" placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Горизонт прогноз:</label>
+          <p-dropdown optionLabel="name" [options]="horizonforecast" placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <div class="p-grid p-nogutter p-justify-end">
+        <p-button label="Вперед" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

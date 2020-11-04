@@ -1,0 +1,21 @@
+interface IShipmentYearValuePairs {
+id:	number
+value:	number
+year:	number
+}
+[{
+  cargoGroup:	string
+  fromRoad:	string
+  fromStation:	string
+  fromStationCode:	number
+  fromSubject:	string
+  id:	number
+  receiverName:	string
+  senderName:	string
+  shipmentType:	string
+  shipmentYearValuePairs:	[2015, 2016]
+  toRoad:	string
+  toStation:	string
+  toStationCode:	number
+  toSubject:	string
+}]

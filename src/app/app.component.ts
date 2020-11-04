@@ -20,14 +20,20 @@ export class AppComponent implements OnInit{
       {
       label: 'Исходные данные',
       items: [
-        {label: 'Исторические данные объемов перевозок', routerLink: ['/shipments']},
-        {label: 'Макроэкономические показатели', routerLink: ['/']},
-        {label: 'Заявки компаний-грузовладельцев', routerLink: ['/']},
-        {label: 'Данные о перспективных кореспонденциях',  routerLink: ['/']}
+        {label: 'Исторические данные объемов перевозок', routerLink: ['shipments/shipmentsUpload']},
+        {label: 'Макроэкономические показатели', routerLink: ['macroPok']},
+        {label: 'Заявки компаний-грузовладельцев', routerLink: ['cargo/cargoUpload']},
+        {label: 'Данные о перспективных кореспонденциях',  routerLink: ['correspondence/correspondUpload']}
       ]
     },
       {
-        label: 'Расчеты'
+        label: 'Расчеты',
+        items:[
+          {label: 'Модель прогнозирования', routerLink: ['steps/import']},
+        ]
+      },
+      {
+        label: 'Справочники'
       }];
   }
 
