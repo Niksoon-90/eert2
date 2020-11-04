@@ -21,7 +21,7 @@ export class ShipmentsService {
     });
   }
 
-  getSession(): Observable<ISession[]> {
-    return this.http.get<ISession[]>(this.url + `api/session`);
+  getSession(): Observable<any[]> {
+    return this.http.get<any[]>(this.url + `api/session`);
   }
 }

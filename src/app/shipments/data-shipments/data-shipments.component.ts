@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ShipmentsService} from '../../services/shipments.service';
 
 @Component({
   selector: 'app-data-shipments',
@@ -12,7 +13,9 @@ export class DataShipmentsComponent implements OnInit {
   first = 0;
 
   rows = 10;
-  constructor() { }
+  constructor(
+    private service: ShipmentsService
+  ) { }
 
   ngOnInit(): void {
     this.products = [
@@ -43,4 +46,10 @@ export class DataShipmentsComponent implements OnInit {
     return this.customers ? this.first === 0 : true;
   }
 
+  test() {
+    this.service.getSession()
+      .subscribe( res => {
+        console.log(res)
+      })
+  }
 }
