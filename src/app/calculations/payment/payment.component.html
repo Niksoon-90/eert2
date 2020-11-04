@@ -1,15 +1,56 @@
 <div class="stepsdemo-content">
   <p-card>
     <ng-template pTemplate="title">
-      <h5></h5>
-
+        Импорт данных
+    </ng-template>
+    <ng-template pTemplate="subtitle">
+        Все поля обязательны для заполнения!
+    </ng-template>
+    <ng-template pTemplate="content">
+      <div class="p-field-radiobutton">
+        <p-radioButton name="manual" value="Ручной расчет" [(ngModel)]="typeCalculation" inputId="manual"></p-radioButton>
+        <label for="manual">Ручной расчет</label>
+      </div>
+      <div class="p-field-radiobutton">
+        <p-radioButton name="auto" value="Автоматический расчет" [(ngModel)]="typeCalculation" inputId="auto"></p-radioButton>
+        <label for="auto">Автоматический расчет</label>
+      </div>
+      <button pButton pRipple type="button" label="Отправить в ИАС Маршрут" class="p-button-success"></button>
+      <h4>Дата отправки: <p> статус: </p></h4>
+      <p-table [value]="sales">
         <ng-template pTemplate="header">
-
+          <tr>
+            <th rowspan="2">Дорога</th>
+            <th rowspan="2">Начальная станция участка</th>
+            <th rowspan="2">Единая сетевая разметка начальной станции</th>
+            <th rowspan="2">Конечная станция участка</th>
+            <th rowspan="2">Единая сетевая разметка конечной станции</th>
+            <th rowspan="2">км</th>
+            <th colspan="2">к концу участка</th>
+            <th colspan="2">к началу участка</th>
+          </tr>
+          <tr>
+            <th>2015</th>
+            <th>2016</th>
+            <th>2015</th>
+            <th>2016</th>
+          </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-customer>
-
+        <ng-template pTemplate="body" let-sale>
+          <tr>
+            <td>{{sale.product}}</td>
+            <td>{{sale.lastYearSale}}%</td>
+            <td>{{sale.thisYearSale}}%</td>
+            <td>{{sale.lastYearProfit | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit1 | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit2 | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit3 | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit4 | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit5 | currency: 'USD'}}</td>
+          </tr>
         </ng-template>
-
+      </p-table>
     </ng-template>
     <ng-template pTemplate="footer">
       <div class="p-grid p-nogutter p-justify-between">

@@ -17,7 +17,7 @@
       </div>
       <button pButton pRipple type="button" label="Расчитать" class="p-button-success"></button>
         <h5>Таблица 1 (млн.т)</h5>
-        <p-table  [scrollable]="true" scrollHeight="200px">
+        <p-table [value]="testData" [scrollable]="true" scrollHeight="200px">
           <ng-template pTemplate="header">
             <tr>
               <th>№_п.п.</th>
@@ -36,9 +36,22 @@
               <th>Объем перевозки n-й год</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-customer>
+          <ng-template pTemplate="body" let-test>
             <tr>
-
+              <td>{{test.z1}}</td>
+              <td>{{test.z2}}</td>
+              <td>{{test.z3}}</td>
+              <td>{{test.z4}}</td>
+              <td>{{test.z5}}</td>
+              <td>{{test.z6}}</td>
+              <td>{{test.z7}}</td>
+              <td>{{test.z8}}</td>
+              <td>{{test.z9}}</td>
+              <td>{{test.z10}}</td>
+              <td>{{test.z11}}</td>
+              <td>{{test.z12}}</td>
+              <td>{{test.z13}}</td>
+              <td>{{test.z14}}</td>
             </tr>
           </ng-template>
         </p-table>

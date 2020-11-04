@@ -35,7 +35,9 @@ export class MacroPokComponent implements OnInit {
   ]
   macroIndex: string;
   year
-  valueMacro: string;
+  pissyValueMacro: string;
+  optimisticValueMacro: string;
+  basicValueMacro: string;
 
   ngOnInit(): void {
     this.getMacroPok()

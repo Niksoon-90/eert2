@@ -20,21 +20,17 @@ export class ImportStepsOneComponent implements OnInit {
     private router: Router,
     public forecastModelService: ForecastingModelService) {
     this.horizonforecast = [
-        {id: 1, name: 1},
-        {id: 1, name: 2},
-        {id: 1, name: 3},
-        {id: 1, name: 4},
         {id: 1, name: 5},
-        {id: 1, name: 6},
-        {id: 1, name: 7},
-        {id: 1, name: 8},
-        {id: 1, name: 9},
-        {id: 1, name: 10},
-        {id: 1, name: 11},
-        {id: 1, name: 12},
-        {id: 1, name: 13},
-        {id: 1, name: 14},
-        {id: 1, name: 15}
+        {id: 2, name: 6},
+        {id: 3, name: 7},
+        {id: 4, name: 8},
+        {id: 5, name: 9},
+        {id: 6, name: 10},
+        {id: 7, name: 11},
+        {id: 8, name: 12},
+        {id: 9, name: 13},
+        {id: 10, name: 14},
+        {id: 11, name: 15}
     ]
   }
 

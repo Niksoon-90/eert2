@@ -34,6 +34,7 @@ import { ForecastCorrespondenceComponent } from './calculations/forecast-corresp
 import { PaymentComponent } from './calculations/payment/payment.component';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {CalendarModule} from 'primeng/calendar';
+import {RadioButtonModule} from "primeng/radiobutton";
 
 
 const itemRoutesShipments: Routes = [
@@ -104,7 +105,8 @@ registerLocaleData(localeRu, 'ru');
     FormsModule,
     DialogModule,
     OverlayPanelModule,
-    CalendarModule
+    CalendarModule,
+    RadioButtonModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'ru' }

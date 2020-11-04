@@ -35,7 +35,7 @@
 <div class="card">
 
   <p-dialog header="Загруженные данные" [(visible)]="dialogVisible" [style]="{width: '50vw'}" [baseZIndex]="10000" [maximizable]="true" [modal]="true" [resizable]="true" [contentStyle]="{height: '300px'}" >
-    <p-table [value]="shipmentsListSessionId" [scrollable]="true" scrollHeight="flex" scrollHeight="80vh">
+    <p-table [value]="shipmentsListSessionId" [scrollable]="true" scrollHeight="flex" scrollHeight="80vh" [resizableColumns]="true">
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
           <col style="width:250px">
@@ -58,6 +58,7 @@
       </ng-template>
       <ng-template pTemplate="header" >
         <tr>
+          <th>№_п.п.</th>
           <th>Группа груза</th>
           <th>Дорога отпр.</th>
           <th>Станция отпр.</th>
@@ -79,6 +80,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-item let-ri="rowIndex">
         <tr>
+          <td>{{ri}}</td>
           <td>{{item.cargoGroup}}</td>
           <td>{{item.fromRoad}}</td>
           <td>{{item.fromStation}}</td>
