@@ -21,11 +21,11 @@
           <tr>
             <td>{{item.cargoGroup}}</td>
             <td>{{item.shipmentType}}</td>
-            <td *ngFor="let data of item.groupVolumesByYears  | keyvalue" style="background-color: rgba(0,64,255,0.07)">
-              {{data.value}}
+            <td *ngFor="let year of item.groupVolumesByYears  | keyvalue" style="background-color: rgba(0,64,255,0.07)">
+              {{year.value}}
             </td>
-            <td *ngFor="let data2 of item.calculatedVolumes | keyvalue" style="background-color: rgba(68,255,0,0.29)">
-              {{data2.value}}
+            <td *ngFor="let data of item.calculatedVolumes | keyvalue" style="background-color: rgba(68,255,0,0.29)">
+              {{data.value}}
             </td>
           </tr>
         </ng-template>

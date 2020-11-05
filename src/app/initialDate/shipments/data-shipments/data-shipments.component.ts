@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ISession, IShipment} from "../../../models/shipmenst.model";
+import {Table} from "primeng/table";
 
 @Component({
   selector: 'app-data-shipments',
@@ -8,6 +9,8 @@ import {ISession, IShipment} from "../../../models/shipmenst.model";
   styleUrls: ['./data-shipments.component.scss']
 })
 export class DataShipmentsComponent implements OnInit {
+  @ViewChild('dt') table: Table;
+
   shipmentsSession: ISession[];
   customers: any[];
   shipmentsListSessionId: IShipment[];
