@@ -1,0 +1,56 @@
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-template pTemplate="title">
+      <h5>Суммирование объемов по основным корреспонденциям с объемами по мелким корреспонденциям</h5>
+      <div class="p-grid p-justify-between" style="padding-bottom: 10px">
+        <div>
+          <input [(ngModel)]="coefficient" id="coefficient" type="text" placeholder="Введите коэффициент" required pInputText>
+          <button pButton pRipple label="Расчитать" class="p-button-success"></button>
+        </div>
+        <div>
+          <button pButton pRipple label="Сформировать суммарный отчет" class="p-button-secondary"></button>
+        </div>
+      </div>
+      <p-table [value]="sales">
+        <ng-template pTemplate="header">
+          <tr>
+            <th rowspan="2">Дорога</th>
+            <th rowspan="2">Начальная станция участка</th>
+            <th rowspan="2">Единая сетевая разметка начальной станции</th>
+            <th rowspan="2">Конечная станция участка</th>
+            <th rowspan="2">Единая сетевая разметка конечной станции</th>
+            <th rowspan="2">км</th>
+            <th colspan="2">к концу участка</th>
+            <th colspan="2">к началу участка</th>
+          </tr>
+          <tr>
+            <th>2015</th>
+            <th>2016</th>
+            <th>2015</th>
+            <th>2016</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-sale>
+          <tr>
+            <td>{{sale.product}}</td>
+            <td>{{sale.lastYearSale}}%</td>
+            <td>{{sale.thisYearSale}}%</td>
+            <td>{{sale.lastYearProfit | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit1 | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit2 | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit3 | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit4 | currency: 'USD'}}</td>
+            <td>{{sale.thisYearProfit5 | currency: 'USD'}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <div class="p-grid p-nogutter p-justify-between">
+        <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
+        <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

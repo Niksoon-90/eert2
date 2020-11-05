@@ -18,8 +18,8 @@ export class CalculationsComponent implements OnInit {
       {label: 'Шаг 2', routerLink: 'mathForecast'},
       {label: 'Шаг 3', routerLink: 'forecast'},
       {label: 'Шаг 4', routerLink: 'payment'},
-      {label: 'Шаг 5'},
-      {label: 'Шаг 6'},
+      {label: 'Шаг 5', routerLink: 'summVolumes'},
+      {label: 'Шаг 6', routerLink: 'export'},
     ];
     console.log(this.forecastingModelIndex)
   }

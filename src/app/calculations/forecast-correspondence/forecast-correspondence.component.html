@@ -5,9 +5,8 @@
     </ng-template>
     <ng-template pTemplate="body">
       <div class="p-d-flex">
-        <label>Выбор кореспонденций: </label>
-        <button pButton pRipple type="button" label="Все"></button>
-        <button pButton pRipple type="button" label="Устойчивые" class="p-button-success"></button>
+        <button pButton pRipple type="button" label="Все кореспонденции"></button>
+        <button pButton pRipple type="button" label="Устойчивые кореспонденции" class="p-button-success"></button>
       </div>
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
@@ -17,23 +16,41 @@
       </div>
       <button pButton pRipple type="button" label="Расчитать" class="p-button-success"></button>
         <h5>Таблица 1 (млн.т)</h5>
-        <p-table [value]="testData" [scrollable]="true" scrollHeight="200px">
+        <p-table [value]="testData" [resizableColumns]="true" columnResizeMode="expand" styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="200px" >
+          <ng-template pTemplate="colgroup">
+            <colgroup>
+              <col>
+              <col>
+              <col>
+              <col>
+              <col>
+              <col>
+              <col>
+              <col>
+              <col>
+              <col>
+              <col>
+              <col>
+              <col>
+              <col>
+            </colgroup>
+          </ng-template>
           <ng-template pTemplate="header">
             <tr>
-              <th>№_п.п.</th>
-              <th>Группа груза</th>
-              <th>Виды перевозок</th>
-              <th>Дор. отпр.</th>
-              <th>Ст. отпр.</th>
-              <th>Код станции отпр. РФ</th>
-              <th>Грузоотпр.</th>
-              <th>Дор. назн.</th>
-              <th>Ст. назн.</th>
-              <th>Код станции назн. РФ</th>
-              <th>Грузополуч.</th>
-              <th>Объем перевозки 1-й год</th>
-              <th>Объем перевозки 2-й год</th>
-              <th>Объем перевозки n-й год</th>
+              <th pResizableColumn>№_п.п.</th>
+              <th pResizableColumn>Группа груза</th>
+              <th pResizableColumn>Виды перевозок</th>
+              <th pResizableColumn>Дор. отпр.</th>
+              <th pResizableColumn>Ст. отпр.</th>
+              <th pResizableColumn>Код станции отпр. РФ</th>
+              <th pResizableColumn>Грузоотпр.</th>
+              <th pResizableColumn>Дор. назн.</th>
+              <th pResizableColumn>Ст. назн.</th>
+              <th pResizableColumn>Код станции назн. РФ</th>
+              <th pResizableColumn>Грузополуч.</th>
+              <th pResizableColumn>Объем перевозки 1-й год</th>
+              <th pResizableColumn>Объем перевозки 2-й год</th>
+              <th pResizableColumn>Объем перевозки n-й год</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-test>
@@ -55,9 +72,11 @@
             </tr>
           </ng-template>
         </p-table>
-      <button pButton pRipple type="button" label="Сохранить"></button>
-      <button pButton pRipple type="button" label="Увязка с прогнозом"></button>
-      <button pButton pRipple type="button" label="Учет заявок"></button>
+      <div style="padding-top: 15px">
+        <button pButton pRipple type="button" label="Сохранить"></button>
+        <button pButton pRipple type="button" label="Увязка с прогнозом"></button>
+        <button pButton pRipple type="button" label="Учет заявок"></button>
+      </div>
     </ng-template>
 
 

@@ -4,7 +4,7 @@
   <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
 </div>
 <p-table [value]="shipmentsSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows" [showCurrentPageReport]="true" [(first)]="first"
-         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" [resizableColumns]="true" >
+         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]"  >
   <ng-template pTemplate="header">
     <tr >
       <th pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
@@ -35,7 +35,7 @@
 <div class="card">
 
   <p-dialog header="Загруженные данные" [(visible)]="dialogVisible" [style]="{width: '50vw'}" [baseZIndex]="10000" [maximizable]="true" [modal]="true" [resizable]="true" [contentStyle]="{height: '300px'}" >
-    <p-table [value]="shipmentsListSessionId" [scrollable]="true" scrollHeight="flex" scrollHeight="80vh" [resizableColumns]="true">
+    <p-table [value]="shipmentsListSessionId" [scrollable]="true" scrollHeight="flex" scrollHeight="80vh">
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
           <col style="width:250px">

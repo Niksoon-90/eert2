@@ -19,24 +19,15 @@ export class ImportStepsOneComponent implements OnInit {
     private shipmentsService: ShipmentsService,
     private router: Router,
     public forecastModelService: ForecastingModelService) {
-    this.horizonforecast = [
-        {id: 1, name: 5},
-        {id: 2, name: 6},
-        {id: 3, name: 7},
-        {id: 4, name: 8},
-        {id: 5, name: 9},
-        {id: 6, name: 10},
-        {id: 7, name: 11},
-        {id: 8, name: 12},
-        {id: 9, name: 13},
-        {id: 10, name: 14},
-        {id: 11, name: 15}
-    ]
   }
 
   ngOnInit(): void  {
     this.getInitialDate()
     this.stepOne = this.forecastModelService.ticketInformation.stepOne;
+    this.horizonforecast = [];
+    for (let i = 5; i < 15; i++) {
+      this.horizonforecast.push({id: i-5, name: i});
+    }
   }
 
   getInitialDate(){
@@ -47,14 +38,18 @@ export class ImportStepsOneComponent implements OnInit {
   }
 
   nextPage() {
+    if(this.stepOne !== undefined){
+      console.log(this.forecastModelService.ticketInformation.stepOne.calcYearsNumber,this.forecastModelService.ticketInformation.stepOne.Session)
       this.forecastModelService.ticketInformation.stepOne = this.stepOne;
       this.router.navigate(['steps/mathForecast']);
+    }
+
   }
 
   setInitialDate(event: any) {
     if(this.stepOne.idShipments && event.value){
-      console.log('setInitialDate', event)
+      console.log('setInitialDate', event.value.id)
     }
-    console.log('test',this.forecastModelService.ticketInformation.stepOne)
+    console.log('test',this.forecastModelService.ticketInformation.stepOne.id)
   }
 }

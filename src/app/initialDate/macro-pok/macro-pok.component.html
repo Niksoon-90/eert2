@@ -36,7 +36,7 @@
     </div>
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12">
-        <label for="pissyValueMacros">Писсимистичное значение:</label>
+        <label for="pissyValueMacros">Пессимистичное значение:</label>
         <input [(ngModel)]="pissyValueMacro" id="pissyValueMacros" type="text" required pInputText>
       </div>
     </div>
@@ -69,7 +69,9 @@
         <th>Тип</th>
         <th>Макро</th>
         <th>Год</th>
-        <th>Значение</th>
+        <th>Пессимистичное значение</th>
+        <th>Оптимистичное значение</th>
+        <th>Базовое значение</th>
         <th>Действия</th>
       </tr>
     </ng-template>
@@ -80,6 +82,8 @@
         <td>{{item.shipmentType}}</td>
         <td>{{item.macroIndex}}</td>
         <td>{{item.year}}</td>
+        <td>{{item.value}}</td>
+        <td>{{item.value}}</td>
         <td>{{item.value}}</td>
         <td> <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-warning p-button p-component p-button-icon-only" ></button></td>
       </tr>

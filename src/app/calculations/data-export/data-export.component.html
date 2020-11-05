@@ -1,0 +1,62 @@
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-template pTemplate="title">
+      <h5>Экспорт в EXCEL</h5>
+      <div class="p-d-flex p-flex-wrap">
+        <div class="p-mr-2 p-mb-2">
+          <p-card header="Дорога-Дорога" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
+            <p>Отчет по всем корреспонденциям в разрезе дорога-дорога!</p>
+            <ng-template pTemplate="footer">
+              <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
+            </ng-template>
+          </p-card>
+        </div>
+        <div class="p-mr-2 p-mb-2">
+          <p-card header="Прогноза по участкам" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
+            <p>Сводный отчет прогноза по участкам!</p>
+            <ng-template pTemplate="footer">
+              <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
+            </ng-template>
+          </p-card>
+        </div>
+        <div class="p-mr-2 p-mb-2">
+          <p-card header="Отчет прогноза" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
+            <p>Отчет прогноза по участкам(по основным корреспонденциям)</p>
+            <ng-template pTemplate="footer">
+              <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
+            </ng-template>
+          </p-card>
+        </div>
+        <div class="p-mr-2 p-mb-2">
+          <p-card header="Отчет по путям" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
+            <p>Отчет по путям следования(по основным корреспонденциям)!</p>
+            <ng-template pTemplate="footer">
+              <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
+            </ng-template>
+          </p-card>
+        </div>
+        <div class="p-mr-2 p-mb-2">
+          <p-card header="Отчет прогноза" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
+            <p>Отчет прогноза по основным корреспонденциям!</p>
+            <ng-template pTemplate="footer">
+              <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
+            </ng-template>
+          </p-card>
+        </div>
+        <div class="p-mr-2 p-mb-2">
+          <p-card header="Отчет прогноза" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
+            <p>Отчет прогноза по всем корреспонденциям!</p>
+            <ng-template pTemplate="footer">
+              <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
+            </ng-template>
+          </p-card>
+        </div>
+      </div>
+
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
+    </ng-template>
+  </p-card>
+</div>

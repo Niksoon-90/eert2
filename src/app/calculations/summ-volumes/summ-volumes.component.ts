@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-payment',
-  templateUrl: './payment.component.html',
-  styleUrls: ['./payment.component.scss']
+  selector: 'app-summ-volumes',
+  templateUrl: './summ-volumes.component.html',
+  styleUrls: ['./summ-volumes.component.scss']
 })
-export class PaymentComponent implements OnInit {
-  typeCalculation: string;
+export class SummVolumesComponent implements OnInit {
+
   sales: any[];
+  coefficient: string;
 
   constructor(private router: Router) { }
 
@@ -27,11 +28,11 @@ export class PaymentComponent implements OnInit {
     ];
   }
 
-  prevPage() {
-    this.router.navigate(['steps/forecast']);
+  nextPage() {
+    this.router.navigate(['steps/export']);
   }
 
-  nextPage() {
-    this.router.navigate(['steps/summVolumes'])
+  prevPage() {
+    this.router.navigate(['steps/payment']);
   }
 }

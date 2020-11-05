@@ -35,6 +35,8 @@ import { PaymentComponent } from './calculations/payment/payment.component';
 import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {CalendarModule} from 'primeng/calendar';
 import {RadioButtonModule} from "primeng/radiobutton";
+import { DataExportComponent } from './calculations/data-export/data-export.component';
+import { SummVolumesComponent } from './calculations/summ-volumes/summ-volumes.component';
 
 
 const itemRoutesShipments: Routes = [
@@ -56,6 +58,8 @@ const itemRoutesCalculations: Routes = [
   {path: 'mathForecast', component: MathForecastComponent},
   {path: 'forecast', component: ForecastCorrespondenceComponent},
   {path: 'payment', component: PaymentComponent},
+  {path: 'summVolumes', component: SummVolumesComponent},
+  {path: 'export', component: DataExportComponent},
 ]
 
 const appRoutes: Routes = [
@@ -82,6 +86,8 @@ registerLocaleData(localeRu, 'ru');
     MathForecastComponent,
     ForecastCorrespondenceComponent,
     PaymentComponent,
+    DataExportComponent,
+    SummVolumesComponent,
   ],
   imports: [
     BrowserModule,
