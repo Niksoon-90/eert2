@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {ISession} from "../../models/shipmenst.model";
 import {ShipmentsService} from "../../services/shipments.service";
-import {Router} from "@angular/router";
 import {ForecastingModelService} from "../../services/forecasting-model.service";
 import {IHorizonforecast} from "../../models/calculations.model";
+import {Router} from "@angular/router";
+
 
 @Component({
   selector: 'app-import-steps-one',
@@ -17,18 +18,21 @@ export class ImportStepsOneComponent implements OnInit {
 
   constructor(
     private shipmentsService: ShipmentsService,
+    public forecastModelService: ForecastingModelService,
     private router: Router,
-    public forecastModelService: ForecastingModelService) {
-  }
+  ) {}
 
   ngOnInit(): void  {
     this.getInitialDate()
     this.stepOne = this.forecastModelService.ticketInformation.stepOne;
-    this.horizonforecast = [];
-    for (let i = 5; i < 15; i++) {
-      this.horizonforecast.push({id: i-5, name: i});
+    if( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null){
+      this.horizonforecast = [];
+      for (let i = 5; i <= 15; i++) {
+        this.horizonforecast.push({name: i});
+      }
     }
   }
+
 
   getInitialDate(){
     this.shipmentsService.getShipSession().subscribe(
@@ -39,8 +43,9 @@ export class ImportStepsOneComponent implements OnInit {
 
   nextPage() {
     if(this.stepOne !== undefined){
-      console.log(this.forecastModelService.ticketInformation.stepOne.calcYearsNumber,this.forecastModelService.ticketInformation.stepOne.Session)
-      this.forecastModelService.ticketInformation.stepOne = this.stepOne;
+      this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
+      this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
+      console.log( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber['name'])
       this.router.navigate(['steps/mathForecast']);
     }
 
@@ -52,4 +57,6 @@ export class ImportStepsOneComponent implements OnInit {
     }
     console.log('test',this.forecastModelService.ticketInformation.stepOne.id)
   }
+
+
 }
