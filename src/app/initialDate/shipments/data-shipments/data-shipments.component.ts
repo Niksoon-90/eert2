@@ -18,6 +18,8 @@ export class DataShipmentsComponent implements OnInit {
   rows = 25;
   error: '';
   dialogVisible: boolean;
+  massSummYears: number[];
+  summYears: 0;
 
   constructor(
     private shipmentsService: ShipmentsService
@@ -67,12 +69,24 @@ export class DataShipmentsComponent implements OnInit {
 
   openShipItemSession(id: number) {
     this.shipmentsService.getShipments(id).subscribe(
-      res => {this.shipmentsListSessionId = res;},
+      res => {this.shipmentsListSessionId = res; this.test()},
       err => console.log('HTTP Error', err.message),
       () => this.showDialog()
     )
   }
   showDialog() {
     this.dialogVisible = true;
+  }
+
+  test() {
+    this.massSummYears = [ ]
+    for(let i = 0; i < this.shipmentsListSessionId[0].shipmentYearValuePairs.length ; i++){
+      this.summYears = 0;
+      for(let x=0; x < this.shipmentsListSessionId.length; x++){
+        this.summYears+= this.shipmentsListSessionId[x].shipmentYearValuePairs[i].value
+      }
+      console.log(this.summYears)
+      this.massSummYears.push(this.summYears);
+    }
   }
 }

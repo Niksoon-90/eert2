@@ -111,6 +111,12 @@
         </tr>
 
       </ng-template>
+      <ng-template pTemplate="footer">
+        <tr>
+          <td colspan="13" class="p-text-right">Итого: </td>
+          <td *ngFor="let items of this.massSummYears">{{items}}</td>
+        </tr>
+      </ng-template>
     </p-table>
     <ng-template pTemplate="footer">
       <button type="button" pButton pRipple icon="pi pi-times" (click)="dialogVisible=false" label="Закрыть" class="p-button-text"></button>
