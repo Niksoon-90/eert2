@@ -37,6 +37,7 @@ import {CalendarModule} from 'primeng/calendar';
 import {RadioButtonModule} from "primeng/radiobutton";
 import { DataExportComponent } from './calculations/data-export/data-export.component';
 import { SummVolumesComponent } from './calculations/summ-volumes/summ-volumes.component';
+import { MathematicalForecastTableComponent } from './calculations/forecast-correspondence/mathematical-forecast-table/mathematical-forecast-table.component';
 
 
 const itemRoutesShipments: Routes = [
@@ -88,6 +89,7 @@ registerLocaleData(localeRu, 'ru');
     PaymentComponent,
     DataExportComponent,
     SummVolumesComponent,
+    MathematicalForecastTableComponent,
   ],
   imports: [
     BrowserModule,

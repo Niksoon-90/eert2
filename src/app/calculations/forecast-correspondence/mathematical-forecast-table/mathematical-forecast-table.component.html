@@ -1,0 +1,62 @@
+<div class="stepsdemo-content">
+  <p-card>
+
+      <p-table [value]="mathematicalForecastTable"  editMode="row" [scrollable]="true" scrollHeight="30vh" dataKey="id">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Группа груза</th>
+            <th>Вид сообщения</th>
+            <ng-container *ngIf="mathematicalForecastTable">
+              <th *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears | keyvalue">
+                {{data.key}}
+              </th>
+              <th *ngFor="let data2 of mathematicalForecastTable[0].calculatedVolumes | keyvalue">
+                {{data2.key}}
+              </th>
+            </ng-container>
+            <th style="width:8rem">Редактирование</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+          <tr [pEditableRow]="item">
+            <td>{{item.cargoGroup}}</td>
+
+
+            <td pEditableColumn >
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input pInputText type="text" [(ngModel)]="item.shipmentType">
+                </ng-template>
+                <ng-template pTemplate="output" >
+                  {{item.shipmentType}}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+
+
+            <td pEditableColumn *ngFor="let year of item.groupVolumesByYears  | keyvalue;" style="background-color: rgba(0,64,255,0.07)">
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input pInputText type="text" [(ngModel)]="year.value">
+                </ng-template>
+                <ng-template pTemplate="output" >
+                  {{year.value}}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+
+
+            <td *ngFor="let data of item.calculatedVolumes | keyvalue" style="background-color: rgba(68,255,0,0.29)">
+              {{data.value}}
+            </td>
+            <td style="text-align:center">
+              <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(item)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(item, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+  </p-card>
+</div>

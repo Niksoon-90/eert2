@@ -6,6 +6,7 @@ export interface ICalculationsModel {
 }
 export interface ISelectMethodUsers {
   id: number;
+  type: string;
   name: string;
 }
 export interface IHorizonforecast {
@@ -19,11 +20,4 @@ export interface ICalculatingPredictiveRegression{
   macroIndexesByYears: {},
   calculatedVolumes: {},
   regressionParameters: number[]
-}
-
-export interface IGroupVolumesByYears {
-  years: number
-}
-export interface ICalculatedVolumes {
-  years: number
 }

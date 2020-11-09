@@ -90,7 +90,7 @@ export class DataShipmentsComponent implements OnInit {
     }
   }
 
-  onActivityChange($event: Event, idx: number) {
+  onActivityChange($event, idx: number) {
     const value = $event.target.value;
     const regValue = value.replace(/\s/g, '').trim();
     const massValue = regValue.toString().split('-');

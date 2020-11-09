@@ -13,19 +13,19 @@
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12">
         <label>Группа груза:</label>
-        <p-dropdown optionLabel="name" [options]="cargoGroup"  placeholder="Выберите один из вариантов:"></p-dropdown>
+        <p-dropdown optionLabel="name" [(ngModel)]="cargoGroup" [options]="cargoGroups"  placeholder="Выберите один из вариантов:"></p-dropdown>
       </div>
     </div>
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12">
         <label>Вид сообщения:</label>
-        <p-dropdown optionLabel="name" [options]="shipmentType"  placeholder="Выберите один из вариантов:"></p-dropdown>
+        <p-dropdown optionLabel="name" [(ngModel)]="shipmentType" [options]="shipmentTypes"  placeholder="Выберите один из вариантов:"></p-dropdown>
       </div>
     </div>
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12">
         <label>Год:</label>
-        <p-calendar [(ngModel)]="year" [showIcon]="true" inputId="icon" view="month" dateFormat="yy" [yearNavigator]="true" yearRange="2000:2030"></p-calendar>
+        <p-dropdown  optionLabel="name" [(ngModel)]="year" [options]="years"></p-dropdown>
       </div>
     </div>
     <div class="p-fluid p-formgrid p-grid">
@@ -54,7 +54,7 @@
     </div>
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12">
-        <button pButton pRipple type="button" label="Сохранить" class="p-button-success" ></button>
+        <button pButton pRipple type="button" label="Сохранить" class="p-button-success" (click)="saveNewMacroPok()"></button>
       </div>
     </div>
   </ng-template>

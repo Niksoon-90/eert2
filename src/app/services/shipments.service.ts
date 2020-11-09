@@ -33,6 +33,8 @@ export class ShipmentsService {
   }
   getMacroPok(): Observable<IMacroPokModel[]>{
     return this.http.get<IMacroPokModel[]>(this.url + `api/macroPok/all`)
-
+  }
+  postMacroPok(macroPok: IMacroPokModel){
+    return this.http.post(this.url + `api/macroPok`, macroPok)
   }
 }

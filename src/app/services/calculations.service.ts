@@ -14,7 +14,23 @@ export class CalculationsService {
   private url = environment.hostURL;
   private urlCalc = environment.hostCalc;
 
-  getCalculation(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]>{
-    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/${id}?calcYearsNumber=${idHorizonforecast}`)
+  getCalculationMultiple(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]>{
+    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/multiple/${id}?calcYearsNumber=${idHorizonforecast}`)
+  }
+  getCalculationSimple(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]> {
+    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/simple/${id}?calcYearsNumber=${idHorizonforecast}`)
+  }
+  getCalculationFiscal(id: number, idHorizonforecast: number, year: string): Observable<ICalculatingPredictiveRegression[]> {
+    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/fiscal/${id}?calcYearsNumber=${idHorizonforecast}&fiscalYear=${year}`)
+  }
+  getCalculationFixed(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]> {
+    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/tendency/fixed/${id}?calcYearsNumber=${idHorizonforecast}`)
+  }
+  getCalculationIncreasing(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]> {
+    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/tendency/increasing/${id}?calcYearsNumber=${idHorizonforecast}`)
+  }
+  getCalculationAverage(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]> {
+    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/average/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
 }
+

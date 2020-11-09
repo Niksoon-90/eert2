@@ -15,7 +15,8 @@ export class MacroPokComponent implements OnInit {
     private shipmentsService: ShipmentsService) { }
 
   macroPokList: IMacroPokModel[];
-  cargoGroup = [
+  years = [];
+  cargoGroups = [
     {id:1, name:"Уголь"},
     {id:2, name:"Кокс"},
     {id:3, name:"Нефтяные грузы"},
@@ -27,20 +28,27 @@ export class MacroPokComponent implements OnInit {
     {id:9, name:"Хлебные грузы"},
     {id:10, name:"Прочие грузы"},
   ];
-  shipmentType = [
+  shipmentTypes = [
     {id:1, name:"Внутренние"},
     {id:2, name:"Экспорт"},
     {id:3, name:"Импорт"},
     {id:4, name:"Транзит"},
   ]
+
+  cargoGroup: string;
+  shipmentType: string;
   macroIndex: string;
-  year
+  year: number;
   pissyValueMacro: string;
   optimisticValueMacro: string;
-  basicValueMacro: string;
+  basicValueMacro: number;
 
   ngOnInit(): void {
     this.getMacroPok()
+    this.years = [];
+    for (let i = 15; i <= 99; i++) {
+      this.years.push({name: `20`+i});
+    }
   }
 
   getMacroPok(){
@@ -48,6 +56,23 @@ export class MacroPokComponent implements OnInit {
       res => this.macroPokList = res,
       err => console.log('HTTP Error', err.message),
       () => console.log('HTTP request completed.')
+    )
+  }
+
+  saveNewMacroPok() {
+    const macroPok: IMacroPokModel = {
+      cargoGroup:	this.cargoGroup['name'],
+      macroIndex:	this.macroIndex,
+      shipmentType:	this.shipmentType['name'],
+      value: this.basicValueMacro,
+      year: this.year
+    }
+    console.log(macroPok)
+    this.shipmentsService.postMacroPok(macroPok).subscribe(
+      res => {
+        console.log(res)
+        this.getMacroPok()
+      }
     )
   }
 }

@@ -13,10 +13,8 @@ export class ForecastingModelService {
       idCargo: 0,
       id: null
     },
-    seatInformation: {
-      class: null,
-      wagon: null,
-      seat: null
+    stepThree: {
+        forecastingStrategy: null,
     },
     paymentInformation: {
       cardholderName:'',

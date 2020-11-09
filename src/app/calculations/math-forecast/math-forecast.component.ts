@@ -22,7 +22,7 @@ export class MathForecastComponent implements OnInit {
     this.createTable()
   }
   createTable(){
-    this.calculationsService.getCalculation(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
+    this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
       .subscribe(
         res => {this.mathematicalForecastTable = res; console.log(this.mathematicalForecastTable)},
         err => console.log('HTTP Error', err.message),

@@ -11,10 +11,12 @@
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
           <label>Стратегия прогнозирования:</label>
-          <p-dropdown [options]="methodUsers" optionLabel="name" [(ngModel)]="methodItemUsers" (ngModelChange)="test($event)"></p-dropdown>
+          <p-dropdown [options]="methodUsers" optionLabel="name" [(ngModel)]="stepThree.forecastingStrategy" placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
       </div>
-      <button pButton pRipple type="button" label="Расчитать" class="p-button-success"></button>
+      <button pButton pRipple type="button" label="Расчитать" class="p-button-success" (click)="calculateForecastingStrategy()" [disabled]="!stepThree.forecastingStrategy"></button>
+      <app-mathematical-forecast-table
+      [mathematicalForecastTable]="this.mathematicalForecastTable"></app-mathematical-forecast-table>
         <h5>Таблица 1 (млн.т)</h5>
         <p-table [value]="testData" [resizableColumns]="true" columnResizeMode="expand" styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="200px" >
           <ng-template pTemplate="colgroup">
