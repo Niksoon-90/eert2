@@ -1,22 +1,16 @@
 <div class="stepsdemo-content">
   <p-card>
     <ng-template pTemplate="title">
-        Импорт данных
-    </ng-template>
-    <ng-template pTemplate="subtitle">
-        Все поля обязательны для заполнения!
-    </ng-template>
-    <ng-template pTemplate="content">
-      <div class="p-field-radiobutton">
-        <p-radioButton name="manual" value="Ручной расчет" [(ngModel)]="typeCalculation" inputId="manual"></p-radioButton>
-        <label for="manual">Ручной расчет</label>
+      <h5>Суммирование объемов по основным корреспонденциям с объемами по мелким корреспонденциям</h5>
+      <div class="p-grid p-justify-between" style="padding-bottom: 10px">
+        <div>
+          <input [(ngModel)]="coefficient" id="coefficient" type="text" placeholder="Введите коэффициент" required pInputText>
+          <button pButton pRipple label="Расчитать" class="p-button-success"></button>
+        </div>
+        <div>
+          <button pButton pRipple label="Сформировать суммарный отчет" class="p-button-secondary"></button>
+        </div>
       </div>
-      <div class="p-field-radiobutton">
-        <p-radioButton name="auto" value="Автоматический расчет" [(ngModel)]="typeCalculation" inputId="auto"></p-radioButton>
-        <label for="auto">Автоматический расчет</label>
-      </div>
-      <button pButton pRipple type="button" label="Отправить в ИАС Маршрут" class="p-button-success"></button>
-      <h4>Дата отправки: <p> статус: </p></h4>
       <p-table [value]="sales">
         <ng-template pTemplate="header">
           <tr>

@@ -9,6 +9,21 @@ export interface ISelectMethodUsers {
   name: string;
 }
 export interface IHorizonforecast {
-  id: number;
   name: number;
+}
+export interface ICalculatingPredictiveRegression{
+  sessionId: number,
+  cargoGroup: string,
+  shipmentType: string,
+  groupVolumesByYears: {},
+  macroIndexesByYears: {},
+  calculatedVolumes: {},
+  regressionParameters: number[]
+}
+
+export interface IGroupVolumesByYears {
+  years: number
+}
+export interface ICalculatedVolumes {
+  years: number
 }

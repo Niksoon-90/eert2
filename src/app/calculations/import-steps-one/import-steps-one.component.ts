@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {ISession} from "../../models/shipmenst.model";
 import {ShipmentsService} from "../../services/shipments.service";
-import {Router} from "@angular/router";
 import {ForecastingModelService} from "../../services/forecasting-model.service";
 import {IHorizonforecast} from "../../models/calculations.model";
+import {Router} from "@angular/router";
+
 
 @Component({
   selector: 'app-import-steps-one',
@@ -17,31 +18,21 @@ export class ImportStepsOneComponent implements OnInit {
 
   constructor(
     private shipmentsService: ShipmentsService,
+    public forecastModelService: ForecastingModelService,
     private router: Router,
-    public forecastModelService: ForecastingModelService) {
-    this.horizonforecast = [
-        {id: 1, name: 1},
-        {id: 1, name: 2},
-        {id: 1, name: 3},
-        {id: 1, name: 4},
-        {id: 1, name: 5},
-        {id: 1, name: 6},
-        {id: 1, name: 7},
-        {id: 1, name: 8},
-        {id: 1, name: 9},
-        {id: 1, name: 10},
-        {id: 1, name: 11},
-        {id: 1, name: 12},
-        {id: 1, name: 13},
-        {id: 1, name: 14},
-        {id: 1, name: 15}
-    ]
-  }
+  ) {}
 
   ngOnInit(): void  {
     this.getInitialDate()
     this.stepOne = this.forecastModelService.ticketInformation.stepOne;
+    if( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null){
+      this.horizonforecast = [];
+      for (let i = 5; i <= 15; i++) {
+        this.horizonforecast.push({name: i});
+      }
+    }
   }
+
 
   getInitialDate(){
     this.shipmentsService.getShipSession().subscribe(
@@ -51,14 +42,23 @@ export class ImportStepsOneComponent implements OnInit {
   }
 
   nextPage() {
-      this.forecastModelService.ticketInformation.stepOne = this.stepOne;
+    if(this.stepOne !== undefined){
+      this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
+      this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
+      console.log( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber['name'])
       this.router.navigate(['steps/mathForecast']);
+    }
+
   }
 
   setInitialDate(event: any) {
-    if (this.stepOne.idShipments && event.value){
-      console.log('setInitialDate', event);
+
+    if(this.stepOne.idShipments && event.value){
+      console.log('setInitialDate', event.value.id)
     }
-    console.log('test', this.forecastModelService.ticketInformation.stepOne);
+    console.log('test', this.forecastModelService.ticketInformation.stepOne.id)
+
   }
+
+
 }

@@ -3,8 +3,8 @@
   <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
   <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
 </div>
-<p-table [value]="shipmentsSession" styleClass="p-datatable-sm" [paginator]="true" [rows]="rows" [showCurrentPageReport]="true" [(first)]="first"
-         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]">
+<p-table [value]="shipmentsSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows" [showCurrentPageReport]="true" [(first)]="first"
+         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]"  >
   <ng-template pTemplate="header">
     <tr >
       <th pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
@@ -35,20 +35,21 @@
 <div class="card">
 
   <p-dialog header="Загруженные данные" [(visible)]="dialogVisible" [style]="{width: '50vw'}" [baseZIndex]="10000" [maximizable]="true" [modal]="true" [resizable]="true" [contentStyle]="{height: '300px'}" >
-    <p-table [value]="shipmentsListSessionId" [scrollable]="true" scrollHeight="flex" scrollHeight="80vh">
+    <p-table #dt [value]="shipmentsListSessionId" [scrollable]="true" scrollHeight="flex" scrollHeight="70vh" [filterDelay]="0" styleClass="p-datatable-sm p-datatable-gridlines" [resizableColumns]="true" columnResizeMode="expand" >
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
-          <col style="width:250px">
+          <col style="width:80px">
+          <col style="width:100px">
+          <col style="width:100px">
+          <col style="width:100px">
+          <col style="width:150px">
           <col style="width:100px">
           <col style="width:250px">
-          <col style="width:100px">
-          <col style="width:250px">
-          <col style="width:250px">
-          <col style="width:250px">
           <col style="width:250px">
           <col style="width:100px">
-          <col style="width:250px">
           <col style="width:100px">
+          <col style="width:100px">
+          <col style="width:250px">
           <col style="width:250px">
           <ng-container *ngIf="shipmentsListSessionId">
             <col style="width:70px" *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs">
@@ -58,39 +59,48 @@
       </ng-template>
       <ng-template pTemplate="header" >
         <tr>
-          <th>Группа груза</th>
-          <th>Дорога отпр.</th>
-          <th>Станция отпр.</th>
-          <th>Код станции отпр.</th>
-          <th>Субъект отпр.</th>
-          <th>Имя получателя</th>
-          <th>Имя отправителя</th>
-          <th>Тип</th>
-          <th>Дорога наз.</th>
-          <th>Станция наз.</th>
-          <th>Код станции наз.</th>
-          <th>Субъект наз.</th>
+          <th>№_п.п.</th>
+          <th pResizableColumn pSortableColumn="cargoGroup">Группа груза<p-sortIcon field="cargoGroup"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="shipmentType">Вид перевозки<p-sortIcon field="shipmentType"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="fromRoad">Дорога отправления<p-sortIcon field="fromRoad"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="fromStation">Станция отправления РФ<p-sortIcon field="fromStation"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="fromStationCode">Код станции отправления РФ<p-sortIcon field="fromStationCode"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="senderName">Субъект отправления<p-sortIcon field="senderName"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="receiverName">Грузоотправитель<p-sortIcon field="receiverName"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="toRoad">Дорога назначения<p-sortIcon field="toRoad"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="toStation">Станция назначения РФ<p-sortIcon field="toStation"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="toStationCode">Код станции назначения РФ<p-sortIcon field="toStationCode"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="toSubject">Субъект назначения<p-sortIcon field="toSubject"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="receiverName">Грузополучатель<p-sortIcon field="receiverName"></p-sortIcon></th>
           <ng-container *ngIf="shipmentsListSessionId">
-            <th *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs">
+            <th pResizableColumn *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs">
               {{data.year}}
             </th>
           </ng-container>
-          <th>Действия</th>
+          <th pSortableColumn>Действия</th>
+        </tr>
+<!--        <tr>-->
+<!--        <th></th>-->
+<!--          <th>-->
+<!--            <input pInputText type="text" (input)="dt.filter($event.target.value, 'fromRoad', 'contains')" placeholder="Фильтр" class="p-column-filter">-->
+<!--          </th>-->
+<!--        </tr>-->
       </ng-template>
       <ng-template pTemplate="body" let-item let-ri="rowIndex">
         <tr>
+          <td>{{ri}}</td>
           <td>{{item.cargoGroup}}</td>
+          <td>{{item.shipmentType}}</td>
           <td>{{item.fromRoad}}</td>
           <td>{{item.fromStation}}</td>
           <td>{{item.fromStationCode}}</td>
-          <td>{{item.fromSubject}}</td>
-          <td>{{item.receiverName}}</td>
           <td>{{item.senderName}}</td>
-          <td>{{item.shipmentType}}</td>
+          <td>{{item.receiverName}}</td>
           <td>{{item.toRoad}}</td>
           <td>{{item.toStation}}</td>
           <td>{{item.toStationCode}}</td>
           <td>{{item.toSubject}}</td>
+          <td>{{item.receiverName}}</td>
           <td *ngFor="let data of item.shipmentYearValuePairs">
             {{data.value}}
           </td>

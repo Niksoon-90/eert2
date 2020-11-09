@@ -18,7 +18,7 @@
     </div>
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12">
-        <label>Тип Груза:</label>
+        <label>Вид сообщения:</label>
         <p-dropdown optionLabel="name" [options]="shipmentType"  placeholder="Выберите один из вариантов:"></p-dropdown>
       </div>
     </div>
@@ -30,14 +30,26 @@
     </div>
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12">
-        <label for="firstname">Макро индекс</label>
+        <label for="firstname">Показатель:</label>
         <input [(ngModel)]="macroIndex" id="firstname" type="text" required pInputText>
       </div>
     </div>
     <div class="p-fluid p-formgrid p-grid">
       <div class="p-field p-col-12">
-        <label for="valueMacros">Значение</label>
-        <input [(ngModel)]="valueMacro" id="valueMacros" type="text" required pInputText>
+        <label for="pissyValueMacros">Пессимистичное значение:</label>
+        <input [(ngModel)]="pissyValueMacro" id="pissyValueMacros" type="text" required pInputText>
+      </div>
+    </div>
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12">
+        <label for="optimisticValueMacros">Оптимистичное значение:</label>
+        <input [(ngModel)]="optimisticValueMacro" id="optimisticValueMacros" type="text" required pInputText>
+      </div>
+    </div>
+    <div class="p-fluid p-formgrid p-grid">
+      <div class="p-field p-col-12">
+        <label for="basicValueMacros">Базовое значение:</label>
+        <input [(ngModel)]="basicValueMacro" id="basicValueMacros" type="text" required pInputText>
       </div>
     </div>
     <div class="p-fluid p-formgrid p-grid">
@@ -57,7 +69,9 @@
         <th>Тип</th>
         <th>Макро</th>
         <th>Год</th>
-        <th>Значение</th>
+        <th>Пессимистичное значение</th>
+        <th>Оптимистичное значение</th>
+        <th>Базовое значение</th>
         <th>Действия</th>
       </tr>
     </ng-template>
@@ -68,6 +82,8 @@
         <td>{{item.shipmentType}}</td>
         <td>{{item.macroIndex}}</td>
         <td>{{item.year}}</td>
+        <td>{{item.value}}</td>
+        <td>{{item.value}}</td>
         <td>{{item.value}}</td>
         <td> <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-warning p-button p-component p-button-icon-only" ></button></td>
       </tr>

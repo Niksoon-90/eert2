@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from "@angular/router";
+import {ForecastingModelService} from "../../services/forecasting-model.service";
+import {CalculationsService} from "../../services/calculations.service";
+import {ICalculatingPredictiveRegression} from "../../models/calculations.model";
 
 @Component({
   selector: 'app-math-forecast',
@@ -7,24 +10,24 @@ import {Router} from "@angular/router";
   styleUrls: ['./math-forecast.component.scss']
 })
 export class MathForecastComponent implements OnInit {
-  customers: any
+  mathematicalForecastTable: ICalculatingPredictiveRegression[];
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    public forecastModelService: ForecastingModelService,
+    private calculationsService: CalculationsService
+  ) { }
 
   ngOnInit(): void {
-      this.customers = [
-        {z1:'Тест значение 1', z2:'Тест значение 1', z3:'Тест значение 1'},
-        {z1:'Тест значение 2', z2:'Тест значение 2', z3:'Тест значение 2'},
-        {z1:'Тест значение 3', z2:'Тест значение 3', z3:'Тест значение 3'},
-        {z1:'Тест значение 4', z2:'Тест значение 4', z3:'Тест значение 4'},
-        {z1:'Тест значение 5', z2:'Тест значение 5', z3:'Тест значение 5'},
-        {z1:'Тест значение 6', z2:'Тест значение 6', z3:'Тест значение 6'},
-        {z1:'Тест значение 7', z2:'Тест значение 7', z3:'Тест значение 7'},
-        {z1:'Тест значение 8', z2:'Тест значение 8', z3:'Тест значение 8'},
-        {z1:'Тест значение 9', z2:'Тест значение 9', z3:'Тест значение 9'}
-      ]
-
-
+    this.createTable()
+  }
+  createTable(){
+    this.calculationsService.getCalculation(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
+      .subscribe(
+        res => {this.mathematicalForecastTable = res; console.log(this.mathematicalForecastTable)},
+        err => console.log('HTTP Error', err.message),
+        () => console.log('HTTP request completed.')
+      )
   }
 
   nextPage() {

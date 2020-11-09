@@ -8,7 +8,8 @@ export class ForecastingModelService {
 
   ticketInformation = {
     stepOne: {
-      idShipments: 0,
+      Session: 0,
+      calcYearsNumber: 0,
       idCargo: 0,
       id: null
     },

@@ -35,7 +35,9 @@ export class MacroPokComponent implements OnInit {
   ]
   macroIndex: string;
   year
-  valueMacro: string;
+  pissyValueMacro: string;
+  optimisticValueMacro: string;
+  basicValueMacro: string;
 
   ngOnInit(): void {
     this.getMacroPok()
@@ -43,10 +45,9 @@ export class MacroPokComponent implements OnInit {
 
   getMacroPok(){
     this.shipmentsService.getMacroPok().subscribe(
-      res => {this.macroPokList = res; console.log(res)},
+      res => this.macroPokList = res,
       err => console.log('HTTP Error', err.message),
       () => console.log('HTTP request completed.')
     )
   }
-
 }
