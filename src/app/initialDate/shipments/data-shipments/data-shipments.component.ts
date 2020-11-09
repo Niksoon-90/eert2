@@ -18,6 +18,8 @@ export class DataShipmentsComponent implements OnInit {
   rows = 25;
   error: '';
   dialogVisible: boolean;
+  massSummYears: number[];
+  summYears: 0;
 
   constructor(
     private shipmentsService: ShipmentsService
@@ -67,12 +69,48 @@ export class DataShipmentsComponent implements OnInit {
 
   openShipItemSession(id: number) {
     this.shipmentsService.getShipments(id).subscribe(
-      res => {this.shipmentsListSessionId = res;},
+      res => {this.shipmentsListSessionId = res; this.test()},
       err => console.log('HTTP Error', err.message),
       () => this.showDialog()
     )
   }
   showDialog() {
     this.dialogVisible = true;
+  }
+
+  test() {
+    this.massSummYears = [ ]
+    for (let i = 0; i < this.shipmentsListSessionId[0].shipmentYearValuePairs.length ; i++){
+      this.summYears = 0;
+      for (let x = 0; x < this.shipmentsListSessionId.length; x++){
+        this.summYears += this.shipmentsListSessionId[x].shipmentYearValuePairs[i].value;
+      }
+      console.log(this.summYears)
+      this.massSummYears.push(this.summYears);
+    }
+  }
+
+  onActivityChange($event: Event, idx: number) {
+    const value = $event.target.value;
+    const regValue = value.replace(/\s/g, '').trim();
+    const massValue = regValue.toString().split('-');
+    const startsWith = parseInt(massValue[0]);
+    const endsWith = parseInt(massValue[1]);
+
+
+    if (!isNaN( startsWith && endsWith) && endsWith > startsWith){
+      console.log(startsWith , endsWith)
+      this.table.filter(startsWith, 'activity', 'gte');
+    //  this.table.filter(endsWith, 'endsWith', 'endsWith');
+    }
+
+
+    // if (value && value.trim().length) {
+    //   const activity = parseInt(value);
+    //
+    //   if (!isNaN(activity)) {
+    //     this.table.filter(activity, 'activity', 'gte');
+    //   }
+    // }
   }
 }

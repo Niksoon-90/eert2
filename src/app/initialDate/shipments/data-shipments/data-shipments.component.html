@@ -4,7 +4,7 @@
   <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
 </div>
 <p-table [value]="shipmentsSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows" [showCurrentPageReport]="true" [(first)]="first"
-         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]"  >
+         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id" >
   <ng-template pTemplate="header">
     <tr >
       <th pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
@@ -52,7 +52,7 @@
           <col style="width:250px">
           <col style="width:250px">
           <ng-container *ngIf="shipmentsListSessionId">
-            <col style="width:70px" *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs">
+            <col style="width:100px" *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs">
           </ng-container>
           <col style="width:150px">
         </colgroup>
@@ -77,14 +77,52 @@
               {{data.year}}
             </th>
           </ng-container>
-          <th pSortableColumn>Действия</th>
+          <th>Действия</th>
         </tr>
-<!--        <tr>-->
-<!--        <th></th>-->
-<!--          <th>-->
-<!--            <input pInputText type="text" (input)="dt.filter($event.target.value, 'fromRoad', 'contains')" placeholder="Фильтр" class="p-column-filter">-->
-<!--          </th>-->
-<!--        </tr>-->
+        <tr>
+          <th colspan="2">
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'cargoGroup', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'shipmentType', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'fromRoad', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'fromStation', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'fromStationCode', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'senderName', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'receiverName', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'toRoad', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'toStation', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'toStationCode', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'toSubject', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <input pInputText type="text" (input)="dt.filter($event.target.value, 'receiverName', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <ng-container *ngIf="shipmentsListSessionId">
+            <th *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs; let idx = index">
+              <input pInputText type="text" (input)="onActivityChange($event, idx)" placeholder="min - max" class="p-column-filter" >
+            </th>
+          </ng-container>
+
+        </tr>
       </ng-template>
       <ng-template pTemplate="body" let-item let-ri="rowIndex">
         <tr>
@@ -110,6 +148,12 @@
         </td>
         </tr>
 
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <tr>
+          <td colspan="13" class="p-text-right">Итого: </td>
+          <td *ngFor="let items of this.massSummYears">{{items}}</td>
+        </tr>
       </ng-template>
     </p-table>
     <ng-template pTemplate="footer">

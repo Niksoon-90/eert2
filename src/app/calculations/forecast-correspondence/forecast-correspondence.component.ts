@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from "@angular/router";
 import {ISelectMethodUsers} from "../../models/calculations.model";
+import {ForecastingModelService} from '../../services/forecasting-model.service';
 
 @Component({
   selector: 'app-forecast-correspondence',
@@ -12,7 +13,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
   methodItemUsers: ISelectMethodUsers;
   testData: any;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    public forecastModelService: ForecastingModelService,
+    ) {
     this.methodUsers = [
       {id: 1, name:'Метод наименьших квадратов'},
       {id: 2, name:'Метод по отчетному году'},
@@ -35,6 +39,12 @@ export class ForecastCorrespondenceComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.initials();
+  }
+
+  initials(){
+    this.forecastModelService.getTicketInformation().stepOne.Session['id'],
+      this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
   }
 
   prevPage() {
