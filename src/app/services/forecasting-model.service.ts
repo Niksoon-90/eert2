@@ -15,6 +15,7 @@ export class ForecastingModelService {
     },
     stepThree: {
         forecastingStrategy: null,
+        yearsSession: null
     },
     paymentInformation: {
       cardholderName:'',

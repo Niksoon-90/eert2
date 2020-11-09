@@ -43,6 +43,7 @@ export class ImportStepsOneComponent implements OnInit {
 
   nextPage() {
     if(this.stepOne !== undefined){
+      console.log(this.stepOne)
       this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
       this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
       this.router.navigate(['steps/mathForecast']);

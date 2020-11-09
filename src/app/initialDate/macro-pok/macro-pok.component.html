@@ -10,60 +10,69 @@
     Все поля обязательны для заполнения!
   </ng-template>
   <ng-template pTemplate="content">
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col-12">
-        <label>Группа груза:</label>
-        <p-dropdown optionLabel="name" [(ngModel)]="cargoGroup" [options]="cargoGroups"  placeholder="Выберите один из вариантов:"></p-dropdown>
-      </div>
-    </div>
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col-12">
-        <label>Вид сообщения:</label>
-        <p-dropdown optionLabel="name" [(ngModel)]="shipmentType" [options]="shipmentTypes"  placeholder="Выберите один из вариантов:"></p-dropdown>
-      </div>
-    </div>
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col-12">
-        <label>Год:</label>
-        <p-dropdown  optionLabel="name" [(ngModel)]="year" [options]="years"></p-dropdown>
-      </div>
-    </div>
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col-12">
-        <label for="firstname">Показатель:</label>
-        <input [(ngModel)]="macroIndex" id="firstname" type="text" required pInputText>
-      </div>
-    </div>
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col-12">
-        <label for="pissyValueMacros">Пессимистичное значение:</label>
-        <input [(ngModel)]="pissyValueMacro" id="pissyValueMacros" type="text" required pInputText>
-      </div>
-    </div>
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col-12">
-        <label for="optimisticValueMacros">Оптимистичное значение:</label>
-        <input [(ngModel)]="optimisticValueMacro" id="optimisticValueMacros" type="text" required pInputText>
-      </div>
-    </div>
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col-12">
-        <label for="basicValueMacros">Базовое значение:</label>
-        <input [(ngModel)]="basicValueMacro" id="basicValueMacros" type="text" required pInputText>
-      </div>
-    </div>
-    <div class="p-fluid p-formgrid p-grid">
-      <div class="p-field p-col-12">
-        <button pButton pRipple type="button" label="Сохранить" class="p-button-success" (click)="saveNewMacroPok()"></button>
-      </div>
-    </div>
+    <form [formGroup]="form" (ngSubmit)="saveNewMacroPok(form.value)" id="create-cursor-form">
+      <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12 form-group">
+            <label>Группа груза:</label>
+            <p-dropdown optionLabel="name" formControlName="cargoGroup" [options]="cargoGroups"  placeholder="Выберите один из вариантов:" [ngClass]="{'p-invalid': (form.controls['cargoGroup'].invalid && form.controls['cargoGroup'].touched)}"></p-dropdown>
+            <small *ngIf="(form.controls['cargoGroup'].invalid && form.controls['cargoGroup'].touched)" class="p-error">Укажите группу груза</small>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12 form-group">
+            <label>Вид сообщения:</label>
+            <p-dropdown optionLabel="name" formControlName="shipmentType" [options]="shipmentTypes"  placeholder="Выберите один из вариантов:" [ngClass]="{'p-invalid': (form.controls['shipmentType'].invalid && form.controls['shipmentType'].touched)}"></p-dropdown>
+            <small *ngIf="(form.controls['shipmentType'].invalid && form.controls['shipmentType'].touched)" class="p-error">Укажите вид сообщения</small>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12 form-group">
+            <label>Год:</label>
+            <p-dropdown  optionLabel="name" formControlName="year" [options]="years" placeholder="Укажите год: " [ngClass]="{'p-invalid': (form.controls['year'].invalid && form.controls['year'].touched)}"></p-dropdown>
+            <small *ngIf="(form.controls['year'].invalid && form.controls['year'].touched)" class="p-error">Укажите год</small>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12 form-group">
+            <label for="firstname">Показатель:</label>
+            <input formControlName="macroIndex" id="firstname" type="text" required pInputText [ngClass]="{'p-invalid': (form.controls['macroIndex'].invalid && form.controls['macroIndex'].touched)}">
+            <small *ngIf="(form.controls['macroIndex'].invalid && form.controls['macroIndex'].touched)" class="p-error">Укажите показатель</small>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12 form-group">
+            <label for="pissyValueMacros">Пессимистичное значение:</label>
+            <input formControlName="pissyValueMacro" id="pissyValueMacros" type="text" required pInputText disabled [ngClass]="{'p-invalid': (form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)}">
+            <small *ngIf="(form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)" class="p-error">Укажите пессимистичное значение</small>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12 form-group">
+            <label for="optimisticValueMacros">Оптимистичное значение:</label>
+            <input formControlName="optimisticValueMacro" id="optimisticValueMacros" type="text" required pInputText disabled [ngClass]="{'p-invalid': (form.controls['optimisticValueMacro'].invalid && form.controls['optimisticValueMacro'].touched)}">
+            <small *ngIf="(form.controls['optimisticValueMacro'].invalid && form.controls['optimisticValueMacro'].touched)" class="p-error">Укажите оптимистичное значение</small>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12 form-group">
+            <label for="basicValueMacros">Базовое значение:</label>
+            <input formControlName="basicValueMacro" id="basicValueMacros" type="text" required pInputText [ngClass]="{'p-invalid': (form.controls['basicValueMacro'].invalid && form.controls['basicValueMacro'].touched)}">
+            <small *ngIf="(form.controls['basicValueMacro'].invalid && form.controls['basicValueMacro'].touched)" class="p-error">Укажите базовое значение</small>
+          </div>
+        </div>
+        <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12 form-group">
+            <button pButton pRipple type="submit" label="Сохранить" class="p-button-success" ></button>
+          </div>
+        </div>
+    </form>
   </ng-template>
 </p-overlayPanel>
 
 <div class="card">
-  <p-table [value]="macroPokList" [scrollable]="true" scrollHeight="200px">
+  <p-table [value]="macroPokList" [scrollable]="true" scrollHeight="80vh" dataKey="id" editMode="row">
     <ng-template pTemplate="header">
-      <tr>
+      <tr >
         <th>id</th>
         <th>Номенклатура грузов</th>
         <th>Тип</th>
@@ -72,20 +81,51 @@
         <th>Пессимистичное значение</th>
         <th>Оптимистичное значение</th>
         <th>Базовое значение</th>
-        <th>Действия</th>
+        <th></th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-item>
-      <tr>
+    <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
+      <tr [pEditableRow]="item">
         <td>{{item.id}}</td>
         <td>{{item.cargoGroup}}</td>
         <td>{{item.shipmentType}}</td>
         <td>{{item.macroIndex}}</td>
         <td>{{item.year}}</td>
-        <td>{{item.value}}</td>
-        <td>{{item.value}}</td>
-        <td>{{item.value}}</td>
-        <td> <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-warning p-button p-component p-button-icon-only" ></button></td>
+        <td pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="item.value">
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{item.value}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="item.value">
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{item.value}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td pEditableColumn>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="item.value">
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{item.value}}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td style="text-align:center">
+          <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
+          <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(item)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+          <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(item, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+        </td>
       </tr>
     </ng-template>
   </p-table>

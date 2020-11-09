@@ -37,4 +37,7 @@ export class ShipmentsService {
   postMacroPok(macroPok: IMacroPokModel){
     return this.http.post(this.url + `api/macroPok`, macroPok)
   }
+  putMacroPok(macroPok: IMacroPokModel){
+    return this.http.put(this.url + `api/macroPok`, macroPok)
+  }
 }

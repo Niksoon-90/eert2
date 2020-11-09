@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ShipmentsService} from "../../services/shipments.service";
 import {IMacroPokModel} from "../../models/macroPok.model";
 import {MessageService} from "primeng/api";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-macro-pok',
@@ -15,6 +16,7 @@ export class MacroPokComponent implements OnInit {
     private shipmentsService: ShipmentsService) { }
 
   macroPokList: IMacroPokModel[];
+  form: FormGroup
   years = [];
   cargoGroups = [
     {id:1, name:"Уголь"},
@@ -35,20 +37,36 @@ export class MacroPokComponent implements OnInit {
     {id:4, name:"Транзит"},
   ]
 
-  cargoGroup: string;
-  shipmentType: string;
-  macroIndex: string;
-  year: number;
-  pissyValueMacro: string;
-  optimisticValueMacro: string;
-  basicValueMacro: number;
 
   ngOnInit(): void {
     this.getMacroPok()
+    this.createForm()
     this.years = [];
     for (let i = 15; i <= 99; i++) {
       this.years.push({name: `20`+i});
     }
+  }
+  createForm(){
+    this.form = new FormGroup({
+      cargoGroup: new FormControl('',[Validators.required]),
+      shipmentType: new FormControl('', [Validators.required]),
+      year: new FormControl('', [Validators.required]),
+      macroIndex: new FormControl('', [Validators.required]),
+      pissyValueMacro: new FormControl('', [Validators.required]),
+      optimisticValueMacro: new FormControl('', [Validators.required]),
+      basicValueMacro: new FormControl('', [Validators.required]),
+    })
+  }
+  resetForm(){
+    this.form.reset({
+      cargoGroup: '',
+      shipmentType: '',
+      year: '',
+      macroIndex: '',
+      pissyValueMacro: '',
+      optimisticValueMacro: '',
+      basicValueMacro: ''
+    })
   }
 
   getMacroPok(){
@@ -59,20 +77,37 @@ export class MacroPokComponent implements OnInit {
     )
   }
 
-  saveNewMacroPok() {
-    const macroPok: IMacroPokModel = {
-      cargoGroup:	this.cargoGroup['name'],
-      macroIndex:	this.macroIndex,
-      shipmentType:	this.shipmentType['name'],
-      value: this.basicValueMacro,
-      year: this.year
-    }
+  saveNewMacroPok(value) {
+     const macroPok: IMacroPokModel = {
+       cargoGroup:	value.cargoGroup['name'],
+       macroIndex:	value.macroIndex,
+       shipmentType:	value.shipmentType['name'],
+       value: value.basicValueMacro,
+       year: value.year['name']
+     }
+     console.log(macroPok)
+     this.shipmentsService.postMacroPok(macroPok).subscribe(
+       res => {
+         this.getMacroPok();
+         this.resetForm();
+       }
+     )
+  }
+
+  onRowEditInit(macroPok: any) {
     console.log(macroPok)
-    this.shipmentsService.postMacroPok(macroPok).subscribe(
-      res => {
-        console.log(res)
-        this.getMacroPok()
-      }
+  }
+
+  onRowEditSave(macroPok: any) {
+    console.log(JSON.stringify(macroPok))
+    this.shipmentsService.putMacroPok(macroPok).subscribe(
+      res => { console.log(res)},
+      err => console.log('HTTP Error', err.message),
+      () => this.getMacroPok()
     )
+  }
+
+  onRowEditCancel(macroPok: any, ri) {
+    console.log(macroPok)
   }
 }

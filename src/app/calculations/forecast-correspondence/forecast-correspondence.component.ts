@@ -12,10 +12,10 @@ import {CalculationsService} from "../../services/calculations.service";
 })
 export class ForecastCorrespondenceComponent implements OnInit {
   methodUsers: ISelectMethodUsers[];
-  testData: any;
   stepThree: any;
   mathematicalForecastTable: ICalculatingPredictiveRegression[];
-  reportingНear: '';
+  reportingYears= [];
+  additionalInformation: boolean = false;
 
   constructor(
     private router: Router,
@@ -29,29 +29,22 @@ export class ForecastCorrespondenceComponent implements OnInit {
       {id: 4, type: 'increasing',  name:'Вычисление прогноза корреспонденций по тенденции (по увеличивающимся промежуткам)'},
       {id: 5, type: 'average', name:'Вычисление прогноза корреспонденций по среднему арифметическому'},
     ]
-    this.testData = [
-      {id:1, z1:1, z2:1, z3:1, z4:1, z5:1, z6:1, z7:1, z8:1, z9:1, z10:1, z11:1, z12:1, z13:1, z14:1},
-      {id:2, z1:2, z2:1, z3:1, z4:1, z5:1, z6:1, z7:1, z8:1, z9:1, z10:1, z11:1, z12:1, z13:1, z14:1},
-      {id:3, z1:3, z2:1, z3:1, z4:1, z5:1, z6:1, z7:1, z8:1, z9:1, z10:1, z11:1, z12:1, z13:1, z14:1},
-      {id:4, z1:4, z2:1, z3:1, z4:1, z5:1, z6:1, z7:1, z8:1, z9:1, z10:1, z11:1, z12:1, z13:1, z14:1},
-      {id:5, z1:5, z2:1, z3:1, z4:1, z5:1, z6:1, z7:1, z8:1, z9:1, z10:1, z11:1, z12:1, z13:1, z14:1},
-      {id:6, z1:6, z2:1, z3:1, z4:1, z5:1, z6:1, z7:1, z8:1, z9:1, z10:1, z11:1, z12:1, z13:1, z14:1},
-      {id:7, z1:7, z2:1, z3:1, z4:1, z5:1, z6:1, z7:1, z8:1, z9:1, z10:1, z11:1, z12:1, z13:1, z14:1},
-      {id:8, z1:8, z2:1, z3:1, z4:1, z5:1, z6:1, z7:1, z8:1, z9:1, z10:1, z11:1, z12:1, z13:1, z14:1},
-      {id:9, z1:9, z2:1, z3:1, z4:1, z5:1, z6:1, z7:1, z8:1, z9:1, z10:1, z11:1, z12:1, z13:1, z14:1},
-      {id:10, z1:10, z2:1, z3:1, z4:1, z5:1, z6:1, z7:1, z8:1, z9:1, z10:1, z11:1, z12:1, z13:1, z14:1}
-    ]
-  }
 
+  }
 
   ngOnInit(): void {
     this.stepThree = this.forecastModelService.ticketInformation.stepThree;
+    this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['year']);
     if(this.forecastModelService.ticketInformation.stepThree.forecastingStrategy !== null){
       this.calculateForecastingStrategy();
     }
 
   }
-
+  additionalInfo(items){
+    for (let item of items) {
+      this.reportingYears.push({"name": item});
+    }
+  }
 
   prevPage() {
     this.router.navigate(['steps/mathForecast']);
@@ -69,8 +62,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
          .subscribe( res => this.mathematicalForecastTable = res)
         break;
       case 'fiscal':
-        this.calculationsService.getCalculationFiscal(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'], this.reportingНear)
-          .subscribe( res => console.log(res))
+        this.calculationsService.getCalculationFiscal(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'], this.stepThree.yearsSession['name'])
+          .subscribe( res => this.mathematicalForecastTable = res)
         break;
       case 'fixed':
         this.calculationsService.getCalculationFixed(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
@@ -87,5 +80,9 @@ export class ForecastCorrespondenceComponent implements OnInit {
       default:
         break;
     }
+  }
+
+  spying(event: any) {
+    event.value.type === 'fiscal'?  this.additionalInformation = true :  this.additionalInformation = false
   }
 }
