@@ -16,6 +16,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
   mathematicalForecastTable: ICalculatingPredictiveRegression[];
   reportingYears= [];
   additionalInformation: boolean = false;
+  sessionId: number;
+  stepOnecalcYearsNumber:number;
 
   constructor(
     private router: Router,
@@ -33,6 +35,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
+    this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     this.stepThree = this.forecastModelService.ticketInformation.stepThree;
     this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['year']);
     if(this.forecastModelService.ticketInformation.stepThree.forecastingStrategy !== null){
@@ -41,8 +45,9 @@ export class ForecastCorrespondenceComponent implements OnInit {
 
   }
   additionalInfo(items){
+    console.log(items)
     for (let item of items) {
-      this.reportingYears.push({"name": item});
+        this.reportingYears.push({"name": item});
     }
   }
 
@@ -52,29 +57,30 @@ export class ForecastCorrespondenceComponent implements OnInit {
 
   nextPage() {
     this.forecastModelService.ticketInformation.stepThree.forecastingStrategy = this.stepThree.forecastingStrategy;
+    console.log(this.forecastModelService.getTicketInformation().stepOne)
     this.router.navigate(['steps/payment']);
   }
 
   calculateForecastingStrategy() {
     switch (this.stepThree.forecastingStrategy.type) {
       case 'simple':
-       this.calculationsService.getCalculationSimple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
-         .subscribe( res => this.mathematicalForecastTable = res)
+       this.calculationsService.getCalculationSimple(this.sessionId, this.stepOnecalcYearsNumber)
+         .subscribe( res => {this.mathematicalForecastTable = res, console.log(res)})
         break;
       case 'fiscal':
-        this.calculationsService.getCalculationFiscal(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'], this.stepThree.yearsSession['name'])
+        this.calculationsService.getCalculationFiscal(this.sessionId, this.stepOnecalcYearsNumber, this.stepThree.yearsSession['name'])
           .subscribe( res => this.mathematicalForecastTable = res)
         break;
       case 'fixed':
-        this.calculationsService.getCalculationFixed(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
+        this.calculationsService.getCalculationFixed(this.sessionId, this.stepOnecalcYearsNumber)
           .subscribe( res => this.mathematicalForecastTable = res)
         break;
       case 'increasing':
-        this.calculationsService.getCalculationIncreasing(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
+        this.calculationsService.getCalculationIncreasing(this.sessionId, this.stepOnecalcYearsNumber)
           .subscribe( res => this.mathematicalForecastTable = res)
         break;
       case 'average':
-        this.calculationsService.getCalculationAverage(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
+        this.calculationsService.getCalculationAverage(this.sessionId, this.stepOnecalcYearsNumber)
           .subscribe( res => this.mathematicalForecastTable = res)
         break;
       default:

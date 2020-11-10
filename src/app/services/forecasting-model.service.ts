@@ -8,7 +8,7 @@ export class ForecastingModelService {
 
   ticketInformation = {
     stepOne: {
-      Session: 0,
+      Session: null,
       calcYearsNumber: 0,
       idCargo: 0,
       id: null

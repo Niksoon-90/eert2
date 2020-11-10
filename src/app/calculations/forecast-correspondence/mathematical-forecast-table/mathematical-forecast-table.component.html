@@ -1,62 +1,78 @@
 <div class="stepsdemo-content">
   <p-card>
-
-      <p-table [value]="mathematicalForecastTable"  editMode="row" [scrollable]="true" scrollHeight="30vh" dataKey="id">
+    <p-table [value]="mathematicalForecastTable"   [scrollable]="true" scrollHeight="flex" scrollHeight="45vh"
+             styleClass="p-datatable-sm p-datatable-gridlines "  dataKey="id" [style]="{width:'95vw'}"
+             [resizableColumns]="true" columnResizeMode="expand"
+    >
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+          <col style="width:80px">
+          <col style="width:100px">
+          <col style="width:100px">
+          <col style="width:100px">
+          <col style="width:150px">
+          <col style="width:100px">
+          <col style="width:250px">
+          <col style="width:250px">
+          <col style="width:100px">
+          <col style="width:100px">
+          <col style="width:100px">
+          <col style="width:250px">
+          <col style="width:250px">
+          <ng-container *ngIf="mathematicalForecastTable">
+            <col style="width:100px" *ngFor="let data of mathematicalForecastTable[0].shipmentYearValuePairs">
+          </ng-container>
+          <col style="width:150px">
+        </colgroup>
+      </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th>Группа груза</th>
-            <th>Вид сообщения</th>
+            <th>№_п.п.</th>
+            <th pResizableColumn pSortableColumn="cargoGroup">Группа груза<p-sortIcon field="cargoGroup"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="shipmentType">Вид перевозки<p-sortIcon field="shipmentType"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="fromRoad">Дорога отправления<p-sortIcon field="fromRoad"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="fromStation">Станция отправления РФ<p-sortIcon field="fromStation"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="fromStationCode">Код станции отправления РФ<p-sortIcon field="fromStationCode"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="fromSubject">Субъект отправления<p-sortIcon field="fromSubject"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="receiverName">Грузоотправитель<p-sortIcon field="receiverName"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="toRoad">Дорога назначения<p-sortIcon field="toRoad"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="toStation">Станция назначения РФ<p-sortIcon field="toStation"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="toStationCode">Код станции назначения РФ<p-sortIcon field="toStationCode"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="toSubject">Субъект назначения<p-sortIcon field="toSubject"></p-sortIcon></th>
+            <th pResizableColumn pSortableColumn="senderName">Грузополучатель<p-sortIcon field="senderName"></p-sortIcon></th>
             <ng-container *ngIf="mathematicalForecastTable">
-              <th *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears | keyvalue">
-                {{data.key}}
-              </th>
-              <th *ngFor="let data2 of mathematicalForecastTable[0].calculatedVolumes | keyvalue">
-                {{data2.key}}
+              <th  *ngFor="let data of mathematicalForecastTable[0].shipmentYearValuePairs">
+                {{data.year}}
               </th>
             </ng-container>
-            <th style="width:8rem">Редактирование</th>
+            <th>Действия</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
-          <tr [pEditableRow]="item">
+          <tr>
+            <td>{{ri}}</td>
             <td>{{item.cargoGroup}}</td>
-
-
-            <td pEditableColumn >
-              <p-cellEditor>
-                <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="item.shipmentType">
-                </ng-template>
-                <ng-template pTemplate="output" >
-                  {{item.shipmentType}}
-                </ng-template>
-              </p-cellEditor>
-            </td>
-
-
-            <td pEditableColumn *ngFor="let year of item.groupVolumesByYears  | keyvalue;" style="background-color: rgba(0,64,255,0.07)">
-              <p-cellEditor>
-                <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="year.value">
-                </ng-template>
-                <ng-template pTemplate="output" >
-                  {{year.value}}
-                </ng-template>
-              </p-cellEditor>
-            </td>
-
-
-            <td *ngFor="let data of item.calculatedVolumes | keyvalue" style="background-color: rgba(68,255,0,0.29)">
+            <td>{{item.shipmentType}}</td>
+            <td>{{item.fromRoad}}</td>
+            <td>{{item.fromStation}}</td>
+            <td>{{item.fromStationCode}}</td>
+            <td>{{item.fromSubject}}</td>
+            <td>{{item.receiverName}}</td>
+            <td>{{item.toRoad}}</td>
+            <td>{{item.toStation}}</td>
+            <td>{{item.toStationCode}}</td>
+            <td>{{item.toSubject}}</td>
+            <td>{{item.senderName}}</td>
+            <td *ngFor="let data of item.shipmentYearValuePairs"  [style]="{'background-color': data.calculated === false ? 'rgba(0,64,255,0.07)':'rgba(68,255,0,0.29)'}">
               {{data.value}}
             </td>
-            <td style="text-align:center">
-              <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
-              <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(item)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-              <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(item, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+            <td>
+              <button pButton pRipple type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" class="p-button-rounded p-button-success p-mr-2 p-button p-component p-button-icon-only"></button>
+              <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-warning p-button p-component p-button-icon-only"></button>
             </td>
           </tr>
         </ng-template>
-      </p-table>
 
+    </p-table>
   </p-card>
 </div>

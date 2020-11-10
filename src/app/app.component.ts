@@ -11,6 +11,7 @@ export class AppComponent implements OnInit{
   title = 'eert';
   name = 'Сидоров Максим Петрович';
   sidebar: MenuItem[];
+  visibleSidebar1: any;
 
   constructor() {
   }

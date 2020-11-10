@@ -15,10 +15,15 @@
     </div>
   </div>
 </div>
+<p-sidebar [(visible)]="visibleSidebar1" [baseZIndex]="10000" class="p0" >
+  <p-panelMenu [model]="sidebar" ></p-panelMenu>
+</p-sidebar>
+
 <div class="p-grid" style="; margin: 0;">
-  <div class="p-col-fixed">
-    <p-panelMenu [model]="sidebar"></p-panelMenu>
-  </div>
+  <p-button type="button" (click)="visibleSidebar1 = true" icon="pi pi-bars"></p-button>
+<!--  <div class="p-col-fixed">-->
+<!--    <p-panelMenu [model]="sidebar"></p-panelMenu>-->
+<!--  </div>-->
   <div class="p-col" style="padding: 0">
     <router-outlet>
     </router-outlet>

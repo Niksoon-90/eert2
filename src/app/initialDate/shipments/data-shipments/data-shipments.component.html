@@ -3,17 +3,31 @@
   <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
   <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
 </div>
-<p-table [value]="shipmentsSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows" [showCurrentPageReport]="true" [(first)]="first"
-         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id" >
+<p-table [value]="shipmentsSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows"
+         [showCurrentPageReport]="true" [(first)]="first"
+         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
+         [resizableColumns]="true">
+
+  <ng-template pTemplate="colgroup" let-columns>
+    <colgroup>
+      <col style="width:80px">
+      <col>
+      <col>
+      <col>
+      <col>
+      <col>
+      <col style="width:100px">
+    </colgroup>
+  </ng-template>
   <ng-template pTemplate="header">
     <tr >
-      <th pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
-      <th pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
-      <th pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
-      <th pSortableColumn="userLoginAdd">Логин<p-sortIcon field="userLoginAdd"></p-sortIcon></th>
-      <th pSortableColumn="userFioAdd">ФИО<p-sortIcon field="userFioAdd"></p-sortIcon></th>
-      <th pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
-      <th>Действия</th>
+      <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
+      <th pResizableColumn pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
+      <th pResizableColumn pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
+      <th pResizableColumn pSortableColumn="userLoginAdd">Логин<p-sortIcon field="userLoginAdd"></p-sortIcon></th>
+      <th pResizableColumn pSortableColumn="userFioAdd">ФИО<p-sortIcon field="userFioAdd"></p-sortIcon></th>
+      <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
+      <th> Действия</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-itemShipmentsSession >
@@ -40,15 +54,15 @@
         <colgroup>
           <col style="width:80px">
           <col style="width:100px">
-          <col style="width:100px">
-          <col style="width:100px">
-          <col style="width:150px">
-          <col style="width:100px">
+          <col style="width:200px">
+          <col style="width:200px">
+          <col style="width:200px">
+          <col style="width:200px">
           <col style="width:250px">
           <col style="width:250px">
-          <col style="width:100px">
-          <col style="width:100px">
-          <col style="width:100px">
+          <col style="width:200px">
+          <col style="width:200px">
+          <col style="width:200px">
           <col style="width:250px">
           <col style="width:250px">
           <ng-container *ngIf="shipmentsListSessionId">
@@ -116,11 +130,11 @@
           <th>
             <input pInputText type="text" (input)="dt.filter($event.target.value, 'receiverName', 'contains')" placeholder="Фильтр" class="p-column-filter">
           </th>
-          <ng-container *ngIf="shipmentsListSessionId">
-            <th *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs; let idx = index">
-              <input pInputText type="text" (input)="onActivityChange($event, idx)" placeholder="min - max" class="p-column-filter" >
-            </th>
-          </ng-container>
+<!--          <ng-container *ngIf="shipmentsListSessionId">-->
+<!--            <th *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs; let idx = index">-->
+<!--              <input pInputText type="text" (input)="onActivityChange($event, idx)" placeholder="min - max" class="p-column-filter" >-->
+<!--            </th>-->
+<!--          </ng-container>-->
 
         </tr>
       </ng-template>

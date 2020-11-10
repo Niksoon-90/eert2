@@ -2,7 +2,19 @@
   <p-card>
     <ng-template pTemplate="title">
       <h5>Математический прогноз с учетом макропоказателей</h5>
-      <p-table [value]="mathematicalForecastTable" [scrollable]="true" scrollHeight="80vh">
+      <p-table [value]="mathematicalForecastTable" [scrollable]="true" scrollHeight="80vh" [style]="{width:'98vw'}" [scrollable]="true" scrollHeight="flex">
+        <ng-template pTemplate="colgroup" let-columns>
+          <colgroup>
+            <col style="width:100px">
+            <col style="width:100px">
+            <ng-container *ngIf="mathematicalForecastTable">
+              <col style="width:100px" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears| keyvalue">
+            </ng-container>
+            <ng-container *ngIf="mathematicalForecastTable">
+              <col style="width:100px" *ngFor="let data2 of mathematicalForecastTable[0].calculatedVolumes| keyvalue">
+            </ng-container>
+          </colgroup>
+        </ng-template>
         <ng-template pTemplate="header">
           <tr>
             <th>Группа груза</th>

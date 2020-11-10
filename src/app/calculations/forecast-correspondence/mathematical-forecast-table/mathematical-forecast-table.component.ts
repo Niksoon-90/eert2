@@ -7,6 +7,7 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class MathematicalForecastTableComponent implements OnInit {
   @Input() mathematicalForecastTable;
+  loading: boolean;
 
   constructor() { }
 
@@ -24,4 +25,6 @@ export class MathematicalForecastTableComponent implements OnInit {
   onRowEditCancel(product: any, ri: any) {
     console.log(product)
   }
+
+
 }

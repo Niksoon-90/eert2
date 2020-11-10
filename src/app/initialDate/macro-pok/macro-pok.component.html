@@ -42,22 +42,22 @@
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12 form-group">
             <label for="pissyValueMacros">Пессимистичное значение:</label>
-            <input formControlName="pissyValueMacro" id="pissyValueMacros" type="text" required pInputText disabled [ngClass]="{'p-invalid': (form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)}">
+            <input formControlName="pissyValueMacro" id="pissyValueMacros" type="text" required pInputText  [ngClass]="{'p-invalid': (form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)}">
             <small *ngIf="(form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)" class="p-error">Укажите пессимистичное значение</small>
           </div>
         </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12 form-group">
+          <label for="basicValueMacros">Базовое значение:</label>
+          <input formControlName="basicValueMacro" id="basicValueMacros" type="text" required pInputText [ngClass]="{'p-invalid': (form.controls['basicValueMacro'].invalid && form.controls['basicValueMacro'].touched)}">
+          <small *ngIf="(form.controls['basicValueMacro'].invalid && form.controls['basicValueMacro'].touched)" class="p-error">Укажите базовое значение</small>
+        </div>
+      </div>
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12 form-group">
             <label for="optimisticValueMacros">Оптимистичное значение:</label>
-            <input formControlName="optimisticValueMacro" id="optimisticValueMacros" type="text" required pInputText disabled [ngClass]="{'p-invalid': (form.controls['optimisticValueMacro'].invalid && form.controls['optimisticValueMacro'].touched)}">
+            <input formControlName="optimisticValueMacro" id="optimisticValueMacros" type="text" required pInputText  [ngClass]="{'p-invalid': (form.controls['optimisticValueMacro'].invalid && form.controls['optimisticValueMacro'].touched)}">
             <small *ngIf="(form.controls['optimisticValueMacro'].invalid && form.controls['optimisticValueMacro'].touched)" class="p-error">Укажите оптимистичное значение</small>
-          </div>
-        </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12 form-group">
-            <label for="basicValueMacros">Базовое значение:</label>
-            <input formControlName="basicValueMacro" id="basicValueMacros" type="text" required pInputText [ngClass]="{'p-invalid': (form.controls['basicValueMacro'].invalid && form.controls['basicValueMacro'].touched)}">
-            <small *ngIf="(form.controls['basicValueMacro'].invalid && form.controls['basicValueMacro'].touched)" class="p-error">Укажите базовое значение</small>
           </div>
         </div>
         <div class="p-fluid p-formgrid p-grid">
@@ -79,8 +79,8 @@
         <th>Макро</th>
         <th>Год</th>
         <th>Пессимистичное значение</th>
-        <th>Оптимистичное значение</th>
         <th>Базовое значение</th>
+        <th>Оптимистичное значение</th>
         <th></th>
       </tr>
     </ng-template>
@@ -94,30 +94,30 @@
         <td pEditableColumn>
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <input pInputText type="text" [(ngModel)]="item.value">
+              <input pInputText type="text" [(ngModel)]="item.valueLow">
             </ng-template>
             <ng-template pTemplate="output">
-              {{item.value}}
+              {{item.valueLow}}
             </ng-template>
           </p-cellEditor>
         </td>
         <td pEditableColumn>
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <input pInputText type="text" [(ngModel)]="item.value">
+              <input pInputText type="text" [(ngModel)]="item.valueMedium">
             </ng-template>
             <ng-template pTemplate="output">
-              {{item.value}}
+              {{item.valueMedium}}
             </ng-template>
           </p-cellEditor>
         </td>
         <td pEditableColumn>
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <input pInputText type="text" [(ngModel)]="item.value">
+              <input pInputText type="text" [(ngModel)]="item.valueHigh">
             </ng-template>
             <ng-template pTemplate="output">
-              {{item.value}}
+              {{item.valueHigh}}
             </ng-template>
           </p-cellEditor>
         </td>

@@ -38,7 +38,7 @@ import {RadioButtonModule} from "primeng/radiobutton";
 import { DataExportComponent } from './calculations/data-export/data-export.component';
 import { SummVolumesComponent } from './calculations/summ-volumes/summ-volumes.component';
 import { MathematicalForecastTableComponent } from './calculations/forecast-correspondence/mathematical-forecast-table/mathematical-forecast-table.component';
-
+import {SidebarModule} from 'primeng/sidebar';
 
 const itemRoutesShipments: Routes = [
   {path: 'data', component: DataShipmentsComponent},
@@ -114,7 +114,8 @@ registerLocaleData(localeRu, 'ru');
     DialogModule,
     OverlayPanelModule,
     CalendarModule,
-    RadioButtonModule
+    RadioButtonModule,
+    SidebarModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'ru' }

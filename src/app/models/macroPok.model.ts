@@ -3,6 +3,8 @@ export interface IMacroPokModel {
   id?: number
   macroIndex?:	string
   shipmentType?:	string
-  value?: number
+  valueHigh?: number
+  valueMedium?: number
+  valueLow?: number
   year?: number
 }

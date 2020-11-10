@@ -82,7 +82,9 @@ export class MacroPokComponent implements OnInit {
        cargoGroup:	value.cargoGroup['name'],
        macroIndex:	value.macroIndex,
        shipmentType:	value.shipmentType['name'],
-       value: value.basicValueMacro,
+       valueLow: value.pissyValueMacro,
+       valueHigh: value.optimisticValueMacro,
+       valueMedium: value.basicValueMacro,
        year: value.year['name']
      }
      console.log(macroPok)
