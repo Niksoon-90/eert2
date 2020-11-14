@@ -18,6 +18,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
   additionalInformation: boolean = false;
   sessionId: number;
   stepOnecalcYearsNumber:number;
+  correspondence: any;
 
   constructor(
     private router: Router,
@@ -65,7 +66,9 @@ export class ForecastCorrespondenceComponent implements OnInit {
     switch (this.stepThree.forecastingStrategy.type) {
       case 'simple':
        this.calculationsService.getCalculationSimple(this.sessionId, this.stepOnecalcYearsNumber)
-         .subscribe( res => {this.mathematicalForecastTable = res, console.log(res)})
+         .subscribe(
+           res => {this.mathematicalForecastTable = res, console.log(res)},
+           err => console.log(err.error))
         break;
       case 'fiscal':
         this.calculationsService.getCalculationFiscal(this.sessionId, this.stepOnecalcYearsNumber, this.stepThree.yearsSession['name'])

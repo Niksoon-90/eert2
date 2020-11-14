@@ -4,90 +4,48 @@
       Прогноз корреспонденций
     </ng-template>
     <ng-template pTemplate="body">
-      <div class="p-d-flex">
-        <button pButton pRipple type="button" label="Все кореспонденции"></button>
-        <button pButton pRipple type="button" label="Устойчивые кореспонденции" class="p-button-success"></button>
+      <div class="p-d-flex  p-jc-center">
+       <div class="p-field p-col-2">
+         <div class="p-field-radiobutton">
+           <p-radioButton name="all" value="all" [(ngModel)]="correspondence" inputId="all"></p-radioButton>
+           <label for="all">Все кореспонденции</label>
+         </div>
+         <div class="p-field-radiobutton">
+           <p-radioButton name="sustainable" value="sustainable" [(ngModel)]="correspondence" inputId="sustainable"></p-radioButton>
+           <label for="sustainable">Устойчивые кореспонденции</label>
+         </div>
+       </div>
+       <div class="p-field p-col-8">
+         <div class="p-fluid p-formgrid p-grid">
+           <div class="p-field p-col-12">
+             <label>Стратегия прогнозирования:</label>
+             <p-dropdown [options]="methodUsers" optionLabel="name" [(ngModel)]="stepThree.forecastingStrategy" (onChange)="spying($event)" placeholder="Выберите один из вариантов:"></p-dropdown>
+           </div>
+         </div>
+         <ng-container  *ngIf="this.additionalInformation">
+           <div class="p-fluid p-formgrid p-grid" >
+             <div class="p-field p-col-12">
+               <label>Укажите год:</label>
+               <p-dropdown [options]="this.reportingYears" optionLabel="name" [(ngModel)]="stepThree.yearsSession" placeholder="Укажите год:"></p-dropdown>
+             </div>
+           </div>
+         </ng-container>
+       </div>
+       <div class="p-field p-col-2">
+         <div class="p-grid">
+           <button pButton pRipple type="button" label="Увязка с прогнозом Учет заявок" class="p-button-success p-col-12"></button>
+           <button pButton pRipple type="button" label="Учет заявок Увязка с прогнозом" class="p-button-success p-col-12"></button>
+         </div>
+       </div>
       </div>
-      <div class="p-fluid p-formgrid p-grid">
-        <div class="p-field p-col-12">
-          <label>Стратегия прогнозирования:</label>
-          <p-dropdown [options]="methodUsers" optionLabel="name" [(ngModel)]="stepThree.forecastingStrategy" (onChange)="spying($event)" placeholder="Выберите один из вариантов:"></p-dropdown>
-        </div>
-      </div>
-      <ng-container  *ngIf="this.additionalInformation">
-        <div class="p-fluid p-formgrid p-grid" >
-          <div class="p-field p-col-12">
-            <label>Укажите год:</label>
-            <p-dropdown [options]="this.reportingYears" optionLabel="name" [(ngModel)]="stepThree.yearsSession" placeholder="Укажите год:"></p-dropdown>
-          </div>
-        </div>
-      </ng-container>
 
       <button pButton pRipple type="button" label="Расчитать" class="p-button-success" (click)="calculateForecastingStrategy()" [disabled]="!stepThree.forecastingStrategy"></button>
-      <app-mathematical-forecast-table
-      [mathematicalForecastTable]="this.mathematicalForecastTable"></app-mathematical-forecast-table>
-<!--        <h5>Таблица 1 (млн.т)</h5>-->
-<!--        <p-table [value]="testData" [resizableColumns]="true" columnResizeMode="expand" styleClass="p-datatable-gridlines" [scrollable]="true" scrollHeight="200px" >-->
-<!--          <ng-template pTemplate="colgroup">-->
-<!--            <colgroup>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--              <col>-->
-<!--            </colgroup>-->
-<!--          </ng-template>-->
-<!--          <ng-template pTemplate="header">-->
-<!--            <tr>-->
-<!--              <th pResizableColumn>№_п.п.</th>-->
-<!--              <th pResizableColumn>Группа груза</th>-->
-<!--              <th pResizableColumn>Виды перевозок</th>-->
-<!--              <th pResizableColumn>Дор. отпр.</th>-->
-<!--              <th pResizableColumn>Ст. отпр.</th>-->
-<!--              <th pResizableColumn>Код станции отпр. РФ</th>-->
-<!--              <th pResizableColumn>Грузоотпр.</th>-->
-<!--              <th pResizableColumn>Дор. назн.</th>-->
-<!--              <th pResizableColumn>Ст. назн.</th>-->
-<!--              <th pResizableColumn>Код станции назн. РФ</th>-->
-<!--              <th pResizableColumn>Грузополуч.</th>-->
-<!--              <th pResizableColumn>Объем перевозки 1-й год</th>-->
-<!--              <th pResizableColumn>Объем перевозки 2-й год</th>-->
-<!--              <th pResizableColumn>Объем перевозки n-й год</th>-->
-<!--            </tr>-->
-<!--          </ng-template>-->
-<!--          <ng-template pTemplate="body" let-test>-->
-<!--            <tr>-->
-<!--              <td>{{test.z1}}</td>-->
-<!--              <td>{{test.z2}}</td>-->
-<!--              <td>{{test.z3}}</td>-->
-<!--              <td>{{test.z4}}</td>-->
-<!--              <td>{{test.z5}}</td>-->
-<!--              <td>{{test.z6}}</td>-->
-<!--              <td>{{test.z7}}</td>-->
-<!--              <td>{{test.z8}}</td>-->
-<!--              <td>{{test.z9}}</td>-->
-<!--              <td>{{test.z10}}</td>-->
-<!--              <td>{{test.z11}}</td>-->
-<!--              <td>{{test.z12}}</td>-->
-<!--              <td>{{test.z13}}</td>-->
-<!--              <td>{{test.z14}}</td>-->
-<!--            </tr>-->
-<!--          </ng-template>-->
-<!--        </p-table>-->
-<!--      <div style="padding-top: 15px">-->
-<!--        <button pButton pRipple type="button" label="Сохранить"></button>-->
-<!--        <button pButton pRipple type="button" label="Увязка с прогнозом"></button>-->
-<!--        <button pButton pRipple type="button" label="Учет заявок"></button>-->
-<!--      </div>-->
+      <ng-container *ngIf="mathematicalForecastTable">
+        <app-mathematical-forecast-table
+          [mathematicalForecastTable]="this.mathematicalForecastTable">
+        </app-mathematical-forecast-table>
+      </ng-container>
+
     </ng-template>
 
 

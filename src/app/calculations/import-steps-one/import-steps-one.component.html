@@ -28,14 +28,8 @@
         </div>
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12">
-            <label>Стратегия прогнозирования:</label>
-            <p-dropdown optionLabel="name" placeholder="Выберите один из вариантов:"></p-dropdown>
-          </div>
-        </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12">
-            <label>Показатели макроэкономики:</label>
-            <p-dropdown optionLabel="name"  placeholder="Выберите один из вариантов:"></p-dropdown>
+            <label>Сценарий развития макропоказателя:</label>
+            <p-dropdown optionLabel="name" [options]="scenarioMacro" [(ngModel)]="stepOne.scenario" placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
         <div class="p-fluid p-formgrid p-grid">

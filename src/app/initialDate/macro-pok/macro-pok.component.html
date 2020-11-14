@@ -97,7 +97,7 @@
               <input pInputText type="text" [(ngModel)]="item.valueLow">
             </ng-template>
             <ng-template pTemplate="output">
-              {{item.valueLow}}
+              {{item.valueLow | number}}
             </ng-template>
           </p-cellEditor>
         </td>
@@ -107,7 +107,7 @@
               <input pInputText type="text" [(ngModel)]="item.valueMedium">
             </ng-template>
             <ng-template pTemplate="output">
-              {{item.valueMedium}}
+              {{item.valueMedium | number}}
             </ng-template>
           </p-cellEditor>
         </td>
@@ -117,7 +117,7 @@
               <input pInputText type="text" [(ngModel)]="item.valueHigh">
             </ng-template>
             <ng-template pTemplate="output">
-              {{item.valueHigh}}
+              {{item.valueHigh | number}}
             </ng-template>
           </p-cellEditor>
         </td>

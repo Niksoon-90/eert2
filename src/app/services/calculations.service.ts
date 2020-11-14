@@ -33,4 +33,3 @@ export class CalculationsService {
     return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/average/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
 }
-
