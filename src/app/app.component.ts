@@ -21,16 +21,16 @@ export class AppComponent implements OnInit{
       {
       label: 'Исходные данные',
       items: [
-        {label: 'Исторические данные объемов перевозок', routerLink: ['shipments/shipmentsUpload']},
-        {label: 'Макроэкономические показатели', routerLink: ['macroPok']},
-        {label: 'Заявки компаний-грузовладельцев', routerLink: ['cargo/cargoUpload']},
-        {label: 'Данные о перспективных кореспонденциях',  routerLink: ['correspondence/correspondUpload']}
+        {label: 'Исторические данные объемов перевозок', routerLink: ['shipments/shipmentsUpload'], command: (event) => { this.clickItem(event); }},
+        {label: 'Макроэкономические показатели', routerLink: ['macroPok'], command: (event) => { this.clickItem(event); }},
+        {label: 'Заявки компаний-грузовладельцев', routerLink: ['cargo/cargoUpload'], command: (event) => { this.clickItem(event); }},
+        {label: 'Данные о перспективных кореспонденциях',  routerLink: ['correspondence/correspondUpload'], command: (event) => { this.clickItem(event); }}
       ]
     },
       {
         label: 'Расчеты',
         items:[
-          {label: 'Модель прогнозирования', routerLink: ['steps/import']},
+          {label: 'Модель прогнозирования', routerLink: ['steps/import'], command: (event) => { this.clickItem(event); }},
         ]
       },
       {
@@ -38,4 +38,8 @@ export class AppComponent implements OnInit{
       }];
   }
 
+  clickItem(event) {
+    console.log(event)
+        this.visibleSidebar1 = false;
+    }
 }

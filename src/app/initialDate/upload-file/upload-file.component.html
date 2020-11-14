@@ -5,18 +5,23 @@
         <h3 >ИАС «Грузоперевозки»</h3>
       </div>
       <div class="p-d-flex p-jc-center">
-        <p>Обращаю Ваше внимание, что файл должен быть...</p>
+        <p>Внимание!!! Файл должен соответсьвовать выбранной Вами размерности.</p>
       </div>
       <div class="p-d-flex p-jc-center" *ngIf="progress > 0">
         <p>Ожидайте окончания Загрузки. Прогресс: {{progress}}%</p>
       </div>
       <span class="p-float-label" style="margin-top: 10px">
-      <input id="float-input" formControlName="nameFile" type="text" pInputText class="p-inputtext-lg">
+        <input id="float-input" type="text" formControlName="nameFile" class="p-inputtext-sm"  pInputText />
       <label for="float-input">Введите имя</label>
         <small id="float-input-help" class="p-invalid"*ngIf="uploadFiles.controls['nameFile'].invalid && uploadFiles.controls['nameFile'].touched">Укажите наименование файла</small>
     </span>
       <div class="p-d-flex p-jc-center">
         <input  type="file" (change)="onFileSelected($event)" class="choose" [disabled]="progress > 0" #fileUploader>
+      </div>
+      <div class="p-fluid p-grid">
+        <div class="p-field p-col-12">
+          <p-dropdown formControlName="dimension" optionLabel="name" [options]="dimensionItems" placeholder="Укажите размерность:"></p-dropdown>
+        </div>
       </div>
       <div *ngIf="progress > 0" class="p-jc-center" style="margin-top: 5px; margin-bottom: 5px">
         <p-progressBar  [value]="progress"  [showValue]="false"></p-progressBar>

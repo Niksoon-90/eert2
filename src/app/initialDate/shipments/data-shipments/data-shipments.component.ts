@@ -29,7 +29,6 @@ export class DataShipmentsComponent implements OnInit {
     this.getShipmentsSession();
   }
 
-
   next() {
     this.first = this.first + this.rows;
   }
@@ -81,14 +80,12 @@ export class DataShipmentsComponent implements OnInit {
   test() {
     this.massSummYears = [ ]
     for (let i = 0; i < this.shipmentsListSessionId[0].shipmentYearValuePairs.length ; i++){
-      this.massSummYears.push(this.shipmentsListSessionId[i].shipmentYearValuePairs.reduce((acc, n) => (acc.value += n.value, acc.year= n.year, acc), { value: 0, year: 0}))
-      console.log(this.massSummYears)
-      // this.summYears = 0;
-      // for (let x = 0; x < this.shipmentsListSessionId.length; x++){
-      //   this.summYears += this.shipmentsListSessionId[x].shipmentYearValuePairs[i].value;
-      // }
-      // console.log(this.summYears)
-      // this.massSummYears.push(this.summYears);
+       this.summYears = 0;
+       for (let x = 0; x < this.shipmentsListSessionId.length; x++){
+         this.summYears += this.shipmentsListSessionId[x].shipmentYearValuePairs[i].value;
+       }
+       console.log(this.summYears)
+       this.massSummYears.push(this.summYears);
     }
   }
 

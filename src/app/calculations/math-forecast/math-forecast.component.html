@@ -2,7 +2,12 @@
   <p-card>
     <ng-template pTemplate="title">
       <h5>Математический прогноз с учетом макропоказателей</h5>
-      <p-table [value]="mathematicalForecastTable" [scrollable]="true" scrollHeight="80vh" [style]="{width:'98vw'}" [scrollable]="true" scrollHeight="flex">
+      <p-table #dt [value]="mathematicalForecastTable" [scrollable]="true" scrollHeight="80vh" [style]="{width:'98vw'}" [scrollable]="true" scrollHeight="flex">
+        <ng-template pTemplate="caption">
+          <div class="p-d-flex">
+            <button type="button" pButton icon="pi pi-file-o" iconPos="left" label="CSV" (click)="dt.exportCSV()" style="margin-right: 0.5em;"></button>
+          </div>
+        </ng-template>
         <ng-template pTemplate="colgroup" let-columns>
           <colgroup>
             <col style="width:100px">
@@ -34,10 +39,10 @@
             <td>{{item.cargoGroup}}</td>
             <td>{{item.shipmentType}}</td>
             <td *ngFor="let year of item.groupVolumesByYears  | keyvalue" style="background-color: rgba(0,64,255,0.07)">
-              {{year.value}}
+              {{year.value | number}}
             </td>
             <td *ngFor="let data of item.calculatedVolumes | keyvalue" style="background-color: rgba(68,255,0,0.29)">
-              {{data.value}}
+              {{data.value | number}}
             </td>
           </tr>
         </ng-template>

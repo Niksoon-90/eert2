@@ -20,6 +20,7 @@ export class UploadFileComponent implements OnInit {
   error: '';
   initialDateType: string;
   displayModal: boolean = false;
+  dimensionItems: any;
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -29,13 +30,19 @@ export class UploadFileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dimensionItems = [
+      {id:1, name: 'млн. тонн'},
+      {id:2, name: 'тыс. тонн'},
+      {id:3, name: 'тонн'}
+    ]
   }
 
 
 
   createForm(){
     this.uploadFiles = new FormGroup({
-      nameFile: new FormControl('', [Validators.required, Validators.minLength(1)])
+      nameFile: new FormControl('', [Validators.required, Validators.minLength(1)]),
+      dimension: new FormControl('', [Validators.required])
     });
   }
   onFileSelected(event) {
@@ -64,7 +71,6 @@ export class UploadFileComponent implements OnInit {
           this.progress = Math.round(event.loaded / event.total * 100);
           // console.log('Прогресс загрузки: ' + Math.round(event.loaded / event.total * 100)  + '%')
         }else if (event.type === HttpEventType.Response){
-
         }
       }, error => {
         this.clearForm();
@@ -82,7 +88,7 @@ export class UploadFileComponent implements OnInit {
     console.log('correspondUpload')
   }
   clearForm(){
-    this.uploadFiles.reset({ nameFile: ''});
+    this.uploadFiles.reset({ nameFile: '', dimension: ''});
     this.fileUploader.nativeElement.value = null;
     this.progress = 0;
   }

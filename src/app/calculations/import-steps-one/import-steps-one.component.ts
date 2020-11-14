@@ -4,6 +4,7 @@ import {ShipmentsService} from "../../services/shipments.service";
 import {ForecastingModelService} from "../../services/forecasting-model.service";
 import {IHorizonforecast} from "../../models/calculations.model";
 import {Router} from "@angular/router";
+import {ModalService} from "../../services/modal.service";
 
 
 @Component({
@@ -14,12 +15,14 @@ import {Router} from "@angular/router";
 export class ImportStepsOneComponent implements OnInit {
   initialDate: ISession[];
   horizonforecast: IHorizonforecast[];
+  scenarioMacro: any[];
   stepOne: any;
 
   constructor(
     private shipmentsService: ShipmentsService,
     public forecastModelService: ForecastingModelService,
     private router: Router,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void  {
@@ -31,13 +34,19 @@ export class ImportStepsOneComponent implements OnInit {
         this.horizonforecast.push({name: i});
       }
     }
+    this.scenarioMacro = [
+      {id: 1, name: 'Пессимистичное значение'},
+      {id: 1, name: 'Базовое значение'},
+      {id: 1, name: 'Оптимистичное значение'}
+    ]
   }
 
 
   getInitialDate(){
     this.shipmentsService.getShipSession().subscribe(
-      res => {this.initialDate = res;
-      }
+      res => this.initialDate = res,
+      err => {this.modalService.open(err.error.message); console.log(err.error)},
+      () => console.log('complede')
     );
   }
 

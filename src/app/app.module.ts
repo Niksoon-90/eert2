@@ -39,6 +39,8 @@ import { DataExportComponent } from './calculations/data-export/data-export.comp
 import { SummVolumesComponent } from './calculations/summ-volumes/summ-volumes.component';
 import { MathematicalForecastTableComponent } from './calculations/forecast-correspondence/mathematical-forecast-table/mathematical-forecast-table.component';
 import {SidebarModule} from 'primeng/sidebar';
+import { ModalComponent } from './modal/modal.component';
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 const itemRoutesShipments: Routes = [
   {path: 'data', component: DataShipmentsComponent},
@@ -90,6 +92,7 @@ registerLocaleData(localeRu, 'ru');
     DataExportComponent,
     SummVolumesComponent,
     MathematicalForecastTableComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -115,7 +118,8 @@ registerLocaleData(localeRu, 'ru');
     OverlayPanelModule,
     CalendarModule,
     RadioButtonModule,
-    SidebarModule
+    SidebarModule,
+    ProgressSpinnerModule
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'ru' }
