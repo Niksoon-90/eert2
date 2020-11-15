@@ -52,7 +52,7 @@ export class DataShipmentsComponent implements OnInit {
 
   getShipmentsSession() {
     this.shipmentsService.getShipSession().subscribe(
-      res => this.shipmentsSession = res,
+      res => {this.shipmentsSession = res; console.log(res)},
       err => console.log('HTTP Error', err.message),
       () => console.log('HTTP request completed.')
   )
@@ -78,13 +78,8 @@ export class DataShipmentsComponent implements OnInit {
   }
 
   test() {
-
-
     this.massSummYears = [ ]
     for (let i = 0; i < this.shipmentsListSessionId[0].shipmentYearValuePairs.length ; i++){
-
-      // this.massSummYears.push(this.shipmentsListSessionId[i].shipmentYearValuePairs.reduce((acc, n) => (acc.value += n.value, acc.year= n.year, acc), { value: 0, year: 0}))
-      // console.log(this.massSummYears)
       this.summYears = 0;
       for (let x = 0; x < this.shipmentsListSessionId.length; x++){
         console.log(this.shipmentsListSessionId[x])
@@ -94,31 +89,6 @@ export class DataShipmentsComponent implements OnInit {
       }
       console.log(this.summYears)
       this.massSummYears.push(this.summYears);
-
     }
-  }
-
-  onActivityChange($event, idx: number) {
-    const value = $event.target.value;
-    const regValue = value.replace(/\s/g, '').trim();
-    const massValue = regValue.toString().split('-');
-    const startsWith = parseInt(massValue[0]);
-    const endsWith = parseInt(massValue[1]);
-
-
-    if (!isNaN( startsWith && endsWith) && endsWith > startsWith){
-      console.log(startsWith , endsWith)
-      this.table.filter(startsWith, 'activity', 'gte');
-    //  this.table.filter(endsWith, 'endsWith', 'endsWith');
-    }
-
-
-    // if (value && value.trim().length) {
-    //   const activity = parseInt(value);
-    //
-    //   if (!isNaN(activity)) {
-    //     this.table.filter(activity, 'activity', 'gte');
-    //   }
-    // }
   }
 }

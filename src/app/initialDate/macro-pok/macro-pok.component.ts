@@ -112,4 +112,15 @@ export class MacroPokComponent implements OnInit {
   onRowEditCancel(macroPok: any, ri) {
     console.log(macroPok)
   }
+
+  mackPokDel(id: number) {
+    this.shipmentsService.deleteMackPok(id).subscribe(
+      res => {
+        this.getMacroPok();
+        this.resetForm();
+      },
+      error => console.log(error.message),
+      () => console.log('HTTP request completed.')
+    )
+  }
 }

@@ -41,18 +41,21 @@ import { MathematicalForecastTableComponent } from './calculations/forecast-corr
 import {SidebarModule} from 'primeng/sidebar';
 import { ModalComponent } from './modal/modal.component';
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import { DataCorrespondenceComponent } from './initialDate/correspondence/data-correspondence/data-correspondence.component';
+import { DataCargoComponent } from './initialDate/cargo/data-cargo/data-cargo.component';
+import { StepsComponent } from './calculations/steps/steps.component';
 
 const itemRoutesShipments: Routes = [
   {path: 'data', component: DataShipmentsComponent},
   {path: ':initialDateType', component: UploadFileComponent}
 ]
 const itemRoutesCargo: Routes = [
-  {path: 'data', component: DataShipmentsComponent},
+  {path: 'data', component: DataCargoComponent},
   {path: ':initialDateType', component: UploadFileComponent}
 ]
 
 const itemRoutesCorrespondence: Routes = [
-  {path: 'data', component: DataShipmentsComponent},
+  {path: 'data', component: DataCorrespondenceComponent},
   {path: ':initialDateType', component: UploadFileComponent}
 ]
 
@@ -71,7 +74,7 @@ const appRoutes: Routes = [
   {path: 'correspondence', component: CorrespondenceComponent, children: itemRoutesCorrespondence},
   {path: 'macroPok', component: MacroPokComponent},
   {path: 'steps', component: CalculationsComponent, children: itemRoutesCalculations},
-  {path: '', component: ShipmentsComponent},
+  {path: '', component: CalculationsComponent},
 
 ]
 registerLocaleData(localeRu, 'ru');
@@ -93,6 +96,9 @@ registerLocaleData(localeRu, 'ru');
     SummVolumesComponent,
     MathematicalForecastTableComponent,
     ModalComponent,
+    DataCorrespondenceComponent,
+    DataCargoComponent,
+    StepsComponent,
   ],
   imports: [
     BrowserModule,

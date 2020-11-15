@@ -3,6 +3,7 @@ import {ShipmentsService} from "../../services/shipments.service";
 import {HttpEventType} from "@angular/common/http";
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from "@angular/router";
+import {ModalService} from "../../services/modal.service";
 
 @Component({
   selector: 'app-upload-file',
@@ -21,10 +22,13 @@ export class UploadFileComponent implements OnInit {
   initialDateType: string;
   displayModal: boolean = false;
   dimensionItems: any;
+  cargoTypes: any[];
+  disabledButton: boolean;
 
   constructor(
     private shipmentsService: ShipmentsService,
-    private activateRoute: ActivatedRoute) {
+    private activateRoute: ActivatedRoute,
+    private modalService: ModalService) {
     this.initialDateType = activateRoute.snapshot.params['initialDateType'];
     this.createForm();
   }
@@ -35,14 +39,17 @@ export class UploadFileComponent implements OnInit {
       {id:2, name: 'тыс. тонн'},
       {id:3, name: 'тонн'}
     ]
+    this.cargoTypes = [
+      {id:1, name:'Грузоотправитель', type: 'SENDER_CLAIMS'},
+      {id:2, name:'Грузополучатель', type: 'RECEIVER_CLAIMS'}
+    ]
   }
-
-
 
   createForm(){
     this.uploadFiles = new FormGroup({
       nameFile: new FormControl('', [Validators.required, Validators.minLength(1)]),
-      dimension: new FormControl('', [Validators.required])
+      dimension: new FormControl('', [Validators.required]),
+      cargoType: new FormControl('', [Validators.required])
     });
   }
   onFileSelected(event) {
@@ -52,11 +59,11 @@ export class UploadFileComponent implements OnInit {
     const formData = new FormData()
     formData.append('file', this.selectedFile, this.selectedFile.name);
     if(this.initialDateType === 'shipmentsUpload'){
-      this.shipmensUpload(formData)
+      this.shipmensUpload(formData, 'SHIPMENTS')
     }else if(this.initialDateType === 'cargoUpload'){
-      this.cargoUpload(formData)
+      this.shipmensUpload(formData, this.uploadFiles.value.cargoType)
     }else if(this.initialDateType === 'correspondUpload'){
-      this.correspondUpload(formData)
+      this.shipmensUpload(formData,'PERSPECTIVE_CORRESPONDENCES')
     }else{
      console.log('error onUpload')
     }
@@ -64,8 +71,8 @@ export class UploadFileComponent implements OnInit {
   showModalDialog() {
     this.displayModal = true;
   }
-  shipmensUpload(formData){
-    this.shipmentsService.postUploadFile(formData, this.uploadFiles.value.nameFile)
+  shipmensUpload(formData, type: string){
+    this.shipmentsService.postUploadFile(formData, this.uploadFiles.value.nameFile, type)
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress){
           this.progress = Math.round(event.loaded / event.total * 100);
@@ -74,22 +81,24 @@ export class UploadFileComponent implements OnInit {
         }
       }, error => {
         this.clearForm();
-        this.error = error.message;
+        this.modalService.open(error.message)
       },() => {
-        this.error = '';
         this.clearForm();
         this.showModalDialog();
       });
   }
-  cargoUpload(formData){
-    console.log('cargoUpload')
-  }
-  correspondUpload(formData){
-    console.log('correspondUpload')
-  }
+
   clearForm(){
-    this.uploadFiles.reset({ nameFile: '', dimension: ''});
+    this.uploadFiles.reset({ nameFile: '', dimension: '', cargoType: ''});
     this.fileUploader.nativeElement.value = null;
     this.progress = 0;
+  }
+
+  disInvalidBut() {
+    if(this.initialDateType !== 'cargoUpload'){
+      if(this.progress > 0 || this.selectedFile === null || this.uploadFiles.controls['dimension'].invalid || this.uploadFiles.controls['nameFile'].invalid ) return true
+    }else if(this.initialDateType === 'cargoUpload') {
+      if(this.progress > 0 || this.selectedFile === null || this.uploadFiles.invalid) return true
+    }
   }
 }

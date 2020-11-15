@@ -15,8 +15,8 @@ export class ShipmentsService {
 
   private url = environment.hostURL;
 
-  postUploadFile(fd, fileName: string) {
-    return this.http.post<any>(this.url + `api/shipments/file/upload?name=${fileName}`, fd, {
+  postUploadFile(fd, fileName: string, type: string) {
+    return this.http.post<any>(this.url + `api/shipments/file//upload?fileType=${type}&name=${fileName}`, fd, {
       reportProgress: true,
       observe: "events"
     });
@@ -39,5 +39,14 @@ export class ShipmentsService {
   }
   putMacroPok(macroPok: IMacroPokModel){
     return this.http.put(this.url + `api/macroPok`, macroPok)
+  }
+  deleteMackPok(id: number){
+    return this.http.delete(this.url + `api/macroPok/${id}`)
+  }
+  getClaimSession(): Observable<ISession[]>{
+    return this.http.get<ISession[]>(this.url + `api/claim/file/all`)
+  }
+  getCorrespondenceSession(): Observable<ISession[]>{
+    return this.http.get<ISession[]>(this.url + `api/correspondence/file/all`)
   }
 }

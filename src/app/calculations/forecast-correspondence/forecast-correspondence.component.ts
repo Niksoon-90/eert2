@@ -68,7 +68,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
        this.calculationsService.getCalculationSimple(this.sessionId, this.stepOnecalcYearsNumber)
          .subscribe(
            res => {this.mathematicalForecastTable = res, console.log(res)},
-           err => console.log(err.error))
+           err => console.log(err.error),
+           () => console.log())
         break;
       case 'fiscal':
         this.calculationsService.getCalculationFiscal(this.sessionId, this.stepOnecalcYearsNumber, this.stepThree.yearsSession['name'])

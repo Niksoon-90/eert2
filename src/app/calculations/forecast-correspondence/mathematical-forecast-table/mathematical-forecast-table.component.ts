@@ -14,6 +14,8 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   loading: boolean;
   totalRecords: number;
   virtualMathematicalForecastTable: [];
+  massSummYear: any[];
+  summYears: 0;
 
   constructor() { }
 
@@ -27,27 +29,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
   columnFilter(event: any, field) {
     this.table.filter(event.target.value, field, 'contains');
-    console.log(this.table)
-    if (!this.table.filteredValue) {
-      console.log ('нет фильтра', this.table.filteredValue)
-      console.log ('нет фильтра', this.table.filteredValue.length)
-    } else {
-      console.log (`Отфильтрованное количество ${this.table.filteredValue.length}`);
-    }
   }
-
-  onRowEditInit(product: any) {
-    console.log(product)
-  }
-
-  onRowEditSave(product: any) {
-    console.log(product)
-  }
-
-  onRowEditCancel(product: any, ri: any) {
-    console.log(product)
-  }
-
 
   loadCustomers($event: any) {
     this.loading = true;
@@ -79,7 +61,18 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     }, 1000);
   }
 
-  ttest($event: any, dt: Table) {
+  massSummYears($event: any) {
     console.log('test', $event.filteredValue);
+    this.massSummYear = [ ]
+    for (let i = 0; i < $event.filteredValue[0].shipmentYearValuePairs.length ; i++){
+      console.log($event.filteredValue[0].shipmentYearValuePairs)
+      this.summYears = 0;
+      for (let x = 0; x < $event.filteredValue.length; x++){
+        console.log($event.filteredValue[x].shipmentYearValuePairs[i].value)
+        this.summYears += $event.filteredValue[x].shipmentYearValuePairs[i].value;
+      }
+      console.log(this.summYears)
+      this.massSummYear.push(this.summYears);
+    }
   }
 }

@@ -5,6 +5,7 @@ export interface ISession {
   userLoginAdd?: string;
   userFioAdd?: string;
   dateWrite?: string
+  fileType?: string
 };
 export interface IShipment {
   cargoGroup:	string

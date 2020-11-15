@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, DoCheck, OnInit} from '@angular/core';
 import {Observable} from "rxjs";
 import {ModalService} from "../services/modal.service";
 
@@ -7,7 +7,7 @@ import {ModalService} from "../services/modal.service";
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.scss']
 })
-export class ModalComponent implements OnInit {
+export class ModalComponent implements OnInit, DoCheck {
 
   display$: Observable<'open' | 'close'>;
   erroMessage: string;
@@ -15,9 +15,10 @@ export class ModalComponent implements OnInit {
   constructor(
     private modalService: ModalService
   ) {}
-
-  ngOnInit() {
+  ngDoCheck(){
     this.erroMessage = this.modalService.errorMessage;
+  }
+  ngOnInit() {
     this.display$ = this.modalService.watch();
   }
 
