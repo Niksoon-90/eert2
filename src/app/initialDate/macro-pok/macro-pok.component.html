@@ -2,7 +2,6 @@
   <h3>Макроэкономические показатели</h3>
 </div>
 <p-toast></p-toast>
-
 <p-button label="Добавить показатель" icon="pi pi-plus" (click)="op.toggle($event)"></p-button>
 
 <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '450px'}">
@@ -70,18 +69,43 @@
 </p-overlayPanel>
 
 <div class="card">
-  <p-table [value]="macroPokList" [scrollable]="true" scrollHeight="80vh" dataKey="id" editMode="row">
+  <p-table #dt [value]="macroPokList" [scrollable]="true" scrollHeight="80vh" dataKey="id" editMode="row"
+           styleClass="p-datatable-sm p-datatable-gridlines"
+           [showCurrentPageReport]="true" [resizableColumns]="true">
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col>
+        <col>
+        <col>
+        <col>
+        <col>
+        <col>
+        <col>
+        <col>
+        <col>
+      </colgroup>
+    </ng-template>
     <ng-template pTemplate="header">
-      <tr >
-        <th>id</th>
-        <th>Номенклатура грузов</th>
-        <th>Тип</th>
-        <th>Макро</th>
-        <th>Год</th>
-        <th>Пессимистичное значение</th>
-        <th>Базовое значение</th>
-        <th>Оптимистичное значение</th>
+      <tr>
+        <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="cargoGroup">Номенклатура грузов<p-sortIcon field="cargoGroup"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="shipmentType">Тип<p-sortIcon field="shipmentType"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="macroIndex">Макро<p-sortIcon field="macroIndex"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="year">Год<p-sortIcon field="year"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="valueLow">Пессимистичное значение<p-sortIcon field="id"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="valueMedium">Базовое значение<p-sortIcon field="id"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="valueHigh">Оптимистичное значение<p-sortIcon field="id"></p-sortIcon></th>
         <th></th>
+      </tr>
+      <tr>
+        <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'id', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+        <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'cargoGroup', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+        <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'shipmentType', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+        <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'macroIndex', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+        <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'year', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+        <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'valueLow', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+        <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'valueMedium', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+        <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'valueHigh', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">

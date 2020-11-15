@@ -10,13 +10,13 @@
         </ng-template>
         <ng-template pTemplate="colgroup" let-columns>
           <colgroup>
-            <col style="width:100px">
-            <col style="width:100px">
+            <col style="width:150px">
+            <col style="width:150px">
             <ng-container *ngIf="mathematicalForecastTable">
-              <col style="width:100px" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears| keyvalue">
+              <col  style="width:200px" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears| keyvalue">
             </ng-container>
             <ng-container *ngIf="mathematicalForecastTable">
-              <col style="width:100px" *ngFor="let data2 of mathematicalForecastTable[0].calculatedVolumes| keyvalue">
+              <col  style="width:200px" *ngFor="let data2 of mathematicalForecastTable[0].calculatedVolumes| keyvalue">
             </ng-container>
           </colgroup>
         </ng-template>

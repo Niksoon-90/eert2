@@ -30,7 +30,7 @@ export class AppComponent implements OnInit{
       {
         label: 'Расчеты',
         items:[
-          {label: 'Модель прогнозирования', routerLink: ['steps/import'], command: (event) => { this.clickItem(event); }},
+          {label: 'Модель прогнозирования', routerLink: [''], command: (event) => { this.clickItem(event); }},
         ]
       },
       {

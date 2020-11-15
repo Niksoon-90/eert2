@@ -40,6 +40,9 @@
       </div>
 
       <button pButton pRipple type="button" label="Расчитать" class="p-button-success" (click)="calculateForecastingStrategy()" [disabled]="!stepThree.forecastingStrategy"></button>
+      <button pButton pRipple type="button" label="Увязать " class="p-button-success" ></button>
+      <button pButton pRipple type="button" label="Учесть заявки грузоотправителей" class="p-button-success" ></button>
+      <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" ></button>
       <ng-container *ngIf="mathematicalForecastTable">
         <app-mathematical-forecast-table
           [mathematicalForecastTable]="this.mathematicalForecastTable">

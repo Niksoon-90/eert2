@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {MenuItem} from "primeng/api";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-calculations',
@@ -7,20 +8,14 @@ import {MenuItem} from "primeng/api";
   styleUrls: ['./calculations.component.scss']
 })
 export class CalculationsComponent implements OnInit {
-  forecastingModel: MenuItem[];
-  forecastingModelIndex: 0;
-  constructor() { }
 
+  constructor(private router: Router) { }
 
   ngOnInit() {
-    this.forecastingModel = [
-      {label: 'Шаг 1', routerLink: 'import'},
-      {label: 'Шаг 2', routerLink: 'mathForecast'},
-      {label: 'Шаг 3', routerLink: 'forecast'},
-      {label: 'Шаг 4', routerLink: 'payment'},
-      {label: 'Шаг 5', routerLink: 'summVolumes'},
-      {label: 'Шаг 6', routerLink: 'export'},
-    ];
-    console.log(this.forecastingModelIndex)
+
+  }
+
+  new() {
+    this.router.navigate(['steps/import'])
   }
 }

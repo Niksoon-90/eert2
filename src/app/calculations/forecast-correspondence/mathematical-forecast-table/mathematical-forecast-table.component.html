@@ -9,7 +9,7 @@
              styleClass="p-datatable-sm p-datatable-gridlines "  dataKey="id" [style]="{width:'95vw'}"
              [resizableColumns]="true" columnResizeMode="expand"
              [lazy]="false" (onLazyLoad)="loadCustomers($event)"
-             [paginator]="true" [rows]="10" [totalRecords]="totalRecords" [loading]="loading" [filterDelay]="0" (onFilter)="massSummYears($event)">
+             [paginator]="true" [rows]="300" [totalRecords]="totalRecords" [loading]="loading" [filterDelay]="0" (onFilter)="massSummYears($event)">
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
           <col style="width:80px">

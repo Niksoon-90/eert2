@@ -59,7 +59,7 @@ const itemRoutesCorrespondence: Routes = [
   {path: ':initialDateType', component: UploadFileComponent}
 ]
 
-const itemRoutesCalculations: Routes = [
+const itemRoutesSteps: Routes = [
   {path: 'import', component: ImportStepsOneComponent},
   {path: 'mathForecast', component: MathForecastComponent},
   {path: 'forecast', component: ForecastCorrespondenceComponent},
@@ -73,7 +73,7 @@ const appRoutes: Routes = [
   {path: 'cargo', component: CargoComponent, children: itemRoutesCargo},
   {path: 'correspondence', component: CorrespondenceComponent, children: itemRoutesCorrespondence},
   {path: 'macroPok', component: MacroPokComponent},
-  {path: 'steps', component: CalculationsComponent, children: itemRoutesCalculations},
+  {path: 'steps', component: StepsComponent, children: itemRoutesSteps},
   {path: '', component: CalculationsComponent},
 
 ]

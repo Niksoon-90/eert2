@@ -35,15 +35,15 @@
       <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'contains')" placeholder="Наименование" class="p-column-filter"></th>
       <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'year', 'contains')" placeholder="Года" class="p-column-filter"></th>
       <th>
-        <p-dropdown [options]="typeCargo" (onChange)="dt.filter($event.value, 'fileType', 'equals')" styleClass="p-column-filter" placeholder="Select a Status" [showClear]="true">
+        <p-dropdown [options]="typeCargo" (onChange)="dt.filter($event.value, 'fileType', 'equals')" styleClass="p-column-filter" placeholder="Тип" [showClear]="true">
           <ng-template let-option pTemplate="item">
-            <span [class]="'customer-badge status-' + option.type">{{option.name}}</span>
+            <span >{{option.name}}</span>
           </ng-template>
         </p-dropdown>
       </th>
-      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userLoginAdd', 'contains')" placeholder="Года" class="p-column-filter"></th>
-      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userFioAdd', 'contains')" placeholder="Года" class="p-column-filter"></th>
-      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'dateWrite', 'contains')" placeholder="Года" class="p-column-filter"></th>
+      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userLoginAdd', 'contains')" placeholder="Логин" class="p-column-filter"></th>
+      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userFioAdd', 'contains')" placeholder="ФИО" class="p-column-filter"></th>
+      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'dateWrite', 'contains')" placeholder="Дата загрузки" class="p-column-filter"></th>
       <th></th>
     </tr>
   </ng-template>

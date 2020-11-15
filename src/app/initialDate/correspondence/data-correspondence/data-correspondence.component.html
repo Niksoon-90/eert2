@@ -3,7 +3,7 @@
   <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
   <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
 </div>
-<p-table [value]="correspondenceSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows"
+<p-table #dt [value]="correspondenceSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows"
          [showCurrentPageReport]="true" [(first)]="first"
          currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
          [resizableColumns]="true">
@@ -27,6 +27,15 @@
       <th pResizableColumn pSortableColumn="userFioAdd">ФИО<p-sortIcon field="userFioAdd"></p-sortIcon></th>
       <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
       <th> Действия</th>
+    </tr>
+    <tr>
+      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'id', 'startsWith')" placeholder="id" class="p-column-filter"></th>
+      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'contains')" placeholder="Наименование" class="p-column-filter"></th>
+      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'year', 'contains')" placeholder="Года" class="p-column-filter"></th>
+      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userLoginAdd', 'contains')" placeholder="Логин" class="p-column-filter"></th>
+      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userFioAdd', 'contains')" placeholder="ФИО" class="p-column-filter"></th>
+      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'dateWrite', 'contains')" placeholder="Дата загрузки" class="p-column-filter"></th>
+      <th></th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-itemCorrespondenceSession >

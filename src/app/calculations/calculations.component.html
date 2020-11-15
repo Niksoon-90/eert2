@@ -1,9 +1,6 @@
 <div style="background-color: #fff">
-  <h3>Модель прогнозирования</h3>
+  <h3>Начать расчет</h3>
 </div>
-<div class="card">
-  <p-steps [model]="forecastingModel" [readonly]="false" [(activeIndex)]="forecastingModelIndex"></p-steps>
-</div>
-<router-outlet></router-outlet>
 <div class="stepsdemo-content">
+  <p-button label="Добавить модель прогнозирования" icon="pi pi-plus" (click)="new()"></p-button>
 </div>
