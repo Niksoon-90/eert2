@@ -5,11 +5,11 @@
     </div>
   </ng-template>
   <p-card *ngIf="mathematicalForecastTable; else load">
-    <p-table [value]="mathematicalForecastTable"   [scrollable]="true" scrollHeight="flex" scrollHeight="45vh"
+    <p-table #dt [value]="mathematicalForecastTable"   [scrollable]="true" scrollHeight="flex" scrollHeight="45vh"
              styleClass="p-datatable-sm p-datatable-gridlines "  dataKey="id" [style]="{width:'95vw'}"
              [resizableColumns]="true" columnResizeMode="expand"
-             [lazy]="true" (onLazyLoad)="loadCustomers($event)"
-             [paginator]="true" [rows]="300" [totalRecords]="totalRecords" [loading]="loading">
+             [lazy]="false" (onLazyLoad)="loadCustomers($event)"
+             [paginator]="true" [rows]="300" [totalRecords]="totalRecords" [loading]="loading" [filterDelay]="0" (onFilter)="ttest($event, dt)">
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
           <col style="width:80px">
@@ -47,12 +47,20 @@
             <th pResizableColumn pSortableColumn="toSubject">Субъект назначения<p-sortIcon field="toSubject"></p-sortIcon></th>
             <th pResizableColumn pSortableColumn="senderName">Грузополучатель<p-sortIcon field="senderName"></p-sortIcon></th>
             <ng-container *ngIf="mathematicalForecastTable">
-              <th pResizableColumn pSortableColumn="{{data.value | number}}" *ngFor="let data of mathematicalForecastTable[0].shipmentYearValuePairs" >
+              <th pResizableColumn pSortableColumn="shipmentYearValuePairs" *ngFor="let data of mathematicalForecastTable[0].shipmentYearValuePairs; let idx = index" >
                 {{data.year}}
-                <p-sortIcon field="{{data.value | number}}"></p-sortIcon>
+                <p-sortIcon [field]="data.value"></p-sortIcon>
               </th>
             </ng-container>
             <th>Действия</th>
+          </tr>
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>
+              <input pInputText type="text" (click)="$event.stopPropagation()" (keyup.enter)="columnFilter($event, 'fromRoad')" class="p-column-filter">
+            </th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
@@ -70,6 +78,7 @@
             <td>{{item.toStationCode}}</td>
             <td>{{item.toSubject}}</td>
             <td>{{item.senderName}}</td>
+
             <td *ngFor="let data of item.shipmentYearValuePairs"  [style]="{'background-color': data.calculated === false ? 'rgba(0,64,255,0.07)':'rgba(68,255,0,0.29)'}">
               {{data.value | number}}
             </td>
@@ -79,7 +88,13 @@
             </td>
           </tr>
         </ng-template>
+      <ng-template pTemplate="footer">
+        <tr>
+          <td colspan="3" class="p-text-right">Totals</td>
+          <td></td>
 
+        </tr>
+      </ng-template>
     </p-table>
   </p-card>
 </div>

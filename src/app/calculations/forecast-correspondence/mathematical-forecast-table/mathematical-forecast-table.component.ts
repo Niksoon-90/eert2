@@ -1,4 +1,5 @@
-import {Component, DoCheck, Input, OnChanges, OnInit} from '@angular/core';
+import {Component, DoCheck, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
+import {Table} from 'primeng/table';
 
 
 @Component({
@@ -8,13 +9,15 @@ import {Component, DoCheck, Input, OnChanges, OnInit} from '@angular/core';
 })
 export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   @Input() mathematicalForecastTable;
+  @ViewChild('dt') table: Table;
+
   loading: boolean;
   totalRecords: number;
   virtualMathematicalForecastTable: [];
 
   constructor() { }
 
-  ngOnChanges(){
+  ngOnChanges() {
     this.totalRecords = this.mathematicalForecastTable.length;
     this.virtualMathematicalForecastTable = this.mathematicalForecastTable;
   }
@@ -22,6 +25,16 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
   }
 
+  columnFilter(event: any, field) {
+    this.table.filter(event.target.value, field, 'contains');
+    console.log(this.table)
+    if (!this.table.filteredValue) {
+      console.log ('нет фильтра', this.table.filteredValue)
+      console.log ('нет фильтра', this.table.filteredValue.length)
+    } else {
+      console.log (`Отфильтрованное количество ${this.table.filteredValue.length}`);
+    }
+  }
 
   onRowEditInit(product: any) {
     console.log(product)
@@ -37,7 +50,6 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
 
   loadCustomers($event: any) {
-    console.log($event)
     this.loading = true;
     if($event.sortField) {
       this.virtualMathematicalForecastTable.sort((data1: string, data2: string) => {
@@ -67,4 +79,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     }, 1000);
   }
 
+  ttest($event: any, dt: Table) {
+    console.log('test', $event.filteredValue);
+  }
 }
