@@ -32,17 +32,14 @@
          </ng-container>
        </div>
        <div class="p-field p-col-2">
-         <div class="p-grid">
-           <button pButton pRipple type="button" label="Увязка с прогнозом Учет заявок" class="p-button-success p-col-12"></button>
-           <button pButton pRipple type="button" label="Учет заявок Увязка с прогнозом" class="p-button-success p-col-12"></button>
-         </div>
+
        </div>
       </div>
 
       <button pButton pRipple type="button" label="Расчитать" class="p-button-success" (click)="calculateForecastingStrategy()" [disabled]="!stepThree.forecastingStrategy"></button>
-      <button pButton pRipple type="button" label="Увязать " class="p-button-success" ></button>
-      <button pButton pRipple type="button" label="Учесть заявки грузоотправителей" class="p-button-success" ></button>
-      <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" ></button>
+      <button pButton pRipple type="button" label="Увязать " class="p-button-success" (click)="test()"></button>
+      <button pButton pRipple type="button" label="Учесть заявки грузоотправителей" class="p-button-success" disabled></button>
+      <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" disabled></button>
       <ng-container *ngIf="mathematicalForecastTable">
         <app-mathematical-forecast-table
           [mathematicalForecastTable]="this.mathematicalForecastTable">

@@ -32,4 +32,7 @@ export class CalculationsService {
   getCalculationAverage(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]> {
     return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/average/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
+  getCorrelation(idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]>{
+    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correlation/${idHorizonforecast}?forecastType=LESS_SQUARE`)
+  }
 }

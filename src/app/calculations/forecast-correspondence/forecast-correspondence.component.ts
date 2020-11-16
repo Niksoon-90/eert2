@@ -4,6 +4,7 @@ import {ICalculatingPredictiveRegression, ISelectMethodUsers} from "../../models
 import {ForecastingModelService} from '../../services/forecasting-model.service';
 import {ShipmentsService} from "../../services/shipments.service";
 import {CalculationsService} from "../../services/calculations.service";
+import {ModalService} from "../../services/modal.service";
 
 @Component({
   selector: 'app-forecast-correspondence',
@@ -24,6 +25,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
     private router: Router,
     public forecastModelService: ForecastingModelService,
     private calculationsService: CalculationsService,
+    private modalService: ModalService,
     ) {
     this.methodUsers = [
       {id: 1, type: 'simple', name:'Вычисление прогноза корреспонденций по методу наименьших квадратов'},
@@ -67,25 +69,41 @@ export class ForecastCorrespondenceComponent implements OnInit {
       case 'simple':
        this.calculationsService.getCalculationSimple(this.sessionId, this.stepOnecalcYearsNumber)
          .subscribe(
-           res => {this.mathematicalForecastTable = res, console.log(res)},
-           err => console.log(err.error),
-           () => console.log())
+           res => this.mathematicalForecastTable = res,
+           err => this.modalService.open(err.message),
+           () => console.log('complete'))
         break;
       case 'fiscal':
         this.calculationsService.getCalculationFiscal(this.sessionId, this.stepOnecalcYearsNumber, this.stepThree.yearsSession['name'])
-          .subscribe( res => this.mathematicalForecastTable = res)
+          .subscribe(
+            res => {this.mathematicalForecastTable = res, console.log(res)},
+            err => this.modalService.open(err.message),
+            () => console.log()
+          )
         break;
       case 'fixed':
         this.calculationsService.getCalculationFixed(this.sessionId, this.stepOnecalcYearsNumber)
-          .subscribe( res => this.mathematicalForecastTable = res)
+          .subscribe(
+            res => {this.mathematicalForecastTable = res, console.log(res)},
+            err => this.modalService.open(err.message),
+            () => console.log()
+          )
         break;
       case 'increasing':
         this.calculationsService.getCalculationIncreasing(this.sessionId, this.stepOnecalcYearsNumber)
-          .subscribe( res => this.mathematicalForecastTable = res)
+          .subscribe(
+            res => {this.mathematicalForecastTable = res, console.log(res)},
+            err => this.modalService.open(err.message),
+            () => console.log()
+          )
         break;
       case 'average':
         this.calculationsService.getCalculationAverage(this.sessionId, this.stepOnecalcYearsNumber)
-          .subscribe( res => this.mathematicalForecastTable = res)
+          .subscribe(
+            res => {this.mathematicalForecastTable = res, console.log(res)},
+            err => this.modalService.open(err.message),
+            () => console.log()
+          )
         break;
       default:
         break;
@@ -94,5 +112,13 @@ export class ForecastCorrespondenceComponent implements OnInit {
 
   spying(event: any) {
     event.value.type === 'fiscal'?  this.additionalInformation = true :  this.additionalInformation = false
+  }
+
+  test() {
+    this.calculationsService.getCorrelation(this.sessionId).subscribe(
+      res => {this.mathematicalForecastTable = res},
+      err => this.modalService.open(err.message),
+      () => console.log()
+    )
   }
 }
