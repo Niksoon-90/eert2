@@ -16,7 +16,7 @@ export class ShipmentsService {
   private url = environment.hostURL;
 
   postUploadFile(fd, fileName: string, type: string) {
-    return this.http.post<any>(this.url + `api/shipments/file//upload?fileType=${type}&name=${fileName}`, fd, {
+    return this.http.post<any>(this.url + `api/shipments/file/upload?fileType=${type}&name=${fileName}`, fd, {
       reportProgress: true,
       observe: "events"
     });

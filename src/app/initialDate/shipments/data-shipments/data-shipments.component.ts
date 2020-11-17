@@ -20,12 +20,17 @@ export class DataShipmentsComponent implements OnInit {
   dialogVisible: boolean;
   massSummYears: any[];
   summYears: 0;
+  typePrimary: any;
 
   constructor(
     private shipmentsService: ShipmentsService
   ) { }
 
   ngOnInit(): void {
+    this.typePrimary = [
+      {id: 1, name: 'да', type: true},
+      {id: 2, name: 'нет', type: false}
+    ]
     this.getShipmentsSession();
   }
 
@@ -67,8 +72,9 @@ export class DataShipmentsComponent implements OnInit {
   }
 
   openShipItemSession(id: number) {
+    console.log(id)
     this.shipmentsService.getShipments(id).subscribe(
-      res => {this.shipmentsListSessionId = res; console.log(res); this.test()},
+      res => {this.shipmentsListSessionId = res; console.log('23', res); this.test()},
       err => console.log('HTTP Error', err.message),
       () => this.showDialog()
     )
@@ -90,5 +96,9 @@ export class DataShipmentsComponent implements OnInit {
       console.log(this.summYears)
       this.massSummYears.push(this.summYears);
     }
+  }
+
+  test2(i: number) {
+    console.log(i)
   }
 }

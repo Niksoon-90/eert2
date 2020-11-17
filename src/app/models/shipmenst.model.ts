@@ -22,6 +22,7 @@ export interface IShipment {
   toStation:	string
   toStationCode:	number
   toSubject:	string
+  primary: boolean
 }
 
 interface IShipmentYearValuePairs {

@@ -76,6 +76,7 @@
           <th>№_п.п.</th>
           <th pResizableColumn pSortableColumn="cargoGroup">Группа груза<p-sortIcon field="cargoGroup"></p-sortIcon></th>
           <th pResizableColumn pSortableColumn="shipmentType">Вид перевозки<p-sortIcon field="shipmentType"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="primary">Основные<p-sortIcon field="primary"></p-sortIcon></th>
           <th pResizableColumn pSortableColumn="fromRoad">Дорога отправления<p-sortIcon field="fromRoad"></p-sortIcon></th>
           <th pResizableColumn pSortableColumn="fromStation">Станция отправления РФ<p-sortIcon field="fromStation"></p-sortIcon></th>
           <th pResizableColumn pSortableColumn="fromStationCode">Код станции отправления РФ<p-sortIcon field="fromStationCode"></p-sortIcon></th>
@@ -99,6 +100,13 @@
           </th>
           <th>
             <input pInputText type="text" (input)="dt.filter($event.target.value, 'shipmentType', 'contains')" placeholder="Фильтр" class="p-column-filter">
+          </th>
+          <th>
+            <p-dropdown [options]="typePrimary" (onChange)="dt.filter($event.value, 'primary', 'equals')" styleClass="p-column-filter" placeholder="Select a Status" [showClear]="true">
+              <ng-template let-option pTemplate="item">
+                <span [class]="'customer-badge primary-' + option.value">{{option.label}}</span>
+              </ng-template>
+            </p-dropdown>
           </th>
           <th>
             <input pInputText type="text" (input)="dt.filter($event.target.value, 'fromRoad', 'contains')" placeholder="Фильтр" class="p-column-filter">
@@ -130,6 +138,16 @@
           <th>
             <input pInputText type="text" (input)="dt.filter($event.target.value, 'receiverName', 'contains')" placeholder="Фильтр" class="p-column-filter">
           </th>
+
+
+
+          <ng-container *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs; let i = index">
+            <th>
+              <p>data.value</p>
+              <input pInputText type="text" (input)="dt.filter($event.target.value, 'data.value', 'contains')" placeholder="Фильтр" class="p-column-filter">
+            </th>
+          </ng-container>
+
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-item let-ri="rowIndex">
@@ -137,6 +155,8 @@
           <td>{{ri}}</td>
           <td>{{item.cargoGroup}}</td>
           <td>{{item.shipmentType}}</td>
+          <td *ngIf="item.primary === true">да</td>
+          <td *ngIf="item.primary === false">нет</td>
           <td>{{item.fromRoad}}</td>
           <td>{{item.fromStation}}</td>
           <td>{{item.fromStationCode}}</td>

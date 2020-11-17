@@ -61,7 +61,7 @@ export class UploadFileComponent implements OnInit {
     if(this.initialDateType === 'shipmentsUpload'){
       this.shipmensUpload(formData, 'SHIPMENTS')
     }else if(this.initialDateType === 'cargoUpload'){
-      this.shipmensUpload(formData, this.uploadFiles.value.cargoType)
+      this.shipmensUpload(formData, this.uploadFiles.value.cargoType.type)
     }else if(this.initialDateType === 'correspondUpload'){
       this.shipmensUpload(formData,'PERSPECTIVE_CORRESPONDENCES')
     }else{
@@ -72,6 +72,7 @@ export class UploadFileComponent implements OnInit {
     this.displayModal = true;
   }
   shipmensUpload(formData, type: string){
+    console.log(type)
     this.shipmentsService.postUploadFile(formData, this.uploadFiles.value.nameFile, type)
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress){
@@ -81,7 +82,7 @@ export class UploadFileComponent implements OnInit {
         }
       }, error => {
         this.clearForm();
-        this.modalService.open(error.message)
+        this.modalService.open(error.error.message)
       },() => {
         this.clearForm();
         this.showModalDialog();
