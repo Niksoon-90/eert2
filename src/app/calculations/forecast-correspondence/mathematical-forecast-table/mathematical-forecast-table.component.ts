@@ -22,6 +22,11 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   columsYears: number= 0;
   cols: any[];
   virtTable: any[];
+
+
+
+  primeryBol = [ { label: 'Все', value: '' },{ label: 'Да', value: true },{ label: 'Нет', value: false }]
+  selectedPrimery: any;
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService: ModalService
@@ -48,7 +53,8 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
       { field: 'toStation', header: 'Станция назначения РФ', width: '100px', keyS: false },
       { field: 'toStationCode', header: 'Код станции назначения РФ', width: '100px', keyS: false },
       { field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false },
-      { field: 'senderName', header: 'Грузополучатель', width: '100px', keyS: false }
+      { field: 'senderName', header: 'Грузополучатель', width: '100px', keyS: false },
+      { field: 'primary', header: 'К', width: '20px', keyS: false },
     ];
     for(let i=0; i< this.columsYears ; i++){
       this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })
@@ -92,7 +98,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   }
 
   onRowEditInit(item: any) {
-    //console.log(item)
+
   }
 
   onRowEditSave(item: any) {
@@ -103,11 +109,39 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     )
   }
 
-  onRowEditCancel(item: any, ri) {
+  onRowEditCancel() {
 
   }
 
-  magic(row: any, col: any, $event: any) {
+
+  test(idx: number, value: any) {
+    const dec = value / this.massSummYear[idx];
+    const resultMass = []
+    for(let i=0; i< this.virtTable.length; i++){
+      this.virtTable[i].shipmentYearValuePairs[idx].value = (this.virtTable[i].shipmentYearValuePairs[idx].value * dec).toFixed(2)
+      const res = this.virtTable[i];
+      for(let a = 0; a < this.mathematicalForecastTable.length; a++){
+        if(this.virtTable[i].id = this.mathematicalForecastTable[a].id){
+          this.mathematicalForecastTable[a] = res;
+          // console.log('1', this.mathematicalForecastTable[a].shipmentYearValuePairs[idx].value)
+          // this.mathematicalForecastTable[a].shipmentYearValuePairs[idx].value = res
+          // console.log('2', this.mathematicalForecastTable[a].shipmentYearValuePairs[idx].value)
+          break;
+        }
+        break;
+      }
+      // const item = {idShip: this.virtTable[i].id, idYear: this.virtTable[i].shipmentYearValuePairs[idx].id, value: res}
+      // resultMass.push(item)
+    }
+    console.log(resultMass)
+  }
+
+  colorYears(rowData, col: any) {
+    const mass = col['field'].toString().split('.');
+    return rowData.shipmentYearValuePairs[mass[1]].calculated === true ?  true :  false
+  }
+
+  editColumn(row: any, col: any, $event: any) {
     if(col['keyS'] === true){
       const mass = col['field'].toString().split('.');
       row.shipmentYearValuePairs[mass[1]].value = Number($event);
@@ -117,17 +151,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     }
   }
 
-  test(idx: number, value: any) {
-    console.log(this.virtTable)
-    console.log(idx)
-    console.log(value)
-    const dec = value / this.massSummYear[idx];
-    const resultMass = []
-    for(let i=0; i< this.virtTable.length; i++){
-     const res =  this.virtTable[i].shipmentYearValuePairs[idx].value * dec;
-     const item = {idShip: this.virtTable[i].id, idYear: this.virtTable[i].shipmentYearValuePairs[idx].id, value: res}
-      resultMass.push(item)
-    }
-    console.log(resultMass)
+  test2(item: any, idx: number) {
+    return this.mathematicalForecastTable[0].shipmentYearValuePairs[idx].calculated === true ? true : false
   }
 }

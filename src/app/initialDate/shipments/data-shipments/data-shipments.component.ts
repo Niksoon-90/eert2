@@ -166,8 +166,6 @@ export class DataShipmentsComponent implements OnInit, OnChanges {
   }
 
   editColumn(row: any, col: any, $event: any) {
-    console.log(col)
-    console.log('row', row)
     if(col['keyS'] === true){
       const mass = col['field'].toString().split('.');
       row.shipmentYearValuePairs[mass[1]].value = Number($event);

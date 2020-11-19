@@ -64,7 +64,7 @@
              [columns]="cols"
              [value]="mathematicalForecastTable"
              [scrollable]="true" scrollHeight="flex" scrollHeight="75vh"
-             styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id" [style]="{width:'100vw'}"
+             styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id" [style]="{width:'94.7vw'}"
              [resizableColumns]="true"  editMode="row"
              [paginator]="true"
              [rows]="1500"
@@ -94,7 +94,7 @@
           <th></th>
         </tr>
         <tr>
-          <th>№</th>
+          <th pResizableColumn >№</th>
             <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
                 {{col.header}}
             </th>

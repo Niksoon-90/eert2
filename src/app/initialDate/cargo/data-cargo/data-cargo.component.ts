@@ -50,4 +50,8 @@ export class DataCargoComponent implements OnInit {
       this.getCargoSessionSession('RECEIVER_CLAIMS')
     }
   }
+
+  test(id: number) {
+    console.log(id)
+  }
 }

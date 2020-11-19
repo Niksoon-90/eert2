@@ -38,4 +38,13 @@ export class CalculationsService {
   getPerspective(sessionId: number,perspectiveSessionId: number ): Observable<ICalculatingPredictiveRegression[]>{
     return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/perspective?perspectiveSessionId=${perspectiveSessionId}&sessionId=${sessionId}`)
   }
+  // getOil(){
+  //   return this.http.get()
+  // }
+  // getMetallurgy(){
+  //   return this.http.get()
+  // }
+  // getOre(){
+  //   return this.http.get()
+  // }
 }

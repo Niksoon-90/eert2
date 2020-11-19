@@ -20,7 +20,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
   sessionId: number;
   stepOnecalcYearsNumber:number;
   disableCorrelation: boolean = true;
-  loading: boolean = true;
+  loading: boolean = false;
   correspondence: any;
   correspondenceTypes: any[] = [{name: 'Все корреспонденции', key: false}, {name: 'Устойчивые кореспонденции', key: true}];
 
@@ -133,11 +133,14 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   corresponTie() {
-
+    this.loading = false;
+    console.log('session', this.sessionId)
+    console.log('sessionKK', this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'])
     this.calculationsService.getPerspective(this.sessionId, this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'])
       .subscribe(
-        res => console.log(res),
-        error => this.modalService.open(error.error.message)
+        res => {this.mathematicalForecastTable = res, console.log(res)},
+        error => this.modalService.open(error.error.message),
+        () => this.loading = true
       )
   }
 }

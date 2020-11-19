@@ -2,7 +2,9 @@
   <p-card>
     <ng-template pTemplate="title">
       <h5>Математический прогноз с учетом макропоказателей</h5>
-      <p-table #dt [value]="mathematicalForecastTable" [scrollable]="true" scrollHeight="80vh" [style]="{width:'98vw'}" [scrollable]="true" scrollHeight="flex">
+      <p-table #dt [value]="mathematicalForecastTable"
+               [scrollable]="true"  [style]="{width:'94.7vw'}"
+                scrollHeight="flex">
         <ng-template pTemplate="caption">
           <div class="p-d-flex">
             <button type="button" pButton icon="pi pi-file-o" iconPos="left" label="CSV" (click)="dt.exportCSV()" style="margin-right: 0.5em;"></button>
@@ -13,10 +15,10 @@
             <col style="width:150px">
             <col style="width:150px">
             <ng-container *ngIf="mathematicalForecastTable">
-              <col  style="width:auto" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears| keyvalue">
+              <col  style="width:150px" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears| keyvalue">
             </ng-container>
             <ng-container *ngIf="mathematicalForecastTable">
-              <col  style="width:auto" *ngFor="let data2 of mathematicalForecastTable[0].calculatedVolumes| keyvalue">
+              <col  style="width:150px" *ngFor="let data2 of mathematicalForecastTable[0].calculatedVolumes| keyvalue">
             </ng-container>
           </colgroup>
         </ng-template>

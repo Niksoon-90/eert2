@@ -15,9 +15,15 @@ import {ModalService} from "../../services/modal.service";
 export class ImportStepsOneComponent implements OnInit {
   initialDate: ISession[];
   correspondenceSession: ISession[];
+  cargoSessionSender: any[]
+  cargoSessionReceiver: any[]
   horizonforecast: IHorizonforecast[];
   scenarioMacro: any[];
   stepOne: any;
+
+  oilCargo: any;
+  ore: any;
+  metallurgy: any;
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -29,6 +35,12 @@ export class ImportStepsOneComponent implements OnInit {
   ngOnInit(): void  {
     this.getInitialDate();
     this.getCorrespondenceSession();
+    this.getCargoSessionSessionSender();
+    this.getCargoSessionSessionReceiver();
+    // this.getOil();
+    // this.getOre();
+    // this.getMetallurgy();
+
     this.stepOne = this.forecastModelService.ticketInformation.stepOne;
     if( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null){
       this.horizonforecast = [];
@@ -44,6 +56,7 @@ export class ImportStepsOneComponent implements OnInit {
   }
 
 
+
   getInitialDate(){
     this.shipmentsService.getShipSession().subscribe(
       res => this.initialDate = res,
@@ -51,6 +64,48 @@ export class ImportStepsOneComponent implements OnInit {
       () => console.log('complede')
     );
   }
+  getCorrespondenceSession() {
+    this.shipmentsService.getCorrespondenceSession().subscribe(
+      res => {this.correspondenceSession = res; console.log(res)},
+      error => this.modalService.open(error.message),
+      () => console.log()
+    )
+  }
+  getCargoSessionSessionSender() {
+    this.shipmentsService.getClaimSession('SENDER_CLAIMS').subscribe(
+      res => {this.cargoSessionSender = res; console.log('res', res)},
+      error => this.modalService.open(error.message),
+      () =>  console.log()
+    )
+  }
+  getCargoSessionSessionReceiver() {
+    this.shipmentsService.getClaimSession('RECEIVER_CLAIMS').subscribe(
+      res => {this.cargoSessionReceiver = res; console.log('res', res)},
+      error => this.modalService.open(error.message),
+      () =>  console.log()
+    )
+  }
+//   getOil(){
+//     this.shipmentsService.().subscribe(
+//       res => {this.oilCargo = res; console.log('res', res)},
+//       error => this.modalService.open(error.message),
+//       () =>  console.log()
+//     )
+//   }
+//   getOre(){
+//     this.shipmentsService.().subscribe(
+//       res => {this.ore = res; console.log('res', res)},
+//       error => this.modalService.open(error.message),
+//       () =>  console.log()
+//     )
+//   }
+//   getMetallurgy(){
+//     this.shipmentsService.().subscribe(
+//       res => {this.metallurgy = res; console.log('res', res)},
+//       error => this.modalService.open(error.message),
+//       () =>  console.log()
+// )
+// }
 
   nextPage() {
     if(this.stepOne !== undefined){
@@ -59,15 +114,13 @@ export class ImportStepsOneComponent implements OnInit {
       this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
       this.forecastModelService.ticketInformation.stepOne.scenarioMacro = this.stepOne.scenarioMacro;
       this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
+      this.forecastModelService.ticketInformation.stepOne.cargoSessionSender = this.stepOne.cargoSessionSender;
+      this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver = this.stepOne.cargoSessionReceiver;
+      this.forecastModelService.ticketInformation.stepOne.oilCargo = this.stepOne.oilCargo;
+      this.forecastModelService.ticketInformation.stepOne.ore = this.stepOne.ore;
+      this.forecastModelService.ticketInformation.stepOne.metallurgy = this.stepOne.metallurgy;
       this.router.navigate(['steps/mathForecast']);
     }
   }
-  getCorrespondenceSession() {
 
-    this.shipmentsService.getCorrespondenceSession().subscribe(
-      res => {this.correspondenceSession = res; console.log(res)},
-      error => this.modalService.open(error.message),
-      () => console.log()
-    )
-  }
 }

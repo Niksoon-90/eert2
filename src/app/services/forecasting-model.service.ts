@@ -12,6 +12,11 @@ export class ForecastingModelService {
       calcYearsNumber: 0,
       scenarioMacro: null,
       correspondenceSession: null,
+      cargoSessionSender: null,
+      cargoSessionReceiver: null,
+      oilCargo: null,
+      metallurgy: null,
+      ore: null,
     },
     stepThree: {
         forecastingStrategy: null,

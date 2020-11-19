@@ -5,7 +5,7 @@
   </div>
   <div  class="p-d-flex p-flex-wrap" style="margin: 20px 0 0 0 !important;">
     <div class="p-d-flex">
-      <p-inputSwitch [(ngModel)]="checkTypeCargo" (onChange)="chekedCargoType()" style="margin-right: 10px"></p-inputSwitch>
+      <p-inputSwitch class="sw" [(ngModel)]="checkTypeCargo" (onChange)="chekedCargoType()"></p-inputSwitch>
         <div style="margin-right: 25px" *ngIf="checkTypeCargo">Грузоотправители</div>
         <div style="margin-right: 25px" *ngIf="!checkTypeCargo">Грузополучатель</div>
     </div>
@@ -64,7 +64,7 @@
         <td>{{itemCargoSession.userFioAdd}}</td>
         <td>{{itemCargoSession.dateWrite | date:'full' }}</td>
         <td>
-          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom"  ></button>
+          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" (click)="test(itemCargoSession.id)" ></button>
           <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text p-button-danger" type="button" icon="pi pi-trash"  pTooltip="Удалить" tooltipPosition="bottom" ></button>
         </td>
       </tr>

@@ -1,19 +1,13 @@
-<div class="stepsdemo-content">
-  <ng-template #load>
-    <div class="p-d-flex p-jc-center">
-      <p-progressSpinner></p-progressSpinner>
-    </div>
-  </ng-template>
-  <p-card *ngIf="mathematicalForecastTable; else load">
+<div class="card" *ngIf="mathematicalForecastTable;">
+  <p-dialog header="Загруженные данные" [(visible)]="dialogVisible" [style]="{width: '50vw'}" [baseZIndex]="1" [maximizable]="true" [modal]="true" [resizable]="true" [contentStyle]="{height: '90vh'}" >
     <p-table #dt
-             [style]="{width:'94.7vw'}"
              [columns]="cols"
              [value]="mathematicalForecastTable"
-             [scrollable]="true" scrollHeight="30vh"
-             styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
-             [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
+             [scrollable]="true" scrollHeight="flex" scrollHeight="75vh"
+             styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id" [style]="{width:'94.7vw'}"
+             [resizableColumns]="true"  editMode="row"
              [paginator]="true"
-             [rows]="500"
+             [rows]="1500"
              [totalRecords]="totalRecords"
              [filterDelay]="0"
              (onFilter)="massSummYears($event)"
@@ -40,13 +34,14 @@
           <th></th>
         </tr>
         <tr>
-          <th pResizableColumn>№</th>
+          <th pResizableColumn >№</th>
           <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
             {{col.header}}
           </th>
           <th>Действия</th>
         </tr>
       </ng-template>
+
       <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
         <tr [pEditableRow]="rowData">
           <td>{{ri}}</td>
@@ -56,15 +51,15 @@
                 <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
               </ng-template>
               <ng-template pTemplate="output" >
-                <div *ngIf="idx < 14 && col['field'] !== 'primary'">
+                <div *ngIf="idx < 13 && col['field'] !== 'primary'">
                   {{rowData[col.field]}}
                 </div>
                 <div *ngIf="col['field'] === 'primary'">
                   <ng-container *ngIf="rowData[col.field] === true; else primaryFalse">
-                    <i class="pi" style="color: green" [ngClass]="{'true-icon pi-check-circle': rowData[col.field], 'false-icon pi-times-circle': !rowData[col.field]}"></i>
+                    да
                   </ng-container>
                   <ng-template #primaryFalse>
-                    <i class="pi"  style="color: red" [ngClass]="{'true-icon pi-check-circle': rowData[col.field], 'false-icon pi-times-circle': !rowData[col.field]}"></i>
+                    нет
                   </ng-template>
                 </div>
                 <div *ngIf="idx > 12" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
@@ -86,19 +81,10 @@
           <td colspan="14" class="p-text-right">Итого: </td>
           <td *ngFor="let items of this.massSummYear">{{items | number}}</td>
         </tr>
-        <tr>
-          <td colspan="14" class="p-text-right">Сумма: </td>
-          <ng-container *ngFor="let item of this.massSummYear; let idx = index">
-            <td *ngIf="test2(item, idx); else num">
-              <input pInputText type="text"  (change)="test(idx, $event.target.value)">
-            </td>
-            <ng-template #num>
-              <td ></td>
-            </ng-template>
-
-          </ng-container>
-
       </ng-template>
     </p-table>
-  </p-card>
+    <ng-template pTemplate="footer">
+      <button type="button" pButton pRipple icon="pi pi-times" (click)="dialogVisible=false" label="Закрыть" class="p-button-text"></button>
+    </ng-template>
+  </p-dialog>
 </div>
