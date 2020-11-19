@@ -14,8 +14,8 @@ export class CalculationsService {
   private url = environment.hostURL;
   private urlCalc = environment.hostCalc;
 
-  getCalculationMultiple(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]>{
-    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/multiple/${id}?calcYearsNumber=${idHorizonforecast}`)
+  getCalculationMultiple(id: number, idHorizonforecast: number, type: string): Observable<ICalculatingPredictiveRegression[]>{
+    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/multiple/${id}?calcYearsNumber=${idHorizonforecast}&macroScenarioType=${type}`)
   }
   getCalculationSimple(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]> {
     return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/simple/${id}?calcYearsNumber=${idHorizonforecast}`)
@@ -34,5 +34,8 @@ export class CalculationsService {
   }
   getCorrelation(idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]>{
     return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correlation/${idHorizonforecast}?forecastType=LESS_SQUARE`)
+  }
+  getPerspective(sessionId: number,perspectiveSessionId: number ): Observable<ICalculatingPredictiveRegression[]>{
+    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/perspective?perspectiveSessionId=${perspectiveSessionId}&sessionId=${sessionId}`)
   }
 }

@@ -13,6 +13,7 @@ export class DataCorrespondenceComponent implements OnInit {
   first = 0;
   rows = 25;
   customers: any;
+  loading: boolean = true;
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -43,10 +44,12 @@ export class DataCorrespondenceComponent implements OnInit {
   }
 
   getCorrespondenceSession() {
+    this.loading = true;
     this.shipmentsService.getCorrespondenceSession().subscribe(
       res => {this.correspondenceSession = res; console.log(res)},
-      err => this.modalService.open(err.message)),
-      () => console.log('HTTP request completed.')
+      error => this.modalService.open(error.message),
+      () => this.loading = false
+    )
   }
 
 }

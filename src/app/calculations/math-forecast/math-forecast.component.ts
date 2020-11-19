@@ -3,6 +3,7 @@ import {Router} from "@angular/router";
 import {ForecastingModelService} from "../../services/forecasting-model.service";
 import {CalculationsService} from "../../services/calculations.service";
 import {ICalculatingPredictiveRegression} from "../../models/calculations.model";
+import {ModalService} from "../../services/modal.service";
 
 @Component({
   selector: 'app-math-forecast',
@@ -15,7 +16,8 @@ export class MathForecastComponent implements OnInit {
   constructor(
     private router: Router,
     public forecastModelService: ForecastingModelService,
-    private calculationsService: CalculationsService
+    private calculationsService: CalculationsService,
+    private modalService: ModalService
   ) { }
 
   ngOnInit(): void {
@@ -24,10 +26,10 @@ export class MathForecastComponent implements OnInit {
   createTable(){
     console.log(this.forecastModelService.getTicketInformation().stepOne.Session['id'])
     console.log(this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
-    this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
+    this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'] )
       .subscribe(
         res => {this.mathematicalForecastTable = res;},
-        err => console.log('HTTP Error', err.message),
+        error => this.modalService.open(error.error.message),
         () => console.log('HTTP request completed.')
       )
   }

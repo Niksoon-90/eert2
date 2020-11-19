@@ -4,6 +4,7 @@ import {environment} from "../../environments/environment";
 import {Observable} from 'rxjs';
 import {ISession, IShipment} from '../models/shipmenst.model';
 import {IMacroPokModel} from "../models/macroPok.model";
+import {ICalculatingPredictiveRegression} from "../models/calculations.model";
 
 @Injectable({
   providedIn: 'root'
@@ -16,20 +17,20 @@ export class ShipmentsService {
   private url = environment.hostURL;
 
   postUploadFile(fd, fileName: string, type: string) {
-    return this.http.post<any>(this.url + `api/shipments/file/upload?fileType=${type}&name=${fileName}`, fd, {
+    return this.http.post<any>(this.url + `api/file/upload?fileType=${type}&name=${fileName}`, fd, {
       reportProgress: true,
       observe: "events"
     });
   }
 
   getShipSession(): Observable<ISession[]> {
-   return this.http.get<ISession[]>(this.url + `api/shipments/file/all/`);
+   return this.http.get<ISession[]>(this.url + `api/file/list?fileType=SHIPMENTS`);
   }
   deleteShipSession(id: number){
     return this.http.delete(this.url + `api/session/${id}`)
   }
   getShipments(id: number): Observable<IShipment[]>{
-    return this.http.get<IShipment[]>(this.url + `api/shipments/file/shipments?sessionId=${id}`)
+    return this.http.get<IShipment[]>(this.url + `api/file/shipments?sessionId=${id}`)
   }
   getMacroPok(): Observable<IMacroPokModel[]>{
     return this.http.get<IMacroPokModel[]>(this.url + `api/macroPok/all`)
@@ -43,10 +44,13 @@ export class ShipmentsService {
   deleteMackPok(id: number){
     return this.http.delete(this.url + `api/macroPok/${id}`)
   }
-  getClaimSession(): Observable<ISession[]>{
-    return this.http.get<ISession[]>(this.url + `api/claim/file/all`)
+  getClaimSession(type: string): Observable<ISession[]>{
+    return this.http.get<ISession[]>(this.url + `api/file/list?fileType=${type}`)
   }
   getCorrespondenceSession(): Observable<ISession[]>{
-    return this.http.get<ISession[]>(this.url + `api/correspondence/file/all`)
+    return this.http.get<ISession[]>(this.url + `api/file/list?fileType=PERSPECTIVE_CORRESPONDENCES`)
+  }
+  putShipments(shipments:ICalculatingPredictiveRegression){
+    return this.http.put(this.url + 'api/file/shipments', shipments)
   }
 }

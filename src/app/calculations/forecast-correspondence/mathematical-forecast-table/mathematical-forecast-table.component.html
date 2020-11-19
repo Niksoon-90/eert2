@@ -5,92 +5,61 @@
     </div>
   </ng-template>
   <p-card *ngIf="mathematicalForecastTable; else load">
-    <p-table #dt [value]="mathematicalForecastTable"   [scrollable]="true" scrollHeight="flex" scrollHeight="45vh"
-             styleClass="p-datatable-sm p-datatable-gridlines "  dataKey="id" [style]="{width:'95vw'}"
-             [resizableColumns]="true" columnResizeMode="expand"
-             [lazy]="false" (onLazyLoad)="loadCustomers($event)"
-             [paginator]="true" [rows]="300" [totalRecords]="totalRecords" [loading]="loading" [filterDelay]="0" (onFilter)="massSummYears($event)">
+    <p-table #dt
+             [columns]="cols"
+             [value]="mathematicalForecastTable"
+             [scrollable]="true" scrollHeight="flex" scrollHeight="45vh"
+             styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id" [style]="{width:'95vw'}"
+             [resizableColumns]="true" columnResizeMode="expand" editMode="row"
+             [paginator]="true"
+             [rows]="1500"
+             [totalRecords]="totalRecords"
+             [loading]="loading"
+             [filterDelay]="0"
+             (onFilter)="massSummYears($event)"
+    >
       <ng-template pTemplate="colgroup" let-columns>
-        <colgroup>
-          <col style="width:80px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:250px">
-          <col style="width:250px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:250px">
-          <col style="width:250px">
-          <ng-container *ngIf="mathematicalForecastTable">
-            <col style="width:100px" *ngFor="let data of mathematicalForecastTable[0].shipmentYearValuePairs">
-          </ng-container>
-          <col style="width:150px">
-        </colgroup>
+          <colgroup>
+            <col style="width:80px" >
+            <col *ngFor="let col of columns" [style.width]="col.width" >
+            <col style="width:80px" >
+          </colgroup>
       </ng-template>
-        <ng-template pTemplate="header">
+        <ng-template pTemplate="header" let-columns>
           <tr>
-            <th>№_п.п.</th>
-            <th pResizableColumn pSortableColumn="cargoGroup">Группа груза<p-sortIcon field="cargoGroup"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="shipmentType">Вид перевозки<p-sortIcon field="shipmentType"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="fromRoad">Дорога отправления<p-sortIcon field="fromRoad"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="fromStation">Станция отправления РФ<p-sortIcon field="fromStation"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="fromStationCode">Код станции отправления РФ<p-sortIcon field="fromStationCode"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="fromSubject">Субъект отправления<p-sortIcon field="fromSubject"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="receiverName">Грузоотправитель<p-sortIcon field="receiverName"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="toRoad">Дорога назначения<p-sortIcon field="toRoad"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="toStation">Станция назначения РФ<p-sortIcon field="toStation"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="toStationCode">Код станции назначения РФ<p-sortIcon field="toStationCode"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="toSubject">Субъект назначения<p-sortIcon field="toSubject"></p-sortIcon></th>
-            <th pResizableColumn pSortableColumn="senderName">Грузополучатель<p-sortIcon field="senderName"></p-sortIcon></th>
-            <ng-container *ngIf="mathematicalForecastTable">
-              <th  *ngFor="let data of mathematicalForecastTable[0].shipmentYearValuePairs" >
-                {{data.year}}
-              </th>
-            </ng-container>
+            <th>№</th>
+            <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"><p-sortIcon [field]="col.field"></p-sortIcon>
+              {{col.header}}
+            </th>
             <th>Действия</th>
           </tr>
           <tr>
             <th></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'cargoGroup')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'shipmentType')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'fromRoad')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'fromStation')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'fromStationCode')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'fromSubject')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'receiverName')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'toRoad')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'toStation')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'toStationCode')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'toSubject')" class="p-column-filter"></th>
-            <th><input pInputText type="text" (click)="$event.stopPropagation()" (input)="columnFilter($event, 'senderName')" class="p-column-filter"></th>
-           </tr>
+            <th *ngFor="let col of columns; let idx = index" [pSortableColumn]="col.field">
+                <input pInputText type="text" (click)="$event.stopPropagation()"  (input)="columnFilter($event, col.field)" class="p-column-filter">
+            </th>
+            <th></th>
+          </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
-          <tr>
-            <td>{{ri}}</td>
-            <td>{{item.cargoGroup}}</td>
-            <td>{{item.shipmentType}}</td>
-            <td>{{item.fromRoad}}</td>
-            <td>{{item.fromStation}}</td>
-            <td>{{item.fromStationCode}}</td>
-            <td>{{item.fromSubject}}</td>
-            <td>{{item.receiverName}}</td>
-            <td>{{item.toRoad}}</td>
-            <td>{{item.toStation}}</td>
-            <td>{{item.toStationCode}}</td>
-            <td>{{item.toSubject}}</td>
-            <td>{{item.senderName}}</td>
 
-            <td *ngFor="let data of item.shipmentYearValuePairs"  [style]="{'background-color': data.calculated === false ? 'rgba(0,64,255,0.07)':'rgba(68,255,0,0.29)'}">
-              {{data.value | number}}
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+          <tr [pEditableRow]="rowData">
+            <td>{{ri}}</td>
+            <td pEditableColumn *ngFor="let col of columns">
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="magic(rowData, col, $event)">
+                </ng-template>
+                <ng-template pTemplate="output">
+                    {{rowData | field:col}}
+                </ng-template>
+              </p-cellEditor>
             </td>
-            <td>
-              <button pButton pRipple type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" class="p-button-rounded p-button-success p-mr-2 p-button p-component p-button-icon-only"></button>
-              <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-warning p-button p-component p-button-icon-only"></button>
+
+            <td style="text-align:center">
+              <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(rowData, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
             </td>
           </tr>
         </ng-template>
@@ -99,7 +68,13 @@
           <td colspan="13" class="p-text-right">Итого: </td>
           <td *ngFor="let items of this.massSummYear">{{items | number}}</td>
         </tr>
+        <tr>
+          <td colspan="13" class="p-text-right">Сумма: </td>
+          <td *ngFor="let item of this.massSummYear; let idx = index">
+            <input pInputText type="text"  (change)="test(idx, $event.target.value)">
+          </td>
+        </tr>
       </ng-template>
-    </p-table>
+      </p-table>
   </p-card>
 </div>

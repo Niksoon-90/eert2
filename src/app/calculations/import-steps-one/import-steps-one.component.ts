@@ -14,6 +14,7 @@ import {ModalService} from "../../services/modal.service";
 })
 export class ImportStepsOneComponent implements OnInit {
   initialDate: ISession[];
+  correspondenceSession: ISession[];
   horizonforecast: IHorizonforecast[];
   scenarioMacro: any[];
   stepOne: any;
@@ -26,7 +27,8 @@ export class ImportStepsOneComponent implements OnInit {
   ) {}
 
   ngOnInit(): void  {
-    this.getInitialDate()
+    this.getInitialDate();
+    this.getCorrespondenceSession();
     this.stepOne = this.forecastModelService.ticketInformation.stepOne;
     if( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null){
       this.horizonforecast = [];
@@ -35,9 +37,9 @@ export class ImportStepsOneComponent implements OnInit {
       }
     }
     this.scenarioMacro = [
-      {id: 1, name: 'Пессимистичное значение'},
-      {id: 1, name: 'Базовое значение'},
-      {id: 1, name: 'Оптимистичное значение'}
+      {id: 1, name: 'Пессимистичное значение', type: 'PESSIMISTIC'},
+      {id: 1, name: 'Базовое значение', type: 'BASE'},
+      {id: 1, name: 'Оптимистичное значение', type: 'OPTIMISTIC'}
     ]
   }
 
@@ -45,7 +47,7 @@ export class ImportStepsOneComponent implements OnInit {
   getInitialDate(){
     this.shipmentsService.getShipSession().subscribe(
       res => this.initialDate = res,
-      err => {this.modalService.open(err.error.message); console.log(err.error)},
+      error => this.modalService.open(error.error.message),
       () => console.log('complede')
     );
   }
@@ -55,19 +57,17 @@ export class ImportStepsOneComponent implements OnInit {
       console.log(this.stepOne)
       this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
       this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
+      this.forecastModelService.ticketInformation.stepOne.scenarioMacro = this.stepOne.scenarioMacro;
+      this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
       this.router.navigate(['steps/mathForecast']);
     }
-
   }
+  getCorrespondenceSession() {
 
-  setInitialDate(event: any) {
-
-    if(this.stepOne.idShipments && event.value){
-      console.log('setInitialDate', event.value.id)
-    }
-    console.log('test', this.forecastModelService.ticketInformation.stepOne.id)
-
+    this.shipmentsService.getCorrespondenceSession().subscribe(
+      res => {this.correspondenceSession = res; console.log(res)},
+      error => this.modalService.open(error.message),
+      () => console.log()
+    )
   }
-
-
 }

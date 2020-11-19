@@ -1,185 +1,145 @@
-<div class="p-mb-3" style="margin: 20px 0 0 0 !important;">
-  <p-button type="button" icon="pi pi-chevron-left" (click)="prev()" [disabled]="isFirstPage()" styleClass="p-button-text"></p-button>
-  <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
-  <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
-</div>
-<p-table [value]="shipmentsSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows"
-         [showCurrentPageReport]="true" [(first)]="first"
-         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
-         [resizableColumns]="true">
+<ng-container *ngIf="!this.loading; else shipSession">
+  <div class="p-mb-3" style="margin: 20px 0 0 0 !important;">
+    <p-button type="button" icon="pi pi-chevron-left" (click)="prev()" [disabled]="isFirstPage()" styleClass="p-button-text"></p-button>
+    <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
+    <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
+  </div>
+  <p-table [value]="shipmentsSession"
+           styleClass="p-datatable-sm p-datatable-gridlines"
+           [scrollable]="true" scrollHeight="flex" scrollHeight="75vh"
+           [paginator]="true" [rows]="rows"
+           [showCurrentPageReport]="true" [(first)]="first"
+           currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
+           [resizableColumns]="true">
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col style="width:80px">
+        <col>
+        <col>
+        <col>
+        <col>
+        <col>
+        <col style="width:100px">
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr >
+        <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userLoginAdd">Логин<p-sortIcon field="userLoginAdd"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userFioAdd">ФИО<p-sortIcon field="userFioAdd"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
+        <th> Действия</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-itemShipmentsSession >
+      <tr>
+        <td>{{itemShipmentsSession.id}}</td>
+        <td>{{itemShipmentsSession.name}}</td>
+        <td>{{itemShipmentsSession.year}}</td>
+        <td>{{itemShipmentsSession.userLoginAdd}}</td>
+        <td>{{itemShipmentsSession.userFioAdd}}</td>
+        <td>{{itemShipmentsSession.dateWrite | date:'full' }}</td>
+        <td>
+          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom"  (click)="openShipItemSession(itemShipmentsSession.id)"></button>
+          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text p-button-danger" type="button" icon="pi pi-trash"  pTooltip="Удалить" tooltipPosition="bottom" (click)="removeShipSession(itemShipmentsSession.id)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-container>
 
-  <ng-template pTemplate="colgroup" let-columns>
-    <colgroup>
-      <col style="width:80px">
-      <col>
-      <col>
-      <col>
-      <col>
-      <col>
-      <col style="width:100px">
-    </colgroup>
-  </ng-template>
-  <ng-template pTemplate="header">
-    <tr >
-      <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="userLoginAdd">Логин<p-sortIcon field="userLoginAdd"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="userFioAdd">ФИО<p-sortIcon field="userFioAdd"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
-      <th> Действия</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-itemShipmentsSession >
-    <tr>
-      <td>{{itemShipmentsSession.id}}</td>
-      <td>{{itemShipmentsSession.name}}</td>
-      <td>{{itemShipmentsSession.year}}</td>
-      <td>{{itemShipmentsSession.userLoginAdd}}</td>
-      <td>{{itemShipmentsSession.userFioAdd}}</td>
-      <td>{{itemShipmentsSession.dateWrite | date:'full' }}</td>
-      <td>
-        <button pButton pRipple type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" class="p-button-rounded p-button-success p-mr-2 p-button p-component p-button-icon-only" (click)="openShipItemSession(itemShipmentsSession.id)"></button>
-        <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-warning p-button p-component p-button-icon-only" (click)="removeShipSession(itemShipmentsSession.id)"></button>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+<ng-template #shipSession>
+  <div class="p-d-flex p-jc-center" style="height: 80vh">
+    <div class="p-grid p-ai-center vertical-container ">
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+    </div>
+  </div>
+</ng-template>
 
-<div class="card">
+<div class="card" *ngIf="mathematicalForecastTable;">
+  <p-dialog header="Загруженные данные" [(visible)]="dialogVisible" [style]="{width: '50vw'}" [baseZIndex]="1" [maximizable]="true" [modal]="true" [resizable]="true" [contentStyle]="{height: '90vh'}" >
+    <p-table #dt
+             [columns]="cols"
+             [value]="mathematicalForecastTable"
+             [scrollable]="true" scrollHeight="flex" scrollHeight="75vh"
+             styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id" [style]="{width:'100vw'}"
+             [resizableColumns]="true"  editMode="row"
+             [paginator]="true"
+             [rows]="1500"
+             [totalRecords]="totalRecords"
+             [filterDelay]="0"
+             (onFilter)="massSummYears($event)"
 
-  <p-dialog header="Загруженные данные" [(visible)]="dialogVisible" [style]="{width: '50vw'}" [baseZIndex]="10000" [maximizable]="true" [modal]="true" [resizable]="true" [contentStyle]="{height: '300px'}" >
-    <p-table #dt [value]="shipmentsListSessionId" [scrollable]="true" scrollHeight="flex" scrollHeight="70vh" [filterDelay]="0" styleClass="p-datatable-sm p-datatable-gridlines" [resizableColumns]="true" columnResizeMode="expand" >
+    >
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
-          <col style="width:80px">
-          <col style="width:100px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:250px">
-          <col style="width:250px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:200px">
-          <col style="width:250px">
-          <col style="width:250px">
-          <ng-container *ngIf="shipmentsListSessionId">
-            <col style="width:100px" *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs">
-          </ng-container>
-          <col style="width:150px">
+          <col style="width:80px" >
+          <col *ngFor="let col of columns" [style.width]="col.width" >
+          <col style="width:80px" >
         </colgroup>
       </ng-template>
-      <ng-template pTemplate="header" >
+      <ng-template pTemplate="header" let-columns>
         <tr>
-          <th>№_п.п.</th>
-          <th pResizableColumn pSortableColumn="cargoGroup">Группа груза<p-sortIcon field="cargoGroup"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="shipmentType">Вид перевозки<p-sortIcon field="shipmentType"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="primary">Основные<p-sortIcon field="primary"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="fromRoad">Дорога отправления<p-sortIcon field="fromRoad"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="fromStation">Станция отправления РФ<p-sortIcon field="fromStation"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="fromStationCode">Код станции отправления РФ<p-sortIcon field="fromStationCode"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="senderName">Субъект отправления<p-sortIcon field="senderName"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="receiverName">Грузоотправитель<p-sortIcon field="receiverName"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="toRoad">Дорога назначения<p-sortIcon field="toRoad"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="toStation">Станция назначения РФ<p-sortIcon field="toStation"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="toStationCode">Код станции назначения РФ<p-sortIcon field="toStationCode"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="toSubject">Субъект назначения<p-sortIcon field="toSubject"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="receiverName">Грузополучатель<p-sortIcon field="receiverName"></p-sortIcon></th>
-          <ng-container *ngIf="shipmentsListSessionId">
-            <th pResizableColumn *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs">
-              {{data.year}}
+          <th></th>
+          <th *ngFor="let col of columns;" >
+            <ng-container *ngIf="col['field'] !== 'primary'; else prime">
+              <input pInputText type="text" (click)="$event.stopPropagation()"  (input)="columnFilter($event, col.field)" class="p-column-filter">
+            </ng-container>
+            <ng-template #prime>
+                <p-dropdown appendTo="body" [options]="primeryBol" [(ngModel)]="selectedPrimery" (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>
+            </ng-template>
+          </th>
+          <th></th>
+        </tr>
+        <tr>
+          <th>№</th>
+            <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
+                {{col.header}}
             </th>
-          </ng-container>
           <th>Действия</th>
         </tr>
-        <tr>
-          <th colspan="2">
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'cargoGroup', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'shipmentType', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <p-dropdown [options]="typePrimary" (onChange)="dt.filter($event.value, 'primary', 'equals')" styleClass="p-column-filter" placeholder="Select a Status" [showClear]="true">
-              <ng-template let-option pTemplate="item">
-                <span [class]="'customer-badge primary-' + option.value">{{option.label}}</span>
-              </ng-template>
-            </p-dropdown>
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'fromRoad', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'fromStation', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'fromStationCode', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'senderName', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'receiverName', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'toRoad', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'toStation', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'toStationCode', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'toSubject', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-          <th>
-            <input pInputText type="text" (input)="dt.filter($event.target.value, 'receiverName', 'contains')" placeholder="Фильтр" class="p-column-filter">
-          </th>
-
-
-
-          <ng-container *ngFor="let data of shipmentsListSessionId[0].shipmentYearValuePairs; let i = index">
-            <th>
-              <p>data.value</p>
-              <input pInputText type="text" (input)="dt.filter($event.target.value, 'data.value', 'contains')" placeholder="Фильтр" class="p-column-filter">
-            </th>
-          </ng-container>
-
-        </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-item let-ri="rowIndex">
-        <tr>
+
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+        <tr [pEditableRow]="rowData">
           <td>{{ri}}</td>
-          <td>{{item.cargoGroup}}</td>
-          <td>{{item.shipmentType}}</td>
-          <td *ngIf="item.primary === true">да</td>
-          <td *ngIf="item.primary === false">нет</td>
-          <td>{{item.fromRoad}}</td>
-          <td>{{item.fromStation}}</td>
-          <td>{{item.fromStationCode}}</td>
-          <td>{{item.senderName}}</td>
-          <td>{{item.receiverName}}</td>
-          <td>{{item.toRoad}}</td>
-          <td>{{item.toStation}}</td>
-          <td>{{item.toStationCode}}</td>
-          <td>{{item.toSubject}}</td>
-          <td>{{item.receiverName}}</td>
-          <td *ngFor="let data of item.shipmentYearValuePairs">
-            {{data.value | number }}
+          <td pEditableColumn *ngFor="let col of this.cols; let idx = index">
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
+              </ng-template>
+              <ng-template pTemplate="output" >
+                <div *ngIf="idx < 13 && col['field'] !== 'primary'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'primary'">
+                  <ng-container *ngIf="rowData[col.field] === true; else primaryFalse">
+                    да
+                  </ng-container>
+                  <ng-template #primaryFalse>
+                    нет
+                  </ng-template>
+                </div>
+                <div *ngIf="idx > 12" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
+                  {{rowData | field:col}}
+                </div>
+              </ng-template>
+            </p-cellEditor>
           </td>
-        <td>
-          <button pButton pRipple type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" class="p-button-rounded p-button-success p-mr-2 p-button p-component p-button-icon-only"></button>
-          <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-warning p-button p-component p-button-icon-only"></button>
-        </td>
+
+          <td style="text-align:center">
+            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
+          </td>
         </tr>
       </ng-template>
       <ng-template pTemplate="footer">
         <tr>
-          <td colspan="13" class="p-text-right">Итого: </td>
-          <td *ngFor="let items of this.massSummYears">{{items | number}}</td>
+          <td colspan="14" class="p-text-right">Итого: </td>
+          <td *ngFor="let items of this.massSummYear">{{items | number}}</td>
         </tr>
       </ng-template>
     </p-table>
@@ -188,4 +148,3 @@
     </ng-template>
   </p-dialog>
   </div>
-

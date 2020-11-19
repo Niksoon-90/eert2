@@ -22,11 +22,13 @@ export interface IShipment {
   toStation:	string
   toStationCode:	number
   toSubject:	string
-  primary: boolean
+  primary?: boolean
 }
 
 interface IShipmentYearValuePairs {
-  id:	number
-  value:	number
-  year:	number
+  id?:	number
+  value?:	number
+  year?:	number
+  shipment?: number,
+  calculated?: boolean
 }

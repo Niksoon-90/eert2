@@ -12,8 +12,9 @@ export class DataCargoComponent implements OnInit {
   cargoSession: ISession[];
   first = 0;
   rows = 25;
-  customers: any;
-  typeCargo: any[];
+  loading: boolean = true;
+  checkTypeCargo: boolean = true;
+
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -21,37 +22,32 @@ export class DataCargoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.typeCargo = [
-      {id:1, name:'Грузоотправитель', type: 'SENDER_CLAIMS'},
-      {id:2, name:'Грузополучатель', type: 'RECEIVER_CLAIMS'}
-    ]
-    this.getCargoSessionSession()
+    this.chekedCargoType()
   }
   next() {
     this.first = this.first + this.rows;
   }
 
-  prev() {
-    this.first = this.first - this.rows;
-  }
-
   reset() {
     this.first = 0;
-    this.getCargoSessionSession();
-  }
-  isLastPage(): boolean {
-    return this.customers ? this.first === (this.customers.length - this.rows): true;
+    this.chekedCargoType();
   }
 
-  isFirstPage(): boolean {
-    return this.customers ? this.first === 0 : true;
+
+  getCargoSessionSession(type: string) {
+    this.loading = true;
+    this.shipmentsService.getClaimSession(type).subscribe(
+      res => {this.cargoSession = res; console.log('res', res)},
+      error => this.modalService.open(error.message),
+      () =>  this.loading = false
+    )
   }
 
-  getCargoSessionSession() {
-    this.shipmentsService.getClaimSession().subscribe(
-      res => {this.cargoSession = res; console.log(res)},
-      err => this.modalService.open(err.message)),
-      () => console.log('HTTP request completed.')
+  chekedCargoType() {
+    if(this.checkTypeCargo === true){
+      this.getCargoSessionSession('SENDER_CLAIMS')
+    }else if(this.checkTypeCargo === false){
+      this.getCargoSessionSession('RECEIVER_CLAIMS')
+    }
   }
-
 }

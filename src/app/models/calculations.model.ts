@@ -1,9 +1,4 @@
-export interface ICalculationsModel {
-  id: number;
-  name: string;
-  startDate: string;
-  state: string;
-}
+
 export interface ISelectMethodUsers {
   id: number;
   type: string;
@@ -19,5 +14,6 @@ export interface ICalculatingPredictiveRegression{
   groupVolumesByYears: {},
   macroIndexesByYears: {},
   calculatedVolumes: {},
-  regressionParameters: number[]
+  regressionParameters: number[],
+  primary?: boolean
 }

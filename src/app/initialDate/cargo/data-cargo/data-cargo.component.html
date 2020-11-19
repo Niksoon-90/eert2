@@ -1,65 +1,73 @@
-<div class="p-mb-3" style="margin: 20px 0 0 0 !important;">
-  <p-button type="button" icon="pi pi-chevron-left" (click)="prev()" [disabled]="isFirstPage()" styleClass="p-button-text"></p-button>
-  <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
-  <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
+
+<div class="p-d-flex p-jc-between">
+  <div  style="margin: 20px 0 0 0 !important;">
+    <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
+  </div>
+  <div  class="p-d-flex p-flex-wrap" style="margin: 20px 0 0 0 !important;">
+    <div class="p-d-flex">
+      <p-inputSwitch [(ngModel)]="checkTypeCargo" (onChange)="chekedCargoType()" style="margin-right: 10px"></p-inputSwitch>
+        <div style="margin-right: 25px" *ngIf="checkTypeCargo">Грузоотправители</div>
+        <div style="margin-right: 25px" *ngIf="!checkTypeCargo">Грузополучатель</div>
+    </div>
+  </div>
 </div>
-<p-table #dt [value]="cargoSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows"
-         [showCurrentPageReport]="true" [(first)]="first"
-         currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
-         [resizableColumns]="true">
-  <ng-template pTemplate="colgroup" let-columns>
-    <colgroup>
-      <col style="width:80px">
-      <col>
-      <col>
-      <col>
-      <col>
-      <col>
-      <col>
-      <col style="width:100px">
-    </colgroup>
-  </ng-template>
-  <ng-template pTemplate="header">
-    <tr >
-      <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="fileType">Тип<p-sortIcon field="fileType"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="userLoginAdd">Логин<p-sortIcon field="userLoginAdd"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="userFioAdd">ФИО<p-sortIcon field="userFioAdd"></p-sortIcon></th>
-      <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
-      <th> Действия</th>
-    </tr>
-    <tr>
-      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'id', 'startsWith')" placeholder="id" class="p-column-filter"></th>
-      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'contains')" placeholder="Наименование" class="p-column-filter"></th>
-      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'year', 'contains')" placeholder="Года" class="p-column-filter"></th>
-      <th>
-        <p-dropdown [options]="typeCargo" (onChange)="dt.filter($event.value, 'fileType', 'equals')" styleClass="p-column-filter" placeholder="Тип" [showClear]="true">
-          <ng-template let-option pTemplate="item">
-            <span >{{option.name}}</span>
-          </ng-template>
-        </p-dropdown>
-      </th>
-      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userLoginAdd', 'contains')" placeholder="Логин" class="p-column-filter"></th>
-      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userFioAdd', 'contains')" placeholder="ФИО" class="p-column-filter"></th>
-      <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'dateWrite', 'contains')" placeholder="Дата загрузки" class="p-column-filter"></th>
-      <th></th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-itemCargoSession >
-    <tr>
-      <td>{{itemCargoSession.id}}</td>
-      <td>{{itemCargoSession.name}}</td>
-      <td>{{itemCargoSession.year}}</td>
-      <td>{{itemCargoSession.fileType}}</td>
-      <td>{{itemCargoSession.userLoginAdd}}</td>
-      <td>{{itemCargoSession.userFioAdd}}</td>
-      <td>{{itemCargoSession.dateWrite | date:'full' }}</td>
-      <td>
-        <button pButton pRipple type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" class="p-button-rounded p-button-success p-mr-2 p-button p-component p-button-icon-only" ></button>
-        <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom" class="p-button-rounded p-button-warning p-button p-component p-button-icon-only"></button>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+
+<ng-template #cargoLoader>
+  <div class="p-d-flex p-jc-center" style="height: 80vh">
+    <div class="p-grid p-ai-center vertical-container ">
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+    </div>
+  </div>
+</ng-template>
+<ng-container *ngIf="!this.loading; else cargoLoader">
+  <p-table #dt [value]="cargoSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows"
+           [showCurrentPageReport]="true" [(first)]="first"
+           currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
+           [resizableColumns]="true">
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col style="width:80px">
+        <col>
+        <col>
+        <col>
+        <col>
+        <col>
+        <col style="width:100px">
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr >
+        <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userLoginAdd">Логин<p-sortIcon field="userLoginAdd"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userFioAdd">ФИО<p-sortIcon field="userFioAdd"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
+        <th> Действия</th>
+      </tr>
+      <tr>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'id', 'startsWith')" placeholder="id" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'contains')" placeholder="Наименование" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'year', 'contains')" placeholder="Года" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userLoginAdd', 'contains')" placeholder="Логин" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userFioAdd', 'contains')" placeholder="ФИО" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'dateWrite', 'contains')" placeholder="Дата загрузки" class="p-column-filter"></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-itemCargoSession >
+      <tr>
+        <td>{{itemCargoSession.id}}</td>
+        <td>{{itemCargoSession.name}}</td>
+        <td>{{itemCargoSession.year}}</td>
+        <td>{{itemCargoSession.userLoginAdd}}</td>
+        <td>{{itemCargoSession.userFioAdd}}</td>
+        <td>{{itemCargoSession.dateWrite | date:'full' }}</td>
+        <td>
+          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom"  ></button>
+          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text p-button-danger" type="button" icon="pi pi-trash"  pTooltip="Удалить" tooltipPosition="bottom" ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-container>

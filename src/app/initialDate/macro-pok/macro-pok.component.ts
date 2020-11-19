@@ -3,6 +3,7 @@ import {ShipmentsService} from "../../services/shipments.service";
 import {IMacroPokModel} from "../../models/macroPok.model";
 import {MessageService} from "primeng/api";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {ModalService} from "../../services/modal.service";
 
 @Component({
   selector: 'app-macro-pok',
@@ -11,9 +12,12 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
   providers: [MessageService]
 })
 export class MacroPokComponent implements OnInit {
+  loading: boolean = true;
 
   constructor(
-    private shipmentsService: ShipmentsService) { }
+    private shipmentsService: ShipmentsService,
+    private modalService:ModalService
+    ) { }
 
   macroPokList: IMacroPokModel[];
   form: FormGroup
@@ -70,10 +74,11 @@ export class MacroPokComponent implements OnInit {
   }
 
   getMacroPok(){
+    this.loading = true;
     this.shipmentsService.getMacroPok().subscribe(
       res => this.macroPokList = res,
-      err => console.log('HTTP Error', err.message),
-      () => console.log('HTTP request completed.')
+      error => this.modalService.open(error.error.message),
+      () => this.loading = false
     )
   }
 
@@ -103,8 +108,8 @@ export class MacroPokComponent implements OnInit {
   onRowEditSave(macroPok: any) {
     console.log(JSON.stringify(macroPok))
     this.shipmentsService.putMacroPok(macroPok).subscribe(
-      res => { console.log(res)},
-      err => console.log('HTTP Error', err.message),
+      res => console.log(),
+      error => this.modalService.open(error.error.message),
       () => this.getMacroPok()
     )
   }
@@ -119,7 +124,7 @@ export class MacroPokComponent implements OnInit {
         this.getMacroPok();
         this.resetForm();
       },
-      error => console.log(error.message),
+      error => this.modalService.open(error.error.message),
       () => console.log('HTTP request completed.')
     )
   }

@@ -10,8 +10,8 @@ export class ForecastingModelService {
     stepOne: {
       Session: null,
       calcYearsNumber: 0,
-      idCargo: 0,
-      id: null
+      scenarioMacro: null,
+      correspondenceSession: null,
     },
     stepThree: {
         forecastingStrategy: null,

@@ -6,16 +6,12 @@
     <ng-template pTemplate="body">
       <div class="p-d-flex  p-jc-center">
        <div class="p-field p-col-2">
-         <div class="p-field-radiobutton">
-           <p-radioButton name="all" value="all" [(ngModel)]="correspondence" inputId="all"></p-radioButton>
-           <label for="all">Все кореспонденции</label>
-         </div>
-         <div class="p-field-radiobutton">
-           <p-radioButton name="sustainable" value="sustainable" [(ngModel)]="correspondence" inputId="sustainable"></p-radioButton>
-           <label for="sustainable">Устойчивые кореспонденции</label>
+         <div *ngFor="let type of correspondenceTypes" class="p-field-checkbox">
+           <p-radioButton inpudIt="type.key" name="type" [value]="type" [(ngModel)]="correspondence" (change)="test($event)"></p-radioButton>
+           <label [for]="type.key">{{type.name}}</label>
          </div>
        </div>
-       <div class="p-field p-col-8">
+       <div class="p-field p-col-6">
          <div class="p-fluid p-formgrid p-grid">
            <div class="p-field p-col-12">
              <label>Стратегия прогнозирования:</label>
@@ -31,23 +27,31 @@
            </div>
          </ng-container>
        </div>
-       <div class="p-field p-col-2">
 
-       </div>
       </div>
-
-      <button pButton pRipple type="button" label="Расчитать" class="p-button-success" (click)="calculateForecastingStrategy()" [disabled]="!stepThree.forecastingStrategy"></button>
-      <button pButton pRipple type="button" label="Увязать " class="p-button-success" (click)="test()"></button>
-      <button pButton pRipple type="button" label="Учесть заявки грузоотправителей" class="p-button-success" disabled></button>
-      <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" disabled></button>
-      <ng-container *ngIf="mathematicalForecastTable">
-        <app-mathematical-forecast-table
-          [mathematicalForecastTable]="this.mathematicalForecastTable">
+      <div class="p-d-flex p-jc-between">
+        <div>
+          <button pButton pRipple type="button" label="Расчитать" class="p-button-success p-button-lg" (click)="calculateForecastingStrategy()" [disabled]="!stepThree.forecastingStrategy"></button>
+        </div>
+        <div>
+          <button pButton pRipple type="button" label="Увязать " class="p-button-success" (click)="correlation()" [disabled]="disableCorrelation"></button>
+          <button pButton pRipple type="button" label="Учесть заявки грузоотправителей" class="p-button-success" [disabled]="disableCorrelation"></button>
+          <button pButton pRipple type="button" label="Учесть заявки грузополучателей" class="p-button-success" [disabled]="disableCorrelation"></button>
+          <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" (click)="corresponTie()" [disabled]="disableCorrelation"></button>
+        </div>
+      </div>
+      <ng-container *ngIf="this.loading; else loader">
+        <app-mathematical-forecast-table *ngIf="this.mathematicalForecastTable"
+                                         [correspondence]="this.correspondence"
+                                         [mathematicalForecastTable]="this.mathematicalForecastTable">
         </app-mathematical-forecast-table>
       </ng-container>
-
     </ng-template>
-
+    <ng-template #loader>
+      <div class="p-d-flex p-jc-center">
+        <p-progressSpinner></p-progressSpinner>
+      </div>
+    </ng-template>
 
     <ng-template pTemplate="footer">
       <div class="p-grid p-nogutter p-justify-between">

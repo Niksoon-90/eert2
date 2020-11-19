@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {LOCALE_ID, NgModule} from '@angular/core';
+import { LOCALE_ID, NgModule} from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UploadFileComponent } from './initialDate/upload-file/upload-file.component';
@@ -14,7 +14,6 @@ import {Routes, RouterModule} from '@angular/router';
 import {MenubarModule} from 'primeng/menubar';
 import { ShipmentsComponent } from './initialDate/shipments/shipments.component';
 import { DataShipmentsComponent } from './initialDate/shipments/data-shipments/data-shipments.component';
-import {TableModule} from 'primeng/table';
 import {TooltipModule} from 'primeng/tooltip';
 import { CargoComponent } from './initialDate/cargo/cargo.component';
 import { CorrespondenceComponent } from './initialDate/correspondence/correspondence.component';
@@ -44,6 +43,11 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import { DataCorrespondenceComponent } from './initialDate/correspondence/data-correspondence/data-correspondence.component';
 import { DataCargoComponent } from './initialDate/cargo/data-cargo/data-cargo.component';
 import { StepsComponent } from './calculations/steps/steps.component';
+import {FieldPipe} from "./field.pipe";
+import {MultiSelectModule} from "primeng/multiselect";
+import { TableModule } from 'primeng/table';
+import {InputSwitchModule} from "primeng/inputswitch";
+
 
 const itemRoutesShipments: Routes = [
   {path: 'data', component: DataShipmentsComponent},
@@ -99,6 +103,7 @@ registerLocaleData(localeRu, 'ru');
     DataCorrespondenceComponent,
     DataCargoComponent,
     StepsComponent,
+    FieldPipe,
   ],
   imports: [
     BrowserModule,
@@ -112,7 +117,6 @@ registerLocaleData(localeRu, 'ru');
     MenuModule,
     RouterModule.forRoot(appRoutes),
     MenubarModule,
-    TableModule,
     TooltipModule,
     PanelMenuModule,
     StepsModule,
@@ -125,8 +129,12 @@ registerLocaleData(localeRu, 'ru');
     CalendarModule,
     RadioButtonModule,
     SidebarModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    MultiSelectModule,
+    TableModule,
+    InputSwitchModule,
   ],
+
   providers: [
     { provide: LOCALE_ID, useValue: 'ru' }
   ],

@@ -23,7 +23,6 @@ export class UploadFileComponent implements OnInit {
   displayModal: boolean = false;
   dimensionItems: any;
   cargoTypes: any[];
-  disabledButton: boolean;
 
   constructor(
     private shipmentsService: ShipmentsService,
