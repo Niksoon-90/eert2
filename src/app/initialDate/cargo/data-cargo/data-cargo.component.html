@@ -1,4 +1,3 @@
-
 <div class="p-d-flex p-jc-between">
   <div  style="margin: 20px 0 0 0 !important;">
     <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
@@ -19,7 +18,7 @@
     </div>
   </div>
 </ng-template>
-<ng-container *ngIf="!this.loading; else cargoLoader">
+<ng-container *ngIf="this.loading; else cargoLoader">
   <p-table #dt [value]="cargoSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows"
            [showCurrentPageReport]="true" [(first)]="first"
            currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
@@ -64,10 +63,20 @@
         <td>{{itemCargoSession.userFioAdd}}</td>
         <td>{{itemCargoSession.dateWrite | date:'full' }}</td>
         <td>
-          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" (click)="test(itemCargoSession.id)" ></button>
-          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text p-button-danger" type="button" icon="pi pi-trash"  pTooltip="Удалить" tooltipPosition="bottom" ></button>
+          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" (click)="openShipItemSession(itemCargoSession.id)" ></button>
+          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text p-button-danger" type="button" icon="pi pi-trash"  pTooltip="Удалить" tooltipPosition="bottom"  (click)="removeShipSession(itemCargoSession.id)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
+</ng-container>
+<ng-container *ngIf="mathematicalForecastTable">
+  <app-list-chipment-data
+    [dialogVisible]="this.dialogVisible"
+    [mathematicalForecastTable]="this.mathematicalForecastTable"
+    [loading]="this.loading"
+    (change)="loadingChange($event)"
+    (changes)="CloseModalChange($event)"
+  >
+  </app-list-chipment-data>
 </ng-container>

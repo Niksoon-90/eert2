@@ -12,7 +12,6 @@ import {ModalService} from "../../../services/modal.service";
 })
 export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   @Input() mathematicalForecastTable;
-  @Input() correspondence;
   @ViewChild('dt')  table: Table;
 
   loading: boolean;
@@ -35,9 +34,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.totalRecords = this.mathematicalForecastTable.length;
-    if(this.correspondence.key === true){
-      this.mathematicalForecastTable = this.mathematicalForecastTable.filter(data => data.primary === true )
-    }
+
   }
   ngOnInit(): void {
     this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
@@ -54,7 +51,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
       { field: 'toStationCode', header: 'Код станции назначения РФ', width: '100px', keyS: false },
       { field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false },
       { field: 'senderName', header: 'Грузополучатель', width: '100px', keyS: false },
-      { field: 'primary', header: 'К', width: '20px', keyS: false },
+      { field: 'primary', header: 'Уст.', width: '80px', keyS: false },
     ];
     for(let i=0; i< this.columsYears ; i++){
       this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })

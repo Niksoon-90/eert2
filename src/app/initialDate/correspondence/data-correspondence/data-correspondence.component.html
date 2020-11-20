@@ -56,11 +56,21 @@
         <td>{{itemCorrespondenceSession.userFioAdd}}</td>
         <td>{{itemCorrespondenceSession.dateWrite | date:'full' }}</td>
         <td>
-          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" ></button>
-          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text p-button-danger" type="button" icon="pi pi-trash"  pTooltip="Удалить" tooltipPosition="bottom"></button>
+          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" (click)="openShipItemSession(itemCorrespondenceSession.id)"></button>
+          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text p-button-danger" type="button" icon="pi pi-trash"  pTooltip="Удалить" tooltipPosition="bottom" (click)="removeShipSession(itemCorrespondenceSession.id)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
-
 </ng-container>
+<ng-container *ngIf="mathematicalForecastTable">
+  <app-list-chipment-data
+    [dialogVisible]="this.dialogVisible"
+    [mathematicalForecastTable]="this.mathematicalForecastTable"
+    [loading]="this.loading"
+    (change)="loadingChange($event)"
+    (changes)="CloseModalChange($event)"
+  >
+  </app-list-chipment-data>
+</ng-container>
+

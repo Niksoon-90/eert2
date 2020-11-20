@@ -21,8 +21,6 @@ export class ForecastCorrespondenceComponent implements OnInit {
   stepOnecalcYearsNumber:number;
   disableCorrelation: boolean = true;
   loading: boolean = false;
-  correspondence: any;
-  correspondenceTypes: any[] = [{name: 'Все корреспонденции', key: false}, {name: 'Устойчивые кореспонденции', key: true}];
 
   constructor(
     private router: Router,
@@ -41,7 +39,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.correspondence = this.correspondenceTypes[0];
+
     this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
     this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     this.stepThree = this.forecastModelService.ticketInformation.stepThree;

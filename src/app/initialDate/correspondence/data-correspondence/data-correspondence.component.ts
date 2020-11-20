@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ModalService} from "../../../services/modal.service";
-import {ISession} from "../../../models/shipmenst.model";
+import {ISession, IShipment} from "../../../models/shipmenst.model";
 
 @Component({
   selector: 'app-data-correspondence',
@@ -14,6 +14,9 @@ export class DataCorrespondenceComponent implements OnInit {
   rows = 25;
   customers: any;
   loading: boolean = true;
+
+  mathematicalForecastTable: IShipment[];
+  dialogVisible: boolean;
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -52,4 +55,41 @@ export class DataCorrespondenceComponent implements OnInit {
     )
   }
 
+  openShipItemSession(id: any) {
+    this.loading = true
+    this.shipmentsService.getShipments(id).subscribe(
+      res => this.mathematicalForecastTable = res,
+      error => {
+        this.modalService.open(error.error.message);
+        this.loading = false;
+      },
+      () => {
+        this.showDialog();
+
+      }
+    )
+  }
+  showDialog() {
+    this.dialogVisible = true;
+    this.loading = false;
+  }
+  loadingChange(event) {
+    this.loading = event;
+  }
+
+  CloseModalChange(event: boolean) {
+    this.dialogVisible = event;
+  }
+
+  removeShipSession(id: number) {
+    this.loading = true
+    this.shipmentsService.deleteShipSession(id).subscribe(
+      () =>  this.getCorrespondenceSession(),
+      error => {
+        this.modalService.open(error.error.message);
+        this.loading = false;
+      },
+      () => this.loading = false
+    )
+  }
 }

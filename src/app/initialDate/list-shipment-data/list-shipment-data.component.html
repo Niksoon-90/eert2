@@ -1,17 +1,26 @@
 <div class="card" *ngIf="mathematicalForecastTable;">
-  <p-dialog header="Загруженные данные" [(visible)]="dialogVisible" [style]="{width: '50vw'}" [baseZIndex]="1" [maximizable]="true" [modal]="true" [resizable]="true" [contentStyle]="{height: '90vh'}" >
+  <p-dialog header="Загруженные данные"
+            [(visible)]="dialogVisible"
+            [style]="{width: '50vw'}"
+            [baseZIndex]="1"
+            [maximizable]="true"
+            [modal]="false"
+            [resizable]="true"
+            [contentStyle]="{height: '50vh'}"
+            [closeOnEscape]="false"
+            [closable]="false" >
     <p-table #dt
+             [style]="{width:'94.7vw'}"
              [columns]="cols"
              [value]="mathematicalForecastTable"
-             [scrollable]="true" scrollHeight="flex" scrollHeight="75vh"
-             styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id" [style]="{width:'94.7vw'}"
-             [resizableColumns]="true"  editMode="row"
+             [scrollable]="true" scrollHeight="70vh"
+             styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
+             [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
              [paginator]="true"
-             [rows]="1500"
+             [rows]="500"
              [totalRecords]="totalRecords"
              [filterDelay]="0"
              (onFilter)="massSummYears($event)"
-
     >
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
@@ -21,6 +30,13 @@
         </colgroup>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th pResizableColumn >№</th>
+          <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
+            {{col.header}}
+          </th>
+          <th>Действия</th>
+        </tr>
         <tr>
           <th></th>
           <th *ngFor="let col of columns;" >
@@ -33,15 +49,7 @@
           </th>
           <th></th>
         </tr>
-        <tr>
-          <th pResizableColumn >№</th>
-          <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
-            {{col.header}}
-          </th>
-          <th>Действия</th>
-        </tr>
       </ng-template>
-
       <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
         <tr [pEditableRow]="rowData">
           <td>{{ri}}</td>
@@ -70,7 +78,7 @@
           </td>
 
           <td style="text-align:center">
-            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit()" class="p-button-rounded p-button-text"></button>
             <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
             <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
           </td>
@@ -84,7 +92,7 @@
       </ng-template>
     </p-table>
     <ng-template pTemplate="footer">
-      <button type="button" pButton pRipple icon="pi pi-times" (click)="dialogVisible=false" label="Закрыть" class="p-button-text"></button>
+      <button type="button" pButton pRipple icon="pi pi-times" (click)="closeModalTable()" label="Закрыть" class="p-button-text"></button>
     </ng-template>
   </p-dialog>
 </div>

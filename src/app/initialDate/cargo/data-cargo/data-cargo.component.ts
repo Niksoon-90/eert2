@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ISession} from "../../../models/shipmenst.model";
+import {ISession, IShipment} from "../../../models/shipmenst.model";
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ModalService} from "../../../services/modal.service";
 
@@ -14,7 +14,8 @@ export class DataCargoComponent implements OnInit {
   rows = 25;
   loading: boolean = true;
   checkTypeCargo: boolean = true;
-
+  mathematicalForecastTable: IShipment[];
+  dialogVisible: boolean;
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -51,7 +52,41 @@ export class DataCargoComponent implements OnInit {
     }
   }
 
-  test(id: number) {
-    console.log(id)
+  openShipItemSession(id: any) {
+    this.loading = true
+    this.shipmentsService.getShipments(id).subscribe(
+      res => this.mathematicalForecastTable = res,
+      error => {
+        this.modalService.open(error.error.message);
+        this.loading = false;
+      },
+      () => {
+        this.showDialog();
+
+      }
+    )
+  }
+  showDialog() {
+    this.dialogVisible = true;
+    this.loading = false;
+  }
+  loadingChange(event) {
+    this.loading = event;
+  }
+
+  CloseModalChange(event: boolean) {
+    this.dialogVisible = event;
+  }
+
+  removeShipSession(id: any) {
+    this.loading = true
+    this.shipmentsService.deleteShipSession(id).subscribe(
+      () =>  this.chekedCargoType(),
+      error => {
+        this.modalService.open(error.error.message);
+        this.loading = false;
+      },
+      () => this.loading = false
+    )
   }
 }

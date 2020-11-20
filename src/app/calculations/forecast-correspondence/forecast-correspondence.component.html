@@ -5,12 +5,6 @@
     </ng-template>
     <ng-template pTemplate="body">
       <div class="p-d-flex  p-jc-center">
-       <div class="p-field p-col-2">
-         <div *ngFor="let type of correspondenceTypes" class="p-field-checkbox">
-           <p-radioButton inpudIt="type.key" name="type" [value]="type" [(ngModel)]="correspondence" (change)="test($event)"></p-radioButton>
-           <label [for]="type.key">{{type.name}}</label>
-         </div>
-       </div>
        <div class="p-field p-col-6">
          <div class="p-fluid p-formgrid p-grid">
            <div class="p-field p-col-12">
@@ -27,9 +21,6 @@
            </div>
          </ng-container>
        </div>
-        <div class="p-field p-col-4">
-
-        </div>
       </div>
       <div class="p-d-flex p-jc-between">
         <div>
@@ -44,7 +35,6 @@
       </div>
       <ng-container *ngIf="this.loading; else loader">
         <app-mathematical-forecast-table *ngIf="this.mathematicalForecastTable"
-                                         [correspondence]="this.correspondence"
                                          [mathematicalForecastTable]="this.mathematicalForecastTable">
         </app-mathematical-forecast-table>
       </ng-container>

@@ -47,8 +47,7 @@ import {FieldPipe} from "./field.pipe";
 import {MultiSelectModule} from "primeng/multiselect";
 import { TableModule } from 'primeng/table';
 import {InputSwitchModule} from "primeng/inputswitch";
-import { InitialDateComponent } from './initial-date/initial-date.component';
-import { ListChipmentDataComponent } from './initialDate/list-chipment-data/list-chipment-data.component';
+import { ListShipmentDataComponent } from './initialDate/list-shipment-data/list-shipment-data.component';
 
 
 const itemRoutesShipments: Routes = [
@@ -106,8 +105,7 @@ registerLocaleData(localeRu, 'ru');
     DataCargoComponent,
     StepsComponent,
     FieldPipe,
-    InitialDateComponent,
-    ListChipmentDataComponent,
+    ListShipmentDataComponent,
   ],
   imports: [
     BrowserModule,
