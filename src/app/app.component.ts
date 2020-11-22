@@ -34,7 +34,10 @@ export class AppComponent implements OnInit{
         ]
       },
       {
-        label: 'Справочники'
+        label: 'Справочники',
+        items:[
+          {label: 'Модель прогнозирования', routerLink: [''], command: (event) => { this.clickItem(event); }},
+        ]
       }];
   }
 

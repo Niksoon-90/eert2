@@ -2,7 +2,13 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {Observable} from "rxjs";
-import {ICalculatingPredictiveRegression} from "../models/calculations.model";
+import {
+  ICalculatingPredictiveRegression,
+  ICargoNci,
+  ICargoOwnerInfluenceFactor,
+  IInfluenceNci
+} from "../models/calculations.model";
+import {MonoCargoSystemsModel} from "../models/mono-cargo-systems.model";
 
 @Injectable({
   providedIn: 'root'
@@ -38,13 +44,55 @@ export class CalculationsService {
   getPerspective(sessionId: number,perspectiveSessionId: number ): Observable<ICalculatingPredictiveRegression[]>{
     return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/perspective?perspectiveSessionId=${perspectiveSessionId}&sessionId=${sessionId}`)
   }
-  // getOil(){
-  //   return this.http.get()
-  // }
-  // getMetallurgy(){
-  //   return this.http.get()
-  // }
-  // getOre(){
-  //   return this.http.get()
-  // }
+  //TODO 4
+  getOil(): Observable<MonoCargoSystemsModel[]>{
+    return this.http.get<MonoCargoSystemsModel[]>(this.urlCalc + `api/external/oil`)
+  }
+  getMetallurgy(): Observable<MonoCargoSystemsModel[]>{
+    return this.http.get<MonoCargoSystemsModel[]>(this.urlCalc + `api/external/metal`)
+  }
+  getOre(): Observable<MonoCargoSystemsModel[]>{
+    return this.http.get<MonoCargoSystemsModel[]>(this.urlCalc + `api/external/ruda`)
+  }
+  //TODO 5
+  postCargoNci(name: string){
+    return this.http.post(this.urlCalc + `api/catalog/cargo`, name)
+  }
+  putCargoNci(cargoNci:ICargoNci){
+    return this.http.put(this.urlCalc + `api/catalog/cargo`, cargoNci)
+  }
+  getSearchCargoNci(id: number){
+    return this.http.get(this.urlCalc + `api/catalog/cargo/${id}`)
+  }
+  deleteCargoNci(id: number){
+    return this.http.delete(this.urlCalc + `api/catalog/cargo/${id}`)
+  }
+  getCargoNci(): Observable<ICargoNci[]>{
+    return this.http.get<ICargoNci[]>(this.urlCalc + `api/catalog/cargo/all`)
+  }
+
+  //TODO 6
+  postInfluenceNci(influenceNci: IInfluenceNci){
+    return this.http.post(this.urlCalc + `api/catalog/influence`, influenceNci)
+  }
+  putInfluenceNci(influenceNci: IInfluenceNci){
+    return this.http.put(this.urlCalc + `api/catalog/influence`, influenceNci)
+  }
+  getSearchInfluenceNci(id: number){
+    return this.http.get(this.urlCalc + `api/catalog/influence/${id}`)
+  }
+  deleteInfluenceNci(id:number){
+    return this.http.delete(this.urlCalc + `api/catalog/influence/${id}`)
+  }
+  getInfluenceNci(): Observable<IInfluenceNci[]>{
+    return this.http.get<IInfluenceNci[]>(this.urlCalc + `api/catalog/influence/all`)
+  }
+  //TODO 7
+  postCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor: ICargoOwnerInfluenceFactor){
+    return this.http.post(this.urlCalc + `api/cargo/factor`, cargoOwnerInfluenceFactor)
+  }
+  putCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor: ICargoOwnerInfluenceFactor){
+    return this.http.put(this.urlCalc + `api/cargo/factor`, cargoOwnerInfluenceFactor)
+  }
+
 }

@@ -1,4 +1,3 @@
-
 export interface ISelectMethodUsers {
   id: number;
   type: string;
@@ -17,3 +16,20 @@ export interface ICalculatingPredictiveRegression{
   regressionParameters: number[],
   primary?: boolean
 }
+
+export interface ICargoNci {
+  "id"?: number,
+  "name"?: string
+
+}export interface IInfluenceNci {
+  "id"?: number,
+  "name"?: string,
+  "weight"?: number
+}
+
+export interface ICargoOwnerInfluenceFactor {
+  "cargoOwnerId"?: number,
+  "id"?: number,
+  "influenceFactorId"?: number
+}
+

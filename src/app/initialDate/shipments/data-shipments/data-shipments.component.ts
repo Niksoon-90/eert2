@@ -77,14 +77,16 @@ export class DataShipmentsComponent implements OnInit {
   openShipItemSession(id: number) {
     this.loading = true
     this.shipmentsService.getShipments(id).subscribe(
-      res => this.mathematicalForecastTable = res,
-      error => {
-        this.modalService.open(error.error.message);
-        this.loading = false;
-        },
-      () => {
+      res => {
+        this.mathematicalForecastTable = res;
         this.showDialog();
-
+        },
+          error => {
+            this.modalService.open(error.error.message);
+            this.loading = false;
+          },
+      () => {
+        console.log('sdsds')
       }
     )
   }

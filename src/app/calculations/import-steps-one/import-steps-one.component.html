@@ -44,24 +44,24 @@
             <p-dropdown optionLabel="name" [options]="horizonforecast" [(ngModel)]="stepOne.calcYearsNumber"   placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
-<!--      <div class="p-fluid p-formgrid p-grid">-->
-<!--        <div class="p-field p-col-12">-->
-<!--          <label>Перспективгые корреспонденции система "Нефтегрузы":</label>-->
-<!--          <p-dropdown optionLabel="name" [options]="oilCargo" [(ngModel)]="stepOne.calcYearsNumber"   placeholder="Выберите один из вариантов:"></p-dropdown>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="p-fluid p-formgrid p-grid">-->
-<!--        <div class="p-field p-col-12">-->
-<!--          <label>Перспективгые корреспонденции система "Руда":</label>-->
-<!--          <p-dropdown optionLabel="name" [options]="ore" [(ngModel)]="stepOne.calcYearsNumber"   placeholder="Выберите один из вариантов:"></p-dropdown>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="p-fluid p-formgrid p-grid">-->
-<!--        <div class="p-field p-col-12">-->
-<!--          <label>Перспективгые корреспонденции система "Металургия":</label>-->
-<!--          <p-dropdown optionLabel="name" [options]="metallurgy" [(ngModel)]="stepOne.calcYearsNumber"   placeholder="Выберите один из вариантов:"></p-dropdown>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Перспективгые корреспонденции система "Нефтегрузы":</label>
+          <p-dropdown optionLabel="title" [options]="oilCargo" [(ngModel)]="stepOne.oilCargo"   placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Перспективгые корреспонденции система "Руда":</label>
+          <p-dropdown optionLabel="title" [options]="ore" [(ngModel)]="stepOne.ore"   placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Перспективгые корреспонденции система "Металургия":</label>
+          <p-dropdown optionLabel="title" [options]="metallurgy" [(ngModel)]="stepOne.metallurgy"   placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
 
     </ng-template>
     <ng-template pTemplate="footer">

@@ -18,7 +18,7 @@
     </div>
   </div>
 </ng-template>
-<ng-container *ngIf="this.loading; else cargoLoader">
+<ng-container *ngIf="!this.loading; else cargoLoader">
   <p-table #dt [value]="cargoSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows"
            [showCurrentPageReport]="true" [(first)]="first"
            currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
