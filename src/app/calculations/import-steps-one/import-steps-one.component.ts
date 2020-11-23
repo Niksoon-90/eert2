@@ -20,7 +20,11 @@ export class ImportStepsOneComponent implements OnInit {
   cargoSessionSender: any[]
   cargoSessionReceiver: any[]
   horizonforecast: IHorizonforecast[];
-  scenarioMacro: any[];
+  scenarioMacro = [
+    {id: 1, name: 'Пессимистичное значение', type: 'PESSIMISTIC'},
+    {id: 2, name: 'Базовое значение', type: 'BASE'},
+    {id: 3, name: 'Оптимистичное значение', type: 'OPTIMISTIC'}
+  ]
   stepOne: any;
 
   oilCargo: MonoCargoSystemsModel[];
@@ -33,7 +37,14 @@ export class ImportStepsOneComponent implements OnInit {
     private router: Router,
     private modalService: ModalService,
     private calculationsService: CalculationsService
-  ) {}
+  ) {
+    if( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null){
+      this.horizonforecast = [];
+      for (let i = 5; i <= 15; i++) {
+        this.horizonforecast.push({name: i});
+      }
+    }
+  }
 
   ngOnInit(): void  {
     this.getInitialDate();
@@ -45,17 +56,8 @@ export class ImportStepsOneComponent implements OnInit {
     this.getMetallurgy();
 
     this.stepOne = this.forecastModelService.ticketInformation.stepOne;
-    if( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null){
-      this.horizonforecast = [];
-      for (let i = 5; i <= 15; i++) {
-        this.horizonforecast.push({name: i});
-      }
-    }
-    this.scenarioMacro = [
-      {id: 1, name: 'Пессимистичное значение', type: 'PESSIMISTIC'},
-      {id: 1, name: 'Базовое значение', type: 'BASE'},
-      {id: 1, name: 'Оптимистичное значение', type: 'OPTIMISTIC'}
-    ]
+    if(this.stepOne.scenarioMacro === null){this.stepOne.scenarioMacro = this.scenarioMacro[1]}
+    if(this.stepOne.calcYearsNumber === 0){this.stepOne.calcYearsNumber = this.horizonforecast[0]}
   }
 
 

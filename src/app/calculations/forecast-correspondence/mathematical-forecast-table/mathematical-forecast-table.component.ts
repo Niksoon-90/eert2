@@ -34,7 +34,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.totalRecords = this.mathematicalForecastTable.length;
-
+    this.massSummYears(this.mathematicalForecastTable)
   }
   ngOnInit(): void {
     this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
@@ -56,7 +56,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     for(let i=0; i< this.columsYears ; i++){
       this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })
     }
-    this.massSummYears(this.mathematicalForecastTable)
+
   }
 
   columnFilter(event: any, field) {
@@ -100,10 +100,11 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
   onRowEditSave(item: any) {
     delete item.session
-    this.shipmentsService.putShipments(item).subscribe(
-      res => (console.log('god')),
-      error => this.modalService.open(error.error.message)
-    )
+    console.log(JSON.stringify(item))
+    // this.shipmentsService.putShipments(item).subscribe(
+    //   res => (console.log('god')),
+    //   error => this.modalService.open(error.error.message)
+    // )
   }
 
   onRowEditCancel() {
@@ -115,11 +116,17 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     const dec = value / this.massSummYear[idx];
     const resultMass = []
     for(let i=0; i< this.virtTable.length; i++){
-      this.virtTable[i].shipmentYearValuePairs[idx].value = (this.virtTable[i].shipmentYearValuePairs[idx].value * dec).toFixed(2)
+      this.virtTable[i].shipmentYearValuePairs[idx].value = Number((this.virtTable[i].shipmentYearValuePairs[idx].value * dec).toFixed(2))
+      console.log(typeof this.virtTable[i].shipmentYearValuePairs[idx].value)
       const res = this.virtTable[i];
       for(let a = 0; a < this.mathematicalForecastTable.length; a++){
         if(this.virtTable[i].id = this.mathematicalForecastTable[a].id){
           this.mathematicalForecastTable[a] = res;
+          delete res.session
+          console.log('res',res)
+          console.log('this.mathematicalForecastTable[a]', this.mathematicalForecastTable[a])
+          console.log(JSON.stringify(res))
+        //  this.onRowEditSave(res)
           // console.log('1', this.mathematicalForecastTable[a].shipmentYearValuePairs[idx].value)
           // this.mathematicalForecastTable[a].shipmentYearValuePairs[idx].value = res
           // console.log('2', this.mathematicalForecastTable[a].shipmentYearValuePairs[idx].value)

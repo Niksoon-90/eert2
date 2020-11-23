@@ -48,6 +48,10 @@ import {MultiSelectModule} from "primeng/multiselect";
 import { TableModule } from 'primeng/table';
 import {InputSwitchModule} from "primeng/inputswitch";
 import { ListShipmentDataComponent } from './initialDate/list-shipment-data/list-shipment-data.component';
+import { CargoNciComponent } from './directory/cargo-nci/cargo-nci.component';
+import { DirectoryComponent } from './directory/directory.component';
+import { InfluenceFactorComponent } from './directory/influence-factor/influence-factor.component';
+import { CargoOwnerInfluenceFactorComponent } from './directory/cargo-owner-influence-factor/cargo-owner-influence-factor.component';
 
 
 const itemRoutesShipments: Routes = [
@@ -79,6 +83,7 @@ const appRoutes: Routes = [
   {path: 'correspondence', component: CorrespondenceComponent, children: itemRoutesCorrespondence},
   {path: 'macroPok', component: MacroPokComponent},
   {path: 'steps', component: StepsComponent, children: itemRoutesSteps},
+  {path: 'directory', component: DirectoryComponent},
   {path: '', component: CalculationsComponent},
 
 ]
@@ -106,6 +111,10 @@ registerLocaleData(localeRu, 'ru');
     StepsComponent,
     FieldPipe,
     ListShipmentDataComponent,
+    CargoNciComponent,
+    DirectoryComponent,
+    InfluenceFactorComponent,
+    CargoOwnerInfluenceFactorComponent,
   ],
   imports: [
     BrowserModule,

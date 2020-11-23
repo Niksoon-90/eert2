@@ -1,4 +1,5 @@
 <div class="card" *ngIf="mathematicalForecastTable;">
+  <ng-container *ngIf="iCargoNci;">
   <p-dialog header="Загруженные данные"
             [(visible)]="dialogVisible"
             [style]="{width: '50vw'}"
@@ -35,7 +36,7 @@
           <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
             {{col.header}}
           </th>
-          <th>Действия</th>
+          <th pResizableColumn>Действия</th>
         </tr>
         <tr>
           <th></th>
@@ -59,7 +60,11 @@
                 <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
               </ng-template>
               <ng-template pTemplate="output" >
-                <div *ngIf="idx < 13 && col['field'] !== 'primary'">
+
+                <div *ngIf="col['field'] === 'cargoGroup'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'shipmentType'">
                   {{rowData[col.field]}}
                 </div>
                 <div *ngIf="col['field'] === 'primary'">
@@ -70,6 +75,43 @@
                     нет
                   </ng-template>
                 </div>
+                <div *ngIf="col['field'] === 'fromRoad'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'fromStation'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'fromStationCode'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'fromSubject'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'receiverName' && carrgoTypes !== 'receiver'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'receiverName' && carrgoTypes === 'receiver'" [ngStyle]="{'color': checkedcarrgoTypes(rowData[col.field])  == false ? '#c54747' : '#4d7d4d' }">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'toRoad'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'toStation'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'toStationCode'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'toSubject'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'senderName' && carrgoTypes !== 'sender'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="col['field'] === 'senderName' && carrgoTypes === 'sender'" [ngStyle]="{'color': checkedcarrgoTypes(rowData[col.field])  == false ? '#c54747' : '#4d7d4d' }">
+                  {{rowData[col.field]}}
+                </div>
+
                 <div *ngIf="idx > 12" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
                   {{rowData | field:col}}
                 </div>
@@ -95,4 +137,5 @@
       <button type="button" pButton pRipple icon="pi pi-times" (click)="closeModalTable()" label="Закрыть" class="p-button-text"></button>
     </ng-template>
   </p-dialog>
+  </ng-container>
 </div>

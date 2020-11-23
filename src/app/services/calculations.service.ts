@@ -55,9 +55,7 @@ export class CalculationsService {
     return this.http.get<MonoCargoSystemsModel[]>(this.urlCalc + `api/external/ruda`)
   }
   //TODO 5
-  postCargoNci(name: string){
-    return this.http.post(this.urlCalc + `api/catalog/cargo`, name)
-  }
+
   putCargoNci(cargoNci:ICargoNci){
     return this.http.put(this.urlCalc + `api/catalog/cargo`, cargoNci)
   }
@@ -67,8 +65,14 @@ export class CalculationsService {
   deleteCargoNci(id: number){
     return this.http.delete(this.urlCalc + `api/catalog/cargo/${id}`)
   }
-  getCargoNci(): Observable<ICargoNci[]>{
+  getAllCargoNci(): Observable<ICargoNci[]>{
     return this.http.get<ICargoNci[]>(this.urlCalc + `api/catalog/cargo/all`)
+  }
+  getItemCargoNci(name: string): Observable<ICargoNci>{
+    return this.http.get<ICargoNci>(this.urlCalc + `api/catalog/cargo/owner/${name}`)
+  }
+  getCreateCargoNci(name: string){
+    return this.http.post(this.urlCalc + `api/catalog/cargo/owner/${name}`, {})
   }
 
   //TODO 6
@@ -94,5 +98,23 @@ export class CalculationsService {
   putCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor: ICargoOwnerInfluenceFactor){
     return this.http.put(this.urlCalc + `api/cargo/factor`, cargoOwnerInfluenceFactor)
   }
-
+  getCargoOwnerInfluenceFactor(cargoOwnerId:number, influenceFactorId: number){
+    return this.http.get(this.urlCalc + `api/cargo/factor/?cargoOwnerId=${cargoOwnerId}&influenceFactorId=${influenceFactorId}`)
+  }
+  getCargoOwnerInfluenceFactorId(cargoOwnerInfluenceFactorId: number){
+    return this.http.get(this.urlCalc + `api/cargo/factor/${cargoOwnerInfluenceFactorId}`)
+  }
+  deleteCargoOwnerInfluenceFactorId(cargoOwnerInfluenceFactorId: number) {
+    return this.http.get(this.urlCalc + `api/cargo/factor/${cargoOwnerInfluenceFactorId}`)
+  }
+  getAllCargoOwnerInfluenceFactor(): Observable<ICargoOwnerInfluenceFactor[]>{
+    return this.http.get<ICargoOwnerInfluenceFactor[]>(this.urlCalc + `api/cargo/factor/all`)
+  }
+  getAllFactorCargoId(cargoOwnerId: number): Observable<ICargoOwnerInfluenceFactor[]>{
+    return this.http.get<ICargoOwnerInfluenceFactor[]>(this.urlCalc + `api/cargo/factor/all`)
+  }
+  //TODO 8
+  getCargoOwnerSessionId(cargoOwnerSessionId: number, historicalDataSessionId: number): Observable<ICalculatingPredictiveRegression[]>{
+    return  this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/claims/?cargoOwnerSessionId=${cargoOwnerSessionId}&historicalDataSessionId=${historicalDataSessionId}`)
+  }
 }

@@ -1,15 +1,26 @@
-import {Component, DoCheck, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import {ShipmentsService} from "../../services/shipments.service";
 import {ModalService} from "../../services/modal.service";
 import {Table} from "primeng/table";
+import {CalculationsService} from "../../services/calculations.service";
+import {ICargoNci} from "../../models/calculations.model";
 
 @Component({
   selector: 'app-list-chipment-data',
   templateUrl: './list-shipment-data.component.html',
   styleUrls: ['./list-shipment-data.component.scss']
 })
-export class ListShipmentDataComponent implements OnInit, OnChanges, DoCheck {
+export class ListShipmentDataComponent implements OnInit, OnChanges {
   @ViewChild('dt') table: Table;
+  @Input() carrgoTypes;
   @Input() dialogVisible;
   @Input() mathematicalForecastTable;
   @Input() loading;
@@ -24,24 +35,29 @@ export class ListShipmentDataComponent implements OnInit, OnChanges, DoCheck {
   totalRecords: number;
   summYears: 0;
 
+  iCargoNci: ICargoNci[];
+
+
   constructor(
     private shipmentsService: ShipmentsService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private calculationsService: CalculationsService
   ) { }
-  ngDoCheck(){
-    this.massSummYears(this.mathematicalForecastTable);
-  }
+
 
   ngOnChanges() {
+
     this.totalRecords = this.mathematicalForecastTable.length;
   }
 
+
   ngOnInit(): void {
+    this.test();
     if(this.mathematicalForecastTable[0].shipmentYearValuePairs.length > 0){this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length}
     this.loading = false
     this.massSummYears(this.mathematicalForecastTable)
     this.cols = [
-      { field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
+      { field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false, isStatic :true},
       { field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false },
       { field: 'primary', header: 'Корреспонденции', width: '100px', keyS: false },
       { field: 'fromRoad', header: 'Дорога отправления', width: '100px', keyS: false },
@@ -89,7 +105,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges, DoCheck {
 
   onRowEditSave(item: any) {
     delete item.session
-    console.log(JSON.stringify(item))
     this.shipmentsService.putShipments(item).subscribe(
       res => (console.log('god')),
       error => this.modalService.open(error.error.message)
@@ -121,4 +136,15 @@ export class ListShipmentDataComponent implements OnInit, OnChanges, DoCheck {
     this.change.emit(this.loading = false);
     this.changes.emit(this.dialogVisible = false);
   }
+  checkedcarrgoTypes(item: any){
+
+    console.log(item)
+    return  this.iCargoNci.some(cargo => cargo.name === item)
+    }
+  test(){
+    this.calculationsService.getAllCargoNci().subscribe(
+      res => this.iCargoNci = res,
+      error => this.modalService.open(error.error.message)
+    )
+}
 }

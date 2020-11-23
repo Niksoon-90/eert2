@@ -19,7 +19,8 @@ export interface ICalculatingPredictiveRegression{
 
 export interface ICargoNci {
   "id"?: number,
-  "name"?: string
+  "name"?: string,
+  "initialVerificationCoeff"?: number
 
 }export interface IInfluenceNci {
   "id"?: number,
@@ -30,6 +31,7 @@ export interface ICargoNci {
 export interface ICargoOwnerInfluenceFactor {
   "cargoOwnerId"?: number,
   "id"?: number,
-  "influenceFactorId"?: number
+  "influenceFactorId"?: number,
+  "koef"?: number
 }
 

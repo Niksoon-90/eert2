@@ -1,0 +1,69 @@
+<form [formGroup]="form" (ngSubmit)="creategetInfluenceNci(); form.reset()">
+  <input pInputText formControlName="name" type="text">
+  <input pInputText formControlName="weight" type="text">
+  <button  pButton pRipple type="submit"  icon="pi pi-save"  class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+</form>
+<div class="card" *ngIf="influenceNci; else Loader">
+  <p-table #dt
+           [style]="{width:'auto'}"
+           [columns]="cols"
+           [value]="influenceNci"
+           [scrollable]="true" scrollHeight="25vh"
+           styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
+           [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
+           [paginator]="true"
+           [rows]="500"
+           [totalRecords]="totalRecords"
+           [filterDelay]="0"
+  >
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col *ngFor="let col of columns" [style.width]="col.width" >
+        <col style="width:15px" >
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
+          {{col.header}}
+        </th>
+        <th pResizableColumn>Действия</th>
+      </tr>
+      <tr>
+        <th *ngFor="let col of columns;" >
+          <input pInputText type="text"  (input)="dt.filter($event.target.value, col['field'], 'contains')" class="p-column-filter">
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+      <tr [pEditableRow]="rowData">
+        <td pEditableColumn *ngFor="let col of this.cols;">
+          <p-cellEditor *ngIf="!col.isStatic;else staticTemplate">
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="rowData[col.field]">
+            </ng-template>
+            <ng-template pTemplate="output" >
+              {{rowData[col.field]}}
+            </ng-template>
+          </p-cellEditor>
+          <ng-template #staticTemplate>
+            {{ rowData[col.field] }}
+          </ng-template>
+        </td>
+        <td style="text-align:center">
+          <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit()" class="p-button-rounded p-button-text"></button>
+          <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+          <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
+          <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" (click)="deleteInfluenceNci(rowData.id)" class="p-button-rounded p-button-text p-button-danger"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<ng-template #Loader>
+  <div class="p-d-flex p-jc-center" style="height: 80vh">
+    <div class="p-grid p-ai-center vertical-container ">
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+    </div>
+  </div>
+</ng-template>

@@ -16,6 +16,7 @@ export class DataCargoComponent implements OnInit {
   checkTypeCargo: boolean = true;
   mathematicalForecastTable: IShipment[];
   dialogVisible: boolean;
+  carrgoTypes: string;
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -47,8 +48,10 @@ export class DataCargoComponent implements OnInit {
   chekedCargoType() {
     if(this.checkTypeCargo === true){
       this.getCargoSessionSession('SENDER_CLAIMS')
+      this.carrgoTypes = 'sender';
     }else if(this.checkTypeCargo === false){
       this.getCargoSessionSession('RECEIVER_CLAIMS')
+      this.carrgoTypes = 'receiver';
     }
   }
 
