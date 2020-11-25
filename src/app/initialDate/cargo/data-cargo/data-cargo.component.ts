@@ -46,10 +46,10 @@ export class DataCargoComponent implements OnInit {
   }
 
   chekedCargoType() {
-    if(this.checkTypeCargo === true){
+    if(this.checkTypeCargo === false){
       this.getCargoSessionSession('SENDER_CLAIMS')
       this.carrgoTypes = 'sender';
-    }else if(this.checkTypeCargo === false){
+    }else if(this.checkTypeCargo === true){
       this.getCargoSessionSession('RECEIVER_CLAIMS')
       this.carrgoTypes = 'receiver';
     }

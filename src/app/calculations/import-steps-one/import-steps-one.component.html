@@ -14,36 +14,37 @@
             <p-dropdown optionLabel="name" [options]="initialDate" [(ngModel)]="stepOne.Session" placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Сценарий развития экономики:</label>
+          <p-dropdown optionLabel="name" [options]="scenarioMacro" [(ngModel)]="stepOne.scenarioMacro" placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Горизонт прогноза (лет):</label>
+          <p-dropdown optionLabel="name" [options]="horizonforecast" [(ngModel)]="stepOne.calcYearsNumber"   placeholder="Выберите один из вариантов:"></p-dropdown>
+        </div>
+      </div>
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12">
-            <label>Прогноз грузоотправителей:</label>
+            <label>Файл с заявками грузоотправителей:</label>
             <p-dropdown optionLabel="name" [options]="cargoSessionSender" [(ngModel)]="stepOne.cargoSessionSender" placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12">
-            <label>Прогноз грузополучателей:</label>
+            <label>Файл с заявками грузополучателей:</label>
             <p-dropdown optionLabel="name" [options]="cargoSessionReceiver" [(ngModel)]="stepOne.cargoSessionReceiver"  placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
-          <label>Перспективные корреспонденции:</label>
+          <label>Файл с перспективными корреспонденциями:</label>
           <p-dropdown optionLabel="name" [options]="correspondenceSession" [(ngModel)]="stepOne.correspondenceSession"   placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
       </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12">
-            <label>Сценарий развития макропоказателя:</label>
-            <p-dropdown optionLabel="name" [options]="scenarioMacro" [(ngModel)]="stepOne.scenarioMacro" placeholder="Выберите один из вариантов:"></p-dropdown>
-          </div>
-        </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12">
-            <label>Горизонт прогноз:</label>
-            <p-dropdown optionLabel="name" [options]="horizonforecast" [(ngModel)]="stepOne.calcYearsNumber"   placeholder="Выберите один из вариантов:"></p-dropdown>
-          </div>
-        </div>
+
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
           <label>Перспективгые корреспонденции система "Нефтегрузы":</label>

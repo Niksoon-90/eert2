@@ -9,7 +9,7 @@ import {MenuItem} from 'primeng/api';
 })
 export class AppComponent implements OnInit{
   title = 'eert';
-  name = 'Сидоров Максим Петрович';
+  name = 'Егорова Л.В.';
   sidebar: MenuItem[];
   visibleSidebar1: any;
 
@@ -36,7 +36,9 @@ export class AppComponent implements OnInit{
       {
         label: 'Справочники',
         items:[
-          {label: 'Справочники', routerLink: ['directory'], command: (event) => { this.clickItem(event); }},
+          {label: 'Факторы влияния', routerLink: ['directory'], command: (event) => { this.clickItem(event); }},
+          {label: 'Дороги, станции', },
+          {label: 'Группы грузов', },
         ]
       }];
   }

@@ -24,9 +24,9 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     this.createForm()
     this.cols = [
       { field: 'id', header: 'id', width: '15px', isStatic :true},
-      { field: 'cargoOwnerId', header: 'Грузовладельцы', width: '100px', },
-      { field: 'influenceFactorId', header: 'Коэффициент ', width: '15px', isStatic :true},
-      { field: 'koef', header: 'Коэффициент ', width: '15px', isStatic :true}
+      { field: 'cargoOwnerId', header: 'Id Грузовладельцев', width: '30px', },
+      { field: 'influenceFactorId', header: 'Id Фактора влияния ', width: '30px'},
+      { field: 'koef', header: 'Коэффициент', width: '30px'}
     ]
   }
   createForm() {
@@ -44,9 +44,11 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
   }
 
   deleteCargoOwnerInfluenceFactor(id: number) {
+    console.log(id)
     this.calculationsService.deleteCargoOwnerInfluenceFactorId(id).subscribe(
       res => console.log(),
-      error => this.modalService.open(error.error.message)
+      error => this.modalService.open(error.error.message),
+      () => this.getAllCargoOwnerInfluenceFactor()
     )
   }
 
@@ -59,11 +61,11 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
       koef: rowData.koef
     }
     console.log('cargoOwnerInfluenceFactor', cargoOwnerInfluenceFactor)
-    // this.calculationsService.putCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
-    //   res => console.log(),
-    //   error => this.modalService.open(error.error.message),
-    //   () => this.getAllCargoOwnerInfluenceFactor()
-    // )
+    this.calculationsService.putCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
+      res => console.log(),
+      error => this.modalService.open(error.error.message),
+      () => this.getAllCargoOwnerInfluenceFactor()
+    )
   }
 
   createcargoOwnerInfluenceFactor() {
@@ -73,10 +75,10 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
       koef: this.form.controls.koef.value
     }
     console.log('cargoOwnerInfluenceFactor', cargoOwnerInfluenceFactor)
-    // this.calculationsService.postCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
-    //   res => console.log(),
-    //   error => this.modalService.open(error.error.message),
-    //   () => this.getAllCargoOwnerInfluenceFactor()
-    // )
+    this.calculationsService.postCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
+      res => console.log(),
+      error => this.modalService.open(error.error.message),
+      () => this.getAllCargoOwnerInfluenceFactor()
+    )
   }
 }

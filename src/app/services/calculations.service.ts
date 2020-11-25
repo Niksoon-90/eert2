@@ -105,7 +105,7 @@ export class CalculationsService {
     return this.http.get(this.urlCalc + `api/cargo/factor/${cargoOwnerInfluenceFactorId}`)
   }
   deleteCargoOwnerInfluenceFactorId(cargoOwnerInfluenceFactorId: number) {
-    return this.http.get(this.urlCalc + `api/cargo/factor/${cargoOwnerInfluenceFactorId}`)
+    return this.http.delete(this.urlCalc + `api/cargo/factor/${cargoOwnerInfluenceFactorId}`)
   }
   getAllCargoOwnerInfluenceFactor(): Observable<ICargoOwnerInfluenceFactor[]>{
     return this.http.get<ICargoOwnerInfluenceFactor[]>(this.urlCalc + `api/cargo/factor/all`)
@@ -117,4 +117,5 @@ export class CalculationsService {
   getCargoOwnerSessionId(cargoOwnerSessionId: number, historicalDataSessionId: number): Observable<ICalculatingPredictiveRegression[]>{
     return  this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/claims/?cargoOwnerSessionId=${cargoOwnerSessionId}&historicalDataSessionId=${historicalDataSessionId}`)
   }
+
 }

@@ -28,14 +28,16 @@
         </div>
         <div>
           <button pButton pRipple type="button" label="Увязать " class="p-button-success" (click)="correlation()" [disabled]="disableCorrelation"></button>
-          <button pButton pRipple type="button" label="Учесть заявки грузоотправителей" class="p-button-success" [disabled]="disableCorrelation"></button>
-          <button pButton pRipple type="button" label="Учесть заявки грузополучателей" class="p-button-success" [disabled]="disableCorrelation"></button>
-          <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" (click)="corresponTie()" [disabled]="disableCorrelation"></button>
+          <button pButton pRipple type="button" label="Учесть заявки грузоотправителей" class="p-button-success" (click)="cargoSessionSenders()" [disabled]="disableCorrelation"></button>
+          <button pButton pRipple type="button" label="Учесть заявки грузополучателей" class="p-button-success" [disabled]="disableCorrelation" (click)="cargoSessionReceivers()"></button>
+          <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" (click)="corresponTie(); " [disabled]="disableCorrelation"></button>
         </div>
       </div>
       <ng-container *ngIf="this.loading; else loader">
         <app-mathematical-forecast-table *ngIf="this.mathematicalForecastTable"
-                                         [mathematicalForecastTable]="this.mathematicalForecastTable">
+                                         [mathematicalForecastTable]="this.mathematicalForecastTable"
+                                         (resetTable)="resetTable($event)"
+        >
         </app-mathematical-forecast-table>
       </ng-container>
     </ng-template>

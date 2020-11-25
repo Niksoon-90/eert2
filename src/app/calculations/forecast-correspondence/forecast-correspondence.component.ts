@@ -4,7 +4,6 @@ import {ICalculatingPredictiveRegression, ISelectMethodUsers} from "../../models
 import {ForecastingModelService} from '../../services/forecasting-model.service';
 import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
-import {filter, map} from "rxjs/operators";
 
 @Component({
   selector: 'app-forecast-correspondence',
@@ -20,7 +19,9 @@ export class ForecastCorrespondenceComponent implements OnInit {
   sessionId: number;
   stepOnecalcYearsNumber:number;
   disableCorrelation: boolean = true;
-  loading: boolean = false;
+  loading: boolean = false
+
+
 
   constructor(
     private router: Router,
@@ -126,19 +127,57 @@ export class ForecastCorrespondenceComponent implements OnInit {
     )
   }
 
-  test($event: Event) {
-    console.log($event)
+  corresponTie() {
+    if(this.forecastModelService.ticketInformation.stepOne.correspondenceSession === null){
+      this.modalService.open('Вы забыли выбрать на первом шаге Перспективные корреспонденции!')
+    }else{
+      this.loading = false;
+      console.log('session', this.sessionId)
+      console.log('sessionKK', this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'])
+      this.calculationsService.getPerspective(this.sessionId, this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'])
+        .subscribe(
+          res => {this.mathematicalForecastTable = res, console.log(res)},
+          error => this.modalService.open(error.error.message),
+          () => {
+            this.loading = true;
+            this.disableCorrelation = !this.disableCorrelation;
+          }
+        )
+    }
+
   }
 
-  corresponTie() {
-    this.loading = false;
-    console.log('session', this.sessionId)
-    console.log('sessionKK', this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'])
-    this.calculationsService.getPerspective(this.sessionId, this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'])
-      .subscribe(
-        res => {this.mathematicalForecastTable = res, console.log(res)},
+  cargoSessionSenders() {
+    if(this.forecastModelService.ticketInformation.stepOne.cargoSessionSender === null){
+      this.modalService.open('Вы забыли выбрать на первом шаге Файл с заявками грузоотправителей!')
+    }else {
+      this.loading = false;
+      this.calculationsService.getCargoOwnerSessionId(this.forecastModelService.ticketInformation.stepOne.cargoSessionSender['id'], this.sessionId).subscribe(
+        res => {
+          this.mathematicalForecastTable = res
+        },
         error => this.modalService.open(error.error.message),
         () => this.loading = true
       )
+    }
+  }
+
+  cargoSessionReceivers() {
+    if (this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver === null) {
+      this.modalService.open('Вы забыли выбрать на первом шаге Файл с заявками грузополучателей!')
+    } else {
+    }
+    this.loading = false;
+    this.calculationsService.getCargoOwnerSessionId(this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver['id'], this.sessionId).subscribe(
+      res => {
+        this.mathematicalForecastTable = res
+      },
+      error => this.modalService.open(error.error.message),
+      () => this.loading = true
+    )
+  }
+
+  resetTable(item) {
+    console.log('go', item)
   }
 }

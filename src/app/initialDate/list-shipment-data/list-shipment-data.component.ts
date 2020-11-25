@@ -34,7 +34,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   massSummYear: any[];
   totalRecords: number;
   summYears: 0;
-
   iCargoNci: ICargoNci[];
 
 
@@ -46,7 +45,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
 
 
   ngOnChanges() {
-
     this.totalRecords = this.mathematicalForecastTable.length;
   }
 
@@ -64,12 +62,12 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       { field: 'fromStation', header: 'Станция отправления РФ', width: '100px', keyS: false },
       { field: 'fromStationCode', header: 'Код станции отправления РФ', width: '100px', keyS: false },
       { field: 'fromSubject', header: 'Субъект отправления', width: '100px', keyS: false },
-      { field: 'receiverName', header: 'Грузоотправитель', width: '100px', keyS: false },
+      { field: 'senderName', header: 'Грузоотправитель', width: '100px', keyS: false },
       { field: 'toRoad', header: 'Дорога назначения', width: '100px', keyS: false },
       { field: 'toStation', header: 'Станция назначения РФ', width: '100px', keyS: false },
       { field: 'toStationCode', header: 'Код станции назначения РФ', width: '100px', keyS: false },
       { field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false },
-      { field: 'senderName', header: 'Грузополучатель', width: '100px', keyS: false }
+      { field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false },
     ];
     for(let i=0; i< this.columsYears ; i++){
       this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })
@@ -137,7 +135,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
     this.changes.emit(this.dialogVisible = false);
   }
   checkedcarrgoTypes(item: any){
-
     console.log(item)
     return  this.iCargoNci.some(cargo => cargo.name === item)
     }

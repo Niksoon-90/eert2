@@ -1,4 +1,5 @@
 <div class="stepsdemo-content">
+
   <ng-template #load>
     <div class="p-d-flex p-jc-center">
       <p-progressSpinner></p-progressSpinner>
@@ -60,7 +61,7 @@
                 <div *ngIf="idx < 14 && col['field'] !== 'primary'">
                   {{rowData[col.field]}}
                 </div>
-                <div *ngIf="col['field'] === 'primary'">
+                <div *ngIf="col['field'] === 'primary'" style="text-align:center">
                   <ng-container *ngIf="rowData[col.field] === true; else primaryFalse">
                     <i class="pi" style="color: green" [ngClass]="{'true-icon pi-check-circle': rowData[col.field], 'false-icon pi-times-circle': !rowData[col.field]}"></i>
                   </ng-container>
@@ -96,9 +97,7 @@
             <ng-template #num>
               <td ></td>
             </ng-template>
-
           </ng-container>
-
       </ng-template>
     </p-table>
   </p-card>

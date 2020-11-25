@@ -24,33 +24,46 @@ export class ShipmentsService {
   }
 
   getShipSession(): Observable<ISession[]> {
-   return this.http.get<ISession[]>(this.url + `api/file/list?fileType=SHIPMENTS`);
+    return this.http.get<ISession[]>(this.url + `api/file/list?fileType=SHIPMENTS`);
   }
-  deleteShipSession(id: number){
+
+  deleteShipSession(id: number) {
     return this.http.delete(this.url + `api/session/${id}`)
   }
-  getShipments(id: number): Observable<IShipment[]>{
+
+  getShipments(id: number): Observable<IShipment[]> {
     return this.http.get<IShipment[]>(this.url + `api/file/shipments?sessionId=${id}`)
   }
-  getMacroPok(): Observable<IMacroPokModel[]>{
+
+  getMacroPok(): Observable<IMacroPokModel[]> {
     return this.http.get<IMacroPokModel[]>(this.url + `api/macroPok/all`)
   }
-  postMacroPok(macroPok: IMacroPokModel){
+
+  postMacroPok(macroPok: IMacroPokModel) {
     return this.http.post(this.url + `api/macroPok`, macroPok)
   }
-  putMacroPok(macroPok: IMacroPokModel){
+
+  putMacroPok(macroPok: IMacroPokModel) {
     return this.http.put(this.url + `api/macroPok`, macroPok)
   }
-  deleteMackPok(id: number){
+
+  deleteMackPok(id: number) {
     return this.http.delete(this.url + `api/macroPok/${id}`)
   }
-  getClaimSession(type: string): Observable<ISession[]>{
+
+  getClaimSession(type: string): Observable<ISession[]> {
     return this.http.get<ISession[]>(this.url + `api/file/list?fileType=${type}`)
   }
-  getCorrespondenceSession(): Observable<ISession[]>{
+
+  getCorrespondenceSession(): Observable<ISession[]> {
     return this.http.get<ISession[]>(this.url + `api/file/list?fileType=PERSPECTIVE_CORRESPONDENCES`)
   }
-  putShipments(shipments:ICalculatingPredictiveRegression){
+
+  putShipments(shipments: ICalculatingPredictiveRegression) {
     return this.http.put(this.url + 'api/file/shipments', shipments)
+  }
+
+  getTest(id: number, calculated: any[]): Observable<IShipment> {
+    return this.http.put<IShipment>(this.url + `api/file/shipments/${id}`, calculated)
   }
 }
