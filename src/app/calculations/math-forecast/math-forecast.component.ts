@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnChanges, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {ForecastingModelService} from "../../services/forecasting-model.service";
 import {CalculationsService} from "../../services/calculations.service";
@@ -10,7 +10,7 @@ import {ModalService} from "../../services/modal.service";
   templateUrl: './math-forecast.component.html',
   styleUrls: ['./math-forecast.component.scss']
 })
-export class MathForecastComponent implements OnInit {
+export class MathForecastComponent implements OnInit, OnChanges {
   mathematicalForecastTable: ICalculatingPredictiveRegression[];
   lastCalculatedVolumesTotal: number[];
   lastGroupVolumesByYearsTotal: number[];
@@ -21,6 +21,10 @@ export class MathForecastComponent implements OnInit {
     private calculationsService: CalculationsService,
     private modalService: ModalService
   ) { }
+
+  ngOnChanges() {
+    this.calculateLastTotal();
+  }
 
   ngOnInit(): void {
     this.createTable()
@@ -63,5 +67,13 @@ export class MathForecastComponent implements OnInit {
     }
     console.log(this.lastCalculatedVolumesTotal)
     console.log(this.lastGroupVolumesByYearsTotal)
+  }
+
+  onRowEditInit(item) {
+    console.log(item)
+  }
+
+  onRowEditSave(item) {
+      console.log(item)
   }
 }

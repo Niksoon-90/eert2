@@ -73,7 +73,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
       case 'simple':
        this.calculationsService.getCalculationSimple(this.sessionId, this.stepOnecalcYearsNumber)
          .subscribe(
-           res => {this.mathematicalForecastTable = res, console.log('calculateForecastingStrategy', res)},
+           res => {this.mathematicalForecastTable = res, console.log('simple', res)},
            error => this.modalService.open(error.error.message),
            () => {this.disableCorrelation = false, this.loading = true}
          )
@@ -81,7 +81,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
       case 'fiscal':
         this.calculationsService.getCalculationFiscal(this.sessionId, this.stepOnecalcYearsNumber, this.stepThree.yearsSession['name'])
           .subscribe(
-            res => {this.mathematicalForecastTable = res, console.log(res)},
+            res => {this.mathematicalForecastTable = res,  console.log('fiscal', res)},
             error => this.modalService.open(error.error.message),
             () => {this.disableCorrelation = false, this.loading = true}
           )
@@ -89,7 +89,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
       case 'fixed':
         this.calculationsService.getCalculationFixed(this.sessionId, this.stepOnecalcYearsNumber)
           .subscribe(
-            res => {this.mathematicalForecastTable = res, console.log(res)},
+              res => {this.mathematicalForecastTable = res, console.log('fixed', res)},
             error => this.modalService.open(error.error.message),
             () => {this.disableCorrelation = false, this.loading = true}
           )
@@ -97,7 +97,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
       case 'increasing':
         this.calculationsService.getCalculationIncreasing(this.sessionId, this.stepOnecalcYearsNumber)
           .subscribe(
-            res => {this.mathematicalForecastTable = res, console.log(res)},
+            res => {this.mathematicalForecastTable = res, console.log('increasing', res)},
             error => this.modalService.open(error.error.message),
             () => {this.disableCorrelation = false, this.loading = true}
           )
@@ -105,7 +105,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
       case 'average':
         this.calculationsService.getCalculationAverage(this.sessionId, this.stepOnecalcYearsNumber)
           .subscribe(
-            res => {this.mathematicalForecastTable = res, console.log(res)},
+            res => {this.mathematicalForecastTable = res, console.log('average', res)},
             error => this.modalService.open(error.error.message),
             () => {this.disableCorrelation = false, this.loading = true}
           )
@@ -121,11 +121,55 @@ export class ForecastCorrespondenceComponent implements OnInit {
 
   correlation() {
     this.loading = false;
-    this.calculationsService.getCorrelation(this.sessionId).subscribe(
-      res => {this.mathematicalForecastTable = res},
-      error => this.modalService.open(error.error.message),
-      () => this.loading = true
-    )
+    switch (this.stepThree.forecastingStrategy.type) {
+      case 'simple':
+        this.calculationsService.getCorrelation(this.sessionId, 'LESS_SQUARE')
+          .subscribe(
+            res => {this.mathematicalForecastTable = res},
+            error => this.modalService.open(error.error.message),
+            () => this.loading = true
+          )
+        break;
+      case 'fiscal':
+        this.calculationsService.getCorrelation(this.sessionId, 'FISCAL_YEAR')
+          .subscribe(
+            res => {this.mathematicalForecastTable = res},
+            error => this.modalService.open(error.error.message),
+            () => this.loading = true
+          )
+        break;
+      case 'fixed':
+        this.calculationsService.getCorrelation(this.sessionId, 'TENDENCY_FIXED_DELTA')
+          .subscribe(
+            res => {this.mathematicalForecastTable = res},
+            error => this.modalService.open(error.error.message),
+            () => this.loading = true
+          )
+        break;
+      case 'increasing':
+        this.calculationsService.getCorrelation(this.sessionId, 'TENDENCY_INCREASING_DELTA')
+          .subscribe(
+            res => {this.mathematicalForecastTable = res},
+            error => this.modalService.open(error.error.message),
+            () => this.loading = true
+          )
+        break;
+      case 'average':
+        this.calculationsService.getCorrelation(this.sessionId, 'AVERAGE')
+          .subscribe(
+            res => {this.mathematicalForecastTable = res},
+            error => this.modalService.open(error.error.message),
+            () => this.loading = true
+          )
+        break;
+      default:
+        break;
+    }
+    // this.calculationsService.getCorrelation(this.sessionId).subscribe(
+    //   res => {this.mathematicalForecastTable = res},
+    //   error => this.modalService.open(error.error.message),
+    //   () => this.loading = true
+    // )
   }
 
   corresponTie() {

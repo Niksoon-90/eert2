@@ -1,14 +1,17 @@
 <form [formGroup]="form" (ngSubmit)="createcargoOwnerInfluenceFactor(); form.reset()">
-  <div class="p-field p-col-12 form-group">
-      <label>Грузовладелец:</label>
-      <p-dropdown  [options]="cargoNci" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" formControlName="cargoOwnerId"  placeholder="Выберите один из вариантов:"></p-dropdown>
+  <div class="p-grid p-jc-end" style="padding: 15px">
+    <div style="padding-right: 10px;">
+      <p-dropdown  [options]="cargoNci" optionLabel="name"  [showClear]="true" formControlName="cargoOwnerId"  placeholder="Грузовладелец:"></p-dropdown>
+    </div>
+    <div style="padding-right: 10px;">
+      <p-dropdown  [options]="influenceNci" optionLabel="name"  [showClear]="true" formControlName="influenceFactorId"  placeholder="Фактор:"></p-dropdown>
+    </div>
+    <span class="p-float-label" style="padding-right: 10px;">
+        <input id="koef" formControlName="koef" type="text" pInputText >
+        <label for="koef">Коэффициент</label>
+      </span>
+    <button  pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary " [disabled]="this.form.invalid"></button>
   </div>
-  <div class="p-field p-col-12 form-group">
-    <label>Фактор влияния:</label>
-    <p-dropdown optionLabel="name" formControlName="influenceFactorId" [options]="influenceNci"  placeholder="Выберите один из вариантов:"></p-dropdown>
-  </div>
-  <input pInputText formControlName="koef" type="text">
-  <button  pButton pRipple type="submit"  icon="pi pi-save"  class="p-button-rounded p-button-text p-button-success p-mr-2" [disabled]="this.form.invalid"></button>
 </form>
 <div class="card" *ngIf="cargoOwnerInfluenceFactor; else Loader">
   <p-table #dt

@@ -1,14 +1,17 @@
 <form [formGroup]="form" (ngSubmit)="creategetInfluenceNci(); form.reset()">
-
-  <div class="p-grid p-jc-end" style="padding: 15px">
-      <span class="p-float-label" style="padding-right: 10px;">
+  <div class="p-grid p-jc-end" [style]="{padding: '15px'}">
+    <div style="padding-right: 10px;">
+       <span class="p-float-label" >
         <input id="nameFactor" formControlName="name" type="text" pInputText >
         <label for="nameFactor">Наименование Фактора</label>
       </span>
-    <span class="p-float-label" style="padding-right: 10px;">
-        <input id="weight" formControlName="weight" type="text" pInputText >
-        <label for="weight">Коэффициент</label>
-      </span>
+    </div>
+    <div style="padding-right: 10px;">
+      <span class="p-float-label" >
+          <input id="weight" formControlName="weight" type="text" pInputText >
+          <label for="weight">Коэффициент</label>
+        </span>
+    </div>
     <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary"></button>
   </div>
 </form>

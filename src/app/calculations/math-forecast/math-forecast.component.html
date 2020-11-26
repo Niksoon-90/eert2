@@ -2,9 +2,14 @@
   <p-card>
     <ng-template pTemplate="title">
       <h5>Математический прогноз с учетом макропоказателей</h5>
-      <p-table #dt [value]="mathematicalForecastTable"
-               [scrollable]="true"  [style]="{width:'94.7vw'}"
-                scrollHeight="flex">
+      <p-table #dt
+               [value]="mathematicalForecastTable" dataKey="id"
+               [scrollable]="true"
+               [style]="{width:'94.7vw'}"
+               styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
+               [resizableColumns]="true"  editMode="row"
+                scrollHeight="flex"
+      >
         <ng-template pTemplate="caption">
           <div class="p-d-flex">
             <button type="button" pButton icon="pi pi-file-o" iconPos="left" label="CSV" (click)="dt.exportCSV()" style="margin-right: 0.5em;"></button>
@@ -12,16 +17,18 @@
         </ng-template>
         <ng-template pTemplate="colgroup" let-columns>
           <colgroup>
-            <col style="width:150px">
-            <col style="width:150px">
+            <col style="width:100px">
+            <col style="width:100px">
             <ng-container *ngIf="mathematicalForecastTable">
-              <col  style="width:150px" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears| keyvalue">
+              <col  style="width:100px" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears| keyvalue">
             </ng-container>
             <ng-container *ngIf="mathematicalForecastTable">
-              <col  style="width:150px" *ngFor="let data2 of mathematicalForecastTable[0].calculatedVolumes| keyvalue">
+              <col  style="width:100px" *ngFor="let data2 of mathematicalForecastTable[0].calculatedVolumes| keyvalue">
             </ng-container>
+            <col style="width:50px">
           </colgroup>
         </ng-template>
+
         <ng-template pTemplate="header">
           <tr>
             <th>Группа груза</th>
@@ -34,17 +41,46 @@
                 {{data2.key}}
               </th>
             </ng-container>
+            <th>Действия</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-item>
-          <tr>
+
+        <ng-template pTemplate="body" let-item  let-ri="rowIndex" let-editing="editing" >
+          <tr [pEditableRow]="item">
             <td>{{item.cargoGroup}}</td>
             <td>{{item.shipmentType}}</td>
-            <td *ngFor="let year of item.groupVolumesByYears  | keyvalue" style="background-color: rgba(0,64,255,0.07)">
-              {{year.value | number}}
+            <td *ngFor="let year of item.groupVolumesByYears  | keyvalue; let idx = index" style="background-color: rgba(0,64,255,0.07)">
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input pInputText type="text" [(ngModel)]="year.value">
+                </ng-template>
+                <ng-template pTemplate="output">
+                    {{year.value | number}}
+                </ng-template>
+              </p-cellEditor>
             </td>
-            <td *ngFor="let data of item.calculatedVolumes | keyvalue" style="background-color: rgba(68,255,0,0.29)">
-              {{data.value | number}}
+            <td *ngFor="let data of item.calculatedVolumes | keyvalue; let idx = index" style="background-color: rgba(68,255,0,0.29)">
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input pInputText type="text" [(ngModel)]="data.value">
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{data.value | number}}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+
+<!--            <td *ngFor="let year of item.groupVolumesByYears  | keyvalue" style="background-color: rgba(0,64,255,0.07)">-->
+<!--              {{year.value | number}}-->
+<!--            </td>-->
+<!--            <td *ngFor="let data of item.calculatedVolumes | keyvalue" style="background-color: rgba(68,255,0,0.29)">-->
+<!--              {{data.value | number}}-->
+<!--            </td>-->
+
+            <td style="text-align:center">
+              <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"  (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(item)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"  class="p-button-rounded p-button-text p-button-danger"></button>
             </td>
           </tr>
         </ng-template>

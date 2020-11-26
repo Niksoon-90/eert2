@@ -29,16 +29,16 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     this.getInfluenceNci();
     this.cols = [
       { field: 'id', header: 'id', width: '15px', isStatic :true},
-      { field: 'cargoOwnerId', header: 'Id Грузовладельцев', width: '30px', },
-      { field: 'influenceFactorId', header: 'Id Фактора влияния ', width: '30px'},
-      { field: 'koef', header: 'Коэффициент', width: '30px'}
+      { field: 'cargoOwnerName', header: 'Id Грузовладельцев', width: '30px', },
+      { field: 'influenceFactorName', header: 'Id Фактора влияния ', width: '45px'},
+      { field: 'koef', header: 'Коэффициент', width: '15px'}
     ]
   }
   createForm() {
     this.form = new FormGroup({
       cargoOwnerId: new FormControl('', [Validators.required]),
       influenceFactorId: new FormControl('', [Validators.required]),
-      koef: new FormControl('', [Validators.required])
+      koef: new FormControl('', [Validators.required, Validators.min(0), Validators.max(1)]),
     })
   }
   getCargoNci(){
@@ -49,7 +49,7 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
   }
   getInfluenceNci(){
     this.calculationsService.getInfluenceNci().subscribe(
-      res => this.influenceNci = res,
+      res => {this.influenceNci = res; console.log('1', res)},
       error => this.modalService.open(error.error.message),
     )
   }

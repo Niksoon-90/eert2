@@ -30,8 +30,9 @@ export interface ICargoNci {
 
 export interface ICargoOwnerInfluenceFactor {
   "cargoOwnerId"?: number,
+  "cargoOwnerName"?: string,
   "id"?: number,
   "influenceFactorId"?: number,
+  "influenceFactorName"?: string,
   "koef"?: number
 }
-

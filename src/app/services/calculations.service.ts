@@ -39,8 +39,8 @@ export class CalculationsService {
   getCalculationAverage(id: number, idHorizonforecast: number): Observable<IShipment[]> {
     return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/average/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
-  getCorrelation(idHorizonforecast: number): Observable<IShipment[]>{
-    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correlation/${idHorizonforecast}?forecastType=LESS_SQUARE`)
+  getCorrelation(idHorizonforecast: number, forecastType: string): Observable<IShipment[]>{
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correlation/${idHorizonforecast}?forecastType=${forecastType}`)
   }
   getPerspective(sessionId: number,perspectiveSessionId: number ): Observable<IShipment[]>{
     return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/perspective?perspectiveSessionId=${perspectiveSessionId}&sessionId=${sessionId}`)
