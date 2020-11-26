@@ -1,8 +1,14 @@
 <form [formGroup]="form" (ngSubmit)="createcargoOwnerInfluenceFactor(); form.reset()">
-  <input pInputText formControlName="cargoOwnerId" type="text">
-  <input pInputText formControlName="influenceFactorId" type="text">
+  <div class="p-field p-col-12 form-group">
+      <label>Грузовладелец:</label>
+      <p-dropdown  [options]="cargoNci" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" formControlName="cargoOwnerId"  placeholder="Выберите один из вариантов:"></p-dropdown>
+  </div>
+  <div class="p-field p-col-12 form-group">
+    <label>Фактор влияния:</label>
+    <p-dropdown optionLabel="name" formControlName="influenceFactorId" [options]="influenceNci"  placeholder="Выберите один из вариантов:"></p-dropdown>
+  </div>
   <input pInputText formControlName="koef" type="text">
-  <button  pButton pRipple type="submit"  icon="pi pi-save"  class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+  <button  pButton pRipple type="submit"  icon="pi pi-save"  class="p-button-rounded p-button-text p-button-success p-mr-2" [disabled]="this.form.invalid"></button>
 </form>
 <div class="card" *ngIf="cargoOwnerInfluenceFactor; else Loader">
   <p-table #dt

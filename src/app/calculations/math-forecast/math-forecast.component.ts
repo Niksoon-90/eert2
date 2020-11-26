@@ -12,6 +12,8 @@ import {ModalService} from "../../services/modal.service";
 })
 export class MathForecastComponent implements OnInit {
   mathematicalForecastTable: ICalculatingPredictiveRegression[];
+  lastCalculatedVolumesTotal: number[];
+  lastGroupVolumesByYearsTotal: number[];
 
   constructor(
     private router: Router,
@@ -28,10 +30,11 @@ export class MathForecastComponent implements OnInit {
     console.log(this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
     this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'] )
       .subscribe(
-        res => {this.mathematicalForecastTable = res;},
+        res => {this.mathematicalForecastTable = res; console.log(this.mathematicalForecastTable)},
         error => this.modalService.open(error.error.message),
-        () => console.log('HTTP request completed.')
+        () => this.calculateLastTotal()
       )
+
   }
 
   nextPage() {
@@ -40,5 +43,25 @@ export class MathForecastComponent implements OnInit {
 
   prevPage() {
     this.router.navigate(['steps/import']);
+  }
+  calculateLastTotal() {
+    this.lastCalculatedVolumesTotal=[]
+    this.lastGroupVolumesByYearsTotal=[]
+    for(let a = 0; a < Object.values(this.mathematicalForecastTable[0].groupVolumesByYears).length; a++){
+      let summColumn = 0
+      for(let i = 0; i< this.mathematicalForecastTable.length; i++){
+        summColumn += Number(Object.values(this.mathematicalForecastTable[i].groupVolumesByYears)[a])
+      }
+      this.lastGroupVolumesByYearsTotal.push(summColumn)
+    }
+    for(let a = 0; a < Object.values(this.mathematicalForecastTable[0].calculatedVolumes).length; a++){
+      let summColumn = 0
+      for(let i = 0; i< this.mathematicalForecastTable.length; i++){
+        summColumn += Number(Object.values(this.mathematicalForecastTable[i].calculatedVolumes)[a])
+      }
+     this.lastCalculatedVolumesTotal.push(summColumn)
+    }
+    console.log(this.lastCalculatedVolumesTotal)
+    console.log(this.lastGroupVolumesByYearsTotal)
   }
 }

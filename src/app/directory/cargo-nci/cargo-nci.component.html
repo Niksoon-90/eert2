@@ -1,6 +1,10 @@
-<label for="createCargoNci">Добавление грузовладельца</label>
-<input id="createCargoNci" type="text" pInputText [(ngModel)]="nameNewCargoNci">
-<button  pButton pRipple type="button"  icon="pi pi-save" (click)="createCargoNci()" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+  <div class="p-grid p-jc-end" style="padding: 15px">
+      <span class="p-float-label" style="padding-right: 10px;">
+        <input id="createCargoNci" type="text" pInputText [(ngModel)]="nameNewCargoNci" >
+        <label for="createCargoNci">Грузовладельцы</label>
+      </span>
+      <button pButton pRipple type="button" label="Сохранить" class="p-button-raised p-button-secondary " (click)="createCargoNci()"></button>
+  </div>
 <div class="card" *ngIf="cargoNci; else Loader">
  <p-table #dt
     [style]="{width:'auto'}"

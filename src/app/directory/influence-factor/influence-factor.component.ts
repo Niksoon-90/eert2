@@ -13,7 +13,6 @@ export class InfluenceFactorComponent implements OnInit {
   cols: any[];
   totalRecords: any;
   influenceNci: IInfluenceNci[];
-  namegetInfluenceNci: string;
   form: FormGroup;
   constructor(
     private modalService: ModalService,

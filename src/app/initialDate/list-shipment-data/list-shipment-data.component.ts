@@ -12,6 +12,8 @@ import {ModalService} from "../../services/modal.service";
 import {Table} from "primeng/table";
 import {CalculationsService} from "../../services/calculations.service";
 import {ICargoNci} from "../../models/calculations.model";
+import {deepEqual} from "assert";
+import {TestService} from "../../test.service";
 
 @Component({
   selector: 'app-list-chipment-data',
@@ -35,17 +37,20 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   totalRecords: number;
   summYears: 0;
   iCargoNci: ICargoNci[];
-
+  oldItem: any
+  //oldItem2:any
 
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
-    private calculationsService: CalculationsService
+    private calculationsService: CalculationsService,
+    private testService: TestService
   ) { }
 
 
   ngOnChanges() {
     this.totalRecords = this.mathematicalForecastTable.length;
+    this.massSummYears(this.mathematicalForecastTable)
   }
 
 
@@ -75,7 +80,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   }
 
   massSummYears($event: any) {
-    console.log('massSummYears', $event)
     this.massSummYear = [ ]
     if($event['filteredValue'] !== undefined){
       if($event.filteredValue.length > 0){
@@ -98,16 +102,87 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
     }
   }
 
-  onRowEditInit() {
+  onRowEditInit(item) {
+    this.testService.or.step1 = Object.assign({}, item);
+    this.testService.start(Object.assign({}, item));
+    this.oldItem = Object.assign({}, item);
+   // this.oldItem2 = {...item}
+
   }
 
   onRowEditSave(item: any) {
-    delete item.session
-    this.shipmentsService.putShipments(item).subscribe(
-      res => (console.log('god')),
-      error => this.modalService.open(error.error.message)
-    )
+    let resultEls =  Object.assign({}, item);
+    if(this.testService.or.step1['senderName'] != item['senderName']){
+      let senderName = item['senderName'];
+      let oldSenderName = this.testService.or.step1['senderName'];
+      delete item.senderName
+      delete this.testService.or.step1.senderName
+      console.log(this.testService.tt.step1 === JSON.stringify(item))
+      if(this.testService.tt.step1 === JSON.stringify(item)){
+        const result = this.mathematicalForecastTable.filter(nci => nci.senderName === oldSenderName);
+        result.push(this.testService.or.step1)
+        console.log(result)
+        if(result.length > 0){
+          for(let items of result){
+            items.senderName = senderName;
+            delete items.session
+            console.log(JSON.stringify(items))
+            this.shipmentsService.putShipments(items).subscribe(
+              res => (console.log('senderName god')),
+              error => this.modalService.open(error.error.message)
+            )
+          }
+        }
+      }else{
+        item.senderName = senderName;
+        delete item.session;
+        this.shipmentsService.putShipments(item).subscribe(
+          res => (console.log('one')),
+          error => this.modalService.open(error.error.message)
+        )
+      }
+    }
+    if(this.testService.or.step1['receiverName'] != item['receiverName']){
+      let receiverName = item['receiverName'];
+      let oldReceiverName = this.testService.or.step1['receiverName'];
+      delete item.receiverName
+      delete this.testService.or.step1.receiverName
+      console.log(this.testService.tt.step1 === JSON.stringify(item))
+      if(this.testService.tt.step1 === JSON.stringify(item)){
+        const result = this.mathematicalForecastTable.filter(nci => nci.receiverName === oldReceiverName);
+        result.push(this.testService.or.step1)
+        console.log(result)
+        if(result.length > 0){
+          for(let items of result){
+            items.receiverName = receiverName;
+            delete items.session
+            console.log(JSON.stringify(items))
+            this.shipmentsService.putShipments(items).subscribe(
+              res => (console.log('senderName god')),
+              error => this.modalService.open(error.error.message)
+            )
+          }
+        }
+      }else{
+        item.receiverName = receiverName;
+        delete item.session;
+        this.shipmentsService.putShipments(item).subscribe(
+          res => (console.log('one')),
+          error => this.modalService.open(error.error.message)
+        )
+      }
+    }
+    else{
+      console.log('11')
+      delete resultEls.session
+      console.log('11')
+      this.shipmentsService.putShipments(resultEls).subscribe(
+        res => (console.log('god')),
+        error => this.modalService.open(error.error.message)
+      )
+    }
   }
+
 
   onRowEditCancel() {
   }
@@ -135,7 +210,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
     this.changes.emit(this.dialogVisible = false);
   }
   checkedcarrgoTypes(item: any){
-    console.log(item)
     return  this.iCargoNci.some(cargo => cargo.name === item)
     }
   test(){

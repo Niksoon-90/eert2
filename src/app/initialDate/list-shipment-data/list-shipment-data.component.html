@@ -54,7 +54,7 @@
       <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
         <tr [pEditableRow]="rowData">
           <td>{{ri}}</td>
-          <td pEditableColumn *ngFor="let col of this.cols; let idx = index">
+          <td  *ngFor="let col of this.cols; let idx = index">
             <p-cellEditor>
               <ng-template pTemplate="input">
                 <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
@@ -121,7 +121,7 @@
           </td>
 
           <td style="text-align:center">
-            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit()" class="p-button-rounded p-button-text"></button>
+            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
             <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
             <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
           </td>

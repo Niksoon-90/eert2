@@ -1,7 +1,16 @@
 <form [formGroup]="form" (ngSubmit)="creategetInfluenceNci(); form.reset()">
-  <input pInputText formControlName="name" type="text">
-  <input pInputText formControlName="weight" type="text">
-  <button  pButton pRipple type="submit"  icon="pi pi-save"  class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+
+  <div class="p-grid p-jc-end" style="padding: 15px">
+      <span class="p-float-label" style="padding-right: 10px;">
+        <input id="nameFactor" formControlName="name" type="text" pInputText >
+        <label for="nameFactor">Наименование Фактора</label>
+      </span>
+    <span class="p-float-label" style="padding-right: 10px;">
+        <input id="weight" formControlName="weight" type="text" pInputText >
+        <label for="weight">Коэффициент</label>
+      </span>
+    <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary"></button>
+  </div>
 </form>
 <div class="card" *ngIf="influenceNci; else Loader">
   <p-table #dt

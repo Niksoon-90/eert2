@@ -5,11 +5,11 @@
       <p-progressSpinner></p-progressSpinner>
     </div>
   </ng-template>
-  <p-card *ngIf="mathematicalForecastTable; else load">
+  <p-card *ngIf="this.mathematicalForecastTable; else load">
     <p-table #dt
              [style]="{width:'94.7vw'}"
              [columns]="cols"
-             [value]="mathematicalForecastTable"
+             [value]="this.mathematicalForecastTable"
              [scrollable]="true" scrollHeight="30vh"
              styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
              [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
@@ -92,7 +92,7 @@
           <td colspan="14" class="p-text-right">Сумма: </td>
           <ng-container *ngFor="let item of this.massSummYear; let idx = index">
             <td *ngIf="test2(item, idx); else num">
-              <input pInputText type="text"  (change)="test(idx, $event.target.value)">
+              <input pInputText type="text"  (keyup.enter)="test(idx, $event.target.value)">
             </td>
             <ng-template #num>
               <td ></td>

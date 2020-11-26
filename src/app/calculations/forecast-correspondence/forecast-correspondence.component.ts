@@ -4,6 +4,7 @@ import {ICalculatingPredictiveRegression, ISelectMethodUsers} from "../../models
 import {ForecastingModelService} from '../../services/forecasting-model.service';
 import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
+import {IShipment} from "../../models/shipmenst.model";
 
 @Component({
   selector: 'app-forecast-correspondence',
@@ -13,7 +14,7 @@ import {ModalService} from "../../services/modal.service";
 export class ForecastCorrespondenceComponent implements OnInit {
   methodUsers: ISelectMethodUsers[];
   stepThree: any;
-  mathematicalForecastTable: ICalculatingPredictiveRegression[];
+  mathematicalForecastTable: IShipment[];
   reportingYears= [];
   additionalInformation: boolean = false;
   sessionId: number;
@@ -178,6 +179,9 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   resetTable(item) {
-    console.log('go', item)
+    this.loading = false;
+    this.mathematicalForecastTable = [...item];
+    this.loading = true;
+    // console.log('go', item)
   }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
-import {ICargoOwnerInfluenceFactor} from "../../models/calculations.model";
+import {ICargoNci, ICargoOwnerInfluenceFactor, IInfluenceNci} from "../../models/calculations.model";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
@@ -13,6 +13,9 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
   cargoOwnerInfluenceFactor: ICargoOwnerInfluenceFactor[];
   cols: any[];
   form: FormGroup;
+  cargoNci:ICargoNci[];
+  influenceNci: IInfluenceNci[];
+
 
   constructor(
     private calculationsService: CalculationsService,
@@ -21,7 +24,9 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllCargoOwnerInfluenceFactor();
-    this.createForm()
+    this.getCargoNci();
+    this.createForm();
+    this.getInfluenceNci();
     this.cols = [
       { field: 'id', header: 'id', width: '15px', isStatic :true},
       { field: 'cargoOwnerId', header: 'Id Грузовладельцев', width: '30px', },
@@ -36,9 +41,21 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
       koef: new FormControl('', [Validators.required])
     })
   }
+  getCargoNci(){
+    this.calculationsService.getAllCargoNci().subscribe(
+      res => this.cargoNci = res,
+      error => this.modalService.open(error.error.message),
+    )
+  }
+  getInfluenceNci(){
+    this.calculationsService.getInfluenceNci().subscribe(
+      res => this.influenceNci = res,
+      error => this.modalService.open(error.error.message),
+    )
+  }
   getAllCargoOwnerInfluenceFactor(){
     this.calculationsService.getAllCargoOwnerInfluenceFactor().subscribe(
-      res => this.cargoOwnerInfluenceFactor = res,
+      res => {this.cargoOwnerInfluenceFactor = res; console.log(res)},
       error => this.modalService.open(error.error.message)
     )
   }
@@ -70,8 +87,8 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
 
   createcargoOwnerInfluenceFactor() {
     const cargoOwnerInfluenceFactor: ICargoOwnerInfluenceFactor = {
-      cargoOwnerId: this.form.controls.cargoOwnerId.value,
-      influenceFactorId: this.form.controls.influenceFactorId.value,
+      cargoOwnerId: this.form.controls.cargoOwnerId.value.id,
+      influenceFactorId: this.form.controls.influenceFactorId.value.id,
       koef: this.form.controls.koef.value
     }
     console.log('cargoOwnerInfluenceFactor', cargoOwnerInfluenceFactor)

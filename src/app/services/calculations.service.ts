@@ -9,6 +9,7 @@ import {
   IInfluenceNci
 } from "../models/calculations.model";
 import {MonoCargoSystemsModel} from "../models/mono-cargo-systems.model";
+import {IShipment} from "../models/shipmenst.model";
 
 @Injectable({
   providedIn: 'root'
@@ -23,26 +24,26 @@ export class CalculationsService {
   getCalculationMultiple(id: number, idHorizonforecast: number, type: string): Observable<ICalculatingPredictiveRegression[]>{
     return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/multiple/${id}?calcYearsNumber=${idHorizonforecast}&macroScenarioType=${type}`)
   }
-  getCalculationSimple(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]> {
-    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/simple/${id}?calcYearsNumber=${idHorizonforecast}`)
+  getCalculationSimple(id: number, idHorizonforecast: number): Observable<IShipment[]> {
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/simple/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
-  getCalculationFiscal(id: number, idHorizonforecast: number, year: string): Observable<ICalculatingPredictiveRegression[]> {
-    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/fiscal/${id}?calcYearsNumber=${idHorizonforecast}&fiscalYear=${year}`)
+  getCalculationFiscal(id: number, idHorizonforecast: number, year: string): Observable<IShipment[]> {
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/fiscal/${id}?calcYearsNumber=${idHorizonforecast}&fiscalYear=${year}`)
   }
-  getCalculationFixed(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]> {
-    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/tendency/fixed/${id}?calcYearsNumber=${idHorizonforecast}`)
+  getCalculationFixed(id: number, idHorizonforecast: number): Observable<IShipment[]> {
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/tendency/fixed/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
-  getCalculationIncreasing(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]> {
-    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/tendency/increasing/${id}?calcYearsNumber=${idHorizonforecast}`)
+  getCalculationIncreasing(id: number, idHorizonforecast: number): Observable<IShipment[]> {
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/tendency/increasing/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
-  getCalculationAverage(id: number, idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]> {
-    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/average/${id}?calcYearsNumber=${idHorizonforecast}`)
+  getCalculationAverage(id: number, idHorizonforecast: number): Observable<IShipment[]> {
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/average/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
-  getCorrelation(idHorizonforecast: number): Observable<ICalculatingPredictiveRegression[]>{
-    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correlation/${idHorizonforecast}?forecastType=LESS_SQUARE`)
+  getCorrelation(idHorizonforecast: number): Observable<IShipment[]>{
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correlation/${idHorizonforecast}?forecastType=LESS_SQUARE`)
   }
-  getPerspective(sessionId: number,perspectiveSessionId: number ): Observable<ICalculatingPredictiveRegression[]>{
-    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/correspondence/perspective?perspectiveSessionId=${perspectiveSessionId}&sessionId=${sessionId}`)
+  getPerspective(sessionId: number,perspectiveSessionId: number ): Observable<IShipment[]>{
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/perspective?perspectiveSessionId=${perspectiveSessionId}&sessionId=${sessionId}`)
   }
   //TODO 4
   getOil(): Observable<MonoCargoSystemsModel[]>{
@@ -114,8 +115,8 @@ export class CalculationsService {
     return this.http.get<ICargoOwnerInfluenceFactor[]>(this.urlCalc + `api/cargo/factor/all`)
   }
   //TODO 8
-  getCargoOwnerSessionId(cargoOwnerSessionId: number, historicalDataSessionId: number): Observable<ICalculatingPredictiveRegression[]>{
-    return  this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/claims/?cargoOwnerSessionId=${cargoOwnerSessionId}&historicalDataSessionId=${historicalDataSessionId}`)
+  getCargoOwnerSessionId(cargoOwnerSessionId: number, historicalDataSessionId: number): Observable<IShipment[]>{
+    return  this.http.get<IShipment[]>(this.urlCalc + `api/calc/claims/?cargoOwnerSessionId=${cargoOwnerSessionId}&historicalDataSessionId=${historicalDataSessionId}`)
   }
 
 }
