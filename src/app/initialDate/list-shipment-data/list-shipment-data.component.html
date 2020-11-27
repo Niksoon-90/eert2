@@ -92,9 +92,9 @@
                 <div *ngIf="col['field'] === 'senderName' && carrgoTypes !== 'sender'">
                   {{rowData[col.field]}}
                 </div>
-                <div *ngIf="col['field'] === 'senderName' && carrgoTypes === 'sender'" [ngStyle]="{'color': checkedcarrgoTypes(rowData[col.field])  == false ? '#c54747' : '#4d7d4d' }">
-                  {{rowData[col.field]}}
-                </div>
+                  <div *ngIf="col['field'] === 'senderName' && carrgoTypes === 'sender'" [ngStyle]="{'color': checkedcarrgoTypes(rowData[col.field])  === false ? '#c54747' : '#4d7d4d' }">
+                    {{rowData[col.field]}}
+                  </div>
                 <div *ngIf="col['field'] === 'toRoad'">
                   {{rowData[col.field]}}
                 </div>
@@ -110,7 +110,7 @@
                 <div *ngIf="col['field'] === 'receiverName' && carrgoTypes !== 'receiver'">
                   {{rowData[col.field]}}
                 </div>
-                <div *ngIf="col['field'] === 'receiverName' && carrgoTypes === 'receiver'" [ngStyle]="{'color': checkedcarrgoTypes(rowData[col.field])  == false ? '#c54747' : '#4d7d4d' }">
+                <div *ngIf="col['field'] === 'receiverName' && carrgoTypes === 'receiver'" [ngStyle]="{'color': checkedcarrgoTypes(rowData[col.field])  === false ? '#c54747' : '#4d7d4d' }">
                   {{rowData[col.field]}}
                 </div>
 

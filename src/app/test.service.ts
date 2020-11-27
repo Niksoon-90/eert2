@@ -15,18 +15,15 @@ export class TestService {
   }
 
 
-
-private paymentComplete = new Subject<any>();
-
-paymentComplete$ = this.paymentComplete.asObservable();
-
-getTicketInformation() {
-  return this.or;
-}
-start(item) {
-  delete item.senderName
+  senderNameOld(item) {
+  item['senderName'] = null
   this.tt.step1 = JSON.stringify(item);
   return true
 }
+  receiverNameOld(item) {
+    item['receiverName'] = null
+    this.tt.step1 = JSON.stringify(item);
+    return true
+  }
 
 }

@@ -101,35 +101,46 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   }
 
   onRowEditInit(item) {
-    this.testService.or.step1 = Object.assign({}, item);
-    this.testService.start(Object.assign({}, item));
+    console.log(this.carrgoTypes)
+    if(this.carrgoTypes === 'sender'){
+      this.testService.or.step1 = Object.assign({}, item);
+      this.testService.senderNameOld(Object.assign({}, item));
+    }else if(this.carrgoTypes === 'receiver'){
+      this.testService.or.step1 = Object.assign({}, item);
+      this.testService.receiverNameOld(Object.assign({}, item));
+    }else{
+
+    }
+
   }
 
   onRowEditSave(item: any) {
     if(this.carrgoTypes !== null){
-      let resultEls =  Object.assign({}, item);
       if(this.testService.or.step1['senderName'] != item['senderName']){
         let senderName = item['senderName'];
         let oldSenderName = this.testService.or.step1['senderName'];
-        delete item.senderName
-        delete this.testService.or.step1.senderName
+        item['senderName'] = null
         if(this.testService.tt.step1 === JSON.stringify(item)){
           const result = this.mathematicalForecastTable.filter(nci => nci.senderName === oldSenderName);
-          result.push(this.testService.or.step1)
-          console.log(result)
+          result.push(item)
           if(result.length > 0){
             for(let items of result){
               items.senderName = senderName;
               delete items.session
               this.shipmentsService.putShipments(items).subscribe(
                 res => (console.log('senderName god')),
-                error => this.modalService.open(error.error.message)
+                error => this.modalService.open(error.error.message),
+                () => {
+                  this.testService.or.step1 = null;
+                  this.testService.tt.step1 = null
+                },
               )
             }
           }
         }else{
           item.senderName = senderName;
           delete item.session;
+          console.log('11111', JSON.stringify(item))
           this.shipmentsService.putShipments(item).subscribe(
             res => (console.log('one')),
             error => this.modalService.open(error.error.message)
@@ -139,20 +150,21 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       if(this.testService.or.step1['receiverName'] != item['receiverName']){
         let receiverName = item['receiverName'];
         let oldReceiverName = this.testService.or.step1['receiverName'];
-        delete item.receiverName
-        delete this.testService.or.step1.receiverName
-        console.log(this.testService.tt.step1 === JSON.stringify(item))
+        item['receiverName'] = null
         if(this.testService.tt.step1 === JSON.stringify(item)){
           const result = this.mathematicalForecastTable.filter(nci => nci.receiverName === oldReceiverName);
-          result.push(this.testService.or.step1)
-          console.log(result)
+          result.push(item)
           if(result.length > 0){
             for(let items of result){
               items.receiverName = receiverName;
               delete items.session
               this.shipmentsService.putShipments(items).subscribe(
-                res => (console.log('senderName god')),
-                error => this.modalService.open(error.error.message)
+                res => (console.log('receiverName god')),
+                error => this.modalService.open(error.error.message),
+                () => {
+                  this.testService.or.step1 = null;
+                  this.testService.tt.step1 = null
+                },
               )
             }
           }
@@ -164,13 +176,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
             error => this.modalService.open(error.error.message)
           )
         }
-      }
-      else{
-        delete resultEls.session
-        this.shipmentsService.putShipments(resultEls).subscribe(
-          res => (console.log('god')),
-          error => this.modalService.open(error.error.message)
-        )
       }
     }else {
       delete item.session
@@ -204,7 +209,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
     return rowData.shipmentYearValuePairs[mass[1]].calculated === true ?  true :  false
   }
   closeModalTable(){
-    this.carrgoTypes = null;
     this.change.emit(this.loading = false);
     this.changes.emit(this.dialogVisible = false);
   }
