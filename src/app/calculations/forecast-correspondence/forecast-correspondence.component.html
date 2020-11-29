@@ -33,6 +33,7 @@
           <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" (click)="corresponTie(); " [disabled]="disableCorrelation"></button>
         </div>
       </div>
+      <button pButton pRipple type="button" label="Скачать" class="p-button-success" (click)="downloadShip()"></button>
       <ng-container *ngIf="this.loading; else loader">
         <app-mathematical-forecast-table *ngIf="this.mathematicalForecastTable"
                                          [mathematicalForecastTable]="this.mathematicalForecastTable"

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ModalService} from "../../services/modal.service";
 import {CalculationsService} from "../../services/calculations.service";
 import {ICargoNci} from "../../models/calculations.model";
+import {AuthenticationService} from "../../services/authentication.service";
 
 @Component({
   selector: 'app-cargo-nci',
@@ -16,7 +17,8 @@ export class CargoNciComponent implements OnInit {
 
   constructor(
     private modalService: ModalService,
-    private calculationsService: CalculationsService
+    private calculationsService: CalculationsService,
+    public authenticationService: AuthenticationService
   ) { }
 
   ngOnInit(): void {

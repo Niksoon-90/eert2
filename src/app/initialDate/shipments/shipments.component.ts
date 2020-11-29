@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {MenuItem} from 'primeng/api';
+import {AuthenticationService} from "../../services/authentication.service";
 
 @Component({
   selector: 'app-shipments',
@@ -9,12 +10,12 @@ import {MenuItem} from 'primeng/api';
 export class ShipmentsComponent implements OnInit {
 
   shipmentsMenu: MenuItem[];
-  constructor() { }
+  constructor(
+    private authenticationService: AuthenticationService
+  ) { }
 
   ngOnInit(): void {
-    this.shipmentsMenu = [
-      { label: 'Загрузить данные', routerLink: ['shipmentsUpload'] },
-      { label: 'Просмотреть данные', routerLink: ['data'] },
-    ];
+    this.shipmentsMenu = [ { label: 'Просмотреть данные', routerLink: ['data'] }]
+    if(!this.authenticationService.auth.authorities.includes('P_P_p1') === false){this.shipmentsMenu.unshift({ label: 'Загрузить данные', routerLink: ['shipmentsUpload'] })}
   }
 }

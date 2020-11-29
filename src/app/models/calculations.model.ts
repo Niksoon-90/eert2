@@ -18,21 +18,21 @@ export interface ICalculatingPredictiveRegression{
 }
 
 export interface ICargoNci {
-  "id"?: number,
-  "name"?: string,
-  "initialVerificationCoeff"?: number
+  id?: number,
+  name?: string,
+  initialVerificationCoeff?: number
 
 }export interface IInfluenceNci {
-  "id"?: number,
-  "name"?: string,
-  "weight"?: number
+  id?: number,
+  name?: string,
+  weight?: number
 }
 
 export interface ICargoOwnerInfluenceFactor {
-  "cargoOwnerId"?: number,
-  "cargoOwnerName"?: string,
-  "id"?: number,
-  "influenceFactorId"?: number,
-  "influenceFactorName"?: string,
-  "koef"?: number
+  cargoOwnerId?: number,
+  cargoOwnerName?: string,
+  id?: number,
+  influenceFactorId?: number,
+  influenceFactorName?: string,
+  koef?: number
 }

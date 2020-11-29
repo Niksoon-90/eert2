@@ -17,9 +17,9 @@ export class StepsComponent implements OnInit {
       {label: 'Шаг 1', routerLink: 'import'},
       {label: 'Шаг 2', routerLink: 'mathForecast'},
       {label: 'Шаг 3', routerLink: 'forecast'},
-      {label: 'Шаг 4', routerLink: 'payment'},
-      {label: 'Шаг 5', routerLink: 'summVolumes'},
-      {label: 'Шаг 6', routerLink: 'export'},
+      // {label: 'Шаг 4', routerLink: 'payment'},
+      // {label: 'Шаг 5', routerLink: 'summVolumes'},
+      {label: 'Шаг 4', routerLink: 'export'},
     ];
   }
 }

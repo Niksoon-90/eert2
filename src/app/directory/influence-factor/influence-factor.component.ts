@@ -3,6 +3,7 @@ import {IInfluenceNci} from "../../models/calculations.model";
 import {ModalService} from "../../services/modal.service";
 import {CalculationsService} from "../../services/calculations.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {AuthenticationService} from "../../services/authentication.service";
 
 @Component({
   selector: 'app-influence-factor',
@@ -16,7 +17,8 @@ export class InfluenceFactorComponent implements OnInit {
   form: FormGroup;
   constructor(
     private modalService: ModalService,
-    private calculationsService: CalculationsService
+    private calculationsService: CalculationsService,
+    public authenticationService: AuthenticationService
   ) { }
 
   ngOnInit(): void {

@@ -10,6 +10,7 @@ import {
 } from "../models/calculations.model";
 import {MonoCargoSystemsModel} from "../models/mono-cargo-systems.model";
 import {IShipment} from "../models/shipmenst.model";
+import {IForecastIASModel, IForecastIASModelId} from "../models/forecastIAS.model";
 
 @Injectable({
   providedIn: 'root'
@@ -117,6 +118,13 @@ export class CalculationsService {
   //TODO 8
   getCargoOwnerSessionId(cargoOwnerSessionId: number, historicalDataSessionId: number): Observable<IShipment[]>{
     return  this.http.get<IShipment[]>(this.urlCalc + `api/calc/claims/?cargoOwnerSessionId=${cargoOwnerSessionId}&historicalDataSessionId=${historicalDataSessionId}`)
+  }
+  //TODO ИАС
+  getForcastIas(): Observable<IForecastIASModel[]>{
+    return this.http.get<IForecastIASModel[]>(this.urlCalc + `api/external/routes/forecast`)
+  }
+  getForcastIasId(id: number): Observable<IForecastIASModelId[]>{
+    return this.http.get<IForecastIASModelId[]>(this.urlCalc + `api/external/routes/forecast/${id}`)
   }
 
 }

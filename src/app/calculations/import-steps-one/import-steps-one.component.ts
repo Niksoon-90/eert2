@@ -7,6 +7,7 @@ import {Router} from "@angular/router";
 import {ModalService} from "../../services/modal.service";
 import {CalculationsService} from "../../services/calculations.service";
 import {MonoCargoSystemsModel} from "../../models/mono-cargo-systems.model";
+import {AuthenticationService} from "../../services/authentication.service";
 
 
 @Component({
@@ -36,7 +37,8 @@ export class ImportStepsOneComponent implements OnInit {
     public forecastModelService: ForecastingModelService,
     private router: Router,
     private modalService: ModalService,
-    private calculationsService: CalculationsService
+    private calculationsService: CalculationsService,
+    public authenticationService: AuthenticationService
   ) {
     if( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null){
       this.horizonforecast = [];

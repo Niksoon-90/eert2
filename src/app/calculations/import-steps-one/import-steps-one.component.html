@@ -29,41 +29,41 @@
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12">
             <label>Файл с заявками грузоотправителей:</label>
-            <p-dropdown optionLabel="name" [options]="cargoSessionSender" [(ngModel)]="stepOne.cargoSessionSender" placeholder="Выберите один из вариантов:"></p-dropdown>
+            <p-dropdown optionLabel="name" [options]="cargoSessionSender" [(ngModel)]="stepOne.cargoSessionSender"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12">
             <label>Файл с заявками грузополучателей:</label>
-            <p-dropdown optionLabel="name" [options]="cargoSessionReceiver" [(ngModel)]="stepOne.cargoSessionReceiver"  placeholder="Выберите один из вариантов:"></p-dropdown>
+            <p-dropdown optionLabel="name" [options]="cargoSessionReceiver" [(ngModel)]="stepOne.cargoSessionReceiver"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
           <label>Файл с перспективными корреспонденциями:</label>
-          <p-dropdown optionLabel="name" [options]="correspondenceSession" [(ngModel)]="stepOne.correspondenceSession"   placeholder="Выберите один из вариантов:"></p-dropdown>
+          <p-dropdown optionLabel="name" [options]="correspondenceSession" [(ngModel)]="stepOne.correspondenceSession"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
       </div>
-
-      <div class="p-fluid p-formgrid p-grid">
-        <div class="p-field p-col-12">
-          <label>Перспективгые корреспонденции система "Нефтегрузы":</label>
-          <p-dropdown optionLabel="title" [options]="oilCargo" [(ngModel)]="stepOne.oilCargo"   placeholder="Выберите один из вариантов:"></p-dropdown>
+      <ng-container *ngIf="this.authenticationService.auth.authorities.includes('P_P_p2') === true">
+        <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12">
+            <label>Перспективгые корреспонденции система "Нефтегрузы":</label>
+            <p-dropdown optionLabel="title" [options]="oilCargo" [(ngModel)]="stepOne.oilCargo"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
+          </div>
         </div>
-      </div>
-      <div class="p-fluid p-formgrid p-grid">
-        <div class="p-field p-col-12">
-          <label>Перспективгые корреспонденции система "Руда":</label>
-          <p-dropdown optionLabel="title" [options]="ore" [(ngModel)]="stepOne.ore"   placeholder="Выберите один из вариантов:"></p-dropdown>
+        <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12">
+            <label>Перспективгые корреспонденции система "Руда":</label>
+            <p-dropdown optionLabel="title" [options]="ore" [(ngModel)]="stepOne.ore"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
+          </div>
         </div>
-      </div>
-      <div class="p-fluid p-formgrid p-grid">
-        <div class="p-field p-col-12">
-          <label>Перспективгые корреспонденции система "Металургия":</label>
-          <p-dropdown optionLabel="title" [options]="metallurgy" [(ngModel)]="stepOne.metallurgy"   placeholder="Выберите один из вариантов:"></p-dropdown>
+        <div class="p-fluid p-formgrid p-grid">
+          <div class="p-field p-col-12">
+            <label>Перспективгые корреспонденции система "Металургия":</label>
+            <p-dropdown optionLabel="title" [options]="metallurgy" [(ngModel)]="stepOne.metallurgy"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
+          </div>
         </div>
-      </div>
-
+      </ng-container>
     </ng-template>
     <ng-template pTemplate="footer">
       <div class="p-grid p-nogutter p-justify-end">

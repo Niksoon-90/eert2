@@ -5,6 +5,8 @@ import {ForecastingModelService} from '../../services/forecasting-model.service'
 import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
 import {IShipment} from "../../models/shipmenst.model";
+import {HttpResponse} from "@angular/common/http";
+import {UploadFileService} from "../../services/upload-file.service";
 
 @Component({
   selector: 'app-forecast-correspondence',
@@ -29,6 +31,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
     public forecastModelService: ForecastingModelService,
     private calculationsService: CalculationsService,
     private modalService: ModalService,
+    private uploadFileService: UploadFileService,
     ) {
     this.methodUsers = [
       {id: 1, type: 'simple', name:'Вычисление прогноза корреспонденций по методу наименьших квадратов'},
@@ -63,7 +66,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
 
   nextPage() {
     this.forecastModelService.ticketInformation.stepThree.forecastingStrategy = this.stepThree.forecastingStrategy;
-    this.router.navigate(['steps/payment']);
+    this.router.navigate(['steps/export']);
   }
 
   calculateForecastingStrategy() {
@@ -227,5 +230,21 @@ export class ForecastCorrespondenceComponent implements OnInit {
     this.mathematicalForecastTable = [...item];
     this.loading = true;
     // console.log('go', item)
+  }
+  downloadShip() {
+    this.uploadFileService.getDownload(this.sessionId, 'SHIPMENTS').subscribe(
+      (response: HttpResponse<Blob>) => {
+        console.log(response)
+        let filename: string = 'report.xlsx'
+        let binaryData = [];
+        binaryData.push(response.body);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+        downloadLink.setAttribute('download', filename);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      error => this.modalService.open(error.error.message)
+    )
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {MenuItem} from "primeng/api";
 import {Router} from "@angular/router";
+import {AuthenticationService} from "../services/authentication.service";
 
 @Component({
   selector: 'app-calculations',
@@ -9,7 +9,10 @@ import {Router} from "@angular/router";
 })
 export class CalculationsComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(
+    public authenticationService: AuthenticationService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
 

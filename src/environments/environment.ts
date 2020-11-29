@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   hostURL: 'http://vpn-djserv.dgs:48080/app/main/',
-  hostCalc: 'http://vpn-djserv.dgs:48080/app/calculation/'
+  hostCalc: 'http://vpn-djserv.dgs:48080/app/calculation/',
+  hostAuth: 'http://192.168.11.180:8080/'
 };
 
 /*

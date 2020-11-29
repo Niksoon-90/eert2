@@ -85,7 +85,6 @@ const appRoutes: Routes = [
   {path: 'steps', component: StepsComponent, children: itemRoutesSteps},
   {path: 'directory', component: DirectoryComponent},
   {path: '', component: CalculationsComponent},
-
 ]
 registerLocaleData(localeRu, 'ru');
 @NgModule({
