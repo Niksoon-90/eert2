@@ -7,14 +7,24 @@ export interface IHorizonforecast {
   name: number;
 }
 export interface ICalculatingPredictiveRegression{
-  sessionId: number,
-  cargoGroup: string,
-  shipmentType: string,
-  groupVolumesByYears: {},
-  macroIndexesByYears: {},
-  calculatedVolumes: {},
-  regressionParameters: number[],
+  id?: number,
+  sessionId?: number,
+  cargoGroup?: string,
+  shipmentType?: string,
+  groupVolumesByYears?: {},
+  macroIndexesByYears?: {},
+  forecastValues?: IfFrecastValues[],
+  regressionParameters?: number[],
   primary?: boolean
+}
+export interface IfFrecastValues {
+  cargoGroup?: string
+  forecastType?: string
+  id?: number
+  sessionId?: number
+  shipmentType?: string
+  value?: number
+  year?: number
 }
 
 export interface ICargoNci {

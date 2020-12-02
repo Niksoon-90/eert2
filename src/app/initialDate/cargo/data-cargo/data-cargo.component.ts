@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {ISession, IShipment} from "../../../models/shipmenst.model";
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ModalService} from "../../../services/modal.service";
+import {IAuthModel} from "../../../models/auth.model";
+import {AuthenticationService} from "../../../services/authentication.service";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-data-cargo',
@@ -17,11 +20,15 @@ export class DataCargoComponent implements OnInit {
   mathematicalForecastTable: IShipment[];
   dialogVisible: boolean;
   carrgoTypes: string;
+  user: IAuthModel
 
   constructor(
     private shipmentsService: ShipmentsService,
-    private modalService: ModalService
-  ) { }
+    private modalService: ModalService,
+    private authenticationService: AuthenticationService
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
   ngOnInit(): void {
     this.chekedCargoType()
@@ -38,11 +45,29 @@ export class DataCargoComponent implements OnInit {
 
   getCargoSessionSession(type: string) {
     this.loading = true;
-    this.shipmentsService.getClaimSession(type).subscribe(
-      res => {this.cargoSession = res; console.log('res', res)},
-      error => this.modalService.open(error.message),
-      () =>  this.loading = false
-    )
+    if(this.user.authorities.includes('P_P_p5') === true) {
+      this.shipmentsService.getClaimSession(type).subscribe(
+        res => {
+          this.cargoSession = res;
+          console.log('res', res)
+        },
+        error => this.modalService.open(error.message),
+        () => this.loading = false
+      )
+    }else{
+      this.shipmentsService.getClaimSession(type)
+        .pipe(
+          map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+        )
+        .subscribe(
+        res => {
+          this.cargoSession = res;
+          console.log('res', res)
+        },
+        error => this.modalService.open(error.message),
+        () => this.loading = false
+      )
+    }
   }
 
   chekedCargoType() {

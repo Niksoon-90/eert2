@@ -3,6 +3,9 @@ import {ShipmentsService} from "../../../services/shipments.service";
 import {ISession, IShipment} from "../../../models/shipmenst.model";
 
 import {ModalService} from "../../../services/modal.service";
+import {IAuthModel} from "../../../models/auth.model";
+import {AuthenticationService} from "../../../services/authentication.service";
+import {map} from "rxjs/operators";
 
 
 @Component({
@@ -19,16 +22,18 @@ export class DataShipmentsComponent implements OnInit {
   first = 0;
   rows = 25;
   dialogVisible: boolean;
-
+  user: IAuthModel
 
   constructor(
     private shipmentsService: ShipmentsService,
-    private modalService: ModalService
-  ) { }
+    private modalService: ModalService,
+    private authenticationService: AuthenticationService
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
 
   ngOnInit(): void {
-
     this.getShipmentsSession();
   }
 
@@ -55,11 +60,23 @@ export class DataShipmentsComponent implements OnInit {
 
   getShipmentsSession() {
     this.loading = true
-    this.shipmentsService.getShipSession().subscribe(
-      res => {this.shipmentsSession = res; console.log(res)},
-      error => this.modalService.open(error.error.message),
-      () => this.loading = false,
-    )
+    if(this.user.authorities.includes('P_P_p5') === true){
+      this.shipmentsService.getShipSession().subscribe(
+        res => {this.shipmentsSession = res; console.log(res)},
+        error => this.modalService.open(error.error.message),
+        () => this.loading = false,
+      )
+    }else{
+      this.shipmentsService.getShipSession()
+        .pipe(
+          map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+        )
+        .subscribe(
+        res => {this.shipmentsSession = res; console.log(res)},
+        error => this.modalService.open(error.error.message),
+        () => this.loading = false,
+      )
+    }
   }
 
   removeShipSession(id: number) {
@@ -85,9 +102,7 @@ export class DataShipmentsComponent implements OnInit {
             this.modalService.open(error.error.message);
             this.loading = false;
           },
-      () => {
-        console.log('sdsds')
-      }
+      () => console.log('sdsds')
     )
   }
 

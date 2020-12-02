@@ -2,8 +2,8 @@ export interface ISession {
   id?: number;
   name?: string;
   year?: string[];
-  userLoginAdd?: string;
-  userFioAdd?: string;
+  userLogin?: string;
+  userFio?: string;
   dateWrite?: string
   fileType?: string
 };
@@ -31,4 +31,9 @@ interface IShipmentYearValuePairs {
   year?:	number
   shipment?: number,
   calculated?: boolean
+}
+
+export interface IResult {
+  value: number
+  id: number
 }

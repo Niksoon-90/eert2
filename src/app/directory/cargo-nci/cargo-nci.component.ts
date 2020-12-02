@@ -3,6 +3,7 @@ import {ModalService} from "../../services/modal.service";
 import {CalculationsService} from "../../services/calculations.service";
 import {ICargoNci} from "../../models/calculations.model";
 import {AuthenticationService} from "../../services/authentication.service";
+import {IAuthModel} from "../../models/auth.model";
 
 @Component({
   selector: 'app-cargo-nci',
@@ -14,12 +15,15 @@ export class CargoNciComponent implements OnInit {
   totalRecords: any;
   cargoNci: ICargoNci[]
   nameNewCargoNci: string = '';
+  user: IAuthModel
 
   constructor(
     private modalService: ModalService,
     private calculationsService: CalculationsService,
     public authenticationService: AuthenticationService
-  ) { }
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
   ngOnInit(): void {
     this.getCargoNci()

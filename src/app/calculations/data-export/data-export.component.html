@@ -1,33 +1,38 @@
 <div class="stepsdemo-content">
   <p-card>
     <ng-template pTemplate="title">
-      <ng-container *ngIf="this.authenticationService.auth.authorities.includes('P_P_p10') === true">
-      <h5>Работа с ИАС Маршруты</h5>
-        <div class="p-grid p-fluid">
-          <div class="p-col-12 p-md-6 p-lg-4">
-            <form [formGroup]="formTwo" (ngSubmit)="download(); form.reset()">
-              <div class="p-d-flex">
-              <p-dropdown [ngStyle]="{padding: '0px'}"  class="p-col-6" [options]="name" optionLabel="name"  formControlName="name"  placeholder="Наименование:"></p-dropdown>
-              <button class="p-col-6" pButton pRipple type="submit" label="Загрузить" class="p-button-raised p-button-secondary " [disabled]="this.form.invalid"></button>
-              </div>
-            </form>
-          </div>
-
-          <div class="p-col-12 p-md-6 p-lg-4">
-            <form [formGroup]="form" (ngSubmit)="unload(); form.reset()">
-              <div class="p-d-flex">
-                <div class="p-d-flex p-flex-column">
-                  <p-dropdown  [options]="forecastCorrespondence" optionLabel="descr"  formControlName="forecastCorrespondence"  placeholder="Выгрузить загрузку участков прогнозными корреспонденциями:"></p-dropdown>
-                  <p-dropdown  [options]="smallCorrespondence" optionLabel="name"   formControlName="smallCorrespondence"  placeholder="Выгрузить загрузку участков мелкими корреспонденциями:"></p-dropdown>
+    </ng-template>
+    <ng-template pTemplate="body">
+      <ng-container *ngIf="this.user.authorities.includes('P_P_p10') === true">
+      <h3>Работа с ИАС Маршруты</h3>
+              <div class="p-grid p-fluid">
+                <div class="p-col-12 p-md-4">
+                  <form [formGroup]="formTwo" (ngSubmit)="download(); form.reset()">
+                    <div class="p-inputgroup">
+                      <button  pButton  type="submit" label="Загрузить" class="p-button-raised p-button-secondary " [disabled]="this.formTwo.invalid"></button>
+                      <span class="p-float-label">
+                        <input id="float-input" type="text" pInputText formControlName="name">
+                        <label for="float-input">Коэффициент</label>
+                      </span>
+                    </div>
+                  </form>
                 </div>
-                <button  pButton pRipple type="submit" label="Выгрузить" class="p-button-raised p-button-secondary " [disabled]="this.form.invalid"></button>
+                <div class="p-col-12 p-md-4">
+                  <form [formGroup]="form" (ngSubmit)="unload(); form.reset()">
+                    <div class="p-d-flex">
+                      <div class="p-d-flex p-flex-column">
+                        <p-dropdown  [options]="forecastCorrespondence" optionLabel="descr"  formControlName="forecastCorrespondence"  placeholder="Выгрузить загрузку участков прогнозными корреспонденциями:"></p-dropdown>
+                        <ng-container *ngIf="this.selectedPrimery === true">
+                          <p-dropdown  [options]="smallCorrespondence" optionLabel="descr"   formControlName="smallCorrespondence"  placeholder="Выгрузить загрузку участков мелкими корреспонденциями:"></p-dropdown>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </form>
+                </div>
               </div>
-            </form>
-          </div>
-        </div>
       </ng-container>
-      <ng-container *ngIf="this.authenticationService.auth.authorities.includes('P_P_p8') === true">
-        <h5>Экспорт в EXCEL</h5>
+      <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
+        <h3>Экспорт в EXCEL</h3>
         <div class="p-d-flex p-flex-wrap">
           <div class="p-mr-2 p-mb-2">
             <p-card header="Дорога-Дорога" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
@@ -38,34 +43,10 @@
             </p-card>
           </div>
           <div class="p-mr-2 p-mb-2">
-            <p-card header="Прогноза по участкам" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
+            <p-card header="Прогноз по участкам" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
               <p>Сводный отчет прогноза по участкам!</p>
               <ng-template pTemplate="footer">
-                <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
-              </ng-template>
-            </p-card>
-          </div>
-          <div class="p-mr-2 p-mb-2">
-            <p-card header="Отчет прогноза" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
-              <p>Отчет прогноза по участкам(по основным корреспонденциям)</p>
-              <ng-template pTemplate="footer">
-                <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
-              </ng-template>
-            </p-card>
-          </div>
-          <div class="p-mr-2 p-mb-2">
-            <p-card header="Отчет по путям" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
-              <p>Отчет по путям следования(по основным корреспонденциям)!</p>
-              <ng-template pTemplate="footer">
-                <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
-              </ng-template>
-            </p-card>
-          </div>
-          <div class="p-mr-2 p-mb-2">
-            <p-card header="Отчет прогноза" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
-              <p>Отчет прогноза по основным корреспонденциям!</p>
-              <ng-template pTemplate="footer">
-                <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
+                <button pButton pRipple type="button" label="Скачать" class="p-button-success" (click)="downloadIasRoutes()" [disabled]="this.form.controls.forecastCorrespondence.invalid"></button>
               </ng-template>
             </p-card>
           </div>
@@ -73,7 +54,15 @@
             <p-card header="Отчет прогноза" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
               <p>Отчет прогноза по всем корреспонденциям!</p>
               <ng-template pTemplate="footer">
-                <button pButton pRipple type="button" label="Скачать" class="p-button-success"></button>
+                <button pButton pRipple type="button" label="Скачать" class="p-button-success" disabled></button>
+              </ng-template>
+            </p-card>
+          </div>
+          <div class="p-mr-2 p-mb-2">
+            <p-card header="Отчет прогноза" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
+              <p>Отчет прогноза по основным корреспонденциям!</p>
+              <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" label="Скачать" class="p-button-success" disabled></button>
               </ng-template>
             </p-card>
           </div>
@@ -86,3 +75,4 @@
     </ng-template>
   </p-card>
 </div>
+

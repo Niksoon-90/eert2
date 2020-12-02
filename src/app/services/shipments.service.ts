@@ -16,15 +16,15 @@ export class ShipmentsService {
 
   private url = environment.hostURL;
 
-  postUploadFile(fd, fileName: string, type: string) {
-    return this.http.post<any>(this.url + `api/file/upload?fileType=${type}&name=${fileName}`, fd, {
+  postUploadFile(fd, fileName: string, type: string, fio: string, login: string, dimension: string) {
+    return this.http.post<any>(this.url + `api/file/upload?dimension=${dimension}&fileType=${type}&name=${fileName}&userFio=${fio}&userLogin=${login}`, fd, {
       reportProgress: true,
       observe: "events"
     });
   }
 
   getShipSession(): Observable<ISession[]> {
-    return this.http.get<ISession[]>(this.url + `api/file/list?fileType=SHIPMENTS`);
+      return this.http.get<ISession[]>(this.url + `api/file/list?fileType=SHIPMENTS`);
   }
 
   deleteShipSession(id: number) {
@@ -65,5 +65,9 @@ export class ShipmentsService {
 
   getTest(id: number, calculated: any[]): Observable<IShipment> {
     return this.http.put<IShipment>(this.url + `api/file/shipments/${id}`, calculated)
+  }
+  //TODO Обновить признак 'Готово для ИАС Маршруты'
+  putTransformFile(id: number, isReadyToTransfer: boolean){
+    return this.http.put(this.url + `/api/file/${id}?isReadyToTransfer=${isReadyToTransfer}`, {})
   }
 }

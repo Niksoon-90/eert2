@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import {Subject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +12,11 @@ export class TestService {
   tt ={
     step1: null
   }
+
+  summ= {
+    result: null
+  }
+
 
 
   senderNameOld(item) {

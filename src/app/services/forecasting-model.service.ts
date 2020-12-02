@@ -20,15 +20,9 @@ export class ForecastingModelService {
     },
     stepThree: {
         forecastingStrategy: null,
-        yearsSession: null
+        yearsSession: null,
+        primeryBolChange: ''
     },
-    paymentInformation: {
-      cardholderName:'',
-      cardholderNumber:'',
-      date:'',
-      cvv:'',
-      remember:false
-    }
   };
 
   private paymentComplete = new Subject<any>();

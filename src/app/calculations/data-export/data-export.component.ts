@@ -8,6 +8,7 @@ import {ModalService} from "../../services/modal.service";
 import {HttpResponse} from "@angular/common/http";
 import {IForecastIASModel, IForecastIASModelId} from "../../models/forecastIAS.model";
 import {CalculationsService} from "../../services/calculations.service";
+import {IAuthModel} from "../../models/auth.model";
 
 @Component({
   selector: 'app-data-export',
@@ -19,9 +20,11 @@ export class DataExportComponent implements OnInit {
   form: FormGroup;
   formTwo: FormGroup
   forecastCorrespondence: IForecastIASModel[];
-  smallCorrespondence: IForecastIASModelId[];
+  smallCorrespondence: IForecastIASModel[];
   name: any;
   sessionId: number
+  selectedPrimery: any
+  user: IAuthModel
 
   constructor(
     private router: Router,
@@ -31,11 +34,13 @@ export class DataExportComponent implements OnInit {
     private modalService: ModalService,
     private calculationsService: CalculationsService
   ) {
+    this.user = this.authenticationService.userValue;
   }
 
   ngOnInit(): void {
     this.forecastListIas();
     this.createForm();
+    this.selectedPrimery = this.forecastModelService.ticketInformation.stepThree.primeryBolChange;
   }
 
 
@@ -81,14 +86,48 @@ export class DataExportComponent implements OnInit {
   }
   forecastListIas(){
     this.calculationsService.getForcastIas().subscribe(
-      res => this.forecastCorrespondence = res,
+      res => {
+        this.forecastCorrespondence = res;
+        this.smallCorrespondence = res;
+      },
       error => this.modalService.open(error.error.message)
     )
   }
-  forecastListIasId(id: number){
-    this.calculationsService.getForcastIasId(id).subscribe(
-      res => this.smallCorrespondence = res,
-      error => this.modalService.open(error.error.message)
-    )
+
+  downloadIasRoutes() {
+    if(this.form.controls.forecastCorrespondence.invalid){
+      this.modalService.open('Укажите форму для загрузки')
+    }else{
+        this.uploadFileService.getDownload(this.form.controls.forecastCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
+          (response: HttpResponse<Blob>) => {
+            console.log(response)
+            let filename: string = 'report.xlsx'
+            let binaryData = [];
+            binaryData.push(response.body);
+            let downloadLink = document.createElement('a');
+            downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+            downloadLink.setAttribute('download', filename);
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+          },
+          error => this.modalService.open(error.error.message)
+        )
+      if(this.selectedPrimery === true){
+        this.uploadFileService.getDownload(this.form.controls.smallCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
+          (response: HttpResponse<Blob>) => {
+            console.log(response)
+            let filename: string = 'report.xlsx'
+            let binaryData = [];
+            binaryData.push(response.body);
+            let downloadLink = document.createElement('a');
+            downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+            downloadLink.setAttribute('download', filename);
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+          },
+          error => this.modalService.open(error.error.message)
+        )
+      }
+    }
   }
 }

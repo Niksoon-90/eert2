@@ -8,8 +8,12 @@ import {
 import {Table} from 'primeng/table';
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ModalService} from "../../../services/modal.service";
-import {ICalculatingPredictiveRegression} from "../../../models/calculations.model";
 import {IShipment} from "../../../models/shipmenst.model";
+import {ForecastingModelService} from "../../../services/forecasting-model.service";
+import {AuthenticationService} from "../../../services/authentication.service";
+import {IAuthModel} from "../../../models/auth.model";
+import {HttpResponse} from "@angular/common/http";
+import {UploadFileService} from "../../../services/upload-file.service";
 
 
 
@@ -21,7 +25,6 @@ import {IShipment} from "../../../models/shipmenst.model";
 export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   @ViewChild('dt')  table: Table;
   @Input() mathematicalForecastTable;
-  @Output() resetTable: EventEmitter<IShipment[]> = new EventEmitter<IShipment[]>();
 
   loading: boolean;
   totalRecords: number;
@@ -30,25 +33,31 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   columsYears: number= 0;
   cols: any[];
   virtTable: any[];
-
-
+  user: IAuthModel;
+  loader: boolean = false
 
   primeryBol = [ { label: 'Все', value: '' },{ label: 'Да', value: true },{ label: 'Нет', value: false }]
   selectedPrimery: any;
   virtTable2: any;
-
-
+  sessionId: number
 
   constructor(
     private shipmentsService: ShipmentsService,
-    private modalService: ModalService
-  ) { }
+    private modalService: ModalService,
+    private forecastingModelService: ForecastingModelService,
+    private authenticationService: AuthenticationService,
+    private uploadFileService: UploadFileService,
+    public forecastModelService: ForecastingModelService,
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
 
   ngOnChanges() {
     this.totalRecords = this.mathematicalForecastTable.length;
   }
   ngOnInit(): void {
+    this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
     this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
     this.massSummYears(this.mathematicalForecastTable)
     this.cols = [
@@ -116,7 +125,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     this.shipmentsService.putShipments(item).subscribe(
       res => (console.log('god')),
       error => this.modalService.open(error.error.message),
-      () => this.massSummYears(this.virtTable2)
+      () => this.massSummYears(this.mathematicalForecastTable)
     )
   }
 
@@ -126,17 +135,15 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
   test(idx: number, value: any) {
     const dec = value / this.massSummYear[idx];
-    const items:  IShipment[] = [...this.virtTable];
-    for(let i=0; i< items.length; i++){
-      const res = Number((items[i].shipmentYearValuePairs[idx].value * dec).toFixed(2))
-      items[i].shipmentYearValuePairs[idx].value = res
-      this.resetTable.emit(items);
+    for(let i=0; i< this.mathematicalForecastTable.length; i++) {
+      this.mathematicalForecastTable[i].shipmentYearValuePairs[idx].value = Number((this.mathematicalForecastTable[i].shipmentYearValuePairs[idx].value * dec).toFixed(2))
+      console.log(this.mathematicalForecastTable[i])
+      this.onRowEditSave(this.mathematicalForecastTable[i])
     }
-    console.log('items', items)
-    console.log('items32', this.mathematicalForecastTable)
-    console.log(items === this.virtTable)
-
-    //this.massSummYears(this.virtTable2)
+    this.loader = true;
+    setTimeout(()=>{
+      this.loader = false;
+    }, 2000);
   }
 
   colorYears(rowData, col: any) {
@@ -157,38 +164,26 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   test2(item: any, idx: number) {
     return this.mathematicalForecastTable[0].shipmentYearValuePairs[idx].calculated === true ? true : false
   }
+
+  primeryBolChange(value: any, field: any, equals: string) {
+    this.table.filter(value, field, equals)
+    this.forecastingModelService.ticketInformation.stepThree.primeryBolChange = this.selectedPrimery
+  }
+
+  downloadShip() {
+    this.uploadFileService.getDownload(this.sessionId, 'SHIPMENTS').subscribe(
+      (response: HttpResponse<Blob>) => {
+        console.log(response)
+        let filename: string = 'report.xlsx'
+        let binaryData = [];
+        binaryData.push(response.body);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+        downloadLink.setAttribute('download', filename);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      error => this.modalService.open(error.error.message)
+    )
+  }
 }
-//this.table.cancelRowEdit(this.mathematicalForecastTable[a])
-// this.shipmentsService.getTest(res.id, res.shipmentYearValuePairs).subscribe(
-//   res => {this.mathematicalForecastTable[a].shipmentYearValuePairs = res
-//     console.log('res2', this.mathematicalForecastTable[a].shipmentYearValuePairs)
-//   },
-//   error => this.modalService.open(error.error.message),
-//   () => {
-//
-//   }
-// )
-//this.onRowEditInit(this.mathematicalForecastTable[a]);
-// this.onRowEditSave(this.mathematicalForecastTable[a]);
-// this.onRowEditCancel()
-// test(idx: number, value: any) {
-//
-//   const dec = value / this.massSummYear[idx];
-//   for(let i=0; i< this.virtTable.length; i++){
-//     console.log('one', this.virtTable[i].shipmentYearValuePairs[idx].value)
-//     this.virtTable[i].shipmentYearValuePairs[idx].value = Number((this.virtTable[i].shipmentYearValuePairs[idx].value * dec).toFixed(2))
-//     console.log('two',this.virtTable[i].shipmentYearValuePairs[idx].value)
-//     for(let a = 0; a < this.mathematicalForecastTable.length; a++){
-//       if(this.virtTable[i].id = this.mathematicalForecastTable[a].id){
-//
-//         //this.table.initRowEdit(this.mathematicalForecastTable[a]);
-//         //  this.onRowEditSave(this.mathematicalForecastTable[a])
-//         break;
-//       }
-//       break;
-//     }
-//
-//   }
-//   this.resetTable.emit(this.virtTable2);
-//   this.massSummYears(this.virtTable2)
-// }

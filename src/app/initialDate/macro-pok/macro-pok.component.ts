@@ -4,6 +4,8 @@ import {IMacroPokModel} from "../../models/macroPok.model";
 import {MessageService} from "primeng/api";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ModalService} from "../../services/modal.service";
+import {AuthenticationService} from "../../services/authentication.service";
+import {IAuthModel} from "../../models/auth.model";
 
 @Component({
   selector: 'app-macro-pok',
@@ -13,11 +15,14 @@ import {ModalService} from "../../services/modal.service";
 })
 export class MacroPokComponent implements OnInit {
   loading: boolean = true;
-
+  user: IAuthModel
   constructor(
     private shipmentsService: ShipmentsService,
-    private modalService:ModalService
-    ) { }
+    private modalService:ModalService,
+    private authenticationService: AuthenticationService
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
   macroPokList: IMacroPokModel[];
   form: FormGroup

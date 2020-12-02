@@ -22,6 +22,10 @@ export class CalculationsService {
   private url = environment.hostURL;
   private urlCalc = environment.hostCalc;
 
+
+  putUpdateMacroForecast(id: number, value: number){
+    return this.http.put(this.urlCalc + `api/calc/forecast/value/${id}?newValue=${value}`, {})
+  }
   getCalculationMultiple(id: number, idHorizonforecast: number, type: string): Observable<ICalculatingPredictiveRegression[]>{
     return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/multiple/${id}?calcYearsNumber=${idHorizonforecast}&macroScenarioType=${type}`)
   }
@@ -43,8 +47,9 @@ export class CalculationsService {
   getCorrelation(idHorizonforecast: number, forecastType: string): Observable<IShipment[]>{
     return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correlation/${idHorizonforecast}?forecastType=${forecastType}`)
   }
-  getPerspective(sessionId: number,perspectiveSessionId: number ): Observable<IShipment[]>{
-    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/perspective?perspectiveSessionId=${perspectiveSessionId}&sessionId=${sessionId}`)
+  getPerspective(urlPerspective: string): Observable<IShipment[]>{
+    return this.http.get<IShipment[]>(this.urlCalc + urlPerspective)
+
   }
   //TODO 4
   getOil(): Observable<MonoCargoSystemsModel[]>{

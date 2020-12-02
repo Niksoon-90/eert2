@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ModalService} from "../../../services/modal.service";
 import {ISession, IShipment} from "../../../models/shipmenst.model";
+import {IAuthModel} from "../../../models/auth.model";
+import {AuthenticationService} from "../../../services/authentication.service";
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-data-correspondence',
@@ -14,14 +17,18 @@ export class DataCorrespondenceComponent implements OnInit {
   rows = 25;
   customers: any;
   loading: boolean = true;
+  user: IAuthModel
 
   mathematicalForecastTable: IShipment[];
   dialogVisible: boolean;
 
   constructor(
     private shipmentsService: ShipmentsService,
-    private modalService: ModalService
-  ) { }
+    private modalService: ModalService,
+    private authenticationService: AuthenticationService
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
   ngOnInit(): void {
   this.getCorrespondenceSession()
@@ -48,11 +55,29 @@ export class DataCorrespondenceComponent implements OnInit {
 
   getCorrespondenceSession() {
     this.loading = true;
-    this.shipmentsService.getCorrespondenceSession().subscribe(
-      res => {this.correspondenceSession = res; console.log(res)},
-      error => this.modalService.open(error.message),
-      () => this.loading = false
-    )
+    if(this.user.authorities.includes('P_P_p5') === true) {
+      this.shipmentsService.getCorrespondenceSession().subscribe(
+        res => {
+          this.correspondenceSession = res;
+          console.log(res)
+        },
+        error => this.modalService.open(error.message),
+        () => this.loading = false
+      )
+    }else{
+      this.shipmentsService.getCorrespondenceSession()
+        .pipe(
+          map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+        )
+        .subscribe(
+        res => {
+          this.correspondenceSession = res;
+          console.log(res)
+        },
+        error => this.modalService.open(error.message),
+        () => this.loading = false
+      )
+    }
   }
 
   openShipItemSession(id: any) {

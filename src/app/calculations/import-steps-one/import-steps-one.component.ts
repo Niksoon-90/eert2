@@ -8,6 +8,8 @@ import {ModalService} from "../../services/modal.service";
 import {CalculationsService} from "../../services/calculations.service";
 import {MonoCargoSystemsModel} from "../../models/mono-cargo-systems.model";
 import {AuthenticationService} from "../../services/authentication.service";
+import {IAuthModel} from "../../models/auth.model";
+import {map} from "rxjs/operators";
 
 
 @Component({
@@ -31,6 +33,7 @@ export class ImportStepsOneComponent implements OnInit {
   oilCargo: MonoCargoSystemsModel[];
   ore: MonoCargoSystemsModel[];
   metallurgy: MonoCargoSystemsModel[];
+  user: IAuthModel
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -40,6 +43,7 @@ export class ImportStepsOneComponent implements OnInit {
     private calculationsService: CalculationsService,
     public authenticationService: AuthenticationService
   ) {
+    this.user = this.authenticationService.userValue;
     if( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null){
       this.horizonforecast = [];
       for (let i = 5; i <= 15; i++) {
@@ -65,25 +69,73 @@ export class ImportStepsOneComponent implements OnInit {
 
 
   getInitialDate(){
-    this.shipmentsService.getShipSession().subscribe(
-      res => this.initialDate = res,
-      error => this.modalService.open(error.error.message),
-      () => console.log('complede')
-    );
+    if(this.user.authorities.includes('P_P_p5') === true ){
+      this.shipmentsService.getShipSession().subscribe(
+        res => this.initialDate = res,
+        error => this.modalService.open(error.error.message),
+        () => console.log('complede')
+      );
+    }else{
+      this.shipmentsService.getShipSession()
+        .pipe(
+          map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+        )
+        .subscribe(
+        res => this.initialDate = res,
+        error => this.modalService.open(error.error.message),
+        () => console.log('complede')
+      );
+    }
   }
   getCorrespondenceSession() {
-    this.shipmentsService.getCorrespondenceSession().subscribe(
-      res => {this.correspondenceSession = res; console.log(res)},
-      error => this.modalService.open(error.message),
-      () => console.log()
-    )
+    if (this.user.authorities.includes('P_P_p5') === true) {
+      this.shipmentsService.getCorrespondenceSession().subscribe(
+        res => {
+          this.correspondenceSession = res;
+          console.log(res)
+        },
+        error => this.modalService.open(error.message),
+        () => console.log()
+      )
+    } else {
+      this.shipmentsService.getCorrespondenceSession()
+        .pipe(
+          map((data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+        )
+        .subscribe(
+          res => {
+            this.correspondenceSession = res;
+            console.log(res)
+          },
+          error => this.modalService.open(error.message),
+          () => console.log()
+        )
+    }
   }
   getCargoSessionSessionSender() {
-    this.shipmentsService.getClaimSession('SENDER_CLAIMS').subscribe(
-      res => {this.cargoSessionSender = res; console.log('res', res)},
-      error => this.modalService.open(error.message),
-      () =>  console.log()
-    )
+    if (this.user.authorities.includes('P_P_p5') === true) {
+      this.shipmentsService.getClaimSession('SENDER_CLAIMS').subscribe(
+        res => {
+          this.cargoSessionSender = res;
+          console.log('res', res)
+        },
+        error => this.modalService.open(error.message),
+        () => console.log()
+      )
+    } else {
+      this.shipmentsService.getClaimSession('SENDER_CLAIMS')
+        .pipe(
+          map((data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+        )
+        .subscribe(
+          res => {
+            this.cargoSessionSender = res;
+            console.log('res', res)
+          },
+          error => this.modalService.open(error.message),
+          () => console.log()
+        )
+    }
   }
   getCargoSessionSessionReceiver() {
     this.shipmentsService.getClaimSession('RECEIVER_CLAIMS').subscribe(
@@ -115,8 +167,7 @@ export class ImportStepsOneComponent implements OnInit {
 }
 
   nextPage() {
-    if(this.stepOne !== undefined){
-      console.log(this.stepOne)
+    if(this.stepOne.Session !== null){
       this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
       this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
       this.forecastModelService.ticketInformation.stepOne.scenarioMacro = this.stepOne.scenarioMacro;
@@ -127,6 +178,8 @@ export class ImportStepsOneComponent implements OnInit {
       this.forecastModelService.ticketInformation.stepOne.ore = this.stepOne.ore;
       this.forecastModelService.ticketInformation.stepOne.metallurgy = this.stepOne.metallurgy;
       this.router.navigate(['steps/mathForecast']);
+    }else{
+      this.modalService.open('Укажите файл "Исходные данные"')
     }
   }
 

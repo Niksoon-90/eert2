@@ -3,6 +3,7 @@ import {MenuItem} from 'primeng/api';
 import {AuthenticationService} from "./services/authentication.service";
 import {Router} from "@angular/router";
 import {IAuthModel} from "./models/auth.model";
+import {ModalService} from "./services/modal.service";
 
 
 @Component({
@@ -19,28 +20,21 @@ export class AppComponent implements OnInit{
 
   constructor(
     private authenticationService: AuthenticationService,
-    private router: Router
-  ) {
-    //this.authenticationService.getMe().subscribe(res => this.authenticationService.auth = res);
-  //  this.user = this.authenticationService.userValue;
-  }
+    private router: Router,
+    private modalService: ModalService
+  ) {}
+
 
   ngOnInit(): void {
-    console.log('user', this.user)
-
-
-
-
-
-    // this.authenticationService.getMe().subscribe(
-    //   res => {
-    //     this.authenticationService.auth = res;
-    //     this.name = res['fio']
-    //   },
-    //   error => console.log(error.error.message),
-    //   () => console.log(this.authenticationService.auth)
-    // )
-
+    this.authenticationService.getMe().subscribe(
+      res => console.log('res', res),
+      error => this.modalService.open(error.error.message),
+      () => this.test());
+    this.authenticationService.user.subscribe(
+      res => this.user = res,
+      error => this.modalService.open(error.error.message),
+      () => this.test());
+    this.user = this.authenticationService.userValue;
 
     this.sidebar = [
       {
@@ -62,7 +56,11 @@ export class AppComponent implements OnInit{
         ]
       }
       ]
-    if(this.authenticationService.auth.authorities.includes('P_P_p3') === true){
+  }
+  test(){
+    console.log(this.user.authorities)
+    console.log(this.user.authorities.includes('P_P_p3') === true)
+    if(this.user.authorities.includes('P_P_p3') === true){
       this.sidebar.splice(1, 0,
         {
           label: 'Расчеты',
@@ -77,8 +75,9 @@ export class AppComponent implements OnInit{
   clickItem() {
         this.visibleSidebar1 = false;
     }
+    //TODO LogOut
   logout() {
     this.authenticationService.logout();
-    this.router.navigate(['http://192.168.11.180:8080/logout']);
+    this.router.navigate(['logOut']);
   }
 }

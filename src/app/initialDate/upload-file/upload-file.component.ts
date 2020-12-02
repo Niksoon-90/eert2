@@ -4,6 +4,8 @@ import {HttpEventType} from "@angular/common/http";
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from "@angular/router";
 import {ModalService} from "../../services/modal.service";
+import {IAuthModel} from "../../models/auth.model";
+import {AuthenticationService} from "../../services/authentication.service";
 
 @Component({
   selector: 'app-upload-file',
@@ -23,20 +25,24 @@ export class UploadFileComponent implements OnInit {
   displayModal: boolean = false;
   dimensionItems: any;
   cargoTypes: any[];
+  user: IAuthModel;
 
   constructor(
     private shipmentsService: ShipmentsService,
     private activateRoute: ActivatedRoute,
-    private modalService: ModalService) {
+    private modalService: ModalService,
+    private authenticationService: AuthenticationService
+  ) {
+    this.user = this.authenticationService.userValue;
     this.initialDateType = activateRoute.snapshot.params['initialDateType'];
     this.createForm();
   }
 
   ngOnInit(): void {
     this.dimensionItems = [
-      {id:1, name: 'млн. тонн'},
-      {id:2, name: 'тыс. тонн'},
-      {id:3, name: 'тонн'}
+      {id:1, name: 'млн. тонн', type: 'MILLION_TONS'},
+      {id:2, name: 'тыс. тонн', type: 'THOUSAND_TONS'},
+      {id:3, name: 'тонн', type: 'TONS'}
     ]
     this.cargoTypes = [
       {id:1, name:'Грузоотправитель', type: 'SENDER_CLAIMS'},
@@ -71,8 +77,8 @@ export class UploadFileComponent implements OnInit {
     this.displayModal = true;
   }
   shipmensUpload(formData, type: string){
-    console.log(type)
-    this.shipmentsService.postUploadFile(formData, this.uploadFiles.value.nameFile, type)
+    // console.log(this.user.fio, this.user.user)
+    this.shipmentsService.postUploadFile(formData, this.uploadFiles.value.nameFile, type, this.user.fio, this.user.user, this.uploadFiles.controls.dimension.value.type)
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress){
           this.progress = Math.round(event.loaded / event.total * 100);

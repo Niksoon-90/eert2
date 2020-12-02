@@ -4,6 +4,7 @@ import {ModalService} from "../../services/modal.service";
 import {ICargoNci, ICargoOwnerInfluenceFactor, IInfluenceNci} from "../../models/calculations.model";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthenticationService} from "../../services/authentication.service";
+import {IAuthModel} from "../../models/auth.model";
 
 @Component({
   selector: 'app-cargo-owner-influence-factor',
@@ -16,13 +17,15 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
   form: FormGroup;
   cargoNci:ICargoNci[];
   influenceNci: IInfluenceNci[];
-
+  user: IAuthModel
 
   constructor(
     private calculationsService: CalculationsService,
     private modalService: ModalService,
     public authenticationService: AuthenticationService
-  ) { }
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
   ngOnInit(): void {
     this.getAllCargoOwnerInfluenceFactor();

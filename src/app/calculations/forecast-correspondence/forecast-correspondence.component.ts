@@ -7,6 +7,9 @@ import {ModalService} from "../../services/modal.service";
 import {IShipment} from "../../models/shipmenst.model";
 import {HttpResponse} from "@angular/common/http";
 import {UploadFileService} from "../../services/upload-file.service";
+import {AuthenticationService} from "../../services/authentication.service";
+import {IAuthModel} from "../../models/auth.model";
+import {ShipmentsService} from "../../services/shipments.service";
 
 @Component({
   selector: 'app-forecast-correspondence',
@@ -23,16 +26,19 @@ export class ForecastCorrespondenceComponent implements OnInit {
   stepOnecalcYearsNumber:number;
   disableCorrelation: boolean = true;
   loading: boolean = false
-
-
+  user: IAuthModel
+  payment: boolean = false
+  urlPerspective =  'api/calc/correspondence/perspective?';
 
   constructor(
     private router: Router,
     public forecastModelService: ForecastingModelService,
     private calculationsService: CalculationsService,
     private modalService: ModalService,
-    private uploadFileService: UploadFileService,
-    ) {
+    private authenticationService: AuthenticationService,
+    private shipmentsService: ShipmentsService
+  ) {
+    this.user = this.authenticationService.userValue;
     this.methodUsers = [
       {id: 1, type: 'simple', name:'Вычисление прогноза корреспонденций по методу наименьших квадратов'},
       {id: 2, type: 'fiscal', name:'Вычисление прогноза корреспонденций по отчётному году'},
@@ -44,7 +50,6 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
     this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     this.stepThree = this.forecastModelService.ticketInformation.stepThree;
@@ -65,11 +70,18 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   nextPage() {
-    this.forecastModelService.ticketInformation.stepThree.forecastingStrategy = this.stepThree.forecastingStrategy;
-    this.router.navigate(['steps/export']);
+    this.shipmentsService.putTransformFile(this.sessionId, true).subscribe(
+      res => console.log(),
+      error => this.modalService.open(error.error.message),
+      () => {
+        this.forecastModelService.ticketInformation.stepThree.forecastingStrategy = this.stepThree.forecastingStrategy;
+        this.router.navigate(['steps/export']);
+      }
+    )
   }
 
   calculateForecastingStrategy() {
+    this.payment = true
     this.disableCorrelation= true;
     this.loading = false;
     switch (this.stepThree.forecastingStrategy.type) {
@@ -126,6 +138,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
     this.loading = false;
     switch (this.stepThree.forecastingStrategy.type) {
       case 'simple':
+        console.log('this.sessionId', this.sessionId)
         this.calculationsService.getCorrelation(this.sessionId, 'LESS_SQUARE')
           .subscribe(
             res => {this.mathematicalForecastTable = res},
@@ -168,21 +181,25 @@ export class ForecastCorrespondenceComponent implements OnInit {
       default:
         break;
     }
-    // this.calculationsService.getCorrelation(this.sessionId).subscribe(
-    //   res => {this.mathematicalForecastTable = res},
-    //   error => this.modalService.open(error.error.message),
-    //   () => this.loading = true
-    // )
   }
 
   corresponTie() {
-    if(this.forecastModelService.ticketInformation.stepOne.correspondenceSession === null){
-      this.modalService.open('Вы забыли выбрать на первом шаге Перспективные корреспонденции!')
-    }else{
       this.loading = false;
-      console.log('session', this.sessionId)
-      console.log('sessionKK', this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'])
-      this.calculationsService.getPerspective(this.sessionId, this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'])
+      if(this.forecastModelService.ticketInformation.stepOne.metallurgy !== null){
+        this.urlPerspective += 'iasMetalForecastId=' + this.forecastModelService.ticketInformation.stepOne.metallurgy['id'].toString() + '&';
+      }
+      if(this.forecastModelService.ticketInformation.stepOne.oilCargo !== null){
+        this.urlPerspective += 'iasOilForecastId=' + this.forecastModelService.ticketInformation.stepOne.oilCargo['id'].toString() + '&';
+      }
+      if(this.forecastModelService.ticketInformation.stepOne.ore !== null){
+        this.urlPerspective += 'iasRudaForecastId=' + this.forecastModelService.ticketInformation.stepOne.ore['id'].toString() + '&';
+      }
+      if(this.forecastModelService.ticketInformation.stepOne.correspondenceSession !== null){
+        this.urlPerspective += 'perspectiveSessionId=' + this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'].toString() + '&';
+      }
+      this.urlPerspective += 'sessionId=' + this.sessionId;
+      console.log(this.urlPerspective)
+      this.calculationsService.getPerspective(this.urlPerspective )
         .subscribe(
           res => {this.mathematicalForecastTable = res, console.log(res)},
           error => this.modalService.open(error.error.message),
@@ -191,8 +208,6 @@ export class ForecastCorrespondenceComponent implements OnInit {
             this.disableCorrelation = !this.disableCorrelation;
           }
         )
-    }
-
   }
 
   cargoSessionSenders() {
@@ -225,26 +240,5 @@ export class ForecastCorrespondenceComponent implements OnInit {
     )
   }
 
-  resetTable(item) {
-    this.loading = false;
-    this.mathematicalForecastTable = [...item];
-    this.loading = true;
-    // console.log('go', item)
-  }
-  downloadShip() {
-    this.uploadFileService.getDownload(this.sessionId, 'SHIPMENTS').subscribe(
-      (response: HttpResponse<Blob>) => {
-        console.log(response)
-        let filename: string = 'report.xlsx'
-        let binaryData = [];
-        binaryData.push(response.body);
-        let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
-        downloadLink.setAttribute('download', filename);
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-      },
-      error => this.modalService.open(error.error.message)
-    )
-  }
+
 }

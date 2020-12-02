@@ -13,6 +13,8 @@ import {Table} from "primeng/table";
 import {CalculationsService} from "../../services/calculations.service";
 import {ICargoNci} from "../../models/calculations.model";
 import {TestService} from "../../test.service";
+import {IAuthModel} from "../../models/auth.model";
+import {AuthenticationService} from "../../services/authentication.service";
 
 @Component({
   selector: 'app-list-chipment-data',
@@ -36,14 +38,17 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   totalRecords: number;
   summYears: 0;
   iCargoNci: ICargoNci[];
-
+  user: IAuthModel
 
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
     private calculationsService: CalculationsService,
-    private testService: TestService
-  ) { }
+    private testService: TestService,
+    private authenticationService: AuthenticationService
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
 
   ngOnChanges() {
@@ -101,7 +106,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   }
 
   onRowEditInit(item) {
-    console.log(this.carrgoTypes)
     if(this.carrgoTypes === 'sender'){
       this.testService.or.step1 = Object.assign({}, item);
       this.testService.senderNameOld(Object.assign({}, item));
@@ -176,6 +180,13 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
             error => this.modalService.open(error.error.message)
           )
         }
+      }
+      else {
+        delete item.session
+        this.shipmentsService.putShipments(item).subscribe(
+          res => (console.log('god')),
+          error => this.modalService.open(error.error.message)
+        )
       }
     }else {
       delete item.session

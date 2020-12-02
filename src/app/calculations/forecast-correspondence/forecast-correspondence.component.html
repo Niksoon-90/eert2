@@ -4,7 +4,7 @@
       Прогноз корреспонденций
     </ng-template>
     <ng-template pTemplate="body">
-      <div class="p-d-flex  p-jc-center">
+      <div class="p-d-flex">
        <div class="p-field p-col-6">
          <div class="p-fluid p-formgrid p-grid">
            <div class="p-field p-col-12">
@@ -27,31 +27,36 @@
           <button pButton pRipple type="button" label="Расчитать" class="p-button-success p-button-lg" (click)="calculateForecastingStrategy()" [disabled]="!stepThree.forecastingStrategy"></button>
         </div>
         <div>
-          <button pButton pRipple type="button" label="Увязать " class="p-button-success" (click)="correlation()" [disabled]="disableCorrelation"></button>
-          <button pButton pRipple type="button" label="Учесть заявки грузоотправителей" class="p-button-success" (click)="cargoSessionSenders()" [disabled]="disableCorrelation"></button>
-          <button pButton pRipple type="button" label="Учесть заявки грузополучателей" class="p-button-success" [disabled]="disableCorrelation" (click)="cargoSessionReceivers()"></button>
+          <button pButton pRipple type="button" label="Увязать " class="p-button-success" (click)="correlation()" [disabled]="disableCorrelation" style="margin-right: 10px"></button>
+          <button pButton pRipple type="button" label="Учесть заявки грузоотправителей" class="p-button-success" (click)="cargoSessionSenders()" [disabled]="disableCorrelation" style="margin-right: 10px"></button>
+          <button pButton pRipple type="button" label="Учесть заявки грузополучателей" class="p-button-success" [disabled]="disableCorrelation" (click)="cargoSessionReceivers()" style="margin-right: 10px"></button>
           <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" (click)="corresponTie(); " [disabled]="disableCorrelation"></button>
         </div>
       </div>
-      <button pButton pRipple type="button" label="Скачать" class="p-button-success" (click)="downloadShip()"></button>
       <ng-container *ngIf="this.loading; else loader">
         <app-mathematical-forecast-table *ngIf="this.mathematicalForecastTable"
                                          [mathematicalForecastTable]="this.mathematicalForecastTable"
-                                         (resetTable)="resetTable($event)"
         >
         </app-mathematical-forecast-table>
       </ng-container>
     </ng-template>
     <ng-template #loader>
-      <div class="p-d-flex p-jc-center">
-        <p-progressSpinner></p-progressSpinner>
-      </div>
+      <ng-container *ngIf="this.payment === false; else Payment">
+      </ng-container>
+      <ng-template #Payment>
+        <div class="p-d-flex p-jc-center">
+          <p-progressSpinner></p-progressSpinner>
+        </div>
+      </ng-template>
+
     </ng-template>
 
     <ng-template pTemplate="footer">
       <div class="p-grid p-nogutter p-justify-between">
         <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left" class="p-button-sm"></p-button>
-        <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right" class="p-button-sm"></p-button>
+        <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+          <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right" class="p-button-sm"></p-button>
+        </ng-container>
       </div>
     </ng-template>
   </p-card>

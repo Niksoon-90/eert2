@@ -1,13 +1,13 @@
 <div class="p-d-flex p-jc-between">
-  <div  style="margin: 20px 0 0 0 !important;">
-    <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
-  </div>
   <div  class="p-d-flex p-flex-wrap" style="margin: 20px 0 0 0 !important;">
     <div class="p-d-flex">
       <p-inputSwitch class="sw" [(ngModel)]="checkTypeCargo" (onChange)="chekedCargoType()"></p-inputSwitch>
-        <div style="margin-right: 25px" *ngIf="!checkTypeCargo">Грузоотправители</div>
-        <div style="margin-right: 25px" *ngIf="checkTypeCargo">Грузополучатель</div>
+      <div style="margin-right: 25px" *ngIf="!checkTypeCargo">Грузоотправители</div>
+      <div style="margin-right: 25px" *ngIf="checkTypeCargo">Грузополучатель</div>
     </div>
+  </div>
+  <div  style="margin: 20px 0 0 0 !important;">
+    <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
   </div>
 </div>
 
@@ -31,7 +31,7 @@
         <col>
         <col>
         <col>
-        <col style="width:100px">
+          <col style="width:100px">
       </colgroup>
     </ng-template>
     <ng-template pTemplate="header">
@@ -39,19 +39,19 @@
         <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
         <th pResizableColumn pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
         <th pResizableColumn pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
-        <th pResizableColumn pSortableColumn="userLoginAdd">Логин<p-sortIcon field="userLoginAdd"></p-sortIcon></th>
-        <th pResizableColumn pSortableColumn="userFioAdd">ФИО<p-sortIcon field="userFioAdd"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userLogin">Логин<p-sortIcon field="userLogin"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userFio">ФИО<p-sortIcon field="userFio"></p-sortIcon></th>
         <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
-        <th> Действия</th>
+          <th> Действия</th>
       </tr>
       <tr>
         <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'id', 'startsWith')" placeholder="id" class="p-column-filter"></th>
         <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'contains')" placeholder="Наименование" class="p-column-filter"></th>
         <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'year', 'contains')" placeholder="Года" class="p-column-filter"></th>
-        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userLoginAdd', 'contains')" placeholder="Логин" class="p-column-filter"></th>
-        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userFioAdd', 'contains')" placeholder="ФИО" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userLogin', 'contains')" placeholder="Логин" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userFio', 'contains')" placeholder="ФИО" class="p-column-filter"></th>
         <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'dateWrite', 'contains')" placeholder="Дата загрузки" class="p-column-filter"></th>
-        <th></th>
+         <th></th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-itemCargoSession >
@@ -59,13 +59,15 @@
         <td>{{itemCargoSession.id}}</td>
         <td>{{itemCargoSession.name}}</td>
         <td>{{itemCargoSession.year}}</td>
-        <td>{{itemCargoSession.userLoginAdd}}</td>
-        <td>{{itemCargoSession.userFioAdd}}</td>
+        <td>{{itemCargoSession.userLogin}}</td>
+        <td>{{itemCargoSession.userFio}}</td>
         <td>{{itemCargoSession.dateWrite | date:'full' }}</td>
-        <td>
-          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" (click)="openShipItemSession(itemCargoSession.id)" ></button>
-          <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text p-button-danger" type="button" icon="pi pi-trash"  pTooltip="Удалить" tooltipPosition="bottom"  (click)="removeShipSession(itemCargoSession.id)"></button>
-        </td>
+          <td>
+            <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" (click)="openShipItemSession(itemCargoSession.id)" ></button>
+            <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+              <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text p-button-danger" type="button" icon="pi pi-trash"  pTooltip="Удалить" tooltipPosition="bottom"  (click)="removeShipSession(itemCargoSession.id)"></button>
+            </ng-container>
+          </td>
       </tr>
     </ng-template>
   </p-table>

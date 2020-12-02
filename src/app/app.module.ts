@@ -52,6 +52,7 @@ import { CargoNciComponent } from './directory/cargo-nci/cargo-nci.component';
 import { DirectoryComponent } from './directory/directory.component';
 import { InfluenceFactorComponent } from './directory/influence-factor/influence-factor.component';
 import { CargoOwnerInfluenceFactorComponent } from './directory/cargo-owner-influence-factor/cargo-owner-influence-factor.component';
+import {RedirectGuard} from './auth/redirect-guard/redirect-guard.component';
 
 
 const itemRoutesShipments: Routes = [
@@ -85,6 +86,7 @@ const appRoutes: Routes = [
   {path: 'steps', component: StepsComponent, children: itemRoutesSteps},
   {path: 'directory', component: DirectoryComponent},
   {path: '', component: CalculationsComponent},
+  {path: 'logOut', canActivate: [RedirectGuard], component: RedirectGuard,  data: {  externalUrl: 'http://192.168.11.180:8080/logout' }}
 ]
 registerLocaleData(localeRu, 'ru');
 @NgModule({
@@ -146,6 +148,7 @@ registerLocaleData(localeRu, 'ru');
   ],
 
   providers: [
+    RedirectGuard,
     { provide: LOCALE_ID, useValue: 'ru' }
   ],
   bootstrap: [AppComponent]

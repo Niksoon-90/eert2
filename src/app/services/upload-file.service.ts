@@ -10,7 +10,7 @@ export class UploadFileService {
   constructor(private http: HttpClient) {
   }
 
-  private url = environment.hostURL;
+  private url = environment.hostCalc;
 
   getDownload(sessionId: number, reportType: string){
     return this.http.get<Blob>(this.url + `api/reports/download/${sessionId}?reportType=${reportType}`, { observe: 'response', responseType: 'blob' as 'json' } )

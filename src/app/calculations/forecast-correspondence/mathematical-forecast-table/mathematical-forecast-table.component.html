@@ -1,104 +1,116 @@
 <div class="stepsdemo-content">
-
   <ng-template #load>
     <div class="p-d-flex p-jc-center">
       <p-progressSpinner></p-progressSpinner>
     </div>
   </ng-template>
-  <p-card *ngIf="this.mathematicalForecastTable; else load">
-    <p-table #dt
-             [style]="{width:'94.7vw'}"
-             [columns]="cols"
-             [value]="this.mathematicalForecastTable"
-             [scrollable]="true" scrollHeight="30vh"
-             styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
-             [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
-             [paginator]="true"
-             [rows]="500"
-             [totalRecords]="totalRecords"
-             [filterDelay]="0"
-             (onFilter)="massSummYears($event)"
+  <ng-container *ngIf="this.loader === false; else load">
+    <p-card *ngIf="mathematicalForecastTable; else load">
+      <p-table #dt
+               [style]="{width:'94.7vw'}"
+               [columns]="cols"
+               [value]="mathematicalForecastTable"
+               [scrollable]="true" scrollHeight="30vh"
+               styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
+               [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
+               [paginator]="true"
+               [rows]="500"
+               [totalRecords]="totalRecords"
+               [filterDelay]="0"
+               (onFilter)="massSummYears($event)"
 
-    >
-      <ng-template pTemplate="colgroup" let-columns>
-        <colgroup>
-          <col style="width:80px" >
-          <col *ngFor="let col of columns" [style.width]="col.width" >
-          <col style="width:80px" >
-        </colgroup>
-      </ng-template>
-      <ng-template pTemplate="header" let-columns>
-        <tr>
-          <th pResizableColumn>№</th>
-          <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
-            {{col.header}}
-          </th>
-          <th>Действия</th>
-        </tr>
-        <tr>
-          <th></th>
-          <th *ngFor="let col of columns;" >
-            <ng-container *ngIf="col['field'] !== 'primary'; else prime">
-              <input pInputText type="text" (click)="$event.stopPropagation()"  (input)="columnFilter($event, col.field)" class="p-column-filter">
+      >
+        <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
+          <ng-template pTemplate="caption">
+            <div class="p-d-flex">
+              <button type="button" pButton icon="pi pi-file-excel" iconPos="left" ptooltip="XLSX" label="Скачать" class="p-button-success p-mr-2 p-button p-component p-button-icon-only" (click)="downloadShip()" style="margin-right: 0.5em;"></button>
+            </div>
+          </ng-template>
+        </ng-container>
+        <ng-template pTemplate="colgroup" let-columns>
+          <colgroup>
+            <col style="width:80px" >
+            <col *ngFor="let col of columns" [style.width]="col.width" >
+            <col style="width:80px" >
+          </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th pResizableColumn>№</th>
+            <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
+              {{col.header}}
+            </th>
+            <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+              <th>Действия</th>
             </ng-container>
-            <ng-template #prime>
-              <p-dropdown appendTo="body" [options]="primeryBol" [(ngModel)]="selectedPrimery" (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>
-            </ng-template>
-          </th>
-          <th></th>
-        </tr>
-
-      </ng-template>
-      <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
-        <tr [pEditableRow]="rowData">
-          <td>{{ri}}</td>
-          <td pEditableColumn *ngFor="let col of this.cols; let idx = index">
-            <p-cellEditor>
-              <ng-template pTemplate="input">
-                <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
+          </tr>
+          <tr>
+            <th></th>
+            <th *ngFor="let col of columns;" >
+              <ng-container *ngIf="col['field'] !== 'primary'; else prime">
+                <input pInputText type="text" (click)="$event.stopPropagation()"  (input)="columnFilter($event, col.field)" class="p-column-filter">
+              </ng-container>
+              <ng-template #prime>
+                <p-dropdown appendTo="body" [options]="primeryBol" [(ngModel)]="selectedPrimery" (onChange)="primeryBolChange($event.value, col.field, 'equals')"></p-dropdown>
               </ng-template>
-              <ng-template pTemplate="output" >
-                <div *ngIf="idx < 14 && col['field'] !== 'primary'">
-                  {{rowData[col.field]}}
-                </div>
-                <div *ngIf="col['field'] === 'primary'" style="text-align:center">
-                  <ng-container *ngIf="rowData[col.field] === true; else primaryFalse">
-                    <i class="pi" style="color: green" [ngClass]="{'true-icon pi-check-circle': rowData[col.field], 'false-icon pi-times-circle': !rowData[col.field]}"></i>
-                  </ng-container>
-                  <ng-template #primaryFalse>
-                    <i class="pi"  style="color: red" [ngClass]="{'true-icon pi-check-circle': rowData[col.field], 'false-icon pi-times-circle': !rowData[col.field]}"></i>
-                  </ng-template>
-                </div>
-                <div *ngIf="idx > 12" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
-                  {{rowData | field:col}}
-                </div>
-              </ng-template>
-            </p-cellEditor>
-          </td>
-
-          <td style="text-align:center">
-            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
-            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="footer">
-        <tr>
-          <td colspan="14" class="p-text-right">Итого: </td>
-          <td *ngFor="let items of this.massSummYear">{{items | number}}</td>
-        </tr>
-        <tr>
-          <td colspan="14" class="p-text-right">Сумма: </td>
-          <ng-container *ngFor="let item of this.massSummYear; let idx = index">
-            <td *ngIf="test2(item, idx); else num">
-              <input pInputText type="text"  (keyup.enter)="test(idx, $event.target.value)">
+            </th>
+            <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+              <th></th>
+            </ng-container>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+          <tr [pEditableRow]="rowData">
+            <td>{{ri}}</td>
+            <td  *ngFor="let col of this.cols; let idx = index">
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
+                </ng-template>
+                <ng-template pTemplate="output" >
+                  <div *ngIf="idx < 14 && col['field'] !== 'primary'">
+                    {{rowData[col.field]}}
+                  </div>
+                  <div *ngIf="col['field'] === 'primary'" style="text-align:center">
+                    <ng-container *ngIf="rowData[col.field] === true; else primaryFalse">
+                      <i class="pi" style="color: green" [ngClass]="{'true-icon pi-check-circle': rowData[col.field], 'false-icon pi-times-circle': !rowData[col.field]}"></i>
+                    </ng-container>
+                    <ng-template #primaryFalse>
+                      <i class="pi"  style="color: red" [ngClass]="{'true-icon pi-check-circle': rowData[col.field], 'false-icon pi-times-circle': !rowData[col.field]}"></i>
+                    </ng-template>
+                  </div>
+                  <div *ngIf="idx > 12" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
+                    {{rowData | field:col}}
+                  </div>
+                </ng-template>
+              </p-cellEditor>
             </td>
-            <ng-template #num>
-              <td ></td>
-            </ng-template>
-          </ng-container>
-      </ng-template>
-    </p-table>
-  </p-card>
+            <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+              <td style="text-align:center">
+                <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+                <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
+              </td>
+            </ng-container>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr>
+            <td colspan="14" class="p-text-right">Итого: </td>
+            <td *ngFor="let items of this.massSummYear">{{items | number}}</td>
+          </tr>
+          <tr>
+            <td colspan="14" class="p-text-right">Сумма: </td>
+            <ng-container *ngFor="let item of this.massSummYear; let idx = index">
+              <td *ngIf="test2(item, idx); else num">
+                <input pInputText type="text"  (keyup.enter)="test(idx, $event.target.value)">
+              </td>
+              <ng-template #num>
+                <td ></td>
+              </ng-template>
+            </ng-container>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </ng-container>
 </div>

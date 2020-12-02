@@ -2,8 +2,11 @@ import {Component, OnChanges, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {ForecastingModelService} from "../../services/forecasting-model.service";
 import {CalculationsService} from "../../services/calculations.service";
-import {ICalculatingPredictiveRegression} from "../../models/calculations.model";
+import {ICalculatingPredictiveRegression, IfFrecastValues} from "../../models/calculations.model";
 import {ModalService} from "../../services/modal.service";
+import {map} from "rxjs/operators";
+import {IAuthModel} from "../../models/auth.model";
+import {AuthenticationService} from "../../services/authentication.service";
 
 @Component({
   selector: 'app-math-forecast',
@@ -14,13 +17,17 @@ export class MathForecastComponent implements OnInit, OnChanges {
   mathematicalForecastTable: ICalculatingPredictiveRegression[];
   lastCalculatedVolumesTotal: number[];
   lastGroupVolumesByYearsTotal: number[];
+  user: IAuthModel
 
   constructor(
     private router: Router,
     public forecastModelService: ForecastingModelService,
     private calculationsService: CalculationsService,
-    private modalService: ModalService
-  ) { }
+    private modalService: ModalService,
+    private authenticationService: AuthenticationService
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
   ngOnChanges() {
     this.calculateLastTotal();
@@ -33,8 +40,14 @@ export class MathForecastComponent implements OnInit, OnChanges {
     console.log(this.forecastModelService.getTicketInformation().stepOne.Session['id'])
     console.log(this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
     this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'] )
+      .pipe(
+        map(data => {
+          const transformedData = Object.keys(data).map(key => Object.assign(data[key], {id: Math.random() * 1000000}));
+          return transformedData;
+        })
+      )
       .subscribe(
-        res => {this.mathematicalForecastTable = res; console.log(this.mathematicalForecastTable)},
+        res => { console.log('res',res); this.mathematicalForecastTable = res},
         error => this.modalService.open(error.error.message),
         () => this.calculateLastTotal()
       )
@@ -58,10 +71,10 @@ export class MathForecastComponent implements OnInit, OnChanges {
       }
       this.lastGroupVolumesByYearsTotal.push(summColumn)
     }
-    for(let a = 0; a < Object.values(this.mathematicalForecastTable[0].calculatedVolumes).length; a++){
+    for(let a = 0; a < Object.values(this.mathematicalForecastTable[0].forecastValues).length; a++){
       let summColumn = 0
       for(let i = 0; i< this.mathematicalForecastTable.length; i++){
-        summColumn += Number(Object.values(this.mathematicalForecastTable[i].calculatedVolumes)[a])
+        summColumn += Number(Object.values(this.mathematicalForecastTable[i].forecastValues)[a].value)
       }
      this.lastCalculatedVolumesTotal.push(summColumn)
     }
@@ -74,6 +87,12 @@ export class MathForecastComponent implements OnInit, OnChanges {
   }
 
   onRowEditSave(item) {
-      console.log(item)
-  }
+    for(let i of item.forecastValues){
+      this.calculationsService.putUpdateMacroForecast(i.id, i.value).subscribe(
+        res => console.log(),
+        error => this.modalService.open(error.error.message),
+        () => this.calculateLastTotal()
+      )
+    }
+    }
 }
