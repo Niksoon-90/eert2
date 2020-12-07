@@ -75,7 +75,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
       error => this.modalService.open(error.error.message),
       () => {
         this.forecastModelService.ticketInformation.stepThree.forecastingStrategy = this.stepThree.forecastingStrategy;
-        this.router.navigate(['steps/export']);
+        this.router.navigate(['steps/payment']);
       }
     )
   }
@@ -239,6 +239,4 @@ export class ForecastCorrespondenceComponent implements OnInit {
       () => this.loading = true
     )
   }
-
-
 }

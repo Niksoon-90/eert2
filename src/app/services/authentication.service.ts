@@ -26,6 +26,12 @@ export class AuthenticationService {
   private hostAuth = environment.hostAuth;
 
   getMe(): Observable<IAuthModel>{
+    //  const users: IAuthModel  = {
+    //    fio: 'sdsdsdsdsd',
+    //    authorities: ['P_P_p1', 'P_P_p2', 'P_P_p3',  'P_P_p4', 'P_P_p5', 'P_P_p6', 'P_P_p7', 'P_P_p8', 'P_P_p10' ]
+    //  }
+    // localStorage.setItem('user', JSON.stringify(users));
+    //  return
     localStorage.removeItem("user");
     return this.http.get<IAuthModel>(this.hostAuth + `me`)
       .pipe(map(user => {

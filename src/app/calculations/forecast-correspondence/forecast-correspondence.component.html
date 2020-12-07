@@ -44,8 +44,10 @@
       <ng-container *ngIf="this.payment === false; else Payment">
       </ng-container>
       <ng-template #Payment>
-        <div class="p-d-flex p-jc-center">
-          <p-progressSpinner></p-progressSpinner>
+        <div class="p-d-flex p-jc-center" style="height: 40vh">
+          <div class="p-grid p-ai-center vertical-container ">
+            <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+          </div>
         </div>
       </ng-template>
 

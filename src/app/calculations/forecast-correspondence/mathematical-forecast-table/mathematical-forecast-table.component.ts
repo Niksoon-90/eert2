@@ -35,7 +35,8 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   virtTable: any[];
   user: IAuthModel;
   loader: boolean = false
-
+  downloadShipLoading: boolean = false
+  downloadRoadLoading: boolean = false
   primeryBol = [ { label: 'Все', value: '' },{ label: 'Да', value: true },{ label: 'Нет', value: false }]
   selectedPrimery: any;
   virtTable2: any;
@@ -171,10 +172,11 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   }
 
   downloadShip() {
+    this.downloadShipLoading = true;
     this.uploadFileService.getDownload(this.sessionId, 'SHIPMENTS').subscribe(
       (response: HttpResponse<Blob>) => {
         console.log(response)
-        let filename: string = 'report.xlsx'
+        let filename: string = 'shipments.xlsx'
         let binaryData = [];
         binaryData.push(response.body);
         let downloadLink = document.createElement('a');
@@ -183,7 +185,26 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => this.modalService.open(error.error.message)
+      error => this.modalService.open(error.error.message),
+      () => this.downloadShipLoading = false
+    )
+  }
+  downloadRoad() {
+    this.downloadRoadLoading = true;
+    this.uploadFileService.getDownload(this.sessionId, 'ROAD_TO_ROAD').subscribe(
+      (response: HttpResponse<Blob>) => {
+        console.log(response)
+        let filename: string = 'road_to_road.xlsx'
+        let binaryData = [];
+        binaryData.push(response.body);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+        downloadLink.setAttribute('download', filename);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      error => this.modalService.open(error.error.message),
+      () =>  this.downloadRoadLoading = false
     )
   }
 }

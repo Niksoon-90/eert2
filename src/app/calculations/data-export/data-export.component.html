@@ -5,9 +5,9 @@
     <ng-template pTemplate="body">
       <ng-container *ngIf="this.user.authorities.includes('P_P_p10') === true">
       <h3>Работа с ИАС Маршруты</h3>
-              <div class="p-grid p-fluid">
-                <div class="p-col-12 p-md-4">
-                  <form [formGroup]="formTwo" (ngSubmit)="download(); form.reset()">
+              <div>
+                <div class="p-col-12 p-md-4" *ngIf="this.selectedPrimery !== true">
+                  <form [formGroup]="formTwo" (ngSubmit)="download(); formTwo.reset()">
                     <div class="p-inputgroup">
                       <button  pButton  type="submit" label="Загрузить" class="p-button-raised p-button-secondary " [disabled]="this.formTwo.invalid"></button>
                       <span class="p-float-label">
@@ -19,13 +19,11 @@
                 </div>
                 <div class="p-col-12 p-md-4">
                   <form [formGroup]="form" (ngSubmit)="unload(); form.reset()">
-                    <div class="p-d-flex">
-                      <div class="p-d-flex p-flex-column">
-                        <p-dropdown  [options]="forecastCorrespondence" optionLabel="descr"  formControlName="forecastCorrespondence"  placeholder="Выгрузить загрузку участков прогнозными корреспонденциями:"></p-dropdown>
-                        <ng-container *ngIf="this.selectedPrimery === true">
-                          <p-dropdown  [options]="smallCorrespondence" optionLabel="descr"   formControlName="smallCorrespondence"  placeholder="Выгрузить загрузку участков мелкими корреспонденциями:"></p-dropdown>
-                        </ng-container>
-                      </div>
+                    <div class="p-d-flex p-flex-column" [style]="{'minWidth':'100%'}">
+                      <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="forecastCorrespondence" optionLabel="descr" [showClear]="true" formControlName="forecastCorrespondence"  placeholder="Выгрузить загрузку участков прогнозными корреспонденциями:"></p-dropdown>
+                      <ng-container *ngIf="this.selectedPrimery === true">
+                        <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="smallCorrespondence" optionLabel="descr" [showClear]="true"  formControlName="smallCorrespondence"  placeholder="Выгрузить загрузку участков мелкими корреспонденциями:"></p-dropdown>
+                      </ng-container>
                     </div>
                   </form>
                 </div>

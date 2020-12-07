@@ -45,7 +45,7 @@ export class DataExportComponent implements OnInit {
 
 
   prevPage() {
-    this.router.navigate(['steps/forecast']);
+    this.router.navigate(['steps/payment']);
   }
 
   createForm() {

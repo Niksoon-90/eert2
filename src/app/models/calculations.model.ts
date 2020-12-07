@@ -46,3 +46,22 @@ export interface ICargoOwnerInfluenceFactor {
   influenceFactorName?: string,
   koef?: number
 }
+
+export interface IStationNci {
+  id?: number,
+  name?: string,
+  code?: number
+}
+export interface IDorogyNci {
+  id: number,
+  name: string
+}
+export interface ICargoGroupNci {
+  id: number,
+  name: string
+}
+
+export interface IShipmentTypNci {
+  id: number,
+  name: string
+}

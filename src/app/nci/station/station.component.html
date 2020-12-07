@@ -1,30 +1,39 @@
 <ng-container *ngIf="this.user.authorities.includes('P_P_p7') === true">
-  <div class="p-grid p-jc-end" style="padding: 15px">
-      <span class="p-float-label" style="padding-right: 10px;">
-        <input id="createCargoNci" type="text" pInputText [(ngModel)]="nameNewCargoNci" >
-        <label for="createCargoNci">Вид сообщения</label>
-      </span>
-    <button pButton pRipple type="button" label="Сохранить" class="p-button-raised p-button-secondary " (click)="createCargoNci()"></button>
-  </div>
+  <form [formGroup]="form" (ngSubmit)="createStatioNci(); form.reset()">
+    <div class="p-grid p-jc-end" [style]="{padding: '15px'}">
+      <div style="padding-right: 10px;">
+         <span class="p-float-label" >
+          <input id="nameStation" formControlName="nameStation" type="text" pInputText >
+          <label for="nameStation">Наименование станции</label>
+        </span>
+      </div>
+      <div style="padding-right: 10px;">
+        <span class="p-float-label" >
+            <input id="code" formControlName="code" type="text" pInputText >
+            <label for="code">Код станции</label>
+          </span>
+      </div>
+      <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary"></button>
+    </div>
+  </form>
 </ng-container>
-<div class="card" *ngIf="cargoNci; else Loader">
- <p-table #dt
-    [style]="{width:'auto'}"
-    [columns]="cols"
-    [value]="cargoNci"
-    [scrollable]="true" scrollHeight="25vh"
-    styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
-    [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
-    [paginator]="true"
-    [rows]="500"
-    [totalRecords]="totalRecords"
-    [filterDelay]="0"
+<div class="card" *ngIf="stationNci; else Loader">
+  <p-table #dt
+           [style]="{width:'auto'}"
+           [columns]="cols"
+           [value]="stationNci"
+           [scrollable]="true" scrollHeight="25vh"
+           styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
+           [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
+           [paginator]="true"
+           [rows]="500"
+           [filterDelay]="0"
   >
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
         <col *ngFor="let col of columns" [style.width]="col.width" >
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
-          <col style="width:15px" >
+          <col style="width: 30%" >
         </ng-container>
       </colgroup>
     </ng-template>
@@ -46,7 +55,7 @@
     <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
       <tr [pEditableRow]="rowData">
         <td pEditableColumn *ngFor="let col of this.cols;">
-          <p-cellEditor *ngIf="!col.isStatic;else staticTemplate">
+          <p-cellEditor>
             <ng-template pTemplate="input">
               <input pInputText type="text" [(ngModel)]="rowData[col.field]">
             </ng-template>
@@ -54,9 +63,6 @@
               {{rowData[col.field]}}
             </ng-template>
           </p-cellEditor>
-          <ng-template #staticTemplate>
-            {{ rowData[col.field] }}
-          </ng-template>
         </td>
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
           <td style="text-align:center">

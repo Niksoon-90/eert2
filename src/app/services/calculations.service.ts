@@ -10,7 +10,12 @@ import {
 } from "../models/calculations.model";
 import {MonoCargoSystemsModel} from "../models/mono-cargo-systems.model";
 import {IShipment} from "../models/shipmenst.model";
-import {IForecastIASModel, IForecastIASModelId} from "../models/forecastIAS.model";
+import {
+  ICorrespondencesIiasForecast,
+  IForecastIASModel,
+  IForecastIASModelId,
+  IPathRequest
+} from "../models/forecastIAS.model";
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +65,18 @@ export class CalculationsService {
   }
   getOre(): Observable<MonoCargoSystemsModel[]>{
     return this.http.get<MonoCargoSystemsModel[]>(this.urlCalc + `api/external/ruda`)
+  }
+  getIasForecastId(id: number): Observable<ICorrespondencesIiasForecast[]>{
+    return this.http.get<ICorrespondencesIiasForecast[]>(this.urlCalc + `api/external/routes/correspondences/${id}`)
+  }
+  getPathRequest(iasForecastId: number, iasCorrespondenceId: number): Observable<IPathRequest[]>{
+    return this.http.get<IPathRequest[]>(this.urlCalc + `api/external/routes/correspondences/${iasForecastId}/${iasCorrespondenceId}`)
+  }
+  getForcastIasId(id: number): Observable<IForecastIASModelId[]>{
+    return this.http.get<IForecastIASModelId[]>(this.urlCalc + `api/external/routes/forecast/${id}`)
+  }
+  getForcastIas(): Observable<IForecastIASModel[]>{
+    return this.http.get<IForecastIASModel[]>(this.urlCalc + `api/external/routes/forecast`)
   }
   //TODO 5
 
@@ -125,11 +142,7 @@ export class CalculationsService {
     return  this.http.get<IShipment[]>(this.urlCalc + `api/calc/claims/?cargoOwnerSessionId=${cargoOwnerSessionId}&historicalDataSessionId=${historicalDataSessionId}`)
   }
   //TODO ИАС
-  getForcastIas(): Observable<IForecastIASModel[]>{
-    return this.http.get<IForecastIASModel[]>(this.urlCalc + `api/external/routes/forecast`)
-  }
-  getForcastIasId(id: number): Observable<IForecastIASModelId[]>{
-    return this.http.get<IForecastIASModelId[]>(this.urlCalc + `api/external/routes/forecast/${id}`)
-  }
+
+
 
 }

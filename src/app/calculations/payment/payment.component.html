@@ -1,57 +1,168 @@
 <div class="stepsdemo-content">
   <p-card>
-    <ng-template pTemplate="title">
-        Импорт данных
-    </ng-template>
-    <ng-template pTemplate="subtitle">
-        Все поля обязательны для заполнения!
-    </ng-template>
     <ng-template pTemplate="content">
-      <div class="p-field-radiobutton">
-        <p-radioButton name="manual" value="Ручной расчет" [(ngModel)]="typeCalculation" inputId="manual"></p-radioButton>
-        <label for="manual">Ручной расчет</label>
-      </div>
-      <div class="p-field-radiobutton">
-        <p-radioButton name="auto" value="Автоматический расчет" [(ngModel)]="typeCalculation" inputId="auto"></p-radioButton>
-        <label for="auto">Автоматический расчет</label>
-      </div>
-      <button pButton pRipple type="button" label="Отправить в ИАС Маршрут" class="p-button-success"></button>
-      <h4>Дата отправки: <p> статус: </p></h4>
-      <p-table [value]="sales">
-        <ng-template pTemplate="header">
-          <tr>
-            <th rowspan="2">Дорога</th>
-            <th rowspan="2">Начальная станция участка</th>
-            <th rowspan="2">Единая сетевая разметка начальной станции</th>
-            <th rowspan="2">Конечная станция участка</th>
-            <th rowspan="2">Единая сетевая разметка конечной станции</th>
-            <th rowspan="2">км</th>
-            <th colspan="2">к концу участка</th>
-            <th colspan="2">к началу участка</th>
-          </tr>
-          <tr>
-            <th>2015</th>
-            <th>2016</th>
-            <th>2015</th>
-            <th>2016</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-sale>
-          <tr>
-            <td>{{sale.product}}</td>
-            <td>{{sale.lastYearSale}}%</td>
-            <td>{{sale.thisYearSale}}%</td>
-            <td>{{sale.lastYearProfit | currency: 'USD'}}</td>
-            <td>{{sale.thisYearProfit | currency: 'USD'}}</td>
-            <td>{{sale.thisYearProfit1 | currency: 'USD'}}</td>
-            <td>{{sale.thisYearProfit2 | currency: 'USD'}}</td>
-            <td>{{sale.thisYearProfit3 | currency: 'USD'}}</td>
-            <td>{{sale.thisYearProfit4 | currency: 'USD'}}</td>
-            <td>{{sale.thisYearProfit5 | currency: 'USD'}}</td>
-          </tr>
-        </ng-template>
-      </p-table>
+      <ng-container *ngIf="this.user.authorities.includes('P_P_p10') === true">
+        <h3>Работа с ИАС Маршруты</h3>
+        <div>
+          <div class="p-col-12 p-md-4">
+            <form [formGroup]="form" (ngSubmit)="corresIiasForecast()">
+                <div class="p-d-flex p-flex-column" [style]="{'minWidth':'100%'}">
+                  <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="forecastCorrespondence" optionLabel="descr" [showClear]="true" formControlName="forecastCorrespondence"  placeholder="Выгрузить загрузку участков прогнозными корреспонденциями:"></p-dropdown>
+                  <ng-container *ngIf="this.selectedPrimery === true">
+                    <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="smallCorrespondence" optionLabel="descr" [showClear]="true"  formControlName="smallCorrespondence"  placeholder="Выгрузить загрузку участков мелкими корреспонденциями:"></p-dropdown>
+                  </ng-container>
+              </div>
+              <button  pButton  type="submit" label="Выгрузить" class="p-button-raised p-button-secondary"></button>
+            </form>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="this.loading === false">
+        <h4>№1 Форма корреспонденций</h4>
+        <ng-container *ngIf="this.loadingOne === false; else Loader">
+          <p-table
+            [style]="{width:'94.7vw'}"
+            [columns]="cols"
+            [value]="correspondencesIiasForecast"
+            [scrollable]="true" scrollHeight="18vh"
+            styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="corr_id"
+            [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
+            [paginator]="true"
+            [rows]="500"
+            [filterDelay]="0"
+            *ngIf="correspondencesIiasForecast"
+          >
+            <ng-template pTemplate="colgroup" let-columns>
+              <colgroup>
+                <col *ngFor="let col of columns" [style.width]="col.width" >
+                <col style="width:80px" >
+              </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
+                  {{col.header}}
+                </th>
+                <th>Действия</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+              <tr [pEditableRow]="rowData">
+                <td  *ngFor="let col of this.cols">
+                  {{rowData[col.field]}}
+                </td>
+                <td>
+                  <button pButton pRipple type="button" icon="pi pi-search" (click)="searchInIAS(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+
+
+        <h4>№2 Форму загрузки участков</h4>
+        <ng-container *ngIf="this.loadingTwo === false; else Loader">
+          <p-table
+            [style]="{width:'94.7vw'}"
+            [columns]="columnF"
+            [value]="forecastIASModelId"
+            [scrollable]="true" scrollHeight="18vh"
+            styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="corr_id"
+            [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
+            [paginator]="true"
+            [rows]="500"
+            [filterDelay]="0"
+            *ngIf="forecastIASModelId"
+          >
+            <ng-template pTemplate="colgroup" let-columns>
+              <colgroup>
+                <col *ngFor="let col of columns" [style.width]="col.width" >
+              </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
+                  {{col.header}}
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+              <tr [pEditableRow]="rowData">
+                <td  *ngFor="let col of this.columnF">
+                  {{rowData[col.field]}}
+                </td>
+              </tr>
+
+            </ng-template>
+          </p-table>
+        </ng-container>
+      </ng-container>
+
+
+      <ng-template #Loader>
+          <div class="p-d-flex p-jc-center" style="height: 20vh">
+            <div class="p-grid p-ai-center vertical-container ">
+              <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+            </div>
+          </div>
+      </ng-template>
+      <ng-template #LoaderListner>
+
+      </ng-template>
+
     </ng-template>
+
+    <p-dialog
+      [baseZIndex]="1"
+      [maximizable]="true"
+      [modal]="false"
+      [resizable]="true"
+      [contentStyle]="{height: '50vh'}"
+      [closeOnEscape]="false"
+      [closable]="false"
+      [(visible)]="productDialog"
+      [style]="{width: '450px'}"
+      header="Отчет по пути следования"
+      styleClass="p-fluid">
+      <ng-template pTemplate="content">
+        <p-table
+          [value]="pathRequest"
+          [columns]="columnS"
+          [scrollable]="true" scrollHeight="75vh"
+          styleClass="p-datatable-sm p-datatable-gridlines"
+          [resizableColumns]="true"  columnResizeMode="expand"
+          [paginator]="true"
+          [rows]="500"
+          [filterDelay]="0"
+        >
+          <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+              <col *ngFor="let col of columns" [style.width]="col.width" >
+            </colgroup>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
+                {{col.header}}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+            <tr [pEditableRow]="rowData">
+              <td  *ngFor="let col of this.columnS">
+                {{rowData[col.field]}}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <button type="button" pButton pRipple icon="pi pi-times" (click)="closeModalTable()" label="Закрыть" class="p-button-text"></button>
+      </ng-template>
+    </p-dialog>
+
+
     <ng-template pTemplate="footer">
       <div class="p-grid p-nogutter p-justify-between">
         <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>

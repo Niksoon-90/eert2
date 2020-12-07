@@ -53,6 +53,11 @@ import { DirectoryComponent } from './directory/directory.component';
 import { InfluenceFactorComponent } from './directory/influence-factor/influence-factor.component';
 import { CargoOwnerInfluenceFactorComponent } from './directory/cargo-owner-influence-factor/cargo-owner-influence-factor.component';
 import {RedirectGuard} from './auth/redirect-guard/redirect-guard.component';
+import { NciComponent } from './nci/nci.component';
+import { StationComponent } from './nci/station/station.component';
+import { DorogyComponent } from './nci/dorogy/dorogy.component';
+import { CargoGroupComponent } from './nci/cargo-group/cargo-group.component';
+import { ShipmentTypeComponent } from './nci/shipment-type/shipment-type.component';
 
 
 const itemRoutesShipments: Routes = [
@@ -85,6 +90,7 @@ const appRoutes: Routes = [
   {path: 'macroPok', component: MacroPokComponent},
   {path: 'steps', component: StepsComponent, children: itemRoutesSteps},
   {path: 'directory', component: DirectoryComponent},
+  {path: 'nci', component: NciComponent},
   {path: '', component: CalculationsComponent},
   {path: 'logOut', canActivate: [RedirectGuard], component: RedirectGuard,  data: {  externalUrl: 'http://192.168.11.180:8080/logout' }}
 ]
@@ -116,6 +122,11 @@ registerLocaleData(localeRu, 'ru');
     DirectoryComponent,
     InfluenceFactorComponent,
     CargoOwnerInfluenceFactorComponent,
+    NciComponent,
+    StationComponent,
+    DorogyComponent,
+    CargoGroupComponent,
+    ShipmentTypeComponent,
   ],
   imports: [
     BrowserModule,

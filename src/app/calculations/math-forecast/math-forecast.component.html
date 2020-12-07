@@ -32,10 +32,10 @@
             <th>Группа груза</th>
             <th>Вид сообщения</th>
             <ng-container *ngIf="mathematicalForecastTable">
-              <th *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears | keyvalue">
+              <th style="text-align: center" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears | keyvalue">
                 {{data.key}}
               </th>
-              <th *ngFor="let data2 of mathematicalForecastTable[0].forecastValues">
+              <th style="text-align: center" *ngFor="let data2 of mathematicalForecastTable[0].forecastValues">
                 {{data2.year}}
               </th>
             </ng-container>
@@ -49,10 +49,10 @@
           <tr [pEditableRow]="item">
             <td>{{item.cargoGroup}}</td>
             <td>{{item.shipmentType}}</td>
-            <td *ngFor="let year of item.groupVolumesByYears  | keyvalue; let idx = index" style="background-color: rgba(0,64,255,0.07)">
+            <td *ngFor="let year of item.groupVolumesByYears  | keyvalue; let idx = index" style="background-color: rgba(0,64,255,0.07); text-align: right">
               {{year.value | number}}
             </td>
-            <td *ngFor="let data of item.forecastValues; let idx = index" style="background-color: rgba(68,255,0,0.29)">
+            <td *ngFor="let data of item.forecastValues; let idx = index" style="background-color: rgba(68,255,0,0.29); text-align: right">
               <p-cellEditor>
                 <ng-template pTemplate="input">
                   <input pInputText type="text" [(ngModel)]="data.value">
@@ -75,10 +75,10 @@
           <tr>
             <td colspan="2" class="p-text-right">Сумма: </td>
             <ng-container *ngFor="let item of this.lastGroupVolumesByYearsTotal">
-              <td>{{item | number}}</td>
+              <td style="text-align: right">{{item | number}}</td>
             </ng-container>
             <ng-container *ngFor="let item of this.lastCalculatedVolumesTotal">
-              <td>{{item | number}}</td>
+              <td style="text-align: right">{{item | number}}</td>
             </ng-container>
           </tr>
         </ng-template>

@@ -1,7 +1,9 @@
 <div class="stepsdemo-content">
   <ng-template #load>
-    <div class="p-d-flex p-jc-center">
-      <p-progressSpinner></p-progressSpinner>
+    <div class="p-d-flex p-jc-center" style="height: 40vh">
+      <div class="p-grid p-ai-center vertical-container ">
+        <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+      </div>
     </div>
   </ng-template>
   <ng-container *ngIf="this.loader === false; else load">
@@ -10,7 +12,7 @@
                [style]="{width:'94.7vw'}"
                [columns]="cols"
                [value]="mathematicalForecastTable"
-               [scrollable]="true" scrollHeight="30vh"
+               [scrollable]="true" scrollHeight="28vh"
                styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
                [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
                [paginator]="true"
@@ -21,10 +23,23 @@
 
       >
         <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
+
           <ng-template pTemplate="caption">
-            <div class="p-d-flex">
-              <button type="button" pButton icon="pi pi-file-excel" iconPos="left" ptooltip="XLSX" label="Скачать" class="p-button-success p-mr-2 p-button p-component p-button-icon-only" (click)="downloadShip()" style="margin-right: 0.5em;"></button>
+            <div class="p-grid p-ai-center vertical-container">
+              <ng-container *ngIf="this.downloadShipLoading === false; else DownloadShipLoading">
+                <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left"  label="Скачать" class="p-button-success p-mr-2 p-button p-component" (click)="downloadShip()" style="margin-right: 0.5em;"></button>
+              </ng-container>
+              <ng-template #DownloadShipLoading>
+                <p-progressSpinner [style]="{width: '30px', height: '30px', margin: '0 100px 0 100px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+              </ng-template>
+              <ng-container *ngIf="this.downloadRoadLoading === false; else DownloadRoadLoading">
+                <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left"  label="Дорога-дорога" class="p-button-success p-mr-2 p-button p-component" (click)="downloadRoad()" style="margin-right: 0.5em;"></button>
+              </ng-container>
+              <ng-template #DownloadRoadLoading>
+                <p-progressSpinner [style]="{width: '30px', height: '30px', margin: '0 100px 0 100px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+              </ng-template>
             </div>
+
           </ng-template>
         </ng-container>
         <ng-template pTemplate="colgroup" let-columns>

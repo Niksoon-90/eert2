@@ -50,9 +50,8 @@ export class AppComponent implements OnInit{
       {
         label: 'Справочники',
         items:[
-          {label: 'Факторы влияния', routerLink: ['directory'], command: () => { this.clickItem(); }},
-          {label: 'Дороги, станции', },
-          {label: 'Группы грузов', },
+          {label: 'Грузовладельцы, факторы', routerLink: ['directory'], command: () => { this.clickItem(); }},
+          {label: 'НСИ', routerLink: ['nci'], command: () => { this.clickItem(); }},
         ]
       }
       ]
