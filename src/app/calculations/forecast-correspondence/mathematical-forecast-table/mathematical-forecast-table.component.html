@@ -23,7 +23,6 @@
 
       >
         <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
-
           <ng-template pTemplate="caption">
             <div class="p-grid p-ai-center vertical-container">
               <ng-container *ngIf="this.downloadShipLoading === false; else DownloadShipLoading">
@@ -39,7 +38,6 @@
                 <p-progressSpinner [style]="{width: '30px', height: '30px', margin: '0 100px 0 100px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
               </ng-template>
             </div>
-
           </ng-template>
         </ng-container>
         <ng-template pTemplate="colgroup" let-columns>

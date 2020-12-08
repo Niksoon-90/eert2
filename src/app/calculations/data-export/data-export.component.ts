@@ -101,7 +101,7 @@ export class DataExportComponent implements OnInit {
         this.uploadFileService.getDownload(this.form.controls.forecastCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
           (response: HttpResponse<Blob>) => {
             console.log(response)
-            let filename: string = 'report.xlsx'
+            let filename: string = 'ias_routes.xlsx'
             let binaryData = [];
             binaryData.push(response.body);
             let downloadLink = document.createElement('a');

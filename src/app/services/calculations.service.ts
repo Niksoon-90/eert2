@@ -43,11 +43,15 @@ export class CalculationsService {
   getCalculationFixed(id: number, idHorizonforecast: number): Observable<IShipment[]> {
     return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/tendency/fixed/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
+
   getCalculationIncreasing(id: number, idHorizonforecast: number): Observable<IShipment[]> {
     return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/tendency/increasing/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
   getCalculationAverage(id: number, idHorizonforecast: number): Observable<IShipment[]> {
-    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/average/${id}?calcYearsNumber=${idHorizonforecast}`)
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/average/fixed/${id}?calcYearsNumber=${idHorizonforecast}`)
+  }
+  getCalculationAverageIncreasing(id: number, idHorizonforecast: number): Observable<IShipment[]> {
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/average/increasing/${id}?calcYearsNumber=${idHorizonforecast}`)
   }
   getCorrelation(idHorizonforecast: number, forecastType: string): Observable<IShipment[]>{
     return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correlation/${idHorizonforecast}?forecastType=${forecastType}`)

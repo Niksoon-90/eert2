@@ -5,8 +5,6 @@ import {ForecastingModelService} from '../../services/forecasting-model.service'
 import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
 import {IShipment} from "../../models/shipmenst.model";
-import {HttpResponse} from "@angular/common/http";
-import {UploadFileService} from "../../services/upload-file.service";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
 import {ShipmentsService} from "../../services/shipments.service";
@@ -44,7 +42,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
       {id: 2, type: 'fiscal', name:'Вычисление прогноза корреспонденций по отчётному году'},
       {id: 3, type: 'fixed',  name:'Вычисление прогноза корреспонденций по тенденции (по фиксированным промежуткам)'},
       {id: 4, type: 'increasing',  name:'Вычисление прогноза корреспонденций по тенденции (по увеличивающимся промежуткам)'},
-      {id: 5, type: 'average', name:'Вычисление прогноза корреспонденций по среднему арифметическому'},
+      {id: 5, type: 'average', name:'Вычисление прогноза корреспонденций по среднему арифметическому (по фиксированным промежуткам)'},
+      {id: 6, type: 'averageIncreasing', name:'Вычисление прогноза корреспонденций по среднему арифметическому (по увеличивающимся промежуткам)'},
     ]
 
   }
@@ -125,6 +124,14 @@ export class ForecastCorrespondenceComponent implements OnInit {
             () => {this.disableCorrelation = false, this.loading = true}
           )
         break;
+        case 'averageIncreasing':
+        this.calculationsService.getCalculationAverageIncreasing(this.sessionId, this.stepOnecalcYearsNumber)
+          .subscribe(
+            res => {this.mathematicalForecastTable = res, console.log('averageIncreasing', res)},
+            error => this.modalService.open(error.error.message),
+            () => {this.disableCorrelation = false, this.loading = true}
+          )
+        break;
       default:
         break;
     }
@@ -171,7 +178,15 @@ export class ForecastCorrespondenceComponent implements OnInit {
           )
         break;
       case 'average':
-        this.calculationsService.getCorrelation(this.sessionId, 'AVERAGE')
+        this.calculationsService.getCorrelation(this.sessionId, 'AVERAGE_FIXED_INTERVAL')
+          .subscribe(
+            res => {this.mathematicalForecastTable = res},
+            error => this.modalService.open(error.error.message),
+            () => this.loading = true
+          )
+        break;
+        case 'averageIncreasing':
+        this.calculationsService.getCorrelation(this.sessionId, 'AVERAGE_INCREASING_INTERVAL')
           .subscribe(
             res => {this.mathematicalForecastTable = res},
             error => this.modalService.open(error.error.message),
