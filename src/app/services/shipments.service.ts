@@ -4,7 +4,7 @@ import {environment} from "../../environments/environment";
 import {Observable} from 'rxjs';
 import {ISession, IShipment} from '../models/shipmenst.model';
 import {IMacroPokModel} from "../models/macroPok.model";
-import {ICalculatingPredictiveRegression} from "../models/calculations.model";
+import {ICalculatingPredictiveRegression, ICargoGroupNci, IShipmentTypNci} from "../models/calculations.model";
 
 @Injectable({
   providedIn: 'root'
@@ -69,5 +69,31 @@ export class ShipmentsService {
   //TODO Обновить признак 'Готово для ИАС Маршруты'
   putTransformFile(id: number, isReadyToTransfer: boolean){
     return this.http.put(this.url + `/api/file/${id}?isReadyToTransfer=${isReadyToTransfer}`, {})
+  }
+  //TODO cargo Type
+  putDictionaryCargo(cargoGroupNci: ICargoGroupNci){
+    return this.http.put(this.url + `api/dictionary/cargo`, cargoGroupNci)
+  }
+  deleteDictionaryCargo(id: number){
+    return this.http.delete(this.url + `api/dictionary/cargo/${id}`)
+  }
+  getDictionaryCargo(): Observable<ICargoGroupNci[]>{
+    return this.http.get<ICargoGroupNci[]>(this.url + `api/dictionary/cargo/all`)
+  }
+  postDictionaryCargo(name: string){
+    return this.http.post(this.url + `api/dictionary/cargo/group/${name}`, {})
+  }
+  //TODO Shipment type
+  putDictionaryShipmenttype(dictionaryShipmenttype: IShipmentTypNci){
+    return this.http.put(this.url + `api/dictionary/shipmenttype`, dictionaryShipmenttype)
+  }
+  deleteDictionaryShipmenttype(id: number){
+    return this.http.delete(this.url + `api/dictionary/shipmenttype/${id}`)
+  }
+  getDictionaryShipmenttype(): Observable<IShipmentTypNci[]>{
+    return this.http.get<ICargoGroupNci[]>(this.url + `api/dictionary/shipmenttype/all`)
+  }
+  postDictionaryShipmenttype(name: string){
+    return this.http.post(this.url + `api/dictionary/shipmenttype/group/${name}`, {})
   }
 }

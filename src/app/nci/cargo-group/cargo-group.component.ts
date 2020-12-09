@@ -3,6 +3,7 @@ import {ICargoGroupNci, IDorogyNci} from "../../models/calculations.model";
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {ModalService} from "../../services/modal.service";
+import {ShipmentsService} from "../../services/shipments.service";
 
 @Component({
   selector: 'app-cargo-group',
@@ -20,6 +21,7 @@ export class CargoGroupComponent implements OnInit {
   constructor(
     public authenticationService: AuthenticationService,
     private modalService: ModalService,
+    private shipmentsService: ShipmentsService
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -32,28 +34,24 @@ export class CargoGroupComponent implements OnInit {
 
   createCargoGroupNci() {
     if(this.nameNewCargoGroupNci !== ''){
-      const newCargoGroupNci: ICargoGroupNci = {
-        id: Math.random(),
-        name: this.nameNewCargoGroupNci
-      }
-      this.cargoGroupNci.push(newCargoGroupNci)
+      this.shipmentsService.postDictionaryCargo(this.nameNewCargoGroupNci).subscribe(
+        res => console.log(),
+        error => this.modalService.open(error.error.message),
+        () => {
+          this.nameNewCargoGroupNci = '',
+          this.getCargoGroupNci()
+        }
+      )
+
     }else{
       this.modalService.open('Укажите наименование группы грузов!')
     }
   }
   getCargoGroupNci() {
-    this.cargoGroupNci = [
-      {id: 1, name: 'Уголь каменный'},
-      {id: 2, name: 'Кокс каменноугольный'},
-      {id: 3, name: 'Нефтяные грузы'},
-      {id: 4, name: 'Руды всякие'},
-      {id: 5, name: 'Черные металлы'},
-      {id: 6, name: 'Лесные грузы'},
-      {id: 7, name: 'Хлебные грузы'},
-      {id: 8, name: 'Минерально-строит.'},
-      {id: 9, name: 'Удобрения'},
-      {id: 10, name: 'Остальные грузы'},
-    ]
+    this.shipmentsService.getDictionaryCargo().subscribe(
+      res =>  this.cargoGroupNci =res,
+      error => this.modalService.open(error.error.message),
+    )
   }
 
   onRowEditInit() {
@@ -61,8 +59,14 @@ export class CargoGroupComponent implements OnInit {
   }
 
   onRowEditSave(rowData) {
-    let item = this.cargoGroupNci.find(x => x.id === rowData.id);
-    item.name = rowData.name;
+    const cargoGroupNci: ICargoGroupNci = {
+     id: rowData.id,
+     name: rowData.name
+    }
+    this.shipmentsService.putDictionaryCargo(cargoGroupNci).subscribe(
+      res => console.log(),
+      error => this.modalService.open(error.error.message),
+    )
   }
 
   onRowEditCancel() {
@@ -70,6 +74,10 @@ export class CargoGroupComponent implements OnInit {
   }
 
   deleteItemCargoNci(id: any) {
-    this.cargoGroupNci = this.cargoGroupNci.filter( data => data.id !== id);
+    this.shipmentsService.deleteDictionaryCargo(id).subscribe(
+      res => console.log(),
+      error => this.modalService.open(error.error.message),
+      () => this.getCargoGroupNci()
+    )
   }
 }

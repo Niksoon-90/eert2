@@ -29,7 +29,6 @@ export class PaymentComponent implements OnInit {
   forecastCorrespondence: IForecastIASModel[];
   smallCorrespondence: IForecastIASModel[];
   correspondencesIiasForecast: ICorrespondencesIiasForecast[]
-  correspondencesIiasForecastsTwo: ICorrespondencesIiasForecast[]
   loadingOne: boolean = false;
   loadingTwo: boolean = false;
   productDialog: boolean;
@@ -40,7 +39,11 @@ export class PaymentComponent implements OnInit {
   columnF: any
   loading: boolean = true;
   downloadIasLoading: boolean = false
+  downloadTotalIasLoading: boolean = false;
+  downloadSmallIasLoading: boolean = false;
+  downloadTotalSmallIasLoading: boolean = false;
   headerYears: number[]
+
   constructor(
     private router: Router,
     public authenticationService: AuthenticationService,
@@ -78,35 +81,18 @@ export class PaymentComponent implements OnInit {
     this.createForm();
     this.forecastListIas();
     this.selectedPrimery = this.forecastModelService.ticketInformation.stepThree.primeryBolChange;
-    // this.cols = [
-    //   { field: 'cargo_group', header: 'Группа груза', width: '100px', keyS: false},
-    //   { field: 'from_station', header: 'Станция отправления РФ', width: '100px', keyS: false },
-    //   { field: 'from_station_code', header: 'Код станции отправления РФ', width: '100px', keyS: false },
-    //   { field: 'to_station', header: 'Станция назначения РФ', width: '100px', keyS: false },
-    //   { field: 'to_station_code', header: 'Код станции назначения РФ', width: '100px', keyS: false },
-    //   { field: 'n1', header: 'Год 1', width: '100px', keyS: false },
-    //   { field: 'n2', header: 'Год 2', width: '100px', keyS: false },
-    //   { field: 'n3', header: 'Год 3', width: '100px', keyS: false },
-    //   { field: 'n4', header: 'Год 4', width: '100px', keyS: false },
-    //   { field: 'n5', header: 'Год 5', width: '100px', keyS: false },
-    //   { field: 'n6', header: 'Год 6', width: '100px', keyS: false },
-    //   { field: 'n7', header: 'Год 7', width: '100px', keyS: false },
-    //   { field: 'n8', header: 'Год 8', width: '100px', keyS: false },
-    //   { field: 'n9', header: 'Год 9', width: '100px', keyS: false },
-    //   { field: 'n10', header: 'Год 10', width: '100px', keyS: false }
-    // ];
     this.columnF = [
       { field: 'dor_name', header: 'Дорога', width: '100px', keyS: false},
-      { field: 'st1_name', header: 'st1_name', width: '100px', keyS: false},
-      { field: 'st1_p', header: 'st1_p', width: '100px', keyS: false},
-      { field: 'st2_name', header: 'st2_name', width: '100px', keyS: false},
-      { field: 'st2_p', header: 'st2_p', width: '100px', keyS: false},
-      { field: 'len', header: 'Длинна', width: '100px', keyS: false},
+      { field: 'st1_u_name', header: 'Начальная станция участка', width: '100px', keyS: false},
+      { field: 'st1_u', header: 'Единая сетевая разметка начальной станции', width: '100px', keyS: false},
+      { field: 'st2_u_name', header: 'Конечная станция участка', width: '100px', keyS: false},
+      { field: 'st2_u', header: 'Единая сетевая разметка конечной станции', width: '100px', keyS: false},
+      { field: 'len', header: 'км', width: '100px', keyS: false},
       { field: 'ntuda', header: 'ntuda', width: '100px', keyS: false},
       { field: 'nobratno', header: 'nobratno', width: '100px', keyS: false},
-      { field: 'p_name', header: 'p_name', width: '100px', keyS: false},
       { field: 'year', header: 'year', width: '100px', keyS: false}
     ]
+
     this.columnS = [
       { field: 'num', header: 'Порядковый номер', width: '100px', keyS: false},
       { field: 'len', header: 'Длина', width: '100px', keyS: false},
@@ -131,7 +117,6 @@ export class PaymentComponent implements OnInit {
         error => this.modalService.open(error.error.message),
         () => this.loadingTwo = false
       )
-
   }
   createForm() {
     this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
@@ -158,16 +143,15 @@ export class PaymentComponent implements OnInit {
     this.forecastModelService.ticketInformation.stepThree.primeryBolChange = false;
   }
 
-  nextPage() {
-    this.router.navigate(['steps/export'])
-  }
+  // nextPage() {
+  //   this.router.navigate(['steps/export'])
+  // }
 
 
   searchInIAS(rowData) {
     console.log('iasForecastId', this.form.controls.forecastCorrespondence.value.var_id)
     console.log('iasCorrespondenceId', rowData.corr_id)
     this.loadingOne = true;
-    this.loadingTwo = true;
     this.calculationsService.getPathRequest(this.form.controls.forecastCorrespondence.value.var_id, rowData.corr_id).subscribe(
       res => {
           this.pathRequest = res,
@@ -176,7 +160,6 @@ export class PaymentComponent implements OnInit {
       error => this.modalService.open(error.error.message),
       () => {
         this.loadingOne = false;
-        this.loadingTwo = false;
         this.productDialog = true;
       }
     )
@@ -207,5 +190,69 @@ export class PaymentComponent implements OnInit {
     }else{
       this.modalService.open('Укажите Маршрут')
     }
+  }
+
+  downTotalloadIas() {
+    console.log('Id прогноза из ИАС Маршруты (основные): ', this.form.controls.forecastCorrespondence.value.var_id)
+    console.log('Id прогноза из ИАС Маршруты (мелкие): ', this.form.controls.smallCorrespondence.value.var_id)
+    console.log('Id сессии загрузки исторических данных: ', this.sessionId)
+    if(this.form.valid){
+      this.downloadTotalIasLoading = true;
+      this.uploadFileService.getDownloadTotal(this.sessionId, this.form.controls.forecastCorrespondence.value.var_id, this.form.controls.smallCorrespondence.value.var_id).subscribe(
+        (response: HttpResponse<Blob>) => {
+          console.log(response)
+          let filename: string = 'total_ias_routes.xlsx'
+          let binaryData = [];
+          binaryData.push(response.body);
+          let downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
+          downloadLink.setAttribute('download', filename);
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+        },
+        error => this.modalService.open(error.error.message),
+        () => this.downloadTotalIasLoading = false
+      )
+    }else{
+      this.modalService.open('Заполните все поля!')
+    }
+  }
+
+  downSmallloadIas() {
+    // this.downloadSmallIasLoading = true;
+    // this.uploadFileService.getDownload(this.form.controls.smallCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
+    //   (response: HttpResponse<Blob>) => {
+    //     console.log(response)
+    //     let filename: string = 'total_ias_routes.xlsx'
+    //     let binaryData = [];
+    //     binaryData.push(response.body);
+    //     let downloadLink = document.createElement('a');
+    //     downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
+    //     downloadLink.setAttribute('download', filename);
+    //     document.body.appendChild(downloadLink);
+    //     downloadLink.click();
+    //   },
+    //   error => this.modalService.open(error.error.message),
+    //   () => this.downloadSmallIasLoading = false
+    // )
+  }
+
+  downTotalSmallloadIas() {
+    this.downloadTotalSmallIasLoading = true;
+    this.uploadFileService.getDownload(this.form.controls.smallCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
+      (response: HttpResponse<Blob>) => {
+        console.log(response)
+        let filename: string = 'smalll_ias_routes.xlsx'
+        let binaryData = [];
+        binaryData.push(response.body);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
+        downloadLink.setAttribute('download', filename);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      error => this.modalService.open(error.error.message),
+      () => this.downloadTotalSmallIasLoading = false
+    )
   }
 }

@@ -3,6 +3,7 @@ import {IShipmentTypNci} from "../../models/calculations.model";
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {ModalService} from "../../services/modal.service";
+import {ShipmentsService} from "../../services/shipments.service";
 
 @Component({
   selector: 'app-shipment-type',
@@ -19,6 +20,7 @@ export class ShipmentTypeComponent implements OnInit {
   constructor(
     public authenticationService: AuthenticationService,
     private modalService: ModalService,
+    private shipmentsService: ShipmentsService
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -32,23 +34,24 @@ export class ShipmentTypeComponent implements OnInit {
 
   createShipmentTypNci() {
     if(this.nameNewShipmentTypeNci !== ''){
-      const newShipmentTypNci: IShipmentTypNci = {
-        id: Math.random(),
-        name: this.nameNewShipmentTypeNci
-      }
-      this.shipmentTypNci.push(newShipmentTypNci)
+      this.shipmentsService.postDictionaryShipmenttype(this.nameNewShipmentTypeNci).subscribe(
+        res => console.log(),
+        error => this.modalService.open(error.error.message),
+        () => {
+          this.nameNewShipmentTypeNci = '',
+            this.getShipmentTypNci()
+        }
+      )
     }else{
       this.modalService.open('Укажите наименование группы грузов!')
     }
   }
 
   private getShipmentTypNci() {
-    this.shipmentTypNci = [
-      {id: 1, name: 'Внутр. перевозки'},
-      {id: 2, name: 'Импорт'},
-      {id: 3, name: 'Транзит'},
-      {id: 4, name: 'Экспорт'}
-    ]
+    this.shipmentsService.getDictionaryShipmenttype().subscribe(
+      res =>  this.shipmentTypNci =res,
+      error => this.modalService.open(error.error.message),
+    )
   }
 
   onRowEditInit() {
@@ -56,8 +59,14 @@ export class ShipmentTypeComponent implements OnInit {
   }
 
   onRowEditSave(rowData) {
-    let item = this.shipmentTypNci.find(x => x.id === rowData.id);
-    item.name = rowData.name;
+    const dictionaryShipmenttype: IShipmentTypNci = {
+      id: rowData.id,
+      name: rowData.name
+    }
+  this.shipmentsService.putDictionaryShipmenttype(dictionaryShipmenttype).subscribe(
+    res => console.log(),
+    error => this.modalService.open(error.error.message),
+  )
   }
 
   onRowEditCancel() {
@@ -65,6 +74,10 @@ export class ShipmentTypeComponent implements OnInit {
   }
 
   deleteItemCargoNci(id: any) {
-    this.shipmentTypNci = this.shipmentTypNci.filter( data => data.id !== id);
+    this.shipmentsService.deleteDictionaryShipmenttype(id).subscribe(
+      res => console.log(),
+      error => this.modalService.open(error.error.message),
+      () => this.getShipmentTypNci()
+    )
   }
 }

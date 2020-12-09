@@ -6,14 +6,13 @@ export interface IForecastIASModel {
 }
 export interface IForecastIASModelId {
   year?: number,
-  st1_p?: string,
-  st2_name?: string,
-  st2_p?: string,
+  st1_u?: string,
+  st2_u_name?: string,
+  st2_u?: string,
   len?: string,
   ntuda?: number,
   nobratno?: number,
-  p_name?: string,
-  st1_name?: string,
+  st1_u_name?: string,
   dor_name?: string
 }
 
