@@ -88,9 +88,9 @@ export class PaymentComponent implements OnInit {
       { field: 'st2_u_name', header: 'Конечная станция участка', width: '100px', keyS: false},
       { field: 'st2_u', header: 'Единая сетевая разметка конечной станции', width: '100px', keyS: false},
       { field: 'len', header: 'км', width: '100px', keyS: false},
-      { field: 'ntuda', header: 'ntuda', width: '100px', keyS: false},
-      { field: 'nobratno', header: 'nobratno', width: '100px', keyS: false},
-      { field: 'year', header: 'year', width: '100px', keyS: false}
+      { field: 'ntuda', header: 'К началу участка', width: '100px', keyS: false},
+      { field: 'nobratno', header: 'К концу участка', width: '100px', keyS: false},
+      { field: 'year', header: 'Год', width: '100px', keyS: false}
     ]
 
     this.columnS = [
@@ -115,7 +115,9 @@ export class PaymentComponent implements OnInit {
       this.calculationsService.getForcastIasId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
         res => this.forecastIASModelId = res,
         error => this.modalService.open(error.error.message),
-        () => this.loadingTwo = false
+        () => {
+          this.loadingTwo = false
+        }
       )
   }
   createForm() {
@@ -147,8 +149,8 @@ export class PaymentComponent implements OnInit {
   //   this.router.navigate(['steps/export'])
   // }
 
-
   searchInIAS(rowData) {
+
     console.log('iasForecastId', this.form.controls.forecastCorrespondence.value.var_id)
     console.log('iasCorrespondenceId', rowData.corr_id)
     this.loadingOne = true;

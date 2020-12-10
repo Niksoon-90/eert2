@@ -79,7 +79,6 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     for(let i=0; i< this.columsYears ; i++){
       this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })
     }
-
   }
 
   columnFilter(event: any, field) {

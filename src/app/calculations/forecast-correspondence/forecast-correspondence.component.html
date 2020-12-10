@@ -57,7 +57,7 @@
       <div class="p-grid p-nogutter p-justify-between">
         <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left" class="p-button-sm"></p-button>
         <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
-          <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right" class="p-button-sm"></p-button>
+          <p-button label="Выгрузить в ИАС Маршруты"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right" class="p-button-sm"></p-button>
         </ng-container>
       </div>
     </ng-template>

@@ -116,7 +116,7 @@
             <td colspan="14" class="p-text-right">Сумма: </td>
             <ng-container *ngFor="let item of this.massSummYear; let idx = index">
               <td *ngIf="test2(item, idx); else num">
-                <input pInputText type="text"  (keyup.enter)="test(idx, $event.target.value)">
+                <input pInputText type="number"  (keyup.enter)="test(idx, $event.target.value)">
               </td>
               <ng-template #num>
                 <td ></td>

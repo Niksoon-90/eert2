@@ -4,6 +4,7 @@ import {IAuthModel} from "../../models/auth.model";
 import {ModalService} from "../../services/modal.service";
 import {CalculationsService} from "../../services/calculations.service";
 import {AuthenticationService} from "../../services/authentication.service";
+import {ShipmentsService} from "../../services/shipments.service";
 
 @Component({
   selector: 'app-dorogy',
@@ -21,6 +22,7 @@ export class DorogyComponent implements OnInit {
   constructor(
     public authenticationService: AuthenticationService,
     private modalService: ModalService,
+    private shipmentsService: ShipmentsService
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -34,11 +36,14 @@ export class DorogyComponent implements OnInit {
 
   createDorogyNci() {
     if(this.nameNewDorogyNci !== ''){
-      const newDorogy: IDorogyNci = {
-        id: Math.random(),
-        name: this.nameNewDorogyNci
-      }
-      this.dorogyNci.push(newDorogy)
+      this.shipmentsService.postDictionaryRailway(this.nameNewDorogyNci).subscribe(
+        res => console.log(),
+        error => this.modalService.open(error.error.message),
+        () => {
+          this.nameNewDorogyNci = '',
+            this.getDorogyNci()
+        }
+      )
     }else{
       this.modalService.open('Укажите наименование Дорги!')
     }
@@ -49,28 +54,21 @@ export class DorogyComponent implements OnInit {
   }
 
   onRowEditSave(rowData) {
-    let item = this.dorogyNci.find(x => x.id === rowData.id);
-    item.name = rowData.name;
+    const dorogyNci: IDorogyNci =  {
+      name: rowData.name,
+      code: rowData.name,
+      shortname: rowData.name
+    }
+    this.shipmentsService.putDictionaryRailway(dorogyNci).subscribe(
+      res => console.log(),
+      error => this.modalService.open(error.error.message),
+    )
   }
   getDorogyNci() {
-    this.dorogyNci = [
-      {id: 1, name: 'Восточно-Сибирская железная'},
-      {id: 2, name: 'Горьковская железная'},
-      {id: 3, name: 'Дальневосточная железная'},
-      {id: 4, name: 'Забайкальская железная'},
-      {id: 5, name: 'Западно-Сибирская железная'},
-      {id: 6, name: 'Калининградская железная'},
-      {id: 7, name: 'Красноярская железная'},
-      {id: 8, name: 'Куйбышевская железная'},
-      {id: 9, name: 'Московская железная'},
-      {id: 10, name: 'Октябрьская железная'},
-      {id: 11, name: 'Приволжская железная'},
-      {id: 12, name: 'Свердловская железная'},
-      {id: 13, name: 'Северная железная '},
-      {id: 14, name: 'Северо-Кавказская железная '},
-      {id: 15, name: 'Юго-Восточная железная '},
-      {id: 16, name: 'Южно-Уральская железная '},
-    ]
+    this.shipmentsService.getDictionaryDictionaryRailway().subscribe(
+      res =>  this.dorogyNci =res,
+      error => this.modalService.open(error.error.message),
+    )
   }
 
   onRowEditCancel() {
@@ -78,6 +76,10 @@ export class DorogyComponent implements OnInit {
   }
 
   deleteItemCargoNci(id: any) {
-    this.dorogyNci = this.dorogyNci.filter( data => data.id !== id);
+    this.shipmentsService.deleteDictionaryRailway(id).subscribe(
+      res => console.log(),
+      error => this.modalService.open(error.error.message),
+      () => this.getDorogyNci()
+    )
   }
 }

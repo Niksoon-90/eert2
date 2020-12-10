@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from "@angular/router";
-import {ICalculatingPredictiveRegression, ISelectMethodUsers} from "../../models/calculations.model";
+import {ISelectMethodUsers} from "../../models/calculations.model";
 import {ForecastingModelService} from '../../services/forecasting-model.service';
 import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
@@ -58,6 +58,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
     }
 
   }
+  //TODO FAIL!
   additionalInfo(items){
     for (let item of items) {
         this.reportingYears.push({"name": item});

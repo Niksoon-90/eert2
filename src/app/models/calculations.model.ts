@@ -50,11 +50,20 @@ export interface ICargoOwnerInfluenceFactor {
 export interface IStationNci {
   id?: number,
   name?: string,
-  code?: number
+  code?: string
+  border?: string,
+  ferry?: string,
+  land?: string,
+  road?: string,
+  subjectGvc?: string,
+  transmissionPoint?: string,
+  type?: string
 }
 export interface IDorogyNci {
-  id: number,
-  name: string
+  id?: number,
+  name?: string
+  code?: number,
+  shortname?: string
 }
 export interface ICargoGroupNci {
   id: number,

@@ -4,7 +4,12 @@ import {environment} from "../../environments/environment";
 import {Observable} from 'rxjs';
 import {ISession, IShipment} from '../models/shipmenst.model';
 import {IMacroPokModel} from "../models/macroPok.model";
-import {ICalculatingPredictiveRegression, ICargoGroupNci, IShipmentTypNci} from "../models/calculations.model";
+import {
+  ICalculatingPredictiveRegression,
+  ICargoGroupNci, IDorogyNci,
+  IShipmentTypNci,
+  IStationNci
+} from "../models/calculations.model";
 
 @Injectable({
   providedIn: 'root'
@@ -91,9 +96,35 @@ export class ShipmentsService {
     return this.http.delete(this.url + `api/dictionary/shipmenttype/${id}`)
   }
   getDictionaryShipmenttype(): Observable<IShipmentTypNci[]>{
-    return this.http.get<ICargoGroupNci[]>(this.url + `api/dictionary/shipmenttype/all`)
+    return this.http.get<IShipmentTypNci[]>(this.url + `api/dictionary/shipmenttype/all`)
   }
   postDictionaryShipmenttype(name: string){
     return this.http.post(this.url + `api/dictionary/shipmenttype/group/${name}`, {})
+  }
+  //TODO station
+  postDictionaryDictionaryStation(name: string){
+    return this.http.post(this.url + `api/dictionary/station?station=${name}`, {})
+  }
+  putDictionaryStation(stationNci: IStationNci){
+    return this.http.put(this.url + `api/dictionary/station`, stationNci)
+  }
+  deleteDictionaryStation(id: number){
+    return this.http.delete(this.url + `api/dictionary/station/${id}`)
+  }
+  getDictionaryDictionaryStation(): Observable<IStationNci[]>{
+    return this.http.get<IStationNci[]>(this.url + `api/dictionary/station/all`)
+  }
+  //TODO dor
+  postDictionaryRailway(name: string){
+    return this.http.post(this.url + `api/dictionary/railway?railway=${name}`, {})
+  }
+  putDictionaryRailway(dorogyNci: IDorogyNci){
+    return this.http.put(this.url + `api/dictionary/railway`, dorogyNci)
+  }
+  deleteDictionaryRailway(id: number){
+    return this.http.delete(this.url + `api/dictionary/railway/${id}`)
+  }
+  getDictionaryDictionaryRailway(): Observable<IDorogyNci[]>{
+    return this.http.get<IDorogyNci[]>(this.url + `api/dictionary/railway/all`)
   }
 }
