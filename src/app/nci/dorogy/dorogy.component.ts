@@ -30,7 +30,8 @@ export class DorogyComponent implements OnInit {
   ngOnInit(): void {
     this.getDorogyNci();
     this.cols = [
-      { field: 'name', header: 'Наименование дороги', width: '70%', isStatic :true}
+      { field: 'name', header: 'Наименование железных дорог', width: '55%', isStatic :true},
+      { field: 'shortname', header: 'Сокращенное наименование дороги', width: '25%', isStatic :true}
     ]
   }
 

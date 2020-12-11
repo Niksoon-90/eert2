@@ -16,6 +16,26 @@ export interface IForecastIASModelId {
   dor_name?: string
 }
 
+export interface IForecastIASModelIdResult {
+  year?: number,
+  st1_u?: string,
+  st2_u_name?: string,
+  st2_u?: string,
+  len?: string,
+  ntuda?: INtuda[],
+  nobratno?: INobratno[],
+  st1_u_name?: string,
+  dor_name?: string
+}
+interface INtuda {
+  ntuda: number,
+  year: number
+}
+interface INobratno {
+  nobratno: number,
+  year: number
+}
+
 export interface ICorrespondencesIiasForecast {
   cargo_group?: string
   corr_id?:	string

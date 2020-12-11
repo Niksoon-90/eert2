@@ -45,14 +45,13 @@ export class ForecastCorrespondenceComponent implements OnInit {
       {id: 5, type: 'average', name:'Вычисление прогноза корреспонденций по среднему арифметическому (по фиксированным промежуткам)'},
       {id: 6, type: 'averageIncreasing', name:'Вычисление прогноза корреспонденций по среднему арифметическому (по увеличивающимся промежуткам)'},
     ]
-
   }
 
   ngOnInit(): void {
     this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
     this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     this.stepThree = this.forecastModelService.ticketInformation.stepThree;
-    this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['year']);
+    this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
     if(this.forecastModelService.ticketInformation.stepThree.forecastingStrategy !== null){
       this.calculateForecastingStrategy();
     }
@@ -60,7 +59,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
   //TODO FAIL!
   additionalInfo(items){
-    for (let item of items) {
+    const res = items.split(',')
+    for (let item of res) {
         this.reportingYears.push({"name": item});
     }
   }

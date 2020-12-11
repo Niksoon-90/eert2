@@ -7,7 +7,7 @@ import {ForecastingModelService} from "../../services/forecasting-model.service"
 import {
   ICorrespondencesIiasForecast,
   IForecastIASModel,
-  IForecastIASModelId,
+  IForecastIASModelId, IForecastIASModelIdResult,
   IPathRequest
 } from "../../models/forecastIAS.model";
 import {CalculationsService} from "../../services/calculations.service";
@@ -44,6 +44,8 @@ export class PaymentComponent implements OnInit {
   downloadTotalSmallIasLoading: boolean = false;
   headerYears: number[]
 
+  pathRequestItem: IForecastIASModelIdResult
+  yearsHeaderTwoTable = []
   constructor(
     private router: Router,
     public authenticationService: AuthenticationService,
@@ -57,7 +59,7 @@ export class PaymentComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('correspondencesIiasForecast', this.correspondencesIiasForecast)
-    this.headerYears = this.forecastModelService.ticketInformation.stepOne.Session['year']
+    this.headerYears = this.forecastModelService.ticketInformation.stepOne.Session['historicalYears'].split(',')
     if(this.headerYears.length < 10){
       let lenghtMas: number = 10 - this.headerYears.length;
       const maxItem: number = Math.max(...this.headerYears);
@@ -81,17 +83,8 @@ export class PaymentComponent implements OnInit {
     this.createForm();
     this.forecastListIas();
     this.selectedPrimery = this.forecastModelService.ticketInformation.stepThree.primeryBolChange;
-    this.columnF = [
-      { field: 'dor_name', header: 'Дорога', width: '100px', keyS: false},
-      { field: 'st1_u_name', header: 'Начальная станция участка', width: '100px', keyS: false},
-      { field: 'st1_u', header: 'Единая сетевая разметка начальной станции', width: '100px', keyS: false},
-      { field: 'st2_u_name', header: 'Конечная станция участка', width: '100px', keyS: false},
-      { field: 'st2_u', header: 'Единая сетевая разметка конечной станции', width: '100px', keyS: false},
-      { field: 'len', header: 'км', width: '100px', keyS: false},
-      { field: 'ntuda', header: 'К началу участка', width: '100px', keyS: false},
-      { field: 'nobratno', header: 'К концу участка', width: '100px', keyS: false},
-      { field: 'year', header: 'Год', width: '100px', keyS: false}
-    ]
+
+
 
     this.columnS = [
       { field: 'num', header: 'Порядковый номер', width: '100px', keyS: false},
@@ -116,10 +109,110 @@ export class PaymentComponent implements OnInit {
         res => this.forecastIASModelId = res,
         error => this.modalService.open(error.error.message),
         () => {
-          this.loadingTwo = false
+          this.headerYearsTable(this.forecastIASModelId)
         }
       )
   }
+
+
+  headerYearsTable(forecastIASModelId: IForecastIASModelId[]){
+    this.columnF = [
+      { field: 'dor_name', header: 'Дорога', width: '100px', keyS: false},
+      { field: 'st1_u_name', header: 'Начальная станция участка', width: '100px', keyS: false},
+      { field: 'st1_u', header: 'Единая сетевая разметка начальной станции', width: '100px', keyS: false},
+      { field: 'st2_u_name', header: 'Конечная станция участка', width: '100px', keyS: false},
+      { field: 'st2_u', header: 'Единая сетевая разметка конечной станции', width: '100px', keyS: false},
+      { field: 'len', header: 'км', width: '100px', keyS: false},
+    ]
+    this.yearsHeaderTwoTable = []
+    let numbers = 0
+    let resultTwoTable: any[] = []
+    for(let i = 0; i<forecastIASModelId.length; i++){
+      if(i === 0){
+        this.pathRequestItem = {
+          dor_name: forecastIASModelId[i].dor_name,
+          st1_u_name: forecastIASModelId[i].st1_u_name,
+          st1_u: forecastIASModelId[i].st1_u,
+          st2_u_name: forecastIASModelId[i].st2_u_name,
+          st2_u: forecastIASModelId[i].st2_u,
+          len: forecastIASModelId[i].len,
+          ntuda: [
+            {ntuda: forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year}
+          ],
+          nobratno:  [
+            {nobratno: forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year}
+          ]
+        }
+      }
+      else if(i !== 0  && forecastIASModelId[i].dor_name === forecastIASModelId[numbers].dor_name && forecastIASModelId[i].st1_u_name === forecastIASModelId[numbers].st1_u_name && forecastIASModelId[i].st2_u_name === forecastIASModelId[numbers].st2_u_name && forecastIASModelId[i].len === forecastIASModelId[numbers].len){
+        this.pathRequestItem.ntuda.push({ntuda: forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year})
+        this.pathRequestItem.nobratno.push({nobratno: forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year})
+      }else{
+        resultTwoTable.push(this.pathRequestItem)
+        numbers = i;
+        this.pathRequestItem = {
+          dor_name: forecastIASModelId[i].dor_name,
+          st1_u_name: forecastIASModelId[i].st1_u_name,
+          st1_u: forecastIASModelId[i].st1_u,
+          st2_u_name: forecastIASModelId[i].st2_u_name,
+          st2_u: forecastIASModelId[i].st2_u,
+          len: forecastIASModelId[i].len,
+          ntuda: [
+            {ntuda: forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year}
+          ],
+          nobratno:  [
+            {nobratno: forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year}
+          ]
+        }
+      }
+    }
+    for(let i = 0; i<forecastIASModelId.length; i++){
+      if(i === 0){
+        this.yearsHeaderTwoTable.push(forecastIASModelId[i].year)
+      }
+      if(i !== 0  && forecastIASModelId[i].dor_name === forecastIASModelId[0].dor_name && forecastIASModelId[i].st1_u_name === forecastIASModelId[0].st1_u_name && forecastIASModelId[i].st2_u_name === forecastIASModelId[0].st2_u_name && forecastIASModelId[i].len === forecastIASModelId[0].len){
+        this.yearsHeaderTwoTable.push(forecastIASModelId[i].year)
+      }
+    }
+    for(let i=0; i< this.yearsHeaderTwoTable.length ; i++){
+      this.columnF.push({field: `ntuda`, header: resultTwoTable[0].ntuda[i].year, width: '100px', keyS: false})
+    }
+    for(let i=0; i< this.yearsHeaderTwoTable.length ; i++){
+      this.columnF.push({field: `nobratno`, header: resultTwoTable[0].nobratno[i].year, width: '100px', keyS: false})
+    }
+    console.log('RESULTAT2!', resultTwoTable)
+    this.loadingTwo = false
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   createForm() {
     this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
     this.form = new FormGroup({

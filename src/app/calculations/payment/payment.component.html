@@ -12,7 +12,7 @@
                     <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="smallCorrespondence" optionLabel="descr" [showClear]="true"  formControlName="smallCorrespondence"  placeholder="Выгрузить загрузку участков мелкими корреспонденциями:"></p-dropdown>
                   </ng-container>
               </div>
-              <button  pButton  type="submit" label="Выгрузить" class="p-button-raised p-button-secondary"></button>
+              <button  pButton  type="submit" label="Загрузить" class="p-button-raised p-button-secondary"></button>
             </form>
           </div>
         </div>
@@ -114,25 +114,39 @@
               </colgroup>
             </ng-template>
             <ng-template pTemplate="header" let-columns>
-              <tr>
-                <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
-                  {{col.header}}
-                </th>
-              </tr>
+                <tr>
+                  <th  rowspan="2" pResizableColumn pSortableColumn="dor_name">Дорога<p-sortIcon field="id"></p-sortIcon></th>
+                  <th  rowspan="2" pResizableColumn pSortableColumn="st1_u_name">Начальная станция участка<p-sortIcon field="id"></p-sortIcon></th>
+                  <th  rowspan="2" pResizableColumn pSortableColumn="st1_u">Единая сетевая разметка начальной станции<p-sortIcon field="id"></p-sortIcon></th>
+                  <th  rowspan="2" pResizableColumn pSortableColumn="st2_u_name">Конечная станция участка<p-sortIcon field="id"></p-sortIcon></th>
+                  <th  rowspan="2" pResizableColumn pSortableColumn="st2_u">Единая сетевая разметка конечной станции<p-sortIcon field="id"></p-sortIcon></th>
+                  <th  rowspan="2" pResizableColumn pSortableColumn="len">км<p-sortIcon field="id"></p-sortIcon></th>
+                  <th [attr.colspan]="this.yearsHeaderTwoTable.length" style="text-align: center">к концу участка</th>
+                  <th [attr.colspan]="this.yearsHeaderTwoTable.length" style="text-align: center">к началу участка</th>
+                </tr>
+                <tr >
+                  <ng-container *ngFor="let col of columns; let idx = index">
+                    <th pResizableColumn *ngIf="idx > 5" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
+                        {{col.header}}
+                    </th>
+                  </ng-container>
+                </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
               <tr [pEditableRow]="rowData">
-                <td  *ngFor="let col of this.columnF">
-                  {{rowData[col.field]}}
+                <td  *ngFor="let col of this.columnF; let idx = index">
+                  <div *ngIf="idx < 6">
+                    {{rowData[col.field]}}
+                  </div>
+                  <div *ngIf="idx > 5" style="text-align: right">
+                    {{rowData | field:col}}
+                  </div>
                 </td>
               </tr>
-
             </ng-template>
           </p-table>
         </ng-container>
       </ng-container>
-
-
       <ng-template #Loader>
           <div class="p-d-flex p-jc-center" style="height: 20vh">
             <div class="p-grid p-ai-center vertical-container ">

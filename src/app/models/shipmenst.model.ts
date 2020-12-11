@@ -6,6 +6,7 @@ export interface ISession {
   userFio?: string;
   dateWrite?: string
   fileType?: string
+  historicalYears?: string[]
 };
 export interface IShipment {
   cargoGroup:	string
