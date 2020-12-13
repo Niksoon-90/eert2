@@ -18,7 +18,7 @@ export class DataCorrespondenceComponent implements OnInit {
   customers: any;
   loading: boolean = true;
   user: IAuthModel
-
+  sessionId: number = 0
   mathematicalForecastTable: IShipment[];
   dialogVisible: boolean;
 
@@ -81,6 +81,7 @@ export class DataCorrespondenceComponent implements OnInit {
   }
 
   openShipItemSession(id: any) {
+    this.sessionId = id
     this.loading = true
     this.shipmentsService.getShipments(id).subscribe(
       res => this.mathematicalForecastTable = res,
@@ -95,7 +96,7 @@ export class DataCorrespondenceComponent implements OnInit {
     )
   }
   showDialog() {
-    this.dialogVisible = true;
+    this.dialogVisible === true? '' :this.dialogVisible = true;
     this.loading = false;
   }
   loadingChange(event) {
@@ -116,5 +117,9 @@ export class DataCorrespondenceComponent implements OnInit {
       },
       () => this.loading = false
     )
+  }
+
+  updateRowTable(id: number) {
+    this.openShipItemSession(id)
   }
 }

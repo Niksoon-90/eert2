@@ -143,8 +143,106 @@
       </ng-template>
     </p-table>
     <ng-template pTemplate="footer">
+      <p-button (click)="showModalDialog()" icon="pi pi-external-link" label="Добавить строку"></p-button>
       <button type="button" pButton pRipple icon="pi pi-times" (click)="closeModalTable()" label="Закрыть" class="p-button-text"></button>
     </ng-template>
   </p-dialog>
   </ng-container>
 </div>
+<p-dialog header="Добавление строки" [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}" [baseZIndex]="10000"
+          [draggable]="false" [resizable]="false">
+  <form [formGroup]="dynamicForm" (ngSubmit)="createNew();">
+    <div class="p-grid p-fluid">
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+          <input id="cargoGroup" formControlName="cargoGroup" type="text" pInputText  >
+          <label for="cargoGroup">Группа груза</label>
+        </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+            <input id="shipmentType" formControlName="shipmentType" type="text" pInputText >
+            <label for="shipmentType">Вид перевозки</label>
+        </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <p-dropdown [options]="primary" placeholder="Выберете вариант" formControlName="primary" [(ngModel)]="primaryRes" optionLabel="label"></p-dropdown>
+<!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--            <input id="primary" formControlName="primary" type="text" pInputText >-->
+<!--            <label for="primary">Корреспонденции</label>-->
+<!--        </span>-->
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+              <input id="fromRoad" formControlName="fromRoad" type="text" pInputText >
+              <label for="fromRoad">Дорога отправления</label>
+          </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+              <input id="fromStation" formControlName="fromStation" type="text" pInputText >
+              <label for="fromStation">Станция отправления РФ</label>
+          </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+              <input id="fromStationCode" formControlName="fromStationCode" type="text" pInputText >
+              <label for="fromStationCode">Код станции отправления РФ</label>
+          </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+              <input id="fromSubject" formControlName="fromSubject" type="text" pInputText >
+              <label for="fromSubject">Субъект отправления</label>
+          </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+              <input id="senderName" formControlName="senderName" type="text" pInputText >
+              <label for="senderName">Грузоотправитель</label>
+          </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+              <input id="toRoad" formControlName="toRoad" type="text" pInputText >
+              <label for="toRoad">Дорога назначения</label>
+          </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+              <input id="toStation" formControlName="toStation" type="text" pInputText >
+              <label for="toStation">Станция назначения РФ</label>
+          </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+              <input id="toStationCode" formControlName="toStationCode" type="text" pInputText >
+              <label for="toStationCode">Код станции назначения РФ</label>
+          </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+              <input id="toSubject" formControlName="toSubject" type="text" pInputText >
+              <label for="toSubject">Субъект назначения</label>
+          </span>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <span class="p-float-label" style="padding-right: 10px;">
+              <input id="receiverName" formControlName="receiverName" type="text" pInputText >
+              <label for="receiverName">Грузополучатель</label>
+          </span>
+      </div>
+      <ng-container *ngFor="let shipmentYearValuePair of t.controls; let i = index" class="list-group list-group-flush">
+        <div class="p-col-12 p-md-4">
+          <form [formGroup]="shipmentYearValuePair" >
+              <span class="p-float-label" style="padding-right: 10px;">
+                <input id="value" formControlName="value" type="text" pInputText >
+                <label for="value">{{this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year}}</label>
+              </span>
+          </form>
+        </div>
+        </ng-container>
+      <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary " [disabled]="this.dynamicForm.invalid"></button>
+    </div>
+  </form>
+</p-dialog>

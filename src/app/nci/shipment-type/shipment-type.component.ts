@@ -43,7 +43,7 @@ export class ShipmentTypeComponent implements OnInit {
         }
       )
     }else{
-      this.modalService.open('Укажите наименование группы грузов!')
+      this.modalService.open('Укажите вид сообщения!')
     }
   }
 

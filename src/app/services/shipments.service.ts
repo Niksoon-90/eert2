@@ -86,7 +86,7 @@ export class ShipmentsService {
     return this.http.get<ICargoGroupNci[]>(this.url + `api/dictionary/cargo/all`)
   }
   postDictionaryCargo(name: string){
-    return this.http.post(this.url + `api/dictionary/cargo/group/${name}`, {})
+    return this.http.post(this.url + `api/dictionary/cargo/name/${name}`, {})
   }
   //TODO Shipment type
   putDictionaryShipmenttype(dictionaryShipmenttype: IShipmentTypNci){
@@ -102,8 +102,8 @@ export class ShipmentsService {
     return this.http.post(this.url + `api/dictionary/shipmenttype/group/${name}`, {})
   }
   //TODO station
-  postDictionaryDictionaryStation(name: string){
-    return this.http.post(this.url + `api/dictionary/station?station=${name}`, {})
+  postDictionaryDictionaryStation(station: IStationNci){
+    return this.http.post(this.url + `api/dictionary/station`, station)
   }
   putDictionaryStation(stationNci: IStationNci){
     return this.http.put(this.url + `api/dictionary/station`, stationNci)
@@ -115,8 +115,8 @@ export class ShipmentsService {
     return this.http.get<IStationNci[]>(this.url + `api/dictionary/station/all`)
   }
   //TODO dor
-  postDictionaryRailway(name: string){
-    return this.http.post(this.url + `api/dictionary/railway?railway=${name}`, {})
+  postDictionaryRailway(item: IDorogyNci){
+    return this.http.post(this.url + `api/dictionary/railway`, item)
   }
   putDictionaryRailway(dorogyNci: IDorogyNci){
     return this.http.put(this.url + `api/dictionary/railway`, dorogyNci)
@@ -126,5 +126,9 @@ export class ShipmentsService {
   }
   getDictionaryDictionaryRailway(): Observable<IDorogyNci[]>{
     return this.http.get<IDorogyNci[]>(this.url + `api/dictionary/railway/all`)
+  }
+  //TODO createRowShip
+  postCreateRowShip(id: number, shipment: IShipment){
+    return this.http.post(this.url + `api/file/shipments/${id}`, shipment)
   }
 }

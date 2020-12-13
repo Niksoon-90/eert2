@@ -30,13 +30,16 @@ export class StationComponent implements OnInit {
     this.createForm();
     this.cols = [
       { field: 'name', header: 'Название станции ', width: '50%'},
-      { field: 'code', header: 'Код станции', width: '20%' }
+      { field: 'road', header: 'Дорога', width: '20%'},
+      { field: 'code', header: 'Код станции', width: '20%', isStatic :true}
+
     ]
   }
   createForm(){
     this.form = new FormGroup({
       nameStation: new FormControl('', [Validators.required]),
-   //   code: new FormControl('', [Validators.required])
+      code: new FormControl('', [Validators.required]),
+      road: new FormControl('', [Validators.required]),
     })
   }
 
@@ -46,6 +49,7 @@ export class StationComponent implements OnInit {
 
   onRowEditSave(rowData) {
     const station: IStationNci = {
+      id: rowData.id,
       border: rowData.border,
       code: rowData.code,
       ferry: rowData.ferry,
@@ -75,7 +79,18 @@ export class StationComponent implements OnInit {
   }
 
   createStatioNci() {
-    this.shipmentsService.postDictionaryDictionaryStation(this.form.controls.nameStation.value).subscribe(
+    const station: IStationNci = {
+      border: null,
+      code: this.form.controls.code.value,
+      ferry: null,
+      land: null,
+      name: this.form.controls.nameStation.value,
+      road: this.form.controls.road.value,
+      subjectGvc: null,
+      transmissionPoint: null,
+      type: null
+    }
+    this.shipmentsService.postDictionaryDictionaryStation(station).subscribe(
       res => console.log(),
       error => this.modalService.open(error.error.message),
       () => {

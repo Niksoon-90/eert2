@@ -67,6 +67,8 @@
   (change)="loadingChange($event)"
   (changes)="CloseModalChange($event)"
   [carrgoTypes] = "null"
+  (changesNewRow)="updateRowTable($event)"
+  [sessionId]="this.sessionId"
 >
 </app-list-chipment-data>
 </ng-container>

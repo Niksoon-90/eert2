@@ -23,7 +23,7 @@ export class DataShipmentsComponent implements OnInit {
   rows = 25;
   dialogVisible: boolean;
   user: IAuthModel
-
+  sessionId: number = 0
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
@@ -92,6 +92,7 @@ export class DataShipmentsComponent implements OnInit {
   }
 
   openShipItemSession(id: number) {
+    this.sessionId = id
     this.loading = true
     this.shipmentsService.getShipments(id).subscribe(
       res => {
@@ -107,7 +108,7 @@ export class DataShipmentsComponent implements OnInit {
   }
 
   showDialog() {
-    this.dialogVisible = true;
+    this.dialogVisible === true ? '' :this.dialogVisible = true;
     this.loading = false;
   }
 
@@ -117,5 +118,9 @@ export class DataShipmentsComponent implements OnInit {
 
   CloseModalChange(event: boolean) {
     this.dialogVisible = event;
+  }
+
+  updateRowTable(id: number) {
+    this.openShipItemSession(id)
   }
 }

@@ -43,7 +43,7 @@ export class PaymentComponent implements OnInit {
   downloadSmallIasLoading: boolean = false;
   downloadTotalSmallIasLoading: boolean = false;
   headerYears: number[]
-
+  resultTwoTable: any[] = []
   pathRequestItem: IForecastIASModelIdResult
   yearsHeaderTwoTable = []
   constructor(
@@ -58,7 +58,6 @@ export class PaymentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('correspondencesIiasForecast', this.correspondencesIiasForecast)
     this.headerYears = this.forecastModelService.ticketInformation.stepOne.Session['historicalYears'].split(',')
     if(this.headerYears.length < 10){
       let lenghtMas: number = 10 - this.headerYears.length;
@@ -85,12 +84,11 @@ export class PaymentComponent implements OnInit {
     this.selectedPrimery = this.forecastModelService.ticketInformation.stepThree.primeryBolChange;
 
 
-
     this.columnS = [
-      { field: 'num', header: 'Порядковый номер', width: '100px', keyS: false},
+      { field: 'orderNum', header: 'Порядковый номер', width: '100px', keyS: false},
       { field: 'len', header: 'Длина', width: '100px', keyS: false},
-      { field: 'st_name', header: 'Наименование станции', width: '100px', keyS: false},
-      { field: 'st', header: 'Код станции', width: '100px', keyS: false}
+      { field: 'stationName', header: 'Наименование станции', width: '100px', keyS: false},
+      { field: 'stationCode', header: 'Код станции', width: '100px', keyS: false}
     ]
   }
 
@@ -116,6 +114,9 @@ export class PaymentComponent implements OnInit {
 
 
   headerYearsTable(forecastIASModelId: IForecastIASModelId[]){
+    this.yearsHeaderTwoTable = []
+    let numbers = 0
+    this.resultTwoTable = []
     this.columnF = [
       { field: 'dor_name', header: 'Дорога', width: '100px', keyS: false},
       { field: 'st1_u_name', header: 'Начальная станция участка', width: '100px', keyS: false},
@@ -124,9 +125,16 @@ export class PaymentComponent implements OnInit {
       { field: 'st2_u', header: 'Единая сетевая разметка конечной станции', width: '100px', keyS: false},
       { field: 'len', header: 'км', width: '100px', keyS: false},
     ]
-    this.yearsHeaderTwoTable = []
-    let numbers = 0
-    let resultTwoTable: any[] = []
+    for(let i = 0; i<forecastIASModelId.length; i++){
+      if(i === 0){
+        this.yearsHeaderTwoTable.push(forecastIASModelId[i].year)
+      }
+      if(i !== 0  && forecastIASModelId[i].dor_name === forecastIASModelId[0].dor_name && forecastIASModelId[i].st1_u_name === forecastIASModelId[0].st1_u_name && forecastIASModelId[i].st2_u_name === forecastIASModelId[0].st2_u_name && forecastIASModelId[i].len === forecastIASModelId[0].len){
+        this.yearsHeaderTwoTable.push(forecastIASModelId[i].year)
+      }
+    }
+
+
     for(let i = 0; i<forecastIASModelId.length; i++){
       if(i === 0){
         this.pathRequestItem = {
@@ -137,18 +145,30 @@ export class PaymentComponent implements OnInit {
           st2_u: forecastIASModelId[i].st2_u,
           len: forecastIASModelId[i].len,
           ntuda: [
-            {ntuda: forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year}
+            {ntuda: forecastIASModelId[i].ntuda === null ? 0 :forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year}
           ],
           nobratno:  [
-            {nobratno: forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year}
+            {nobratno: forecastIASModelId[i].nobratno === null ? 0 : forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year}
           ]
         }
       }
       else if(i !== 0  && forecastIASModelId[i].dor_name === forecastIASModelId[numbers].dor_name && forecastIASModelId[i].st1_u_name === forecastIASModelId[numbers].st1_u_name && forecastIASModelId[i].st2_u_name === forecastIASModelId[numbers].st2_u_name && forecastIASModelId[i].len === forecastIASModelId[numbers].len){
-        this.pathRequestItem.ntuda.push({ntuda: forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year})
-        this.pathRequestItem.nobratno.push({nobratno: forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year})
+        this.pathRequestItem.ntuda.push({ntuda: forecastIASModelId[i].ntuda === null ? 0 :forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year})
+        this.pathRequestItem.nobratno.push({nobratno: forecastIASModelId[i].nobratno === null ? 0 : forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year})
       }else{
-        resultTwoTable.push(this.pathRequestItem)
+        if(this.pathRequestItem.ntuda.length < this.yearsHeaderTwoTable.length) {
+          for (let i = this.pathRequestItem.ntuda.length; i < this.yearsHeaderTwoTable.length; i++) {
+            console.log(this.pathRequestItem.ntuda.length)
+            this.pathRequestItem.ntuda.push({ntuda: 0, year: forecastIASModelId[i].year})
+          }
+        }
+          if(this.pathRequestItem.nobratno.length < this.yearsHeaderTwoTable.length){
+            for(let i = this.pathRequestItem.nobratno.length; i < this.yearsHeaderTwoTable.length; i++){
+              console.log(this.pathRequestItem.nobratno.length)
+              this.pathRequestItem.nobratno.push({nobratno: 0, year: forecastIASModelId[i].year})
+            }
+        }
+        this.resultTwoTable.push(this.pathRequestItem)
         numbers = i;
         this.pathRequestItem = {
           dor_name: forecastIASModelId[i].dor_name,
@@ -158,58 +178,23 @@ export class PaymentComponent implements OnInit {
           st2_u: forecastIASModelId[i].st2_u,
           len: forecastIASModelId[i].len,
           ntuda: [
-            {ntuda: forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year}
+            {ntuda: forecastIASModelId[i].ntuda === null ? 0 :forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year}
           ],
           nobratno:  [
-            {nobratno: forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year}
+            {nobratno: forecastIASModelId[i].nobratno === null ? 0 : forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year}
           ]
         }
       }
     }
-    for(let i = 0; i<forecastIASModelId.length; i++){
-      if(i === 0){
-        this.yearsHeaderTwoTable.push(forecastIASModelId[i].year)
-      }
-      if(i !== 0  && forecastIASModelId[i].dor_name === forecastIASModelId[0].dor_name && forecastIASModelId[i].st1_u_name === forecastIASModelId[0].st1_u_name && forecastIASModelId[i].st2_u_name === forecastIASModelId[0].st2_u_name && forecastIASModelId[i].len === forecastIASModelId[0].len){
-        this.yearsHeaderTwoTable.push(forecastIASModelId[i].year)
-      }
+    for(let i=0; i< this.yearsHeaderTwoTable.length ; i++){
+      this.columnF.push({field: `ntuda.${i}.ntuda`, header: this.resultTwoTable[0].ntuda[i].year, width: '100px', keyS: false})
     }
     for(let i=0; i< this.yearsHeaderTwoTable.length ; i++){
-      this.columnF.push({field: `ntuda`, header: resultTwoTable[0].ntuda[i].year, width: '100px', keyS: false})
+      this.columnF.push({field: `nobratno.${i}.nobratno`, header: this.resultTwoTable[0].nobratno[i].year, width: '100px', keyS: false})
     }
-    for(let i=0; i< this.yearsHeaderTwoTable.length ; i++){
-      this.columnF.push({field: `nobratno`, header: resultTwoTable[0].nobratno[i].year, width: '100px', keyS: false})
-    }
-    console.log('RESULTAT2!', resultTwoTable)
+    console.log('RESULTAT2!', this.resultTwoTable)
     this.loadingTwo = false
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -279,7 +264,10 @@ export class PaymentComponent implements OnInit {
           document.body.appendChild(downloadLink);
           downloadLink.click();
         },
-        error => this.modalService.open(error.error.message),
+        error => {
+            this.modalService.open(error.error.message),
+            this.downloadIasLoading = false
+        },
         () => this.downloadIasLoading = false
       )
     }else{
@@ -305,7 +293,10 @@ export class PaymentComponent implements OnInit {
           document.body.appendChild(downloadLink);
           downloadLink.click();
         },
-        error => this.modalService.open(error.error.message),
+        error => {
+          this.modalService.open(error.error.message),
+            this.downloadTotalIasLoading = false
+        },
         () => this.downloadTotalIasLoading = false
       )
     }else{
@@ -346,7 +337,10 @@ export class PaymentComponent implements OnInit {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => this.modalService.open(error.error.message),
+      error => {
+        this.modalService.open(error.error.message),
+          this.downloadTotalSmallIasLoading = false
+      },
       () => this.downloadTotalSmallIasLoading = false
     )
   }

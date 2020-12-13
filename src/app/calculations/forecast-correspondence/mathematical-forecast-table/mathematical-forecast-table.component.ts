@@ -184,7 +184,10 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => this.modalService.open(error.error.message),
+      error => {
+        this.modalService.open(error.error.message),
+          this.downloadShipLoading = false
+      },
       () => this.downloadShipLoading = false
     )
   }
@@ -202,7 +205,10 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => this.modalService.open(error.error.message),
+      error => {
+        this.modalService.open(error.error.message),
+          this.downloadRoadLoading = false
+      },
       () =>  this.downloadRoadLoading = false
     )
   }

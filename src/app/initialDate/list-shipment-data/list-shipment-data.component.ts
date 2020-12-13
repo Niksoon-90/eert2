@@ -15,6 +15,7 @@ import {ICargoNci} from "../../models/calculations.model";
 import {TestService} from "../../test.service";
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-list-chipment-data',
@@ -25,13 +26,16 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   @ViewChild('dt') table: Table;
   @Input() carrgoTypes;
   @Input() dialogVisible;
+  @Input() sessionId;
   @Input() mathematicalForecastTable;
   @Input() loading;
   @Output() change: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() changes: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() changesNewRow: EventEmitter<number> = new EventEmitter<number>();
 
   columsYears: number= 0;
   primeryBol = [ { label: 'Все', value: '' },{ label: 'Да', value: true },{ label: 'Нет', value: false }]
+  primary = [ { label: 'Да', dt: true },{ label: 'Нет', dt: false }]
   cols: any[];
   selectedPrimery: any;
   massSummYear: any[];
@@ -39,13 +43,16 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   summYears: 0;
   iCargoNci: ICargoNci[];
   user: IAuthModel
-
+  displayModal: boolean = false
+  dynamicForm: FormGroup;
+  primaryRes: any;
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
     private calculationsService: CalculationsService,
     private testService: TestService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private formBuilder: FormBuilder
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -55,7 +62,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
     this.totalRecords = this.mathematicalForecastTable.length;
     this.massSummYears(this.mathematicalForecastTable)
   }
-
 
   ngOnInit(): void {
     this.test();
@@ -79,6 +85,41 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
     ];
     for(let i=0; i< this.columsYears ; i++){
       this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })
+    }
+    this.createForm();
+    this.onChangeTickets();
+  }
+  get f() { return this.dynamicForm.controls; }
+  get t() { return this.f.shipmentYearValuePairs as FormArray; }
+
+  createForm(){
+    this.dynamicForm = this.formBuilder.group({
+      cargoGroup:  ['', Validators.required],
+      fromRoad:  ['', Validators.required],
+      fromStation:  ['', Validators.required],
+      fromStationCode:  ['', Validators.required],
+      fromSubject:  ['', Validators.required],
+      primary:  ['', Validators.required],
+      receiverName:  ['', Validators.required],
+      senderName:  ['', Validators.required],
+      shipmentType:  ['', Validators.required],
+      toRoad:  ['', Validators.required],
+      toStation:  ['', Validators.required],
+      toStationCode:  ['', Validators.required],
+      toSubject:  ['', Validators.required],
+      shipmentYearValuePairs: new FormArray([])
+    });
+  }
+  onChangeTickets() {
+    console.log('this.mathematicalForecastTable',this.mathematicalForecastTable)
+    if (this.t.length < this.mathematicalForecastTable[0].shipmentYearValuePairs.length) {
+      for (let i = this.t.length; i < this.mathematicalForecastTable[0].shipmentYearValuePairs.length; i++) {
+        this.t.push(this.formBuilder.group({
+          value: ['', Validators.required],
+          year: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year,
+          calculated: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].calculated
+        }));
+      }
     }
   }
 
@@ -232,4 +273,33 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       error => this.modalService.open(error.error.message)
     )
 }
+
+  createNew() {
+    // stop here if form is invalid
+    if (this.dynamicForm.invalid) {
+      return;
+    }
+    console.log(this.dynamicForm.controls.primary.value)
+    this.dynamicForm.value.primary = this.primaryRes.dt
+    console.log(JSON.stringify(this.dynamicForm.value, null, 4));
+    this.shipmentsService.postCreateRowShip(this.sessionId, this.dynamicForm.value).subscribe(
+      res => console.log(),
+      error => this.modalService.open(error.error.message),
+      () => {
+        this.displayModal = false;
+        this.clearForm(),
+          this.changesNewRow.emit(this.sessionId);
+      }
+
+    )
+  }
+  clearForm() {
+    this.dynamicForm.reset()
+    this.t.clear();
+    this.onChangeTickets()
+  }
+
+  showModalDialog() {
+    this.displayModal = true;
+  }
 }

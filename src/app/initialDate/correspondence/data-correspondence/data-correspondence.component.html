@@ -51,7 +51,7 @@
       <tr>
         <td>{{itemCorrespondenceSession.id}}</td>
         <td>{{itemCorrespondenceSession.name}}</td>
-        <td>{{itemCorrespondenceSession.year}}</td>
+        <td>{{itemCorrespondenceSession.historicalYears}}</td>
         <td>{{itemCorrespondenceSession.userLogin}}</td>
         <td>{{itemCorrespondenceSession.userFio}}</td>
         <td>{{itemCorrespondenceSession.dateWrite | date:'full' }}</td>
@@ -73,6 +73,8 @@
     (change)="loadingChange($event)"
     (changes)="CloseModalChange($event)"
     [carrgoTypes] = "null"
+    [sessionId]="this.sessionId"
+    (changesNewRow)="updateRowTable($event)"
   >
   </app-list-chipment-data>
 </ng-container>

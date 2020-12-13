@@ -58,7 +58,7 @@
       <tr>
         <td>{{itemCargoSession.id}}</td>
         <td>{{itemCargoSession.name}}</td>
-        <td>{{itemCargoSession.year}}</td>
+        <td>{{itemCargoSession.historicalYears}}</td>
         <td>{{itemCargoSession.userLogin}}</td>
         <td>{{itemCargoSession.userFio}}</td>
         <td>{{itemCargoSession.dateWrite | date:'full' }}</td>
@@ -80,6 +80,8 @@
     (change)="loadingChange($event)"
     (changes)="CloseModalChange($event)"
     [carrgoTypes] = "this.carrgoTypes"
+    [sessionId]="this.sessionId"
+    (changesNewRow)="updateRowTable($event)"
   >
   </app-list-chipment-data>
 </ng-container>

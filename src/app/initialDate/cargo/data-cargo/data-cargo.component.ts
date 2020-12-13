@@ -21,7 +21,7 @@ export class DataCargoComponent implements OnInit {
   dialogVisible: boolean;
   carrgoTypes: string;
   user: IAuthModel
-
+  sessionId: number = 0
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
@@ -81,6 +81,7 @@ export class DataCargoComponent implements OnInit {
   }
 
   openShipItemSession(id: any) {
+    this.sessionId = id
     this.loading = true
     this.shipmentsService.getShipments(id).subscribe(
       res => this.mathematicalForecastTable = res,
@@ -95,7 +96,7 @@ export class DataCargoComponent implements OnInit {
     )
   }
   showDialog() {
-    this.dialogVisible = true;
+    this.dialogVisible === true ? '' :this.dialogVisible = true;
     this.loading = false;
   }
   loadingChange(event) {
@@ -116,5 +117,9 @@ export class DataCargoComponent implements OnInit {
       },
       () => this.loading = false
     )
+  }
+
+  updateRowTable(id: number) {
+    this.openShipItemSession(id)
   }
 }

@@ -4,7 +4,7 @@
         <input id="createCargoNci" type="text" pInputText [(ngModel)]="nameNewCargoGroupNci" >
         <label for="createCargoNci">Группа грузов</label>
       </span>
-    <button pButton pRipple type="button" label="Сохранить" class="p-button-raised p-button-secondary " (click)="createCargoGroupNci()"></button>
+    <button pButton pRipple type="button" label="Сохранить" class="p-button-raised p-button-secondary " (click)="createCargoGroupNci()" [disabled]="this.nameNewCargoGroupNci != ''"></button>
   </div>
 </ng-container>
 <div class="card" *ngIf="cargoGroupNci; else Loader">
@@ -44,7 +44,7 @@
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
       <tr [pEditableRow]="rowData">
-        <td pEditableColumn *ngFor="let col of this.cols;">
+        <td  *ngFor="let col of this.cols;">
           <p-cellEditor>
             <ng-template pTemplate="input">
               <input pInputText type="text" [(ngModel)]="rowData[col.field]">

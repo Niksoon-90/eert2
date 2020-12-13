@@ -9,20 +9,20 @@ export interface ISession {
   historicalYears?: string[]
 };
 export interface IShipment {
-  cargoGroup:	string
-  fromRoad:	string
-  fromStation:	string
-  fromStationCode:	number
-  fromSubject:	string
-  id:	number
-  receiverName:	string
-  senderName:	string
-  shipmentType:	string
-  shipmentYearValuePairs:	IShipmentYearValuePairs[]
-  toRoad:	string
-  toStation:	string
-  toStationCode:	number
-  toSubject:	string
+  cargoGroup?:	string
+  fromRoad?:	string
+  fromStation?:	string
+  fromStationCode?:	number
+  fromSubject?:	string
+  id?:	number
+  receiverName?:	string
+  senderName?:	string
+  shipmentType?:	string
+  shipmentYearValuePairs?:	IShipmentYearValuePairs[]
+  toRoad?:	string
+  toStation?:	string
+  toStationCode?:	number
+  toSubject?:	string
   primary?: boolean
 }
 

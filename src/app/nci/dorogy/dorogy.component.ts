@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {ICargoNci, IDorogyNci} from "../../models/calculations.model";
+import {IDorogyNci} from "../../models/calculations.model";
 import {IAuthModel} from "../../models/auth.model";
 import {ModalService} from "../../services/modal.service";
-import {CalculationsService} from "../../services/calculations.service";
 import {AuthenticationService} from "../../services/authentication.service";
 import {ShipmentsService} from "../../services/shipments.service";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-dorogy',
@@ -16,8 +16,9 @@ export class DorogyComponent implements OnInit {
   cols: any[];
   totalRecords: any;
   dorogyNci: IDorogyNci[]
-  nameNewDorogyNci: string = '';
+  //nameNewDorogyNci: string = '';
   user: IAuthModel
+  form: FormGroup
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -29,40 +30,55 @@ export class DorogyComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDorogyNci();
+    this.createForm();
     this.cols = [
-      { field: 'name', header: 'Наименование железных дорог', width: '55%', isStatic :true},
-      { field: 'shortname', header: 'Сокращенное наименование дороги', width: '25%', isStatic :true}
+      { field: 'name', header: 'Наименование железных дорог', width: '30%'},
+      { field: 'shortname', header: 'Сокращенное наименование дороги', width: '25%'},
+      { field: 'code', header: 'Код', width: '15%', isStatic :true}
     ]
   }
 
+  createForm() {
+    this.form = new FormGroup({
+      name: new FormControl('', [Validators.required]),
+      code: new FormControl('', [Validators.required]),
+      shortname: new FormControl('', [Validators.required]),
+    })
+  }
+
   createDorogyNci() {
-    if(this.nameNewDorogyNci !== ''){
-      this.shipmentsService.postDictionaryRailway(this.nameNewDorogyNci).subscribe(
+    if(this.form.valid){
+      const neDor: IDorogyNci = {
+        name: this.form.controls.name.value,
+        code: this.form.controls.code.value,
+        shortname: this.form.controls.shortname.value
+      }
+      this.shipmentsService.postDictionaryRailway(neDor).subscribe(
         res => console.log(),
         error => this.modalService.open(error.error.message),
         () => {
-          this.nameNewDorogyNci = '',
             this.getDorogyNci()
         }
       )
     }else{
-      this.modalService.open('Укажите наименование Дорги!')
+      this.modalService.open('Не все поля заполнены!')
     }
   }
 
   onRowEditInit() {
-
   }
 
   onRowEditSave(rowData) {
     const dorogyNci: IDorogyNci =  {
+      id: rowData.id,
       name: rowData.name,
-      code: rowData.name,
-      shortname: rowData.name
+      code: rowData.code,
+      shortname: rowData.shortname
     }
     this.shipmentsService.putDictionaryRailway(dorogyNci).subscribe(
       res => console.log(),
       error => this.modalService.open(error.error.message),
+      () => this.getDorogyNci()
     )
   }
   getDorogyNci() {
