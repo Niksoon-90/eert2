@@ -18,7 +18,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import { CargoComponent } from './initialDate/cargo/cargo.component';
 import { CorrespondenceComponent } from './initialDate/correspondence/correspondence.component';
 import { MacroPokComponent } from './initialDate/macro-pok/macro-pok.component';
-import {registerLocaleData} from "@angular/common";
+import {HashLocationStrategy, LocationStrategy, registerLocaleData} from "@angular/common";
 import localeRu from '@angular/common/locales/ru';
 import { CalculationsComponent } from './calculations/calculations.component';
 import {PanelMenuModule} from "primeng/panelmenu";
@@ -58,6 +58,10 @@ import { StationComponent } from './nci/station/station.component';
 import { DorogyComponent } from './nci/dorogy/dorogy.component';
 import { CargoGroupComponent } from './nci/cargo-group/cargo-group.component';
 import { ShipmentTypeComponent } from './nci/shipment-type/shipment-type.component';
+import { HistoricalComponent } from './payment-history/historical/historical.component';
+import { StepComponent } from './payment-history/historical/step/step.component';
+import { PaymentHistoryComponent } from './payment-history/payment-history.component';
+import { StepIasComponent } from './payment-history/historical/step-ias/step-ias.component';
 
 
 const itemRoutesShipments: Routes = [
@@ -83,6 +87,12 @@ const itemRoutesSteps: Routes = [
   {path: 'export', component: DataExportComponent},
 ]
 
+const itemRoutesHistoricalSteps: Routes = [
+  {path: 'match/:id/:name', component: StepComponent},
+  {path: 'ias/:id/:name', component: StepIasComponent},
+  {path: '', component: HistoricalComponent}
+]
+
 const appRoutes: Routes = [
   {path: 'shipments', component: ShipmentsComponent, children: itemRoutesShipments},
   {path: 'cargo', component: CargoComponent, children: itemRoutesCargo},
@@ -91,6 +101,7 @@ const appRoutes: Routes = [
   {path: 'steps', component: StepsComponent, children: itemRoutesSteps},
   {path: 'directory', component: DirectoryComponent},
   {path: 'nci', component: NciComponent},
+  {path: 'payments', component: PaymentHistoryComponent, children: itemRoutesHistoricalSteps},
   {path: '', component: CalculationsComponent},
   {path: 'logOut', canActivate: [RedirectGuard], component: RedirectGuard,  data: {  externalUrl: 'http://192.168.11.180:8080/logout' }}
 ]
@@ -127,6 +138,10 @@ registerLocaleData(localeRu, 'ru');
     DorogyComponent,
     CargoGroupComponent,
     ShipmentTypeComponent,
+    HistoricalComponent,
+    StepComponent,
+    PaymentHistoryComponent,
+    StepIasComponent,
   ],
   imports: [
     BrowserModule,
@@ -160,7 +175,8 @@ registerLocaleData(localeRu, 'ru');
 
   providers: [
     RedirectGuard,
-    { provide: LOCALE_ID, useValue: 'ru' }
+    { provide: LOCALE_ID, useValue: 'ru' },
+    {provide: LocationStrategy, useClass: HashLocationStrategy}
   ],
   bootstrap: [AppComponent]
 })

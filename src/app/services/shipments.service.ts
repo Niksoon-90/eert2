@@ -131,4 +131,13 @@ export class ShipmentsService {
   postCreateRowShip(id: number, shipment: IShipment){
     return this.http.post(this.url + `api/file/shipments/${id}`, shipment)
   }
+  getHistoricalSession(): Observable<ISession[]>{
+    return this.http.get<ISession[]>(this.url + `api/file/list/historical`)
+  }
+  getHistorical(id: number): Observable<ISession[]>{
+    return this.http.get<ISession[]>(this.url + `api/file/list/forecast/${id}`)
+  }
+  getHistoricalForcaste(): Observable<ISession[]>{
+    return this.http.get<ISession[]>(this.url + `api/file/list/forecast`)
+  }
 }

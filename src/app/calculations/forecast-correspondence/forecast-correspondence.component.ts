@@ -27,7 +27,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
   user: IAuthModel
   payment: boolean = false
   urlPerspective =  'api/calc/correspondence/perspective?';
-
+  forecastName: string
   constructor(
     private router: Router,
     public forecastModelService: ForecastingModelService,
@@ -48,6 +48,13 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(this.forecastModelService.ticketInformation.stepOne.oldSessionId === null){
+      this.forecastModelService.ticketInformation.stepOne.oldSessionId = this.forecastModelService.ticketInformation.stepOne.Session['id']
+    }
+    if(this.forecastModelService.ticketInformation.stepOne.newSessionId !== null){
+      this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.newSessionId
+    }
+    this.forecastName = this.forecastModelService.getTicketInformation().stepOne.nameNewShip
     this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
     this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     this.stepThree = this.forecastModelService.ticketInformation.stepThree;
@@ -66,19 +73,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   prevPage() {
+    this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.oldSessionId
     this.router.navigate(['steps/mathForecast']);
   }
 
-  nextPage() {
-    this.shipmentsService.putTransformFile(this.sessionId, true).subscribe(
-      res => console.log(),
-      error => this.modalService.open(error.error.message),
-      () => {
-        this.forecastModelService.ticketInformation.stepThree.forecastingStrategy = this.stepThree.forecastingStrategy;
-        this.router.navigate(['steps/payment']);
-      }
-    )
-  }
 
   calculateForecastingStrategy() {
     this.payment = true
@@ -86,51 +84,112 @@ export class ForecastCorrespondenceComponent implements OnInit {
     this.loading = false;
     switch (this.stepThree.forecastingStrategy.type) {
       case 'simple':
-       this.calculationsService.getCalculationSimple(this.sessionId, this.stepOnecalcYearsNumber)
+       this.calculationsService.getCalculationSimple(this.sessionId, this.stepOnecalcYearsNumber, this.forecastName)
          .subscribe(
            res => {this.mathematicalForecastTable = res, console.log('simple', res)},
-           error => this.modalService.open(error.error.message),
-           () => {this.disableCorrelation = false, this.loading = true}
+           error => {
+             this.modalService.open(error.error.message),
+               this.loading = true
+           },
+           () => {
+             if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
+               this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
+             }
+             this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
+             this.sessionId = this.mathematicalForecastTable[0].session,
+             this.disableCorrelation = false,
+               this.loading = true}
          )
         break;
       case 'fiscal':
-        this.calculationsService.getCalculationFiscal(this.sessionId, this.stepOnecalcYearsNumber, this.stepThree.yearsSession['name'])
+        this.calculationsService.getCalculationFiscal(this.sessionId, this.stepOnecalcYearsNumber, this.stepThree.yearsSession['name'], this.forecastName)
           .subscribe(
             res => {this.mathematicalForecastTable = res,  console.log('fiscal', res)},
-            error => this.modalService.open(error.error.message),
-            () => {this.disableCorrelation = false, this.loading = true}
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
+            () => {
+              if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
+                this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
+              }
+              this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
+                this.sessionId = this.mathematicalForecastTable[0].session,
+              this.disableCorrelation = false,
+                this.loading = true
+            }
           )
         break;
       case 'fixed':
-        this.calculationsService.getCalculationFixed(this.sessionId, this.stepOnecalcYearsNumber)
+        this.calculationsService.getCalculationFixed(this.sessionId, this.stepOnecalcYearsNumber, this.forecastName)
           .subscribe(
               res => {this.mathematicalForecastTable = res, console.log('fixed', res)},
-            error => this.modalService.open(error.error.message),
-            () => {this.disableCorrelation = false, this.loading = true}
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
+            () => {
+              if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
+                this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
+              }
+              this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
+                this.sessionId = this.mathematicalForecastTable[0].session,
+                this.disableCorrelation = false,
+                  this.loading = true}
           )
         break;
       case 'increasing':
-        this.calculationsService.getCalculationIncreasing(this.sessionId, this.stepOnecalcYearsNumber)
+        this.calculationsService.getCalculationIncreasing(this.sessionId, this.stepOnecalcYearsNumber, this.forecastName)
           .subscribe(
             res => {this.mathematicalForecastTable = res, console.log('increasing', res)},
-            error => this.modalService.open(error.error.message),
-            () => {this.disableCorrelation = false, this.loading = true}
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
+            () => {
+              if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
+                this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
+              }
+              this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
+                this.sessionId = this.mathematicalForecastTable[0].session,
+              this.disableCorrelation = false,
+                this.loading = true}
           )
         break;
       case 'average':
-        this.calculationsService.getCalculationAverage(this.sessionId, this.stepOnecalcYearsNumber)
+        this.calculationsService.getCalculationAverage(this.sessionId, this.stepOnecalcYearsNumber, this.forecastName)
           .subscribe(
             res => {this.mathematicalForecastTable = res, console.log('average', res)},
-            error => this.modalService.open(error.error.message),
-            () => {this.disableCorrelation = false, this.loading = true}
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
+            () => {
+              if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
+                this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
+              }
+              this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
+                this.sessionId = this.mathematicalForecastTable[0].session,
+              this.disableCorrelation = false,
+                this.loading = true}
           )
         break;
         case 'averageIncreasing':
-        this.calculationsService.getCalculationAverageIncreasing(this.sessionId, this.stepOnecalcYearsNumber)
+        this.calculationsService.getCalculationAverageIncreasing(this.sessionId, this.stepOnecalcYearsNumber, this.forecastName)
           .subscribe(
             res => {this.mathematicalForecastTable = res, console.log('averageIncreasing', res)},
-            error => this.modalService.open(error.error.message),
-            () => {this.disableCorrelation = false, this.loading = true}
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
+            () => {
+              if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
+                this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
+              }
+              this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
+                this.sessionId = this.mathematicalForecastTable[0].session,
+                this.disableCorrelation = false,
+                this.loading = true}
           )
         break;
       default:
@@ -150,7 +209,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
         this.calculationsService.getCorrelation(this.sessionId, 'LESS_SQUARE')
           .subscribe(
             res => {this.mathematicalForecastTable = res},
-            error => this.modalService.open(error.error.message),
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
             () => this.loading = true
           )
         break;
@@ -158,7 +220,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
         this.calculationsService.getCorrelation(this.sessionId, 'FISCAL_YEAR')
           .subscribe(
             res => {this.mathematicalForecastTable = res},
-            error => this.modalService.open(error.error.message),
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
             () => this.loading = true
           )
         break;
@@ -166,7 +231,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
         this.calculationsService.getCorrelation(this.sessionId, 'TENDENCY_FIXED_DELTA')
           .subscribe(
             res => {this.mathematicalForecastTable = res},
-            error => this.modalService.open(error.error.message),
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
             () => this.loading = true
           )
         break;
@@ -174,7 +242,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
         this.calculationsService.getCorrelation(this.sessionId, 'TENDENCY_INCREASING_DELTA')
           .subscribe(
             res => {this.mathematicalForecastTable = res},
-            error => this.modalService.open(error.error.message),
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
             () => this.loading = true
           )
         break;
@@ -182,7 +253,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
         this.calculationsService.getCorrelation(this.sessionId, 'AVERAGE_FIXED_INTERVAL')
           .subscribe(
             res => {this.mathematicalForecastTable = res},
-            error => this.modalService.open(error.error.message),
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
             () => this.loading = true
           )
         break;
@@ -190,7 +264,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
         this.calculationsService.getCorrelation(this.sessionId, 'AVERAGE_INCREASING_INTERVAL')
           .subscribe(
             res => {this.mathematicalForecastTable = res},
-            error => this.modalService.open(error.error.message),
+            error => {
+              this.modalService.open(error.error.message),
+                this.loading = true
+            },
             () => this.loading = true
           )
         break;
@@ -218,7 +295,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
       this.calculationsService.getPerspective(this.urlPerspective )
         .subscribe(
           res => {this.mathematicalForecastTable = res, console.log(res)},
-          error => this.modalService.open(error.error.message),
+          error => {
+            this.modalService.open(error.error.message),
+              this.loading = true
+          },
           () => {
             this.loading = true;
             this.disableCorrelation = !this.disableCorrelation;
@@ -235,7 +315,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
         res => {
           this.mathematicalForecastTable = res
         },
-        error => this.modalService.open(error.error.message),
+        error => {
+          this.modalService.open(error.error.message),
+            this.loading = true
+        },
         () => this.loading = true
       )
     }
@@ -251,8 +334,25 @@ export class ForecastCorrespondenceComponent implements OnInit {
       res => {
         this.mathematicalForecastTable = res
       },
-      error => this.modalService.open(error.error.message),
+      error => {
+        this.modalService.open(error.error.message),
+          this.loading = true
+      },
       () => this.loading = true
     )
   }
+  nextPage() {
+    this.shipmentsService.putTransformFile(this.sessionId, true).subscribe(
+      res => console.log(),
+      error => {
+        this.modalService.open(error.error.message),
+          this.loading = true
+      },
+      () => {
+        this.forecastModelService.ticketInformation.stepThree.forecastingStrategy = this.stepThree.forecastingStrategy;
+        this.router.navigate(['steps/payment']);
+      }
+    )
+  }
+
 }

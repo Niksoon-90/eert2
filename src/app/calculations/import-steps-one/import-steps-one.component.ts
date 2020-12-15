@@ -66,13 +66,16 @@ export class ImportStepsOneComponent implements OnInit {
     if(this.stepOne.calcYearsNumber === 0){this.stepOne.calcYearsNumber = this.horizonforecast[0]}
   }
 
-
-
   getInitialDate(){
     if(this.user.authorities.includes('P_P_p5') === true ){
-      this.shipmentsService.getShipSession().subscribe(
-        res => this.initialDate = res,
-        error => this.modalService.open(error.error.message),
+
+      this.shipmentsService.getHistoricalSession()
+        .pipe(
+          map((data: ISession[]) => data.filter(p => p.fileType === "SHIPMENTS"))
+        )
+        .subscribe(
+          res => this.initialDate = res,
+          error => this.modalService.open(error.error.message),
         () => console.log('complede')
       );
     }else{
@@ -169,6 +172,8 @@ export class ImportStepsOneComponent implements OnInit {
   nextPage() {
     if(this.stepOne.Session !== null){
       this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
+      this.forecastModelService.ticketInformation.stepOne.nameNewShip = this.stepOne.nameNewShip;
+      console.log('this.stepOne.Session', this.stepOne.Session)
       this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
       this.forecastModelService.ticketInformation.stepOne.scenarioMacro = this.stepOne.scenarioMacro;
       this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
@@ -177,9 +182,11 @@ export class ImportStepsOneComponent implements OnInit {
       this.forecastModelService.ticketInformation.stepOne.oilCargo = this.stepOne.oilCargo;
       this.forecastModelService.ticketInformation.stepOne.ore = this.stepOne.ore;
       this.forecastModelService.ticketInformation.stepOne.metallurgy = this.stepOne.metallurgy;
+      this.forecastModelService.ticketInformation.stepOne.oldSessionId = null;
+      this.forecastModelService.ticketInformation.stepOne.newSessionId = null;
       this.router.navigate(['steps/mathForecast']);
     }else{
-      this.modalService.open('Укажите файл "Исходные данные"')
+      this.router.navigate(['steps/forecast']);
     }
   }
 

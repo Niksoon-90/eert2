@@ -17,12 +17,19 @@ export class ForecastingModelService {
       oilCargo: null,
       metallurgy: null,
       ore: null,
+      nameNewShip: null,
+      oldSessionId: null,
+      newSessionId: null,
     },
     stepThree: {
         forecastingStrategy: null,
         yearsSession: null,
         primeryBolChange: false
     },
+    history: {
+      primeryBolChange: false,
+      historicalYears: null
+    }
   };
 
   private paymentComplete = new Subject<any>();

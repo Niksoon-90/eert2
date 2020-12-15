@@ -61,7 +61,11 @@ export class DataShipmentsComponent implements OnInit {
   getShipmentsSession() {
     this.loading = true
     if(this.user.authorities.includes('P_P_p5') === true){
-      this.shipmentsService.getShipSession().subscribe(
+      this.shipmentsService.getHistoricalSession()
+        .pipe(
+          map((data: ISession[]) => data.filter(p => p.fileType === "SHIPMENTS"))
+        )
+        .subscribe(
         res => {this.shipmentsSession = res; console.log(res)},
         error => this.modalService.open(error.error.message),
         () => this.loading = false,
@@ -69,7 +73,7 @@ export class DataShipmentsComponent implements OnInit {
     }else{
       this.shipmentsService.getShipSession()
         .pipe(
-          map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+          map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user && p.fileType === "SHIPMENTS"))
         )
         .subscribe(
         res => {this.shipmentsSession = res; console.log(res)},

@@ -39,6 +39,7 @@ export class MathForecastComponent implements OnInit, OnChanges {
   createTable(){
     console.log(this.forecastModelService.getTicketInformation().stepOne.Session['id'])
     console.log(this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
+    console.log(this.forecastModelService.getTicketInformation().stepOne.nameNewShip)
     this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'] )
       .pipe(
         map(data => {
@@ -55,6 +56,9 @@ export class MathForecastComponent implements OnInit, OnChanges {
   }
 
   nextPage() {
+    if(this.forecastModelService.ticketInformation.stepOne.newSessionId !== null){
+      this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.newSessionId
+    }
     this.router.navigate(['steps/forecast']);
   }
 

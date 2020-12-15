@@ -4,10 +4,17 @@
       Импорт данных
     </ng-template>
     <ng-template pTemplate="subtitle">
-      Все поля обязательны для заполнения!
+
     </ng-template>
     <ng-template pTemplate="content">
-
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+         <span class="p-float-label" style="padding-right: 10px;">
+            <input id="name"  type="text"pInputText [(ngModel)]="stepOne.nameNewShip" >
+            <label for="name">Наименование расчета</label>
+          </span>
+        </div>
+      </div>
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12">
             <label>Исходные данные:</label>

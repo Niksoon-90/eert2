@@ -7,6 +7,8 @@ export interface ISession {
   dateWrite?: string
   fileType?: string
   historicalYears?: string[]
+  parentHistoricalSessionId?: number
+  forecastCreated?: boolean
 };
 export interface IShipment {
   cargoGroup?:	string
@@ -24,6 +26,8 @@ export interface IShipment {
   toStationCode?:	number
   toSubject?:	string
   primary?: boolean
+  session?: number
+
 }
 
 interface IShipmentYearValuePairs {

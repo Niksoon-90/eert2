@@ -44,6 +44,7 @@ export class AppComponent implements OnInit{
         {label: 'Макроэкономические показатели', routerLink: ['macroPok'], command: () => { this.clickItem(); }},
         {label: 'Заявки компаний-грузовладельцев', routerLink: ['cargo/data'], command: () => { this.clickItem(); }},
         {label: 'Данные о перспективных кореспонденциях',  routerLink: ['correspondence/data'], command: () => { this.clickItem(); }},
+        {label: 'Расчеты (модель прогнозирования)',  routerLink: ['payments'], command: () => { this.clickItem(); }},
 
       ]
     },

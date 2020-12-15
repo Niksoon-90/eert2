@@ -1,33 +1,33 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  ViewChild
-} from '@angular/core';
-import {Table} from 'primeng/table';
-import {ShipmentsService} from "../../../services/shipments.service";
-import {ModalService} from "../../../services/modal.service";
-import {ForecastingModelService} from "../../../services/forecasting-model.service";
-import {AuthenticationService} from "../../../services/authentication.service";
+import {Component, OnChanges, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from "@angular/router";
+import {from, Subscription} from "rxjs";
 import {IAuthModel} from "../../../models/auth.model";
+import {CalculationsService} from "../../../services/calculations.service";
+import {ModalService} from "../../../services/modal.service";
+import {AuthenticationService} from "../../../services/authentication.service";
+import {ShipmentsService} from "../../../services/shipments.service";
+import {IShipment} from "../../../models/shipmenst.model";
 import {HttpResponse} from "@angular/common/http";
 import {UploadFileService} from "../../../services/upload-file.service";
-import {from} from "rxjs";
+import {Table} from "primeng/table";
 import {concatMap, mergeMap} from "rxjs/operators";
-
-
+import {ForecastingModelService} from "../../../services/forecasting-model.service";
 
 @Component({
-  selector: 'app-mathematical-forecast-table',
-  templateUrl: './mathematical-forecast-table.component.html',
-  styleUrls: ['./mathematical-forecast-table.component.scss']
+  selector: 'app-step',
+  templateUrl: './step.component.html',
+  styleUrls: ['./step.component.scss']
 })
-export class MathematicalForecastTableComponent implements OnInit, OnChanges {
+export class StepComponent implements OnInit, OnChanges {
   @ViewChild('dt')  table: Table;
-  @Input() mathematicalForecastTable;
 
-
+  sessionId: number;
+  nameSession: string
+  private subscription: Subscription;
+  user: IAuthModel
+  forecastingStrategy: any;
+  yearsSession: any;
+  mathematicalForecastTable: IShipment[];
   loading: boolean;
   totalRecords: number;
   massSummYear: any[];
@@ -35,54 +35,73 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   columsYears: number= 0;
   cols: any[];
   virtTable: any[];
-  user: IAuthModel;
   loader: boolean = false
   downloadShipLoading: boolean = false
   downloadRoadLoading: boolean = false
   primeryBol = [ { label: 'Все', value: '' },{ label: 'Да', value: true },{ label: 'Нет', value: false }]
   selectedPrimery: any;
   virtTable2: any;
-  sessionId: number
+
 
   constructor(
-    private shipmentsService: ShipmentsService,
+    private router: Router,
+    private calculationsService: CalculationsService,
     private modalService: ModalService,
-    private forecastingModelService: ForecastingModelService,
     private authenticationService: AuthenticationService,
+    private shipmentsService: ShipmentsService,
+    private activateRoute: ActivatedRoute,
     private uploadFileService: UploadFileService,
-    public forecastModelService: ForecastingModelService,
+    private forecastingModelService: ForecastingModelService
   ) {
+    this.subscription = activateRoute.params.subscribe(params => {
+      this.sessionId = params['id'], this.nameSession = params['name']
+    });
     this.user = this.authenticationService.userValue;
   }
 
-
   ngOnChanges() {
     this.totalRecords = this.mathematicalForecastTable.length;
-  }
-  ngOnInit(): void {
-    this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
-    this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
     this.massSummYears(this.mathematicalForecastTable)
-    this.cols = [
-      { field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
-      { field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false },
-      { field: 'fromRoad', header: 'Дорога отправления', width: '100px', keyS: false },
-      { field: 'fromStation', header: 'Станция отправления РФ', width: '100px', keyS: false },
-      { field: 'fromStationCode', header: 'Код станции отправления РФ', width: '100px', keyS: false },
-      { field: 'fromSubject', header: 'Субъект отправления', width: '100px', keyS: false },
-      { field: 'senderName', header: 'Грузоотправитель', width: '100px', keyS: false },
-      { field: 'toRoad', header: 'Дорога назначения', width: '100px', keyS: false },
-      { field: 'toStation', header: 'Станция назначения РФ', width: '100px', keyS: false },
-      { field: 'toStationCode', header: 'Код станции назначения РФ', width: '100px', keyS: false },
-      { field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false },
-      { field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false },
-      { field: 'primary', header: 'Уст.', width: '80px', keyS: false },
-    ];
-    for(let i=0; i< this.columsYears ; i++){
-      this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })
-    }
   }
 
+  ngOnInit(): void {
+    this.allShipItemSession(this.sessionId);
+  }
+
+  allShipItemSession(id: number) {
+    this.loader = true
+    this.shipmentsService.getShipments(id).subscribe(
+      res => {
+        this.mathematicalForecastTable = res;
+      },
+      error => {
+        this.modalService.open(error.error.message);
+      },
+      () => {
+        this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
+        this.massSummYears(this.mathematicalForecastTable),
+          this.cols = [
+            { field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
+            { field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false },
+            { field: 'fromRoad', header: 'Дорога отправления', width: '100px', keyS: false },
+            { field: 'fromStation', header: 'Станция отправления РФ', width: '100px', keyS: false },
+            { field: 'fromStationCode', header: 'Код станции отправления РФ', width: '100px', keyS: false },
+            { field: 'fromSubject', header: 'Субъект отправления', width: '100px', keyS: false },
+            { field: 'senderName', header: 'Грузоотправитель', width: '100px', keyS: false },
+            { field: 'toRoad', header: 'Дорога назначения', width: '100px', keyS: false },
+            { field: 'toStation', header: 'Станция назначения РФ', width: '100px', keyS: false },
+            { field: 'toStationCode', header: 'Код станции назначения РФ', width: '100px', keyS: false },
+            { field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false },
+            { field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false },
+            { field: 'primary', header: 'Уст.', width: '80px', keyS: false },
+          ];
+        for(let i=0; i< this.columsYears ; i++){
+          this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })
+        }
+        this.loader = false
+      }
+    )
+  }
   columnFilter(event: any, field) {
     this.table.filter(event.target.value, field, 'contains');
   }
@@ -116,7 +135,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   }
 
   onRowEditInit(item: any) {
-  console.log('item', item)
+    console.log('item', item)
   }
 
   onRowEditSave(item: any) {
@@ -133,7 +152,6 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
 
   test(idx: number, value: any) {
-
     const saveMass = []
     const dec = Number(value / this.massSummYear[idx]).toFixed(3);
     for(let i=0; i< this.virtTable.length; i++) {
@@ -142,15 +160,8 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
       delete this.virtTable[i].session;
       saveMass.push(this.virtTable[i])
     }
-    // for(let i=0; i< this.mathematicalForecastTable.length; i++) {
-    //   this.mathematicalForecastTable[i].shipmentYearValuePairs[idx].value = Number((this.mathematicalForecastTable[i].shipmentYearValuePairs[idx].value * dec).toFixed(2))
-    //   delete this.mathematicalForecastTable[i].session;
-    //   saveMass.push(this.mathematicalForecastTable[i])
-    // //  this.onRowEditSave(this.mathematicalForecastTable[i])
-    // }
-
     if(saveMass.length !== 0){
-      this.loader = true;
+      this.loader = true
       from(saveMass).pipe(
         concatMap(param => this.shipmentsService.putShipments(param)) //concatMap
       ).subscribe(
@@ -169,17 +180,6 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
       );
     }
   }
-  //   const dec = value / this.massSummYear[idx];
-  //   for(let i=0; i< this.mathematicalForecastTable.length; i++) {
-  //     this.mathematicalForecastTable[i].shipmentYearValuePairs[idx].value = Number((this.mathematicalForecastTable[i].shipmentYearValuePairs[idx].value * dec).toFixed(2))
-  //     console.log(this.mathematicalForecastTable[i])
-  //     this.onRowEditSave(this.mathematicalForecastTable[i])
-  //   }
-  //   this.loader = true;
-  //   setTimeout(()=>{
-  //     this.loader = false;
-  //   }, 2000);
-  // }
 
   colorYears(rowData, col: any) {
     const mass = col['field'].toString().split('.');
@@ -202,7 +202,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
   primeryBolChange(value: any, field: any, equals: string) {
     this.table.filter(value, field, equals)
-    this.forecastingModelService.ticketInformation.stepThree.primeryBolChange = this.selectedPrimery
+    this.forecastingModelService.ticketInformation.history.primeryBolChange = this.selectedPrimery
   }
 
   downloadShip() {
@@ -246,5 +246,15 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
       },
       () =>  this.downloadRoadLoading = false
     )
+  }
+
+  prevPage() {
+    this.router.navigate(['/payments']);
+  }
+
+  nextPage() {
+    if(this.selectedPrimery !== null){
+      this.router.navigate(['payments/ias/', this.sessionId, this.nameSession]);
+    }
   }
 }
