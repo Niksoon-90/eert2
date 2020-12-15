@@ -48,17 +48,24 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.forecastModelService.ticketInformation.stepOne.oldSessionId === null){
+    if(this.forecastModelService.ticketInformation.stepOne.oldSessionId === null && this.forecastModelService.getTicketInformation().stepOne.Session !== null){
       this.forecastModelService.ticketInformation.stepOne.oldSessionId = this.forecastModelService.ticketInformation.stepOne.Session['id']
     }
-    if(this.forecastModelService.ticketInformation.stepOne.newSessionId !== null){
+    if(this.forecastModelService.ticketInformation.stepOne.newSessionId !== null && this.forecastModelService.getTicketInformation().stepOne.Session !== null){
       this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.newSessionId
     }
     this.forecastName = this.forecastModelService.getTicketInformation().stepOne.nameNewShip
-    this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
+
+    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+      this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
+      this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
+    }else{
+      this.sessionId = null
+    }
+
     this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     this.stepThree = this.forecastModelService.ticketInformation.stepThree;
-    this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
+
     if(this.forecastModelService.ticketInformation.stepThree.forecastingStrategy !== null){
       this.calculateForecastingStrategy();
     }
@@ -73,8 +80,12 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   prevPage() {
-    this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.oldSessionId
-    this.router.navigate(['steps/mathForecast']);
+    if(this.sessionId !== null){
+      this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.oldSessionId
+      this.router.navigate(['steps/mathForecast']);
+    }else {
+      this.router.navigate(['steps/import']);
+    }
   }
 
 

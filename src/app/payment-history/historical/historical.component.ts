@@ -43,8 +43,38 @@ export class HistoricalComponent implements OnInit {
     )
   }
 
-  openThreeStep(id: number, name: string, historicalYears: any) {
+  openThreeStep(id: number, name: string, historicalYears: any, forecastConfirmed: boolean) {
     this.forecastModelService.ticketInformation.history.historicalYears = historicalYears;
+    this.forecastModelService.ticketInformation.history.forecastConfirmed = forecastConfirmed;
     this.router.navigate(['payments/match/', id, name]);
+  }
+
+  deletedThreeStep(id: number) {
+    this.loading = true
+    this.shipmentsService.deleteShipSession(id).subscribe(
+      res => console.log(),
+      error => {
+        this.modalService.open(error.error.message),
+          this.loading = false
+      },
+      () => {
+        this.openShipItemSession(),
+          this.loading = false
+      }
+    )
+  }
+  confirmSession(id: number){
+    this.loading = true
+    this.shipmentsService.putConfirm(id).subscribe(
+      res => console.log(),
+      error => {
+        this.modalService.open(error.error.message),
+          this.loading = false
+      },
+      () => {
+        this.openShipItemSession(),
+          this.loading = false
+      }
+    )
   }
 }

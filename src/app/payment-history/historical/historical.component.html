@@ -17,7 +17,7 @@
         <col>
         <col>
         <col>
-        <col style="width:100px">
+        <col style="width:110px">
       </colgroup>
     </ng-template>
     <ng-template pTemplate="header">
@@ -32,7 +32,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-itemShipmentsSession >
-      <tr>
+      <tr  [ngStyle]="{'background-color': itemShipmentsSession.forecastConfirmed === true ? '#9bd4b2' : '#fff' }">
         <td>{{itemShipmentsSession.id}}</td>
         <td>{{itemShipmentsSession.name}}</td>
         <td>{{itemShipmentsSession.historicalYears}}</td>
@@ -40,7 +40,11 @@
         <td>{{itemShipmentsSession.userFio}}</td>
         <td>{{itemShipmentsSession.dateWrite | date:'full' }}</td>
         <td>
-          <button pButton pRipple icon="pi pi-arrow-right"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Перейти" tooltipPosition="bottom"  (click)="openThreeStep(itemShipmentsSession.id, itemShipmentsSession.name, itemShipmentsSession.historicalYears)"></button>
+          <button pButton pRipple icon="pi pi-arrow-circle-right"  class="p-button-rounded p-button-text p-button-plain" type="button"  pTooltip="Перейти" tooltipPosition="bottom"  (click)="openThreeStep(itemShipmentsSession.id, itemShipmentsSession.name, itemShipmentsSession.historicalYears, itemShipmentsSession.forecastConfirmed)"></button>
+          <ng-container *ngIf="itemShipmentsSession.forecastConfirmed !== true">
+            <button pButton pRipple icon="pi pi-star"  class="p-button-rounded p-button-warning p-button-text" type="button"  pTooltip="Утвердить" tooltipPosition="bottom"  (click)="confirmSession(itemShipmentsSession.id)"></button>
+          </ng-container>
+          <button pButton pRipple icon="pi pi-times"  class="p-button-rounded p-button-danger p-button-text" type="button"  pTooltip="Удалить" tooltipPosition="bottom"  (click)="deletedThreeStep(itemShipmentsSession.id)"></button>
         </td>
       </tr>
     </ng-template>

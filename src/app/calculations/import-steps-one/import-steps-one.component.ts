@@ -173,7 +173,6 @@ export class ImportStepsOneComponent implements OnInit {
     if(this.stepOne.Session !== null){
       this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
       this.forecastModelService.ticketInformation.stepOne.nameNewShip = this.stepOne.nameNewShip;
-      console.log('this.stepOne.Session', this.stepOne.Session)
       this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
       this.forecastModelService.ticketInformation.stepOne.scenarioMacro = this.stepOne.scenarioMacro;
       this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
@@ -187,6 +186,17 @@ export class ImportStepsOneComponent implements OnInit {
       this.router.navigate(['steps/mathForecast']);
     }else{
       this.router.navigate(['steps/forecast']);
+      this.forecastModelService.ticketInformation.stepOne.Session =  null
+      this.forecastModelService.ticketInformation.stepOne.nameNewShip =  null
+      this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
+      this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
+      this.forecastModelService.ticketInformation.stepOne.cargoSessionSender = this.stepOne.cargoSessionSender;
+      this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver = this.stepOne.cargoSessionReceiver;
+      this.forecastModelService.ticketInformation.stepOne.oilCargo = this.stepOne.oilCargo;
+      this.forecastModelService.ticketInformation.stepOne.ore = this.stepOne.ore;
+      this.forecastModelService.ticketInformation.stepOne.metallurgy = this.stepOne.metallurgy;
+      this.forecastModelService.ticketInformation.stepOne.oldSessionId = null;
+      this.forecastModelService.ticketInformation.stepOne.newSessionId = null;
     }
   }
 

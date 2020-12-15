@@ -41,7 +41,7 @@ export class StepComponent implements OnInit, OnChanges {
   primeryBol = [ { label: 'Все', value: '' },{ label: 'Да', value: true },{ label: 'Нет', value: false }]
   selectedPrimery: any;
   virtTable2: any;
-
+  forecastConfirmed: boolean = false
 
   constructor(
     private router: Router,
@@ -65,6 +65,7 @@ export class StepComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.forecastConfirmed = this.forecastingModelService.ticketInformation.history.forecastConfirmed;
     this.allShipItemSession(this.sessionId);
   }
 

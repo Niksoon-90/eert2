@@ -28,7 +28,8 @@ export class ForecastingModelService {
     },
     history: {
       primeryBolChange: false,
-      historicalYears: null
+      historicalYears: null,
+      forecastConfirmed: false
     }
   };
 

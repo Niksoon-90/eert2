@@ -3,7 +3,11 @@
     <ng-template pTemplate="title">
       Прогноз корреспонденций
     </ng-template>
+
+
+
     <ng-template pTemplate="body">
+      <ng-container *ngIf="this.sessionId !== null; else sessionIdnull">
       <div class="p-d-flex">
        <div class="p-field p-col-6">
          <div class="p-fluid p-formgrid p-grid">
@@ -33,12 +37,17 @@
           <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" (click)="corresponTie(); " [disabled]="disableCorrelation"></button>
         </div>
       </div>
+      </ng-container>
+      <ng-template #sessionIdnull>
+        <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success" (click)="corresponTie(); " [disabled]="disableCorrelation"></button>
+      </ng-template>
       <ng-container *ngIf="this.loading; else loader">
         <app-mathematical-forecast-table *ngIf="this.mathematicalForecastTable"
                                          [mathematicalForecastTable]="this.mathematicalForecastTable"
         >
         </app-mathematical-forecast-table>
       </ng-container>
+
     </ng-template>
     <ng-template #loader>
       <ng-container *ngIf="this.payment === false; else Payment">

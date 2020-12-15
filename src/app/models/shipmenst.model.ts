@@ -9,6 +9,7 @@ export interface ISession {
   historicalYears?: string[]
   parentHistoricalSessionId?: number
   forecastCreated?: boolean
+  forecastConfirmed?: boolean
 };
 export interface IShipment {
   cargoGroup?:	string

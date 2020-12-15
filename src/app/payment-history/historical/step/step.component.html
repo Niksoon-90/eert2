@@ -56,7 +56,9 @@
                 {{col.header}}
               </th>
               <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
-                <th>Действия</th>
+                <ng-container *ngIf="this.forecastConfirmed !== true">
+                  <th>Действия</th>
+                </ng-container>
               </ng-container>
             </tr>
             <tr>
@@ -70,7 +72,9 @@
                 </ng-template>
               </th>
               <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
-                <th></th>
+                <ng-container *ngIf="this.forecastConfirmed !== true">
+                  <th></th>
+                </ng-container>
               </ng-container>
             </tr>
           </ng-template>
@@ -101,11 +105,13 @@
                 </p-cellEditor>
               </td>
               <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
-                <td style="text-align:center">
-                  <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
-                  <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-                  <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
-                </td>
+                <ng-container *ngIf="this.forecastConfirmed !== true">
+                  <td style="text-align:center">
+                    <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(rowData)" class="p-button-rounded p-button-text"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
+                  </td>
+                </ng-container>
               </ng-container>
             </tr>
           </ng-template>
@@ -114,16 +120,19 @@
               <td colspan="14" class="p-text-right">Итого: </td>
               <td *ngFor="let items of this.massSummYear">{{items | number}}</td>
             </tr>
-            <tr>
-              <td colspan="14" class="p-text-right">Сумма: </td>
-              <ng-container *ngFor="let item of this.massSummYear; let idx = index">
-                <td *ngIf="test2(item, idx); else num">
-                  <input pInputText type="number"  (keyup.enter)="test(idx, $event.target.value)">
-                </td>
-                <ng-template #num>
-                  <td ></td>
-                </ng-template>
-              </ng-container>
+            <ng-container *ngIf="this.forecastConfirmed !== true">
+              <tr>
+                <td colspan="14" class="p-text-right">Сумма: </td>
+                <ng-container *ngFor="let item of this.massSummYear; let idx = index">
+                  <td *ngIf="test2(item, idx); else num">
+                    <input pInputText type="number"  (keyup.enter)="test(idx, $event.target.value)">
+                  </td>
+                  <ng-template #num>
+                    <td ></td>
+                  </ng-template>
+                </ng-container>
+              </tr>
+            </ng-container>
           </ng-template>
         </p-table>
       </p-card>

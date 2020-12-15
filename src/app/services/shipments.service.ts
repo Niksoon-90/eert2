@@ -140,4 +140,7 @@ export class ShipmentsService {
   getHistoricalForcaste(): Observable<ISession[]>{
     return this.http.get<ISession[]>(this.url + `api/file/list/forecast`)
   }
+  putConfirm(id: number){
+    return this.http.put(this.url + `api/file/forecast/confirm/${id}`, {})
+  }
 }
