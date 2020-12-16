@@ -4,6 +4,9 @@ import {ModalService} from "../../services/modal.service";
 import {ShipmentsService} from "../../services/shipments.service";
 import {Router} from "@angular/router";
 import {ForecastingModelService} from "../../services/forecasting-model.service";
+import {IAuthModel} from "../../models/auth.model";
+import {AuthenticationService} from "../../services/authentication.service";
+import {map} from "rxjs/operators";
 
 
 @Component({
@@ -17,12 +20,16 @@ export class HistoricalComponent implements OnInit {
   loading: boolean = true;
   first = 0;
   rows = 25;
+  user: IAuthModel;
   constructor(
     private modalService: ModalService,
     private shipmentsService: ShipmentsService,
+    private authenticationService: AuthenticationService,
     private router: Router,
     private forecastModelService: ForecastingModelService,
-  ) { }
+  ) {
+    this.user = this.authenticationService.userValue;
+  }
 
   ngOnInit(): void {
     this.openShipItemSession()
@@ -30,6 +37,7 @@ export class HistoricalComponent implements OnInit {
 
   openShipItemSession() {
     this.loading = true
+   // if(this.user.authorities.includes('P_P_p5') === true){
     this.shipmentsService.getHistoricalForcaste().subscribe(
       res => {
         this.historical = res,
@@ -41,6 +49,23 @@ export class HistoricalComponent implements OnInit {
           this.loading = false
       }
     )
+    // }else{
+      // this.shipmentsService.getHistoricalForcaste()
+      //   .pipe(
+      //     map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+      //   )
+      //   .subscribe(
+      //   res => {
+      //     this.historical = res,
+      //       console.log(res)
+      //   },
+      //   error => this.modalService.open(error.error.message),
+      //   () => {
+      //     this.dialogVisible = true,
+      //       this.loading = false
+      //   }
+      // )
+    // }
   }
 
   openThreeStep(id: number, name: string, historicalYears: any, forecastConfirmed: boolean) {

@@ -121,17 +121,19 @@
               <td *ngFor="let items of this.massSummYear">{{items | number}}</td>
             </tr>
             <ng-container *ngIf="this.forecastConfirmed !== true">
-              <tr>
-                <td colspan="14" class="p-text-right">Сумма: </td>
-                <ng-container *ngFor="let item of this.massSummYear; let idx = index">
-                  <td *ngIf="test2(item, idx); else num">
-                    <input pInputText type="number"  (keyup.enter)="test(idx, $event.target.value)">
-                  </td>
-                  <ng-template #num>
-                    <td ></td>
-                  </ng-template>
-                </ng-container>
-              </tr>
+              <ng-container *ngIf="this.user.authorities.includes('P_P_p10') !== true">
+                <tr>
+                  <td colspan="14" class="p-text-right">Сумма: </td>
+                  <ng-container *ngFor="let item of this.massSummYear; let idx = index">
+                    <td *ngIf="test2(item, idx); else num">
+                      <input pInputText type="number"  (keyup.enter)="test(idx, $event.target.value)">
+                    </td>
+                    <ng-template #num>
+                      <td ></td>
+                    </ng-template>
+                  </ng-container>
+                </tr>
+              </ng-container>
             </ng-container>
           </ng-template>
         </p-table>
@@ -141,7 +143,9 @@
     <ng-template pTemplate="footer">
       <div class="p-grid p-nogutter p-justify-between">
         <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
-                <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+        <ng-container *ngIf="this.user.authorities.includes('P_P_p10') !== true">
+          <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
+        </ng-container>
       </div>
     </ng-template>
   </p-card>

@@ -46,6 +46,7 @@ export class PaymentComponent implements OnInit {
   resultTwoTable: any[] = []
   pathRequestItem: IForecastIASModelIdResult
   yearsHeaderTwoTable = []
+
   constructor(
     private router: Router,
     public authenticationService: AuthenticationService,
@@ -133,7 +134,6 @@ export class PaymentComponent implements OnInit {
         this.yearsHeaderTwoTable.push(forecastIASModelId[i].year)
       }
     }
-
 
     for(let i = 0; i<forecastIASModelId.length; i++){
       if(i === 0){

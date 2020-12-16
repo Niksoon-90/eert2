@@ -61,7 +61,7 @@
 
       <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
         <tr [pEditableRow]="rowData">
-          <td>{{ri}}</td>
+          <td>{{ri + 1}}</td>
           <td  *ngFor="let col of this.cols; let idx = index">
             <p-cellEditor>
               <ng-template pTemplate="input">
