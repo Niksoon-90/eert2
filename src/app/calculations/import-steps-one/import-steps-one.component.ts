@@ -169,7 +169,9 @@ export class ImportStepsOneComponent implements OnInit {
 )
 }
 
+
   nextPage() {
+    console.log('this.stepOne.Session', this.stepOne.Session)
     if(this.stepOne.Session !== null){
       this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
       this.forecastModelService.ticketInformation.stepOne.nameNewShip = this.stepOne.nameNewShip;
@@ -187,7 +189,7 @@ export class ImportStepsOneComponent implements OnInit {
     }else{
       this.router.navigate(['steps/forecast']);
       this.forecastModelService.ticketInformation.stepOne.Session =  null
-      this.forecastModelService.ticketInformation.stepOne.nameNewShip =  null
+      this.forecastModelService.ticketInformation.stepOne.nameNewShip =  this.stepOne.nameNewShip;
       this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
       this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
       this.forecastModelService.ticketInformation.stepOne.cargoSessionSender = this.stepOne.cargoSessionSender;

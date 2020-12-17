@@ -113,11 +113,6 @@
                 </div>
               </ng-template>
             </ng-container>
-            <!--            <ng-template pTemplate="colgroup" let-columns>-->
-            <!--              <colgroup>-->
-            <!--                <col *ngFor="let col of columns" [style.width]="col.width" >-->
-            <!--              </colgroup>-->
-            <!--            </ng-template>-->
             <ng-template pTemplate="header" let-columns>
               <tr>
                 <th  rowspan="2" pResizableColumn pSortableColumn="dor_name">Дорога<p-sortIcon field="id"></p-sortIcon></th>
@@ -126,8 +121,8 @@
                 <th  rowspan="2" pResizableColumn pSortableColumn="st2_u_name">Конечная станция участка<p-sortIcon field="id"></p-sortIcon></th>
                 <th  rowspan="2" pResizableColumn pSortableColumn="st2_u">Единая сетевая разметка конечной станции<p-sortIcon field="id"></p-sortIcon></th>
                 <th  rowspan="2" pResizableColumn pSortableColumn="len">км<p-sortIcon field="id"></p-sortIcon></th>
-                <th [attr.colspan]="this.yearsHeaderTwoTable.length" style="text-align: center">к концу участка</th>
-                <th [attr.colspan]="this.yearsHeaderTwoTable.length" style="text-align: center">к началу участка</th>
+                <th [attr.colspan]="this.yearsHohoho.length" style="text-align: center">к концу участка</th>
+                <th [attr.colspan]="this.yearsHohoho.length" style="text-align: center">к началу участка</th>
               </tr>
               <tr >
                 <ng-container *ngFor="let col of columns; let idx = index">

@@ -60,7 +60,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
       this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
       this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
     }else{
-      this.sessionId = null
+      this.postCreateEmptySession()
+      //this.sessionId = null
     }
 
     this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
@@ -71,6 +72,15 @@ export class ForecastCorrespondenceComponent implements OnInit {
     }
 
   }
+  postCreateEmptySession(){
+    this.calculationsService.postCreateEmptySession(this.forecastName, this.user.fio, this.user.user_name).subscribe(
+      res => {
+        this.sessionId = Number(res),
+        console.log(res)
+      },
+      error => this.modalService.open(error.error.message),
+    )
+  }
   //TODO FAIL!
   additionalInfo(items){
     const res = items.split(',')
@@ -80,7 +90,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   prevPage() {
-    if(this.sessionId !== null){
+    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
       this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.oldSessionId
       this.router.navigate(['steps/mathForecast']);
     }else {
@@ -288,6 +298,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   corresponTie() {
+
       this.loading = false;
       if(this.forecastModelService.ticketInformation.stepOne.metallurgy !== null){
         this.urlPerspective += 'iasMetalForecastId=' + this.forecastModelService.ticketInformation.stepOne.metallurgy['id'].toString() + '&';
@@ -317,6 +328,36 @@ export class ForecastCorrespondenceComponent implements OnInit {
         )
   }
 
+  corresponTiers() {
+    this.payment = true
+    this.loading = false;
+    if(this.forecastModelService.ticketInformation.stepOne.metallurgy !== null){
+      this.urlPerspective += 'iasMetalForecastId=' + this.forecastModelService.ticketInformation.stepOne.metallurgy['id'].toString() + '&';
+    }
+    if(this.forecastModelService.ticketInformation.stepOne.oilCargo !== null){
+      this.urlPerspective += 'iasOilForecastId=' + this.forecastModelService.ticketInformation.stepOne.oilCargo['id'].toString() + '&';
+    }
+    if(this.forecastModelService.ticketInformation.stepOne.ore !== null){
+      this.urlPerspective += 'iasRudaForecastId=' + this.forecastModelService.ticketInformation.stepOne.ore['id'].toString() + '&';
+    }
+    if(this.forecastModelService.ticketInformation.stepOne.correspondenceSession !== null){
+      this.urlPerspective += 'perspectiveSessionId=' + this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'].toString() + '&';
+    }
+    this.urlPerspective += 'sessionId=' + this.sessionId;
+    console.log(this.urlPerspective)
+    this.calculationsService.getPerspective(this.urlPerspective )
+      .subscribe(
+        res => {this.mathematicalForecastTable = res, console.log(res)},
+        error => {
+          this.modalService.open(error.error.message),
+            this.loading = true
+        },
+        () => {
+          this.loading = true;
+          this.disableCorrelation = !this.disableCorrelation;
+        }
+      )
+  }
   cargoSessionSenders() {
     if(this.forecastModelService.ticketInformation.stepOne.cargoSessionSender === null){
       this.modalService.open('Вы забыли выбрать на первом шаге Файл с заявками грузоотправителей!')

@@ -1,6 +1,8 @@
 <div style="background-color: #fff">
   <h3>Начать расчет</h3>
 </div>
-<div class="stepsdemo-content">
-  <p-button label="Добавить модель прогнозирования" icon="pi pi-plus" (click)="new()" ></p-button>
-</div>
+<ng-container *ngIf="this.user.authorities.includes('P_P_p3') === true">
+  <div class="stepsdemo-content">
+    <p-button label="Добавить модель прогнозирования" icon="pi pi-plus" (click)="new()" ></p-button>
+  </div>
+</ng-container>

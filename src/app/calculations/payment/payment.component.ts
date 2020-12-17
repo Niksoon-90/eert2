@@ -7,7 +7,7 @@ import {ForecastingModelService} from "../../services/forecasting-model.service"
 import {
   ICorrespondencesIiasForecast,
   IForecastIASModel,
-  IForecastIASModelId, IForecastIASModelIdResult,
+  IForecastIASModelId, IForecastIASModelIdResult, IForecastIASModelIdResults,
   IPathRequest
 } from "../../models/forecastIAS.model";
 import {CalculationsService} from "../../services/calculations.service";
@@ -44,8 +44,10 @@ export class PaymentComponent implements OnInit {
   downloadTotalSmallIasLoading: boolean = false;
   headerYears: number[]
   resultTwoTable: any[] = []
-  pathRequestItem: IForecastIASModelIdResult
+  pathRequestItem: IForecastIASModelIdResults
+  pathRequestItemFin: IForecastIASModelIdResult
   yearsHeaderTwoTable = []
+  yearsHohoho = []
 
   constructor(
     private router: Router,
@@ -115,8 +117,7 @@ export class PaymentComponent implements OnInit {
 
 
   headerYearsTable(forecastIASModelId: IForecastIASModelId[]){
-    this.yearsHeaderTwoTable = []
-    let numbers = 0
+    this.loadingTwo = true
     this.resultTwoTable = []
     this.columnF = [
       { field: 'dor_name', header: 'Дорога', width: '100px', keyS: false},
@@ -126,75 +127,156 @@ export class PaymentComponent implements OnInit {
       { field: 'st2_u', header: 'Единая сетевая разметка конечной станции', width: '100px', keyS: false},
       { field: 'len', header: 'км', width: '100px', keyS: false},
     ]
-    for(let i = 0; i<forecastIASModelId.length; i++){
-      if(i === 0){
-        this.yearsHeaderTwoTable.push(forecastIASModelId[i].year)
-      }
-      if(i !== 0  && forecastIASModelId[i].dor_name === forecastIASModelId[0].dor_name && forecastIASModelId[i].st1_u_name === forecastIASModelId[0].st1_u_name && forecastIASModelId[i].st2_u_name === forecastIASModelId[0].st2_u_name && forecastIASModelId[i].len === forecastIASModelId[0].len){
-        this.yearsHeaderTwoTable.push(forecastIASModelId[i].year)
-      }
-    }
-
-    for(let i = 0; i<forecastIASModelId.length; i++){
-      if(i === 0){
-        this.pathRequestItem = {
-          dor_name: forecastIASModelId[i].dor_name,
-          st1_u_name: forecastIASModelId[i].st1_u_name,
-          st1_u: forecastIASModelId[i].st1_u,
-          st2_u_name: forecastIASModelId[i].st2_u_name,
-          st2_u: forecastIASModelId[i].st2_u,
-          len: forecastIASModelId[i].len,
-          ntuda: [
-            {ntuda: forecastIASModelId[i].ntuda === null ? 0 :forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year}
-          ],
-          nobratno:  [
-            {nobratno: forecastIASModelId[i].nobratno === null ? 0 : forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year}
-          ]
-        }
-      }
-      else if(i !== 0  && forecastIASModelId[i].dor_name === forecastIASModelId[numbers].dor_name && forecastIASModelId[i].st1_u_name === forecastIASModelId[numbers].st1_u_name && forecastIASModelId[i].st2_u_name === forecastIASModelId[numbers].st2_u_name && forecastIASModelId[i].len === forecastIASModelId[numbers].len){
-        this.pathRequestItem.ntuda.push({ntuda: forecastIASModelId[i].ntuda === null ? 0 :forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year})
-        this.pathRequestItem.nobratno.push({nobratno: forecastIASModelId[i].nobratno === null ? 0 : forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year})
-      }else{
-        if(this.pathRequestItem.ntuda.length < this.yearsHeaderTwoTable.length) {
-          for (let i = this.pathRequestItem.ntuda.length; i < this.yearsHeaderTwoTable.length; i++) {
-            console.log(this.pathRequestItem.ntuda.length)
-            this.pathRequestItem.ntuda.push({ntuda: 0, year: forecastIASModelId[i].year})
+    let oldMass = [];
+    let newMassiv = [];
+    const fin3 = []
+    let fin4 = []
+    let resultse = []
+    for(let i = 0; i<forecastIASModelId.length; i++) {
+      if (i === 0) {
+        oldMass = forecastIASModelId.filter(data => data.st1_u_name === forecastIASModelId[i].st1_u_name && data.st2_u_name === forecastIASModelId[i].st2_u_name && data.dor_name === forecastIASModelId[i].dor_name)
+        oldMass.sort((a, b) => a.year > b.year ? 1 : -1);
+        console.log('oldMass', oldMass)
+        for (let a = 0; a < oldMass.length; a++) {
+          if (a === 0) {
+            this.pathRequestItem = {
+              dor_name: oldMass[a].dor_name,
+              st1_u_name: oldMass[a].st1_u_name,
+              st1_u: oldMass[a].st1_u,
+              st2_u_name: oldMass[a].st2_u_name,
+              st2_u: oldMass[a].st2_u,
+              len: oldMass[a].len,
+              ntuda: oldMass[a].ntuda === null ? 0 : oldMass[a].ntuda,
+              nobratno: oldMass[a].nobratno === null ? 0 : oldMass[a].nobratno,
+              year: oldMass[a].year
+            }
+            fin3.push(this.pathRequestItem)
+          }
+          if (a !== 0 && fin3[fin3.length - 1].year === oldMass[a].year) {
+            fin3[fin3.length - 1].ntuda += oldMass[a]['ntuda']
+            fin3[fin3.length - 1].nobratno += oldMass[a]['nobratno']
+          } else if (a !== 0) {
+            this.pathRequestItem = {
+              dor_name: oldMass[a].dor_name,
+              st1_u_name: oldMass[a].st1_u_name,
+              st1_u: oldMass[a].st1_u,
+              st2_u_name: oldMass[a].st2_u_name,
+              st2_u: oldMass[a].st2_u,
+              len: oldMass[a].len,
+              ntuda: oldMass[a].ntuda === null ? 0 : oldMass[a].ntuda,
+              nobratno: oldMass[a].nobratno === null ? 0 : oldMass[a].nobratno,
+              year: oldMass[a].year
+            }
+            fin3.push(this.pathRequestItem)
           }
         }
-          if(this.pathRequestItem.nobratno.length < this.yearsHeaderTwoTable.length){
-            for(let i = this.pathRequestItem.nobratno.length; i < this.yearsHeaderTwoTable.length; i++){
-              console.log(this.pathRequestItem.nobratno.length)
-              this.pathRequestItem.nobratno.push({nobratno: 0, year: forecastIASModelId[i].year})
+        console.log('fin3', fin3)
+        console.log('resultse', resultse)
+        resultse.push(fin3)
+      }
+      if (i !== 0 && oldMass.includes(forecastIASModelId[i])) {
+        continue
+      } else {
+        fin4 = []
+        newMassiv = forecastIASModelId.filter(data => data.st1_u_name === forecastIASModelId[i].st1_u_name && data.st2_u_name === forecastIASModelId[i].st2_u_name && data.dor_name === forecastIASModelId[i].dor_name)
+        newMassiv.sort((a, b) => a.year > b.year ? 1 : -1);
+        console.log('newMassiv', newMassiv)
+        for (let a = 0; a < newMassiv.length; a++) {
+          if (a === 0) {
+            this.pathRequestItem = {
+              dor_name: newMassiv[a].dor_name,
+              st1_u_name: newMassiv[a].st1_u_name,
+              st1_u: newMassiv[a].st1_u,
+              st2_u_name: newMassiv[a].st2_u_name,
+              st2_u: newMassiv[a].st2_u,
+              len: newMassiv[a].len,
+              ntuda: newMassiv[a].ntuda === null ? 0 : newMassiv[a].ntuda,
+              nobratno: newMassiv[a].nobratno === null ? 0 : newMassiv[a].nobratno,
+              year: newMassiv[a].year
             }
+            fin4.push(this.pathRequestItem)
+          }
+          if (a !== 0 && fin4[fin4.length - 1].year === newMassiv[a].year) {
+            fin4[fin4.length - 1].ntuda += newMassiv[a]['ntuda']
+            fin4[fin4.length - 1].nobratno += newMassiv[a]['nobratno']
+          } else if (a !== 0) {
+            this.pathRequestItem = {
+              dor_name: newMassiv[a].dor_name,
+              st1_u_name: newMassiv[a].st1_u_name,
+              st1_u: newMassiv[a].st1_u,
+              st2_u_name: newMassiv[a].st2_u_name,
+              st2_u: newMassiv[a].st2_u,
+              len: newMassiv[a].len,
+              ntuda: newMassiv[a].ntuda === null ? 0 : newMassiv[a].ntuda,
+              nobratno: newMassiv[a].nobratno === null ? 0 : newMassiv[a].nobratno,
+              year: newMassiv[a].year
+            }
+            fin4.push(this.pathRequestItem)
+          }
         }
-        this.resultTwoTable.push(this.pathRequestItem)
-        numbers = i;
-        this.pathRequestItem = {
-          dor_name: forecastIASModelId[i].dor_name,
-          st1_u_name: forecastIASModelId[i].st1_u_name,
-          st1_u: forecastIASModelId[i].st1_u,
-          st2_u_name: forecastIASModelId[i].st2_u_name,
-          st2_u: forecastIASModelId[i].st2_u,
-          len: forecastIASModelId[i].len,
-          ntuda: [
-            {ntuda: forecastIASModelId[i].ntuda === null ? 0 :forecastIASModelId[i].ntuda, year: forecastIASModelId[i].year}
-          ],
-          nobratno:  [
-            {nobratno: forecastIASModelId[i].nobratno === null ? 0 : forecastIASModelId[i].nobratno, year: forecastIASModelId[i].year}
-          ]
+        console.log('fin4', fin4)
+        console.log('resultse', resultse)
+        resultse.push(fin4)
+        oldMass = newMassiv
+      }
+    }
+    for(let item of resultse){
+      for(let x= 0; x < item.length; x++){
+        if(!this.yearsHohoho.includes(item[x].year, 0))
+          this.yearsHohoho.push(item[x].year)
+      }
+    }
+    this.yearsHohoho.sort(function(a, b){return a - b});
+    for(let item of resultse){
+      if(item.length < this.yearsHohoho.length){
+        for(let years of this.yearsHohoho){
+          const checkObj = obj => obj.year === years;
+          if(!item.some(checkObj)){
+            this.pathRequestItem = {
+              dor_name: item[0].dor_name,
+              st1_u_name: item[0].st1_u_name,
+              st1_u: item[0].st1_u,
+              st2_u_name: item[0].st2_u_name,
+              st2_u: item[0].st2_u,
+              len: item[0].len,
+              ntuda: 0,
+              nobratno: 0,
+              year: years
+            }
+            item.push(this.pathRequestItem)
+          }
+          item = item.sort((a, b) => a.year > b.year ? 1 : -1);
         }
       }
     }
-    for(let i=0; i< this.yearsHeaderTwoTable.length ; i++){
+    console.log(this.yearsHohoho)
+    console.log(resultse)
+    for(let item of resultse){
+      this.pathRequestItemFin = {
+        dor_name: item[0].dor_name,
+        st1_u_name: item[0].st1_u_name,
+        st1_u: item[0].st1_u,
+        st2_u_name: item[0].st2_u_name,
+        st2_u: item[0].st2_u,
+        len: item[0].len,
+        ntuda: [],
+        nobratno:  []
+      }
+      for(let i = 0; i < item.length; i++){
+        this.pathRequestItemFin.ntuda.push({ntuda: item[i].ntuda === null ? 0 :item[i].ntuda, year: item[i].year})
+        this.pathRequestItemFin.nobratno.push({nobratno: item[i].nobratno === null ? 0 :item[i].nobratno, year: item[i].year})
+      }
+      this.resultTwoTable.push(this.pathRequestItemFin)
+    }
+    //this.resultTwoTable = resultse
+    for(let i =0; i < this.yearsHohoho.length; i++){
       this.columnF.push({field: `ntuda.${i}.ntuda`, header: this.resultTwoTable[0].ntuda[i].year, width: '100px', keyS: false})
     }
-    for(let i=0; i< this.yearsHeaderTwoTable.length ; i++){
+    for(let i =0; i < this.yearsHohoho.length; i++){
       this.columnF.push({field: `nobratno.${i}.nobratno`, header: this.resultTwoTable[0].nobratno[i].year, width: '100px', keyS: false})
     }
-    console.log('RESULTAT2!', this.resultTwoTable)
     this.loadingTwo = false
-  };
+  }
 
 
 

@@ -146,7 +146,9 @@ export class CalculationsService {
     return  this.http.get<IShipment[]>(this.urlCalc + `api/calc/claims/?cargoOwnerSessionId=${cargoOwnerSessionId}&historicalDataSessionId=${historicalDataSessionId}`)
   }
   //TODO ИАС
-
+  postCreateEmptySession(name: string, userFio: string, userLogin: string){
+    return this.http.post(this.urlCalc + `api/calc/correspondence/createEmptySession?dimension=MILLION_TONS&name=${name}&userFio=${userFio}&userLogin=${userLogin}`, {})
+  }
 
 
 }

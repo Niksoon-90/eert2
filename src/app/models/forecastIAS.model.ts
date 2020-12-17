@@ -26,6 +26,17 @@ export interface IForecastIASModelIdResult {
   nobratno?: INobratno[],
   st1_u_name?: string,
   dor_name?: string
+
+}export interface IForecastIASModelIdResults {
+  year?: number,
+  st1_u?: string,
+  st2_u_name?: string,
+  st2_u?: string,
+  len?: string,
+  ntuda?: number,
+  nobratno?: number,
+  st1_u_name?: string,
+  dor_name?: string
 }
 interface INtuda {
   ntuda: number,

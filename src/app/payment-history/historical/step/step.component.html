@@ -143,7 +143,7 @@
     <ng-template pTemplate="footer">
       <div class="p-grid p-nogutter p-justify-between">
         <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
-        <ng-container *ngIf="this.user.authorities.includes('P_P_p10') !== true">
+        <ng-container *ngIf="this.user.authorities.includes('P_P_p10') === true">
           <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
         </ng-container>
       </div>
