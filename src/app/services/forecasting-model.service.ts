@@ -24,7 +24,8 @@ export class ForecastingModelService {
     stepThree: {
         forecastingStrategy: null,
         yearsSession: null,
-        primeryBolChange: false
+        primeryBolChange: false,
+        sessionId: null
     },
     history: {
       primeryBolChange: false,

@@ -53,6 +53,7 @@ export class AppComponent implements OnInit{
         items:[
           {label: 'Грузовладельцы, факторы', routerLink: ['directory'], command: () => { this.clickItem(); }},
           {label: 'НСИ', routerLink: ['nci'], command: () => { this.clickItem(); }},
+          {label: 'Станции', routerLink: ['station'], command: () => { this.clickItem(); }},
         ]
       }
       ]

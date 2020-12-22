@@ -74,14 +74,19 @@
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
           <tr [pEditableRow]="rowData">
-            <td>{{ri}}</td>
+            <td>{{ri + 1}}</td>
             <td  *ngFor="let col of this.cols; let idx = index">
               <p-cellEditor>
                 <ng-template pTemplate="input">
-                  <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
+                  <ng-container *ngIf="col['field'] !== 'primary'; else primaryEdit">
+                    <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
+                  </ng-container>
+                  <ng-template #primaryEdit>
+                    <p-dropdown appendTo="body" [options]="primary2"  [(ngModel)]="rowData[col.field]" ></p-dropdown>
+                  </ng-template>
                 </ng-template>
                 <ng-template pTemplate="output" >
-                  <div *ngIf="idx < 14 && col['field'] !== 'primary'">
+                  <div *ngIf="idx < 15 && col['field'] !== 'primary'">
                     {{rowData[col.field]}}
                   </div>
                   <div *ngIf="col['field'] === 'primary'" style="text-align:center">
@@ -92,7 +97,7 @@
                       <i class="pi"  style="color: red" [ngClass]="{'true-icon pi-check-circle': rowData[col.field], 'false-icon pi-times-circle': !rowData[col.field]}"></i>
                     </ng-template>
                   </div>
-                  <div *ngIf="idx > 12" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
+                  <div *ngIf="idx > 13" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
                     {{rowData | field:col}}
                   </div>
                 </ng-template>
@@ -109,11 +114,11 @@
         </ng-template>
         <ng-template pTemplate="footer">
           <tr>
-            <td colspan="14" class="p-text-right">Итого: </td>
+            <td colspan="15" class="p-text-right">Итого: </td>
             <td *ngFor="let items of this.massSummYear">{{items | number}}</td>
           </tr>
           <tr>
-            <td colspan="14" class="p-text-right">Сумма: </td>
+            <td colspan="15" class="p-text-right">Сумма: </td>
             <ng-container *ngFor="let item of this.massSummYear; let idx = index">
               <td *ngIf="test2(item, idx); else num">
                 <input pInputText type="number"  (keyup.enter)="test(idx, $event.target.value)">

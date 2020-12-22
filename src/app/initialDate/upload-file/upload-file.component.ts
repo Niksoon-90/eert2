@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ShipmentsService} from "../../services/shipments.service";
 import {HttpEventType} from "@angular/common/http";
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from "@angular/router";
 import {ModalService} from "../../services/modal.service";
 import {IAuthModel} from "../../models/auth.model";
@@ -23,37 +23,48 @@ export class UploadFileComponent implements OnInit {
   error: '';
   initialDateType: string;
   displayModal: boolean = false;
-  dimensionItems: any;
   cargoTypes: any[];
   user: IAuthModel;
+  dimensionLable
+  dimensionItems = [
+    {value:1, label: 'млн. тонн', type: 'MILLION_TONS'},
+    {value:2, label: 'тыс. тонн', type: 'THOUSAND_TONS'},
+    {value:3, label: 'тонн', type: 'TONS'}
+  ]
+
+
+
 
   constructor(
     private shipmentsService: ShipmentsService,
     private activateRoute: ActivatedRoute,
     private modalService: ModalService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private fb: FormBuilder
   ) {
     this.user = this.authenticationService.userValue;
     this.initialDateType = activateRoute.snapshot.params['initialDateType'];
-    this.createForm();
   }
 
   ngOnInit(): void {
-    this.dimensionItems = [
-      {id:1, name: 'млн. тонн', type: 'MILLION_TONS'},
-      {id:2, name: 'тыс. тонн', type: 'THOUSAND_TONS'},
-      {id:3, name: 'тонн', type: 'TONS'}
-    ]
+
+    if(this.initialDateType === 'shipmentsUpload' || this.initialDateType === 'correspondUpload' ){
+      this.dimensionLable = this.dimensionItems[2]
+    }
+    if(this.initialDateType === 'cargoUpload'){
+      this.dimensionLable = this.dimensionItems[0]
+    }
     this.cargoTypes = [
       {id:1, name:'Грузоотправитель', type: 'SENDER_CLAIMS'},
       {id:2, name:'Грузополучатель', type: 'RECEIVER_CLAIMS'}
     ]
+    this.createForm();
   }
 
   createForm(){
-    this.uploadFiles = new FormGroup({
+    this.uploadFiles =  this.fb.group({
       nameFile: new FormControl('', [Validators.required, Validators.minLength(1)]),
-      dimension: new FormControl('', [Validators.required]),
+      dimension: new FormControl(this.dimensionLable, [Validators.required]),
       cargoType: new FormControl('', [Validators.required])
     });
   }
@@ -95,7 +106,7 @@ export class UploadFileComponent implements OnInit {
   }
 
   clearForm(){
-    this.uploadFiles.reset({ nameFile: '', dimension: '', cargoType: ''});
+    this.uploadFiles.reset({ nameFile: '', dimension: this.dimensionLable, cargoType: ''});
     this.fileUploader.nativeElement.value = null;
     this.progress = 0;
   }

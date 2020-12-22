@@ -1,19 +1,32 @@
 <ng-container *ngIf="this.user.authorities.includes('P_P_p7') === true">
-  <div class="p-grid p-jc-end" style="padding: 15px">
+  <form [formGroup]="form" (ngSubmit)="createStatioNci(); form.reset()">
+    <div class="p-grid p-jc-end" style="padding: 15px">
+      <p-dropdown  [options]="subjectNci" optionLabel="name"  [showClear]="true" formControlName="subjectGvc"  placeholder="Субъект:" style="padding-right: 10px;"></p-dropdown>
+      <p-dropdown  [options]="dorogyNci" optionLabel="name"  [showClear]="true" formControlName="road"   placeholder="Дорога:" style="padding-right: 10px;"></p-dropdown>
       <span class="p-float-label" style="padding-right: 10px;">
-        <input id="createCargoNci" type="text" pInputText [(ngModel)]="nameNewCargoGroupNci" >
-        <label for="createCargoNci">Группа грузов</label>
+        <input id="nameStation" formControlName="nameStation" type="text" pInputText  >
+        <label for="nameStation">Наименование станции</label>
       </span>
-    <button pButton pRipple type="button" label="Сохранить" class="p-button-raised p-button-secondary " (click)="createCargoGroupNci()" [disabled]="this.nameNewCargoGroupNci === ''"></button>
-  </div>
+
+<!--      <span class="p-float-label" style="padding-right: 10px;">-->
+<!--        <input id="road" formControlName="road" type="text" pInputText >-->
+<!--        <label for="road">Наименование дороги</label>-->
+<!--      </span>-->
+      <span class="p-float-label" style="padding-right: 10px;">
+        <input id="code" formControlName="code" type="text" pInputText >
+        <label for="code">Код</label>
+      </span>
+      <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary " [disabled]="this.form.invalid"></button>
+    </div>
+  </form>
 </ng-container>
-<div class="card" *ngIf="cargoGroupNci; else Loader">
+<div class="card" *ngIf="stationNci; else Loader">
   <p-table #dt
            [style]="{width:'auto'}"
            [columns]="cols"
-           [value]="cargoGroupNci"
-           [scrollable]="true" scrollHeight="25vh"
-           styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
+           [value]="stationNci"
+           [scrollable]="true" scrollHeight="75vh"
+           styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="code"
            [resizableColumns]="true"  editMode="row" columnResizeMode="expand"
            [paginator]="true"
            [rows]="500"
@@ -45,7 +58,7 @@
     <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
       <tr [pEditableRow]="rowData">
         <td  *ngFor="let col of this.cols;">
-          <p-cellEditor>
+          <p-cellEditor *ngIf="!col.isStatic; else staticTemplate">
             <ng-template pTemplate="input">
               <input pInputText type="text" [(ngModel)]="rowData[col.field]">
             </ng-template>
@@ -53,13 +66,16 @@
               {{rowData[col.field]}}
             </ng-template>
           </p-cellEditor>
+          <ng-template #staticTemplate>
+            {{ rowData[col.field] }}
+          </ng-template>
         </td>
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
           <td style="text-align:center">
             <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit()" class="p-button-rounded p-button-text"></button>
             <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
             <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
-            <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" (click)="deleteItemCargoNci(rowData.id)" class="p-button-rounded p-button-text p-button-danger"></button>
+            <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" (click)="deleteItemCargoNci(rowData.code)" class="p-button-rounded p-button-text p-button-danger"></button>
           </td>
         </ng-container>
       </tr>

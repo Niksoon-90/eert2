@@ -42,7 +42,7 @@ export class PaymentComponent implements OnInit {
   downloadTotalIasLoading: boolean = false;
   downloadSmallIasLoading: boolean = false;
   downloadTotalSmallIasLoading: boolean = false;
-  headerYears: number[]
+  headerYears: any[]
   resultTwoTable: any[] = []
   pathRequestItem: IForecastIASModelIdResults
   pathRequestItemFin: IForecastIASModelIdResult
@@ -61,17 +61,22 @@ export class PaymentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.headerYears = this.forecastModelService.ticketInformation.stepOne.Session['historicalYears'].split(',')
-    if(this.headerYears.length < 10){
-      let lenghtMas: number = 10 - this.headerYears.length;
-      const maxItem: number = Math.max(...this.headerYears);
-      for(let a=1; a <= lenghtMas; a++){
-        this.headerYears.push(maxItem + a)
+    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+      this.headerYears = this.forecastModelService.ticketInformation.stepOne.Session['historicalYears'].split(',')
+      if(this.headerYears.length < 10){
+        let lenghtMas: number = 10 - this.headerYears.length;
+        const maxItem: number = Math.max(...this.headerYears);
+        for(let a=1; a <= lenghtMas; a++){
+          this.headerYears.push(maxItem + a)
+        }
+        if(this.headerYears.length > 10){
+          this.headerYears = this.headerYears.slice(0, 10);
+        }
       }
-      if(this.headerYears.length > 10){
-        this.headerYears = this.headerYears.slice(0, 10);
-      }
+    }else{
+        this.headerYears = ['Прогнозный год - 1', 'Прогнозный год - 2', 'Прогнозный год - 3', 'Прогнозный год - 4','Прогнозный год - 5','Прогнозный год - 6','Прогнозный год - 7','Прогнозный год - 8','Прогнозный год - 9','Прогнозный год - 10']
     }
+
     this.cols = [
       { field: 'cargo_group', header: 'Группа груза', width: '100px', keyS: false},
       { field: 'from_station', header: 'Станция отправления РФ', width: '100px', keyS: false },
@@ -281,7 +286,11 @@ export class PaymentComponent implements OnInit {
 
 
   createForm() {
-    this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
+    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+      this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
+    }else{
+      this.sessionId = this.forecastModelService.getTicketInformation().stepThree.sessionId;
+    }
     this.form = new FormGroup({
       forecastCorrespondence: new FormControl('', [Validators.required]),
       smallCorrespondence: new FormControl('', [Validators.required])

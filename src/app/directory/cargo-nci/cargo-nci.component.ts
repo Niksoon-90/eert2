@@ -78,7 +78,7 @@ export class CargoNciComponent implements OnInit {
         }
       )
     } else{
-
+      this.modalService.open('Заполните поле Грузовладелец!')
     }
   }
 }

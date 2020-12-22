@@ -11,11 +11,20 @@ import {ShipmentsService} from "../../services/shipments.service";
 import {ModalService} from "../../services/modal.service";
 import {Table} from "primeng/table";
 import {CalculationsService} from "../../services/calculations.service";
-import {ICargoNci} from "../../models/calculations.model";
+import {
+  ICargoGroupNci,
+  ICargoNci,
+  IDorogyNci,
+  IShipmentTypNci,
+  IStationNci,
+  ISubjectNci
+} from "../../models/calculations.model";
 import {TestService} from "../../test.service";
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {map} from "rxjs/operators";
+import {IShipment} from "../../models/shipmenst.model";
 
 @Component({
   selector: 'app-list-chipment-data',
@@ -36,6 +45,7 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   columsYears: number= 0;
   primeryBol = [ { label: 'Все', value: '' },{ label: 'Да', value: true },{ label: 'Нет', value: false }]
   primary = [ { label: 'Да', dt: true },{ label: 'Нет', dt: false }]
+  primary2 = [ { label: 'Да', value: true },{ label: 'Нет', value: false }]
   cols: any[];
   selectedPrimery: any;
   massSummYear: any[];
@@ -46,6 +56,19 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   displayModal: boolean = false
   dynamicForm: FormGroup;
   primaryRes: any;
+  cargoGroupNci: ICargoGroupNci[];
+  shipmentTypNci: IShipmentTypNci[];
+  dorogyNci: IDorogyNci[];
+  subjectNci: ISubjectNci[];
+  cargoNci: ICargoNci[];
+  stationNci: IStationNci[];
+  fromstationNci: IStationNci[];
+  fromstationCode: IStationNci[];
+  tostationNci: IStationNci[];
+  tostationCode: IStationNci[];
+
+
+
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
@@ -64,12 +87,14 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.formApi();
     this.test();
     if(this.mathematicalForecastTable[0].shipmentYearValuePairs.length > 0){this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length}
     this.loading = false
     this.massSummYears(this.mathematicalForecastTable)
     this.cols = [
       { field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false, isStatic :true},
+      { field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false },
       { field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false },
       { field: 'primary', header: 'Корреспонденции', width: '100px', keyS: false },
       { field: 'fromRoad', header: 'Дорога отправления', width: '100px', keyS: false },
@@ -82,6 +107,7 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       { field: 'toStationCode', header: 'Код станции назначения РФ', width: '100px', keyS: false },
       { field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false },
       { field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false },
+
     ];
     for(let i=0; i< this.columsYears ; i++){
       this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })
@@ -95,6 +121,7 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   createForm(){
     this.dynamicForm = this.formBuilder.group({
       cargoGroup:  ['', Validators.required],
+      cargoSubGroup: [''],
       fromRoad:  ['', Validators.required],
       fromStation:  ['', Validators.required],
       fromStationCode:  ['', Validators.required],
@@ -110,6 +137,51 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       shipmentYearValuePairs: new FormArray([])
     });
   }
+  formApi(){
+   this.getDictionaryCargo();
+   this.getShipmentTypNci();
+   this.getDorogyNci();
+   this.getSubjectNci();
+   this.getCargoNci();
+   this.getStationNci();
+  }
+  getDictionaryCargo(){
+    this.shipmentsService.getDictionaryCargo().subscribe(
+      res =>  this.cargoGroupNci =res,
+      error => this.modalService.open(error.error.message),
+    )
+  }
+  getShipmentTypNci() {
+    this.shipmentsService.getDictionaryShipmenttype().subscribe(
+      res =>  this.shipmentTypNci =res,
+      error => this.modalService.open(error.error.message),
+    )
+  }
+  getDorogyNci() {
+    this.shipmentsService.getDictionaryDictionaryRailway().subscribe(
+      res =>  this.dorogyNci =res,
+      error => this.modalService.open(error.error.message),
+    )
+  }
+  getSubjectNci() {
+    this.shipmentsService.getSubject().subscribe(
+      res => this.subjectNci = res,
+      error => this.modalService.open(error.error.message)
+    )
+  }
+  getCargoNci(){
+    this.calculationsService.getAllCargoNci().subscribe(
+      res => this.cargoNci = res,
+      error => this.modalService.open(error.error.message),
+    )
+  }
+  getStationNci() {
+    this.shipmentsService.getDictionaryDictionaryStation().subscribe(
+      res =>  this.stationNci =res,
+      error => this.modalService.open(error.error.message),
+    )
+  }
+
   onChangeTickets() {
     console.log('this.mathematicalForecastTable',this.mathematicalForecastTable)
     if (this.t.length < this.mathematicalForecastTable[0].shipmentYearValuePairs.length) {
@@ -243,6 +315,7 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   }
 
   editColumn(row: any, col: any, $event: any) {
+    console.log($event)
     if(col['keyS'] === true){
       const mass = col['field'].toString().split('.');
       row.shipmentYearValuePairs[mass[1]].value = Number($event);
@@ -279,10 +352,26 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
     if (this.dynamicForm.invalid) {
       return;
     }
-    console.log(this.dynamicForm.controls.primary.value)
-    this.dynamicForm.value.primary = this.primaryRes.dt
-    console.log(JSON.stringify(this.dynamicForm.value, null, 4));
-    this.shipmentsService.postCreateRowShip(this.sessionId, this.dynamicForm.value).subscribe(
+    const shipment: IShipment = {
+      cargoGroup:	this.dynamicForm.controls.cargoGroup.value.name,
+      cargoSubGroup: this.dynamicForm.controls.cargoSubGroup.value,
+      fromRoad:	this.dynamicForm.controls.fromRoad.value.shortname,
+      fromStation:	this.dynamicForm.controls.fromStation.value.name,
+      fromStationCode:	this.dynamicForm.controls.fromStationCode.value.code,
+      fromSubject:	this.dynamicForm.controls.fromSubject.value.name,
+      receiverName:	this.dynamicForm.controls.receiverName.value.name,
+      senderName:	this.dynamicForm.controls.senderName.value.name,
+      shipmentType:	this.dynamicForm.controls.shipmentType.value.name,
+      shipmentYearValuePairs:	this.dynamicForm.controls.shipmentYearValuePairs.value,
+      toRoad:	this.dynamicForm.controls.toRoad.value.shortname,
+      toStation:	this.dynamicForm.controls.toStation.value.name,
+      toStationCode: this.dynamicForm.controls.toStationCode.value.code,
+      toSubject:	this.dynamicForm.controls.toSubject.value.name,
+      primary: this.primaryRes.dt,
+    }
+
+    console.log(JSON.stringify(shipment, null, 4));
+    this.shipmentsService.postCreateRowShip(this.sessionId, shipment).subscribe(
       res => console.log(),
       error => this.modalService.open(error.error.message),
       () => {
@@ -302,4 +391,49 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   showModalDialog() {
     this.displayModal = true;
   }
+
+  fromStationNci() {
+    if(this.dynamicForm.controls.fromSubject.valid && this.dynamicForm.controls.fromRoad.valid){
+      this.fromstationNci = this.stationNci.filter(station => (station.subjectGvc === this.dynamicForm.controls.fromSubject.value.name && station.road === this.dynamicForm.controls.fromRoad.value.shortname))
+      if(this.fromstationNci.length === 0){
+        this.modalService.open(`В справочнике нет станции с признаком Дорога: ${this.dynamicForm.controls.fromRoad.value.name} и Субъект: ${this.dynamicForm.controls.fromSubject.value.name}`)
+      }
+    }else{
+      this.modalService.open("не указанна дорога и субъект РФ")
+    }
+  }
+
+  fromStationCode() {
+    if (this.dynamicForm.controls.fromStation.valid) {
+      this.fromstationCode = this.fromstationNci.filter(station => station.name === this.dynamicForm.controls.fromStation.value.name )
+      if(this.fromstationCode.length === 0){
+        this.modalService.open(`У станции отправления ${this.dynamicForm.controls.fromStation.value.name} (Дорога: ${this.dynamicForm.controls.fromRoad.value.name}  Субъект: ${this.dynamicForm.controls.fromSubject.value.name}) нет кода`)
+      }
+    }else{
+      this.modalService.open("не указанна Станция отправления РФ")
+    }
+  }
+
+  toStationNci() {
+    if(this.dynamicForm.controls.toSubject.valid && this.dynamicForm.controls.toRoad.valid){
+      this.tostationNci = this.stationNci.filter(station => (station.subjectGvc === this.dynamicForm.controls.toSubject.value.name && station.road === this.dynamicForm.controls.toRoad.value.shortname))
+      if(this.fromstationNci.length === 0){
+        this.modalService.open(`В справочнике нет станции с признаком Дорога: ${this.dynamicForm.controls.toRoad.value.name} и Субъект: ${this.dynamicForm.controls.toSubject.value.name}`)
+      }
+    }else{
+      this.modalService.open("не указанна дорога и субъект РФ")
+    }
+  }
+
+  toStationCode() {
+    if (this.dynamicForm.controls.toStation.valid) {
+      this.tostationCode = this.fromstationNci.filter(station => station.name === this.dynamicForm.controls.toStation.value.name )
+      if(this.tostationCode.length === 0){
+        this.modalService.open(`У станции назначения ${this.dynamicForm.controls.toStation.value.name} (Дорога: ${this.dynamicForm.controls.toRoad.value.name}  Субъект: ${this.dynamicForm.controls.toSubject.value.name}) нет кода`)
+      }
+    }else{
+      this.modalService.open("не указанна Станция назначения РФ")
+    }
+  }
 }
+

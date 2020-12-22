@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
-import { IStationNci} from "../../models/calculations.model";
+import {IDorogyNci, IStationNci, ISubjectNci} from "../../models/calculations.model";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ShipmentsService} from "../../services/shipments.service";
 import {ModalService} from "../../services/modal.service";
@@ -16,6 +16,9 @@ export class StationComponent implements OnInit {
   cols: any
   stationNci: IStationNci[];
   form: FormGroup
+  subjectNci: ISubjectNci[];
+  dorogyNci: IDorogyNci[];
+
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -27,12 +30,14 @@ export class StationComponent implements OnInit {
 
   ngOnInit(): void {
     this.getStationNci();
+    this.getSubjectNci();
+    this.getDorogyNci();
     this.createForm();
     this.cols = [
-      { field: 'name', header: 'Название станции ', width: '50%'},
+      { field: 'subjectGvc', header: 'Субъект РФ', width: '50%'},
       { field: 'road', header: 'Дорога', width: '20%'},
+      { field: 'name', header: 'Название станции ', width: '50%'},
       { field: 'code', header: 'Код станции', width: '20%', isStatic :true}
-
     ]
   }
   createForm(){
@@ -40,8 +45,23 @@ export class StationComponent implements OnInit {
       nameStation: new FormControl('', [Validators.required]),
       code: new FormControl('', [Validators.required]),
       road: new FormControl('', [Validators.required]),
+      subjectGvc: new FormControl('', [Validators.required]),
     })
   }
+
+  getSubjectNci() {
+    this.shipmentsService.getSubject().subscribe(
+      res => this.subjectNci = res,
+      error => this.modalService.open(error.error.message)
+    )
+  }
+  getDorogyNci() {
+    this.shipmentsService.getDictionaryDictionaryRailway().subscribe(
+      res =>  this.dorogyNci =res,
+      error => this.modalService.open(error.error.message),
+    )
+  }
+
 
   onRowEditInit() {
 
@@ -85,8 +105,8 @@ export class StationComponent implements OnInit {
       ferry: null,
       land: null,
       name: this.form.controls.nameStation.value,
-      road: this.form.controls.road.value,
-      subjectGvc: null,
+      road: this.form.controls.road.value.name,
+      subjectGvc: this.form.controls.subjectGvc.value.name,
       transmissionPoint: null,
       type: null
     }
@@ -98,7 +118,6 @@ export class StationComponent implements OnInit {
           this.getStationNci()
       }
     )
-
 
   }
 

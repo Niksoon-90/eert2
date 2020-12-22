@@ -76,6 +76,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
     this.calculationsService.postCreateEmptySession(this.forecastName, this.user.fio, this.user.user_name).subscribe(
       res => {
         this.sessionId = Number(res),
+          this.forecastModelService.ticketInformation.stepThree.sessionId = Number(res)
         console.log(res)
       },
       error => this.modalService.open(error.error.message),
@@ -113,6 +114,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
                this.loading = true
            },
            () => {
+             //подмена  сессии
              if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
                this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
              }

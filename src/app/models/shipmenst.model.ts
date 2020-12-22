@@ -28,7 +28,7 @@ export interface IShipment {
   toSubject?:	string
   primary?: boolean
   session?: number
-
+  cargoSubGroup?: string
 }
 
 interface IShipmentYearValuePairs {
@@ -37,9 +37,4 @@ interface IShipmentYearValuePairs {
   year?:	number
   shipment?: number,
   calculated?: boolean
-}
-
-export interface IResult {
-  value: number
-  id: number
 }

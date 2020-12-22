@@ -65,7 +65,12 @@
           <td  *ngFor="let col of this.cols; let idx = index">
             <p-cellEditor>
               <ng-template pTemplate="input">
-                <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
+                <ng-container *ngIf="col['field'] !== 'primary'; else primaryEdit">
+                  <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
+                </ng-container>
+                <ng-template #primaryEdit>
+                  <p-dropdown appendTo="body" [options]="primary2"  [(ngModel)]="rowData[col.field]" ></p-dropdown>
+                </ng-template>
               </ng-template>
               <ng-template pTemplate="output" >
 
@@ -119,8 +124,10 @@
                 <div *ngIf="col['field'] === 'receiverName' && carrgoTypes === 'receiver'" [ngStyle]="{'color': checkedcarrgoTypes(rowData[col.field])  === false ? '#c54747' : '#4d7d4d' }">
                   {{rowData[col.field]}}
                 </div>
-
-                <div *ngIf="idx > 12" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
+                <div *ngIf="col['field'] === 'cargoSubGroup'">
+                  {{rowData[col.field]}}
+                </div>
+                <div *ngIf="idx > 13" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
                   {{rowData | field:col}}
                 </div>
               </ng-template>
@@ -137,7 +144,7 @@
       </ng-template>
       <ng-template pTemplate="footer">
         <tr>
-          <td colspan="14" class="p-text-right">Итого: </td>
+          <td colspan="15" class="p-text-right">Итого: </td>
           <td *ngFor="let items of this.massSummYear">{{items | number}}</td>
         </tr>
       </ng-template>
@@ -154,79 +161,102 @@
   <form [formGroup]="dynamicForm" (ngSubmit)="createNew();">
     <div class="p-grid p-fluid">
       <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-          <input id="cargoGroup" formControlName="cargoGroup" type="text" pInputText  >
-          <label for="cargoGroup">Группа груза</label>
-        </span>
+        <p-dropdown  [options]="cargoGroupNci" optionLabel="name"  [showClear]="true" formControlName="cargoGroup"   placeholder="Группа груза:"></p-dropdown>
+<!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--          <input id="cargoGroup" formControlName="cargoGroup" type="text" pInputText  >-->
+<!--          <label for="cargoGroup">Группа груза</label>-->
+<!--        </span>-->
       </div>
       <div class="p-col-12 p-md-4">
         <span class="p-float-label" style="padding-right: 10px;">
-            <input id="shipmentType" formControlName="shipmentType" type="text" pInputText >
-            <label for="shipmentType">Вид перевозки</label>
-        </span>
-      </div>
-      <div class="p-col-12 p-md-4">
-        <p-dropdown [options]="primary" placeholder="Выберете вариант" formControlName="primary" [(ngModel)]="primaryRes" optionLabel="label"></p-dropdown>
-      </div>
-      <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-              <input id="fromRoad" formControlName="fromRoad" type="text" pInputText >
-              <label for="fromRoad">Дорога отправления</label>
+              <input id="cargoSubGroup" formControlName="cargoSubGroup" type="text" pInputText >
+              <label for="cargoSubGroup">Подгруппа груза</label>
           </span>
       </div>
       <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-              <input id="fromStation" formControlName="fromStation" type="text" pInputText >
-              <label for="fromStation">Станция отправления РФ</label>
-          </span>
+        <p-dropdown  [options]="shipmentTypNci" optionLabel="name"  [showClear]="true" formControlName="shipmentType"   placeholder="Вид перевозки:"></p-dropdown>
+<!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--            <input id="shipmentType" formControlName="shipmentType" type="text" pInputText >-->
+<!--            <label for="shipmentType">Вид перевозки</label>-->
+<!--        </span>-->
       </div>
       <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-              <input id="fromStationCode" formControlName="fromStationCode" type="text" pInputText >
-              <label for="fromStationCode">Код станции отправления РФ</label>
-          </span>
+        <p-dropdown [options]="primary" placeholder="Выберете вариант" formControlName="primary"  optionLabel="label"></p-dropdown>
+      </div>
+
+      <div class="p-col-12 p-md-4">
+        <p-dropdown  [options]="dorogyNci" optionLabel="name"  [showClear]="true" formControlName="fromRoad"  placeholder="Дорога отправления:"></p-dropdown>
+<!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--              <input id="fromRoad" formControlName="fromRoad" type="text" pInputText >-->
+<!--              <label for="fromRoad">Дорога отправления</label>-->
+<!--          </span>-->
       </div>
       <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-              <input id="fromSubject" formControlName="fromSubject" type="text" pInputText >
-              <label for="fromSubject">Субъект отправления</label>
-          </span>
+        <p-dropdown  [options]="subjectNci" optionLabel="name"  [showClear]="true" formControlName="fromSubject"  placeholder="Субъект отправления РФ:" [disabled]="this.dynamicForm.controls.fromRoad.invalid" (onChange)="fromStationNci()"></p-dropdown>
+        <!--        <span class="p-float-label" style="padding-right: 10px;">-->
+        <!--              <input id="fromSubject" formControlName="fromSubject" type="text" pInputText >-->
+        <!--              <label for="fromSubject">Субъект отправления</label>-->
+        <!--          </span>-->
       </div>
       <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-              <input id="senderName" formControlName="senderName" type="text" pInputText >
-              <label for="senderName">Грузоотправитель</label>
-          </span>
+        <p-dropdown  [options]="fromstationNci" optionLabel="name"  [showClear]="true" formControlName="fromStation"   placeholder="Станция отправления РФ:" (onChange)="fromStationCode()" [disabled]="this.dynamicForm.controls.fromSubject.invalid"></p-dropdown>
+<!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--              <input id="fromStation" formControlName="fromStation" type="text" pInputText >-->
+<!--              <label for="fromStation">Станция отправления РФ</label>-->
+<!--          </span>-->
       </div>
       <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-              <input id="toRoad" formControlName="toRoad" type="text" pInputText >
-              <label for="toRoad">Дорога назначения</label>
-          </span>
+        <p-dropdown  [options]="fromstationCode" optionLabel="code"  [showClear]="true" formControlName="fromStationCode"   placeholder="Код станции отправления РФ:" [disabled]="this.dynamicForm.controls.fromStation.invalid"></p-dropdown>
+<!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--              <input id="fromStationCode" formControlName="fromStationCode" type="text" pInputText >-->
+<!--              <label for="fromStationCode">Код станции отправления РФ</label>-->
+<!--          </span>-->
+      </div>
+
+      <div class="p-col-12 p-md-4">
+        <p-dropdown  [options]="cargoNci" optionLabel="name"  [showClear]="true" formControlName="senderName"  placeholder="Грузоотправитель:"></p-dropdown>
+<!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--              <input id="senderName" formControlName="senderName" type="text" pInputText >-->
+<!--              <label for="senderName">Грузоотправитель</label>-->
+<!--          </span>-->
+      </div>
+
+
+      <div class="p-col-12 p-md-4">
+        <p-dropdown  [options]="dorogyNci" optionLabel="name"  [showClear]="true" formControlName="toRoad"   placeholder="Дорога назначения:"></p-dropdown>
+<!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--              <input id="toRoad" formControlName="toRoad" type="text" pInputText >-->
+<!--              <label for="toRoad">Дорога назначения</label>-->
+<!--          </span>-->
       </div>
       <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-              <input id="toStation" formControlName="toStation" type="text" pInputText >
-              <label for="toStation">Станция назначения РФ</label>
-          </span>
+        <p-dropdown  [options]="subjectNci" optionLabel="name"  [showClear]="true" formControlName="toSubject"  placeholder="Субъект назначения РФ:" [disabled]="this.dynamicForm.controls.toRoad.invalid" (onChange)="toStationNci()"></p-dropdown>
+        <!--        <span class="p-float-label" style="padding-right: 10px;">-->
+        <!--              <input id="toSubject" formControlName="toSubject" type="text" pInputText >-->
+        <!--              <label for="toSubject">Субъект назначения</label>-->
+        <!--          </span>-->
       </div>
       <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-              <input id="toStationCode" formControlName="toStationCode" type="text" pInputText >
-              <label for="toStationCode">Код станции назначения РФ</label>
-          </span>
+        <p-dropdown  [options]="tostationNci" optionLabel="name"  [showClear]="true" formControlName="toStation"   placeholder="Станция назначения РФ:" (onChange)="toStationCode()" [disabled]="this.dynamicForm.controls.toSubject.invalid"></p-dropdown>
+        <!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--              <input id="toStation" formControlName="toStation" type="text" pInputText >-->
+<!--              <label for="toStation">Станция назначения РФ</label>-->
+<!--          </span>-->
       </div>
       <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-              <input id="toSubject" formControlName="toSubject" type="text" pInputText >
-              <label for="toSubject">Субъект назначения</label>
-          </span>
+        <p-dropdown  [options]="tostationCode" optionLabel="code"  [showClear]="true" formControlName="toStationCode"   placeholder="Код станции назначения РФ:" [disabled]="this.dynamicForm.controls.toStation.invalid"></p-dropdown>
+<!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--              <input id="toStationCode" formControlName="toStationCode" type="text" pInputText >-->
+<!--              <label for="toStationCode">Код станции назначения РФ</label>-->
+<!--          </span>-->
       </div>
+
       <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
-              <input id="receiverName" formControlName="receiverName" type="text" pInputText >
-              <label for="receiverName">Грузополучатель</label>
-          </span>
+        <p-dropdown  [options]="cargoNci" optionLabel="name"  [showClear]="true" formControlName="receiverName"   placeholder="Грузополучатель:"></p-dropdown>
+<!--        <span class="p-float-label" style="padding-right: 10px;">-->
+<!--              <input id="receiverName" formControlName="receiverName" type="text" pInputText >-->
+<!--              <label for="receiverName">Грузополучатель</label>-->
+<!--          </span>-->
       </div>
       <ng-container *ngFor="let shipmentYearValuePair of t.controls; let i = index" class="list-group list-group-flush">
         <div class="p-col-12 p-md-4">

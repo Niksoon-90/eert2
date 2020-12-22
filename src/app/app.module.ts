@@ -54,7 +54,6 @@ import { InfluenceFactorComponent } from './directory/influence-factor/influence
 import { CargoOwnerInfluenceFactorComponent } from './directory/cargo-owner-influence-factor/cargo-owner-influence-factor.component';
 import {RedirectGuard} from './auth/redirect-guard/redirect-guard.component';
 import { NciComponent } from './nci/nci.component';
-import { StationComponent } from './nci/station/station.component';
 import { DorogyComponent } from './nci/dorogy/dorogy.component';
 import { CargoGroupComponent } from './nci/cargo-group/cargo-group.component';
 import { ShipmentTypeComponent } from './nci/shipment-type/shipment-type.component';
@@ -62,6 +61,9 @@ import { HistoricalComponent } from './payment-history/historical/historical.com
 import { StepComponent } from './payment-history/historical/step/step.component';
 import { PaymentHistoryComponent } from './payment-history/payment-history.component';
 import { StepIasComponent } from './payment-history/historical/step-ias/step-ias.component';
+import { SubjectComponent } from './nci/subject/subject.component';
+import { StationNsiComponent } from './station-nsi/station-nsi.component';
+import {StationComponent} from "./station-nsi/station/station.component";
 
 
 const itemRoutesShipments: Routes = [
@@ -101,6 +103,7 @@ const appRoutes: Routes = [
   {path: 'steps', component: StepsComponent, children: itemRoutesSteps},
   {path: 'directory', component: DirectoryComponent},
   {path: 'nci', component: NciComponent},
+  {path: 'station', component: StationNsiComponent},
   {path: 'payments', component: PaymentHistoryComponent, children: itemRoutesHistoricalSteps},
   {path: '', component: CalculationsComponent},
   {path: 'logOut', canActivate: [RedirectGuard], component: RedirectGuard,  data: {  externalUrl: 'http://192.168.11.180:8080/logout' }}
@@ -142,6 +145,8 @@ registerLocaleData(localeRu, 'ru');
     StepComponent,
     PaymentHistoryComponent,
     StepIasComponent,
+    SubjectComponent,
+    StationNsiComponent,
   ],
   imports: [
     BrowserModule,

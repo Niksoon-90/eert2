@@ -1,5 +1,6 @@
 <div class="p-d-flex p-jc-center" >
   <div style="padding-right: 200px">
+
     <form [formGroup]="uploadFiles" (ngSubmit)="onUpload()">
       <div class=" p-d-flex p-jc-center">
         <h3 >ИАС «Грузопотоки»</h3>
@@ -27,7 +28,7 @@
       </ng-container>
       <div class="p-fluid p-grid">
         <div class="p-col-12">
-          <p-dropdown formControlName="dimension" optionLabel="name" [options]="dimensionItems" placeholder="Укажите размерность:"></p-dropdown>
+          <p-dropdown optionLabel="label" formControlName="dimension"  [options]="dimensionItems" placeholder="Укажите размерность:"></p-dropdown>
         </div>
       </div>
       <div *ngIf="progress > 0" class="p-jc-center" style="margin-top: 5px; margin-bottom: 5px">

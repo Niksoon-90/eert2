@@ -4,7 +4,7 @@
         <input id="createCargoNci" type="text" pInputText [(ngModel)]="nameNewCargoNci" >
         <label for="createCargoNci">Грузовладелец</label>
       </span>
-    <button pButton pRipple type="button" label="Сохранить" class="p-button-raised p-button-secondary " (click)="createCargoNci()"></button>
+    <button pButton pRipple type="button" label="Сохранить" class="p-button-raised p-button-secondary " (click)="createCargoNci()" [disabled]="this.nameNewCargoNci === ''"></button>
   </div>
 </ng-container>
 <div class="card" *ngIf="cargoNci; else Loader">

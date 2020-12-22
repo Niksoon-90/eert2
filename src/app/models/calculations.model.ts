@@ -69,6 +69,10 @@ export interface ICargoGroupNci {
   id: number,
   name: string
 }
+export interface ISubjectNci {
+  id: number,
+  name: string
+}
 
 export interface IShipmentTypNci {
   id: number,

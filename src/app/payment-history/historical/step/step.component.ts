@@ -42,6 +42,7 @@ export class StepComponent implements OnInit, OnChanges {
   selectedPrimery: any;
   virtTable2: any;
   forecastConfirmed: boolean = false
+  primary2 = [ { label: 'Да', value: true },{ label: 'Нет', value: false }]
 
   constructor(
     private router: Router,
@@ -83,6 +84,7 @@ export class StepComponent implements OnInit, OnChanges {
         this.massSummYears(this.mathematicalForecastTable),
           this.cols = [
             { field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
+            { field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false },
             { field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false },
             { field: 'fromRoad', header: 'Дорога отправления', width: '100px', keyS: false },
             { field: 'fromStation', header: 'Станция отправления РФ', width: '100px', keyS: false },
@@ -95,6 +97,7 @@ export class StepComponent implements OnInit, OnChanges {
             { field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false },
             { field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false },
             { field: 'primary', header: 'Уст.', width: '80px', keyS: false },
+
           ];
         for(let i=0; i< this.columsYears ; i++){
           this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })

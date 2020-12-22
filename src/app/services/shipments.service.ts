@@ -8,7 +8,7 @@ import {
   ICalculatingPredictiveRegression,
   ICargoGroupNci, IDorogyNci,
   IShipmentTypNci,
-  IStationNci
+  IStationNci, ISubjectNci
 } from "../models/calculations.model";
 
 @Injectable({
@@ -142,5 +142,18 @@ export class ShipmentsService {
   }
   putConfirm(id: number){
     return this.http.put(this.url + `api/file/forecast/confirm/${id}`, {})
+  }
+  //TODO subject
+  postCreateSubject(subject: ISubjectNci){
+    return this.http.post(this.url + `api/dictionary/subject`, subject)
+  }
+  putSubject(subject: ISubjectNci){
+    return this.http.put(this.url + `api/dictionary/subject`, subject)
+  }
+  deleteSubject(id: number){
+    return this.http.delete(this.url + `api/dictionary/subject/${id}`)
+  }
+  getSubject(): Observable<ISubjectNci[]>{
+    return this.http.get<ISubjectNci[]>(this.url + `api/dictionary/subject/all`)
   }
 }

@@ -34,8 +34,8 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     this.getInfluenceNci();
     this.cols = [
       { field: 'id', header: 'id', width: '15px', isStatic :true},
-      { field: 'cargoOwnerName', header: 'Id Грузовладельцев', width: '30px', },
-      { field: 'influenceFactorName', header: 'Id Фактора влияния ', width: '45px'},
+      { field: 'cargoOwnerName', header: 'Грузовладельцев', width: '30px', },
+      { field: 'influenceFactorName', header: 'Фактора влияния ', width: '45px'},
       { field: 'koef', header: 'Коэффициент', width: '15px'}
     ]
   }

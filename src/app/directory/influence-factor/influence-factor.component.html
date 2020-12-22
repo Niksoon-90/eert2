@@ -13,7 +13,7 @@
             <label for="weight">Коэффициент</label>
           </span>
       </div>
-      <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary"></button>
+      <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary" [disabled]="this.form.invalid"></button>
     </div>
   </form>
 </ng-container>

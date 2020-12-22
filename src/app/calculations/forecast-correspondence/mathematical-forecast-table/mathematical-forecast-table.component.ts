@@ -43,6 +43,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
   selectedPrimery: any;
   virtTable2: any;
   sessionId: number
+  primary2 = [ { label: 'Да', value: true },{ label: 'Нет', value: false }]
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -55,16 +56,21 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     this.user = this.authenticationService.userValue;
   }
 
-
   ngOnChanges() {
     this.totalRecords = this.mathematicalForecastTable.length;
   }
   ngOnInit(): void {
-    this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
+    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+      this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
+    }else{
+      this.sessionId = this.forecastModelService.getTicketInformation().stepThree.sessionId;
+    }
+
     this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
     this.massSummYears(this.mathematicalForecastTable)
     this.cols = [
       { field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
+      { field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false },
       { field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false },
       { field: 'fromRoad', header: 'Дорога отправления', width: '100px', keyS: false },
       { field: 'fromStation', header: 'Станция отправления РФ', width: '100px', keyS: false },

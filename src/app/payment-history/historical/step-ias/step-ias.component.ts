@@ -67,6 +67,7 @@ export class StepIasComponent implements OnInit {
 
 
   ngOnInit(): void {
+
     this.headerYears = this.forecastModelService.ticketInformation.history.historicalYears.split(',')
     if(this.headerYears.length < 10){
       let lenghtMas: number = 10 - this.headerYears.length;
