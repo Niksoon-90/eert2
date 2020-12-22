@@ -123,7 +123,7 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       cargoGroup:  ['', Validators.required],
       cargoSubGroup: [''],
       fromRoad:  ['', Validators.required],
-      fromStation:  ['', Validators.required],
+      fromStation:  ['',  Validators.required],
       fromStationCode:  ['', Validators.required],
       fromSubject:  ['', Validators.required],
       primary:  ['', Validators.required],
@@ -392,11 +392,22 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
     this.displayModal = true;
   }
 
+  fromRoad() {
+    if(this.dynamicForm.controls.fromSubject.value){
+      this.dynamicForm.controls.fromSubject.reset()
+      this.dynamicForm.controls.fromStation.reset()
+      this.dynamicForm.controls.fromStationCode.reset()
+    }
+  }
+
   fromStationNci() {
+    this.dynamicForm.controls.fromStation.reset()
+    this.dynamicForm.controls.fromStationCode.reset()
     if(this.dynamicForm.controls.fromSubject.valid && this.dynamicForm.controls.fromRoad.valid){
       this.fromstationNci = this.stationNci.filter(station => (station.subjectGvc === this.dynamicForm.controls.fromSubject.value.name && station.road === this.dynamicForm.controls.fromRoad.value.shortname))
       if(this.fromstationNci.length === 0){
         this.modalService.open(`В справочнике нет станции с признаком Дорога: ${this.dynamicForm.controls.fromRoad.value.name} и Субъект: ${this.dynamicForm.controls.fromSubject.value.name}`)
+        this.dynamicForm.controls.fromSubject.reset()
       }
     }else{
       this.modalService.open("не указанна дорога и субъект РФ")
@@ -404,6 +415,7 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   }
 
   fromStationCode() {
+    this.dynamicForm.controls.fromStationCode.reset()
     if (this.dynamicForm.controls.fromStation.valid) {
       this.fromstationCode = this.fromstationNci.filter(station => station.name === this.dynamicForm.controls.fromStation.value.name )
       if(this.fromstationCode.length === 0){
@@ -413,12 +425,22 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       this.modalService.open("не указанна Станция отправления РФ")
     }
   }
+  toRoad() {
+    if(this.dynamicForm.controls.toSubject.value){
+      this.dynamicForm.controls.toSubject.reset()
+      this.dynamicForm.controls.toStation.reset()
+      this.dynamicForm.controls.toStationCode.reset()
+    }
+  }
 
   toStationNci() {
+    this.dynamicForm.controls.toStation.reset();
+    this.dynamicForm.controls.toStationCode.reset();
     if(this.dynamicForm.controls.toSubject.valid && this.dynamicForm.controls.toRoad.valid){
       this.tostationNci = this.stationNci.filter(station => (station.subjectGvc === this.dynamicForm.controls.toSubject.value.name && station.road === this.dynamicForm.controls.toRoad.value.shortname))
-      if(this.fromstationNci.length === 0){
+      if(this.tostationNci.length === 0){
         this.modalService.open(`В справочнике нет станции с признаком Дорога: ${this.dynamicForm.controls.toRoad.value.name} и Субъект: ${this.dynamicForm.controls.toSubject.value.name}`)
+        this.dynamicForm.controls.toSubject.reset()
       }
     }else{
       this.modalService.open("не указанна дорога и субъект РФ")
@@ -426,6 +448,7 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   }
 
   toStationCode() {
+    this.dynamicForm.controls.toStationCode.reset()
     if (this.dynamicForm.controls.toStation.valid) {
       this.tostationCode = this.fromstationNci.filter(station => station.name === this.dynamicForm.controls.toStation.value.name )
       if(this.tostationCode.length === 0){
@@ -435,5 +458,7 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       this.modalService.open("не указанна Станция назначения РФ")
     }
   }
+
+
 }
 
