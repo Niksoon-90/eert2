@@ -23,7 +23,6 @@ import {TestService} from "../../test.service";
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {map} from "rxjs/operators";
 import {IShipment} from "../../models/shipmenst.model";
 
 @Component({
@@ -55,7 +54,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   user: IAuthModel
   displayModal: boolean = false
   dynamicForm: FormGroup;
-  primaryRes: any;
   cargoGroupNci: ICargoGroupNci[];
   shipmentTypNci: IShipmentTypNci[];
   dorogyNci: IDorogyNci[];
@@ -63,9 +61,7 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   cargoNci: ICargoNci[];
   stationNci: IStationNci[];
   fromstationNci: IStationNci[];
-  fromstationCode: IStationNci[];
   tostationNci: IStationNci[];
-  tostationCode: IStationNci[];
 
 
 
@@ -124,16 +120,12 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       cargoSubGroup: [''],
       fromRoad:  ['', Validators.required],
       fromStation:  ['',  Validators.required],
-      fromStationCode:  ['', Validators.required],
-      fromSubject:  ['', Validators.required],
       primary:  ['', Validators.required],
       receiverName:  ['', Validators.required],
       senderName:  ['', Validators.required],
       shipmentType:  ['', Validators.required],
       toRoad:  ['', Validators.required],
       toStation:  ['', Validators.required],
-      toStationCode:  ['', Validators.required],
-      toSubject:  ['', Validators.required],
       shipmentYearValuePairs: new FormArray([])
     });
   }
@@ -141,7 +133,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
    this.getDictionaryCargo();
    this.getShipmentTypNci();
    this.getDorogyNci();
-   this.getSubjectNci();
    this.getCargoNci();
    this.getStationNci();
   }
@@ -357,17 +348,17 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       cargoSubGroup: this.dynamicForm.controls.cargoSubGroup.value,
       fromRoad:	this.dynamicForm.controls.fromRoad.value.shortname,
       fromStation:	this.dynamicForm.controls.fromStation.value.name,
-      fromStationCode:	this.dynamicForm.controls.fromStationCode.value.code,
-      fromSubject:	this.dynamicForm.controls.fromSubject.value.name,
+      fromStationCode:	this.dynamicForm.controls.fromStation.value.code,
+      fromSubject:	this.dynamicForm.controls.fromStation.value.subjectGvc,
       receiverName:	this.dynamicForm.controls.receiverName.value.name,
       senderName:	this.dynamicForm.controls.senderName.value.name,
       shipmentType:	this.dynamicForm.controls.shipmentType.value.name,
       shipmentYearValuePairs:	this.dynamicForm.controls.shipmentYearValuePairs.value,
       toRoad:	this.dynamicForm.controls.toRoad.value.shortname,
       toStation:	this.dynamicForm.controls.toStation.value.name,
-      toStationCode: this.dynamicForm.controls.toStationCode.value.code,
-      toSubject:	this.dynamicForm.controls.toSubject.value.name,
-      primary: this.primaryRes.dt,
+      toStationCode: this.dynamicForm.controls.toStation.value.code,
+      toSubject:	this.dynamicForm.controls.toStation.value.subjectGvc,
+      primary: this.dynamicForm.controls.primary.value.dt,
     }
 
     console.log(JSON.stringify(shipment, null, 4));
@@ -393,72 +384,20 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
   }
 
   fromRoad() {
-    if(this.dynamicForm.controls.fromSubject.value){
-      this.dynamicForm.controls.fromSubject.reset()
       this.dynamicForm.controls.fromStation.reset()
-      this.dynamicForm.controls.fromStationCode.reset()
+      this.fromstationNci = this.stationNci.filter(station => (station.road === this.dynamicForm.controls.fromRoad.value.shortname))
+    if(this.fromstationNci.length === 0){
+      this.modalService.open(`В справочнике нет станции с признаком Дорога: ${this.dynamicForm.controls.fromRoad.value.name}`)
     }
   }
 
-  fromStationNci() {
-    this.dynamicForm.controls.fromStation.reset()
-    this.dynamicForm.controls.fromStationCode.reset()
-    if(this.dynamicForm.controls.fromSubject.valid && this.dynamicForm.controls.fromRoad.valid){
-      this.fromstationNci = this.stationNci.filter(station => (station.subjectGvc === this.dynamicForm.controls.fromSubject.value.name && station.road === this.dynamicForm.controls.fromRoad.value.shortname))
-      if(this.fromstationNci.length === 0){
-        this.modalService.open(`В справочнике нет станции с признаком Дорога: ${this.dynamicForm.controls.fromRoad.value.name} и Субъект: ${this.dynamicForm.controls.fromSubject.value.name}`)
-        this.dynamicForm.controls.fromSubject.reset()
-      }
-    }else{
-      this.modalService.open("не указанна дорога и субъект РФ")
-    }
-  }
 
-  fromStationCode() {
-    this.dynamicForm.controls.fromStationCode.reset()
-    if (this.dynamicForm.controls.fromStation.valid) {
-      this.fromstationCode = this.fromstationNci.filter(station => station.name === this.dynamicForm.controls.fromStation.value.name )
-      if(this.fromstationCode.length === 0){
-        this.modalService.open(`У станции отправления ${this.dynamicForm.controls.fromStation.value.name} (Дорога: ${this.dynamicForm.controls.fromRoad.value.name}  Субъект: ${this.dynamicForm.controls.fromSubject.value.name}) нет кода`)
-      }
-    }else{
-      this.modalService.open("не указанна Станция отправления РФ")
-    }
-  }
   toRoad() {
-    if(this.dynamicForm.controls.toSubject.value){
-      this.dynamicForm.controls.toSubject.reset()
-      this.dynamicForm.controls.toStation.reset()
-      this.dynamicForm.controls.toStationCode.reset()
+    this.dynamicForm.controls.toStation.reset()
+    this.tostationNci = this.stationNci.filter(station => (station.road === this.dynamicForm.controls.toRoad.value.shortname))
+    if(this.tostationNci.length === 0){
+      this.modalService.open(`В справочнике нет станции с признаком Дорога: ${this.dynamicForm.controls.toRoad.value.name}`)
     }
   }
-
-  toStationNci() {
-    this.dynamicForm.controls.toStation.reset();
-    this.dynamicForm.controls.toStationCode.reset();
-    if(this.dynamicForm.controls.toSubject.valid && this.dynamicForm.controls.toRoad.valid){
-      this.tostationNci = this.stationNci.filter(station => (station.subjectGvc === this.dynamicForm.controls.toSubject.value.name && station.road === this.dynamicForm.controls.toRoad.value.shortname))
-      if(this.tostationNci.length === 0){
-        this.modalService.open(`В справочнике нет станции с признаком Дорога: ${this.dynamicForm.controls.toRoad.value.name} и Субъект: ${this.dynamicForm.controls.toSubject.value.name}`)
-        this.dynamicForm.controls.toSubject.reset()
-      }
-    }else{
-      this.modalService.open("не указанна дорога и субъект РФ")
-    }
-  }
-
-  toStationCode() {
-    this.dynamicForm.controls.toStationCode.reset()
-    if (this.dynamicForm.controls.toStation.valid) {
-      this.tostationCode = this.fromstationNci.filter(station => station.name === this.dynamicForm.controls.toStation.value.name )
-      if(this.tostationCode.length === 0){
-        this.modalService.open(`У станции назначения ${this.dynamicForm.controls.toStation.value.name} (Дорога: ${this.dynamicForm.controls.toRoad.value.name}  Субъект: ${this.dynamicForm.controls.toSubject.value.name}) нет кода`)
-      }
-    }else{
-      this.modalService.open("не указанна Станция назначения РФ")
-    }
-  }
-
-
 }
 

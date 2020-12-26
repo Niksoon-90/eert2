@@ -168,7 +168,29 @@ export class ImportStepsOneComponent implements OnInit {
       () =>  console.log()
 )
 }
-
+  postCreateEmptySession(){
+    this.calculationsService.postCreateEmptySession(this.stepOne.nameNewShip, this.user.fio, this.user.user_name).subscribe(
+      res => {
+          this.forecastModelService.ticketInformation.stepThree.sessionId = Number(res)
+        console.log(res)
+      },
+      error => this.modalService.open(error.error.message),
+      () => {
+        this.router.navigate(['steps/forecast']);
+        this.forecastModelService.ticketInformation.stepOne.Session =  null
+        this.forecastModelService.ticketInformation.stepOne.nameNewShip =  this.stepOne.nameNewShip;
+        this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
+        this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
+        this.forecastModelService.ticketInformation.stepOne.cargoSessionSender = this.stepOne.cargoSessionSender;
+        this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver = this.stepOne.cargoSessionReceiver;
+        this.forecastModelService.ticketInformation.stepOne.oilCargo = this.stepOne.oilCargo;
+        this.forecastModelService.ticketInformation.stepOne.ore = this.stepOne.ore;
+        this.forecastModelService.ticketInformation.stepOne.metallurgy = this.stepOne.metallurgy;
+        this.forecastModelService.ticketInformation.stepOne.oldSessionId = null;
+        this.forecastModelService.ticketInformation.stepOne.newSessionId = null;
+      }
+    )
+  }
 
   nextPage() {
     console.log('this.stepOne.Session', this.stepOne.Session)
@@ -187,18 +209,7 @@ export class ImportStepsOneComponent implements OnInit {
       this.forecastModelService.ticketInformation.stepOne.newSessionId = null;
       this.router.navigate(['steps/mathForecast']);
     }else{
-      this.router.navigate(['steps/forecast']);
-      this.forecastModelService.ticketInformation.stepOne.Session =  null
-      this.forecastModelService.ticketInformation.stepOne.nameNewShip =  this.stepOne.nameNewShip;
-      this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
-      this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
-      this.forecastModelService.ticketInformation.stepOne.cargoSessionSender = this.stepOne.cargoSessionSender;
-      this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver = this.stepOne.cargoSessionReceiver;
-      this.forecastModelService.ticketInformation.stepOne.oilCargo = this.stepOne.oilCargo;
-      this.forecastModelService.ticketInformation.stepOne.ore = this.stepOne.ore;
-      this.forecastModelService.ticketInformation.stepOne.metallurgy = this.stepOne.metallurgy;
-      this.forecastModelService.ticketInformation.stepOne.oldSessionId = null;
-      this.forecastModelService.ticketInformation.stepOne.newSessionId = null;
+      this.postCreateEmptySession();
     }
   }
 

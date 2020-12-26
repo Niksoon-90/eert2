@@ -28,7 +28,7 @@ export class ShipmentTypeComponent implements OnInit {
   ngOnInit(): void {
     this.getShipmentTypNci();
     this.cols = [
-      { field: 'name', header: 'Вид сообщения', width: '70%', isStatic :true}
+      { field: 'name', header: 'Вид сообщения', width: 'auto', isStatic :true}
     ]
   }
 

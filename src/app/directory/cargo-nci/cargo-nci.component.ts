@@ -16,7 +16,9 @@ export class CargoNciComponent implements OnInit {
   cargoNci: ICargoNci[]
   nameNewCargoNci: string = '';
   user: IAuthModel
-
+  displayMaximizable: boolean;
+  cargoOwnerId: number
+  cargoOwnerName: string
   constructor(
     private modalService: ModalService,
     private calculationsService: CalculationsService,
@@ -28,9 +30,9 @@ export class CargoNciComponent implements OnInit {
   ngOnInit(): void {
     this.getCargoNci()
     this.cols = [
-      { field: 'id', header: 'id', width: '15px', isStatic :true},
-      { field: 'name', header: 'Грузовладельцы', width: '100px', },
-      { field: 'initialVerificationCoeff', header: 'Коэффициент ', width: '15px', isStatic :true}
+      { field: 'id', header: 'id', width: '120px', isStatic :true},
+      { field: 'name', header: 'Грузовладельцы', width: 'auto', },
+      { field: 'initialVerificationCoeff', header: 'Коэффициент ', width: '150px', isStatic :true}
     ]
   }
   getCargoNci(){
@@ -80,5 +82,16 @@ export class CargoNciComponent implements OnInit {
     } else{
       this.modalService.open('Заполните поле Грузовладелец!')
     }
+  }
+
+  showMaximizableDialog(id: number, name: string) {
+    this.cargoOwnerName = name;
+    this.cargoOwnerId = id;
+    this.displayMaximizable = true;
+  }
+
+  closeModal() {
+    this.cargoOwnerId = 0;
+    this.displayMaximizable=false
   }
 }

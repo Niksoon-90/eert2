@@ -46,7 +46,6 @@ export class PaymentComponent implements OnInit {
   resultTwoTable: any[] = []
   pathRequestItem: IForecastIASModelIdResults
   pathRequestItemFin: IForecastIASModelIdResult
-  yearsHeaderTwoTable = []
   yearsHohoho = []
 
   constructor(
@@ -90,8 +89,6 @@ export class PaymentComponent implements OnInit {
     this.createForm();
     this.forecastListIas();
     this.selectedPrimery = this.forecastModelService.ticketInformation.stepThree.primeryBolChange;
-
-
     this.columnS = [
       { field: 'orderNum', header: 'Порядковый номер', width: '100px', keyS: false},
       { field: 'len', header: 'Длина', width: '100px', keyS: false},
@@ -112,10 +109,17 @@ export class PaymentComponent implements OnInit {
         () => this.loadingOne = false
       )
       this.calculationsService.getForcastIasId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
-        res => this.forecastIASModelId = res,
+        res => {
+          this.forecastIASModelId = res
+        },
         error => this.modalService.open(error.error.message),
         () => {
-          this.headerYearsTable(this.forecastIASModelId)
+          if(this.forecastIASModelId.length !== 0){
+            this.headerYearsTable(this.forecastIASModelId)
+          }else{
+            this.resultTwoTable = []
+            this.loadingTwo = false
+          }
         }
       )
   }
@@ -254,7 +258,7 @@ export class PaymentComponent implements OnInit {
         }
       }
     }
-    console.log(this.yearsHohoho)
+    console.log('2',this.yearsHohoho)
     console.log(resultse)
     for(let item of resultse){
       this.pathRequestItemFin = {
@@ -314,12 +318,8 @@ export class PaymentComponent implements OnInit {
     this.forecastModelService.ticketInformation.stepThree.primeryBolChange = false;
   }
 
-  // nextPage() {
-  //   this.router.navigate(['steps/export'])
-  // }
 
   searchInIAS(rowData) {
-
     console.log('iasForecastId', this.form.controls.forecastCorrespondence.value.var_id)
     console.log('iasCorrespondenceId', rowData.corr_id)
     this.loadingOne = true;

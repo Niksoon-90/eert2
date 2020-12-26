@@ -42,7 +42,7 @@ export class StepIasComponent implements OnInit {
   downloadIasLoading: boolean = false
   downloadTotalIasLoading: boolean = false;
   downloadTotalSmallIasLoading: boolean = false;
-  headerYears: number[]
+  headerYears: any[]
   resultTwoTable: any[] = []
   pathRequestItem: IForecastIASModelIdResults
   pathRequestItemFin: IForecastIASModelIdResult
@@ -67,17 +67,20 @@ export class StepIasComponent implements OnInit {
 
 
   ngOnInit(): void {
-
-    this.headerYears = this.forecastModelService.ticketInformation.history.historicalYears.split(',')
-    if(this.headerYears.length < 10){
-      let lenghtMas: number = 10 - this.headerYears.length;
-      const maxItem: number = Math.max(...this.headerYears);
-      for(let a=1; a <= lenghtMas; a++){
-        this.headerYears.push(maxItem + a)
+    if(this.forecastModelService.getTicketInformation().history.historicalYears !== null){
+      this.headerYears = this.forecastModelService.ticketInformation.history['historicalYears'].split(',')
+      if(this.headerYears.length < 10){
+        let lenghtMas: number = 10 - this.headerYears.length;
+        const maxItem: number = Math.max(...this.headerYears);
+        for(let a=1; a <= lenghtMas; a++){
+          this.headerYears.push(maxItem + a)
+        }
+        if(this.headerYears.length > 10){
+          this.headerYears = this.headerYears.slice(0, 10);
+        }
       }
-      if(this.headerYears.length > 10){
-        this.headerYears = this.headerYears.slice(0, 10);
-      }
+    }else{
+      this.headerYears = ['Прогнозный год - 1', 'Прогнозный год - 2', 'Прогнозный год - 3', 'Прогнозный год - 4','Прогнозный год - 5','Прогнозный год - 6','Прогнозный год - 7','Прогнозный год - 8','Прогнозный год - 9','Прогнозный год - 10']
     }
     this.cols = [
       { field: 'cargo_group', header: 'Группа груза', width: '100px', keyS: false},
@@ -117,7 +120,12 @@ export class StepIasComponent implements OnInit {
       res => this.forecastIASModelId = res,
       error => this.modalService.open(error.error.message),
       () => {
-        this.headerYearsTable(this.forecastIASModelId)
+        if(this.forecastIASModelId.length !== 0){
+          this.headerYearsTable(this.forecastIASModelId)
+        }else{
+          this.resultTwoTable = []
+          this.loadingTwo = false
+        }
       }
     )
   }
@@ -287,7 +295,6 @@ export class StepIasComponent implements OnInit {
 
 
   createForm() {
-
     this.form = new FormGroup({
       forecastCorrespondence: new FormControl('', [Validators.required]),
       smallCorrespondence: new FormControl('', [Validators.required])
@@ -296,6 +303,7 @@ export class StepIasComponent implements OnInit {
       name: new FormControl('', [Validators.required])
     })
   }
+
   forecastListIas(){
     this.calculationsService.getForcastIas().subscribe(
       res => {
@@ -307,13 +315,13 @@ export class StepIasComponent implements OnInit {
   }
 
   prevPage() {
+    console.log('payments/match/', this.sessionId, this.nameSession)
     this.router.navigate(['payments/match/', this.sessionId, this.nameSession]);
     this.forecastModelService.ticketInformation.history.primeryBolChange = false;
   }
 
 
   searchInIAS(rowData) {
-
     console.log('iasForecastId', this.form.controls.forecastCorrespondence.value.var_id)
     console.log('iasCorrespondenceId', rowData.corr_id)
     this.loadingOne = true;
@@ -387,25 +395,6 @@ export class StepIasComponent implements OnInit {
     }else{
       this.modalService.open('Заполните все поля!')
     }
-  }
-
-  downSmallloadIas() {
-    // this.downloadSmallIasLoading = true;
-    // this.uploadFileService.getDownload(this.form.controls.smallCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
-    //   (response: HttpResponse<Blob>) => {
-    //     console.log(response)
-    //     let filename: string = 'total_ias_routes.xlsx'
-    //     let binaryData = [];
-    //     binaryData.push(response.body);
-    //     let downloadLink = document.createElement('a');
-    //     downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
-    //     downloadLink.setAttribute('download', filename);
-    //     document.body.appendChild(downloadLink);
-    //     downloadLink.click();
-    //   },
-    //   error => this.modalService.open(error.error.message),
-    //   () => this.downloadSmallIasLoading = false
-    // )
   }
 
   downTotalSmallloadIas() {

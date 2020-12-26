@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthenticationService} from "../services/authentication.service";
 import {IAuthModel} from "../models/auth.model";
+import {ForecastingModelService} from "../services/forecasting-model.service";
 
 @Component({
   selector: 'app-calculations',
@@ -12,6 +13,7 @@ export class CalculationsComponent implements OnInit {
   user: IAuthModel
   constructor(
     public authenticationService: AuthenticationService,
+    public forecastModelService: ForecastingModelService,
     private router: Router
   ) {
     this.user = this.authenticationService.userValue;
@@ -22,6 +24,34 @@ export class CalculationsComponent implements OnInit {
   }
 
   new() {
+    const ticketInformation = {
+        stepOne: {
+          Session: null,
+          calcYearsNumber: 0,
+          scenarioMacro: null,
+          correspondenceSession: null,
+          cargoSessionSender: null,
+          cargoSessionReceiver: null,
+          oilCargo: null,
+          metallurgy: null,
+          ore: null,
+          nameNewShip: null,
+          oldSessionId: null,
+          newSessionId: null,
+        },
+        stepThree: {
+          forecastingStrategy: null,
+          yearsSession: null,
+          primeryBolChange: false,
+          sessionId: null
+        },
+        history: {
+          primeryBolChange: false,
+          historicalYears: null,
+          forecastConfirmed: false
+        }
+    };
+    this.forecastModelService.ticketInformation = ticketInformation;
     this.router.navigate(['steps/import'])
   }
 }

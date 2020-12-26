@@ -37,10 +37,10 @@ export class HistoricalComponent implements OnInit {
 
   openShipItemSession() {
     this.loading = true
-   // if(this.user.authorities.includes('P_P_p5') === true){
     this.shipmentsService.getHistoricalForcaste().subscribe(
       res => {
         this.historical = res,
+          this.historical = this.historical.sort((a, b) => a.id < b.id ? 1 : -1)
           console.log(res)
       },
       error => this.modalService.open(error.error.message),
@@ -49,23 +49,6 @@ export class HistoricalComponent implements OnInit {
           this.loading = false
       }
     )
-    // }else{
-      // this.shipmentsService.getHistoricalForcaste()
-      //   .pipe(
-      //     map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
-      //   )
-      //   .subscribe(
-      //   res => {
-      //     this.historical = res,
-      //       console.log(res)
-      //   },
-      //   error => this.modalService.open(error.error.message),
-      //   () => {
-      //     this.dialogVisible = true,
-      //       this.loading = false
-      //   }
-      // )
-    // }
   }
 
   openThreeStep(id: number, name: string, historicalYears: any, forecastConfirmed: boolean) {

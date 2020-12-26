@@ -67,11 +67,17 @@ export class DataCorrespondenceComponent implements OnInit {
     }else{
       this.shipmentsService.getCorrespondenceSession()
         .pipe(
-          map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+          map( (data: ISession[]) => {
+            if(data.length !== 0){
+              data =  data.filter(p => p.userLogin === this.user.user)
+            }
+            return data
+          })
         )
         .subscribe(
         res => {
           this.correspondenceSession = res;
+          console.log(this.user.user)
           console.log(res)
         },
         error => this.modalService.open(error.message),

@@ -34,10 +34,10 @@ export class StationComponent implements OnInit {
     this.getDorogyNci();
     this.createForm();
     this.cols = [
-      { field: 'subjectGvc', header: 'Субъект РФ', width: '50%'},
-      { field: 'road', header: 'Дорога', width: '20%'},
-      { field: 'name', header: 'Название станции ', width: '50%'},
-      { field: 'code', header: 'Код станции', width: '20%', isStatic :true}
+      { field: 'subjectGvc', header: 'Субъект РФ', width: 'auto'},
+      { field: 'road', header: 'Дорога', width: 'auto'},
+      { field: 'name', header: 'Название станции ', width: 'auto'},
+      { field: 'code', header: 'Код станции', width: 'auto', isStatic :true}
     ]
   }
   createForm(){

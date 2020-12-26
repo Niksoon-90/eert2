@@ -18,19 +18,19 @@
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12">
             <label>Исходные данные:</label>
-            <p-dropdown optionLabel="name" [options]="initialDate" [(ngModel)]="stepOne.Session" placeholder="Выберите один из вариантов:"></p-dropdown>
+            <p-dropdown optionLabel="name" [options]="initialDate" [(ngModel)]="stepOne.Session" [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
           <label>Сценарий развития экономики:</label>
-          <p-dropdown optionLabel="name" [options]="scenarioMacro" [(ngModel)]="stepOne.scenarioMacro" placeholder="Выберите один из вариантов:"></p-dropdown>
+          <p-dropdown optionLabel="name" [options]="scenarioMacro" [(ngModel)]="stepOne.scenarioMacro"[showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
       </div>
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
           <label>Горизонт прогноза (лет):</label>
-          <p-dropdown optionLabel="name" [options]="horizonforecast" [(ngModel)]="stepOne.calcYearsNumber"   placeholder="Выберите один из вариантов:"></p-dropdown>
+          <p-dropdown optionLabel="name" [options]="horizonforecast" [(ngModel)]="stepOne.calcYearsNumber" [showClear]="true"  placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
       </div>
         <div class="p-fluid p-formgrid p-grid">

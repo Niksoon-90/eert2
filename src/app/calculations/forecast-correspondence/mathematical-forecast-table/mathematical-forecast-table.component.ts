@@ -139,53 +139,34 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
 
   test(idx: number, value: any) {
-
-    const saveMass = []
-    const dec = Number(value / this.massSummYear[idx]).toFixed(3);
-    for(let i=0; i< this.virtTable.length; i++) {
-      this.virtTable[i].shipmentYearValuePairs[idx].value = Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(3))
-      console.log(Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(2)))
-      delete this.virtTable[i].session;
-      saveMass.push(this.virtTable[i])
-    }
-    // for(let i=0; i< this.mathematicalForecastTable.length; i++) {
-    //   this.mathematicalForecastTable[i].shipmentYearValuePairs[idx].value = Number((this.mathematicalForecastTable[i].shipmentYearValuePairs[idx].value * dec).toFixed(2))
-    //   delete this.mathematicalForecastTable[i].session;
-    //   saveMass.push(this.mathematicalForecastTable[i])
-    // //  this.onRowEditSave(this.mathematicalForecastTable[i])
-    // }
-
-    if(saveMass.length !== 0){
-      this.loader = true;
-      from(saveMass).pipe(
-        concatMap(param => this.shipmentsService.putShipments(param)) //concatMap
-      ).subscribe(
-        res =>   this.massSummYears(this.mathematicalForecastTable),
-        error => {
-          this.modalService.open(error.error.message),
-            this.loader = false;
-        },
-        () => {
-          this.massSummYears(this.mathematicalForecastTable),
-            this.loader = true;
-          setTimeout(()=>{
-            this.loader = false;
-          }, 10);
-        }
-      );
-    }
+  const saveMass = []
+  const dec = Number(value / this.massSummYear[idx]).toFixed(3);
+  for(let i=0; i< this.virtTable.length; i++) {
+    this.virtTable[i].shipmentYearValuePairs[idx].value = Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(3))
+    console.log(Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(2)))
+    delete this.virtTable[i].session;
+    saveMass.push(this.virtTable[i])
   }
-  //   const dec = value / this.massSummYear[idx];
-  //   for(let i=0; i< this.mathematicalForecastTable.length; i++) {
-  //     this.mathematicalForecastTable[i].shipmentYearValuePairs[idx].value = Number((this.mathematicalForecastTable[i].shipmentYearValuePairs[idx].value * dec).toFixed(2))
-  //     console.log(this.mathematicalForecastTable[i])
-  //     this.onRowEditSave(this.mathematicalForecastTable[i])
-  //   }
-  //   this.loader = true;
-  //   setTimeout(()=>{
-  //     this.loader = false;
-  //   }, 2000);
-  // }
+  if(saveMass.length !== 0){
+    this.loader = true;
+    from(saveMass).pipe(
+      concatMap(param => this.shipmentsService.putShipments(param)) //concatMap
+    ).subscribe(
+      res =>   this.massSummYears(this.mathematicalForecastTable),
+      error => {
+        this.modalService.open(error.error.message),
+          this.loader = false;
+      },
+      () => {
+        this.massSummYears(this.mathematicalForecastTable),
+          this.loader = true;
+        setTimeout(()=>{
+          this.loader = false;
+        }, 10);
+      }
+    );
+  }
+}
 
   colorYears(rowData, col: any) {
     const mass = col['field'].toString().split('.');
@@ -254,3 +235,33 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     )
   }
 }
+// test(idx: number, value: any) {
+//   const shipmentYer
+//   const saveMass = []
+//   const dec = Number(value / this.massSummYear[idx]).toFixed(3);
+//   for(let i=0; i< this.virtTable.length; i++) {
+//     this.virtTable[i].shipmentYearValuePairs[idx].value = Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(3))
+//     console.log(Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(2)))
+//     delete this.virtTable[i].session;
+//     saveMass.push(this.virtTable[i])
+//   }
+//   if(saveMass.length !== 0){
+//     this.loader = true;
+//     from(saveMass).pipe(
+//       concatMap(param => this.shipmentsService.putShipments(param)) //concatMap
+//     ).subscribe(
+//       res =>   this.massSummYears(this.mathematicalForecastTable),
+//       error => {
+//         this.modalService.open(error.error.message),
+//           this.loader = false;
+//       },
+//       () => {
+//         this.massSummYears(this.mathematicalForecastTable),
+//           this.loader = true;
+//         setTimeout(()=>{
+//           this.loader = false;
+//         }, 10);
+//       }
+//     );
+//   }
+// }

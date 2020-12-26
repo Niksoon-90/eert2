@@ -6,6 +6,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ModalService} from "../../services/modal.service";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
+import {ICargoGroupNci, IShipmentTypNci} from "../../models/calculations.model";
 
 @Component({
   selector: 'app-macro-pok',
@@ -16,6 +17,8 @@ import {IAuthModel} from "../../models/auth.model";
 export class MacroPokComponent implements OnInit {
   loading: boolean = true;
   user: IAuthModel
+  cargoGroups: ICargoGroupNci[]
+  shipmentTypes: IShipmentTypNci[]
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService:ModalService,
@@ -27,33 +30,29 @@ export class MacroPokComponent implements OnInit {
   macroPokList: IMacroPokModel[];
   form: FormGroup
   years = [];
-  cargoGroups = [
-    {id:1, name:"Уголь"},
-    {id:2, name:"Кокс"},
-    {id:3, name:"Нефтяные грузы"},
-    {id:4, name:"Рудные грузы"},
-    {id:5, name:"Черные металлы"},
-    {id:6, name:"Лесные грузы"},
-    {id:7, name:"Минеральные строительные материалы"},
-    {id:8, name:"Удобрения"},
-    {id:9, name:"Хлебные грузы"},
-    {id:10, name:"Прочие грузы"},
-  ];
-  shipmentTypes = [
-    {id:1, name:"Внутренние"},
-    {id:2, name:"Экспорт"},
-    {id:3, name:"Импорт"},
-    {id:4, name:"Транзит"},
-  ]
 
 
   ngOnInit(): void {
     this.getMacroPok()
+    this.getCargoGroupNci();
+    this.getShipmentTypNci()
     this.createForm()
     this.years = [];
     for (let i = 15; i <= 99; i++) {
       this.years.push({name: `20`+i});
     }
+  }
+  getCargoGroupNci() {
+    this.shipmentsService.getDictionaryCargo().subscribe(
+      res =>  this.cargoGroups =res,
+      error => this.modalService.open(error.error.message),
+    )
+  }
+  getShipmentTypNci() {
+    this.shipmentsService.getDictionaryShipmenttype().subscribe(
+      res =>  this.shipmentTypes =res,
+      error => this.modalService.open(error.error.message),
+    )
   }
   createForm(){
     this.form = new FormGroup({
@@ -81,7 +80,10 @@ export class MacroPokComponent implements OnInit {
   getMacroPok(){
     this.loading = true;
     this.shipmentsService.getMacroPok().subscribe(
-      res => this.macroPokList = res,
+      res => {
+        this.macroPokList = res,
+          this.macroPokList = this.macroPokList.sort((a, b) => a.id < b.id ? 1 : -1)
+      },
       error => this.modalService.open(error.error.message),
       () => this.loading = false
     )

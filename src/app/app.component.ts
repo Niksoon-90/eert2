@@ -34,14 +34,14 @@ export class AppComponent implements OnInit{
       res => this.user = res,
       error => this.modalService.open(error.error.message),
       () => this.test());
-    this.user = this.authenticationService.userValue;
+     this.user = this.authenticationService.userValue;
 
     this.sidebar = [
       {
       label: 'Исходные данные',
       items: [
         {label: 'Исторические данные объемов перевозок', routerLink: ['shipments/data'], command: () => { this.clickItem(); }},
-        {label: 'Макроэкономические показатели', routerLink: ['macroPok'], command: () => { this.clickItem(); }},
+        {label: 'Макроэкономические показатели', routerLink: ['macroPok/data'], command: () => { this.clickItem(); }},
         {label: 'Заявки компаний-грузовладельцев', routerLink: ['cargo/data'], command: () => { this.clickItem(); }},
         {label: 'Данные о перспективных кореспонденциях',  routerLink: ['correspondence/data'], command: () => { this.clickItem(); }},
         {label: 'Расчеты (модель прогнозирования)',  routerLink: ['payments'], command: () => { this.clickItem(); }},

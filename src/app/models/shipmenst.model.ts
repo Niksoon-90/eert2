@@ -38,3 +38,9 @@ interface IShipmentYearValuePairs {
   shipment?: number,
   calculated?: boolean
 }
+
+export interface ISynonym{
+  cargoOwnerId?: number,
+  id?: number,
+  name?: string
+}

@@ -33,7 +33,7 @@
       <colgroup>
         <col *ngFor="let col of columns" [style.width]="col.width" >
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
-          <col style="width: 30%" >
+          <col style="width: 120px" >
         </ng-container>
       </colgroup>
     </ng-template>
@@ -69,10 +69,10 @@
         </td>
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
           <td style="text-align:center">
-            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit()" class="p-button-rounded p-button-text"></button>
-            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
-            <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" (click)="deleteItemCargoNci(rowData.code)" class="p-button-rounded p-button-text p-button-danger"></button>
+            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" pTooltip="Редактировать" (click)="onRowEditInit()" class="p-button-rounded p-button-text"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"  pTooltip="Сохранить" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" pTooltip="Отменить" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
+            <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" pTooltip="Удалить" (click)="deleteItemCargoNci(rowData.code)" class="p-button-rounded p-button-text p-button-danger"></button>
           </td>
         </ng-container>
       </tr>

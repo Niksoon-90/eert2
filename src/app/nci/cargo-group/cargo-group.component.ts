@@ -28,7 +28,7 @@ export class CargoGroupComponent implements OnInit {
   ngOnInit(): void {
     this.getCargoGroupNci();
     this.cols = [
-      { field: 'name', header: 'Группа грузов', width: '70%', isStatic :true}
+      { field: 'name', header: 'Группа грузов', width: 'auto', isStatic :true}
     ]
   }
 
@@ -42,7 +42,6 @@ export class CargoGroupComponent implements OnInit {
           this.getCargoGroupNci()
         }
       )
-
     }else{
       this.modalService.open('Укажите наименование группы грузов!')
     }

@@ -64,6 +64,8 @@ import { StepIasComponent } from './payment-history/historical/step-ias/step-ias
 import { SubjectComponent } from './nci/subject/subject.component';
 import { StationNsiComponent } from './station-nsi/station-nsi.component';
 import {StationComponent} from "./station-nsi/station/station.component";
+import { DataMacroPokComponent } from './initialDate/macro-pok/data-macro-pok/data-macro-pok.component';
+import { SynonymComponent } from './directory/cargo-nci/synonym/synonym.component';
 
 
 const itemRoutesShipments: Routes = [
@@ -77,6 +79,10 @@ const itemRoutesCargo: Routes = [
 
 const itemRoutesCorrespondence: Routes = [
   {path: 'data', component: DataCorrespondenceComponent},
+  {path: ':initialDateType', component: UploadFileComponent}
+]
+const itemRoutesMacroPok: Routes = [
+  {path: 'data', component: MacroPokComponent},
   {path: ':initialDateType', component: UploadFileComponent}
 ]
 
@@ -99,7 +105,7 @@ const appRoutes: Routes = [
   {path: 'shipments', component: ShipmentsComponent, children: itemRoutesShipments},
   {path: 'cargo', component: CargoComponent, children: itemRoutesCargo},
   {path: 'correspondence', component: CorrespondenceComponent, children: itemRoutesCorrespondence},
-  {path: 'macroPok', component: MacroPokComponent},
+  {path: 'macroPok', component: DataMacroPokComponent, children: itemRoutesMacroPok},
   {path: 'steps', component: StepsComponent, children: itemRoutesSteps},
   {path: 'directory', component: DirectoryComponent},
   {path: 'nci', component: NciComponent},
@@ -147,6 +153,8 @@ registerLocaleData(localeRu, 'ru');
     StepIasComponent,
     SubjectComponent,
     StationNsiComponent,
+    DataMacroPokComponent,
+    SynonymComponent,
   ],
   imports: [
     BrowserModule,

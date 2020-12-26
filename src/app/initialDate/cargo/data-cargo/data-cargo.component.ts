@@ -57,7 +57,12 @@ export class DataCargoComponent implements OnInit {
     }else{
       this.shipmentsService.getClaimSession(type)
         .pipe(
-          map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+          map( (data: ISession[]) => {
+            if(data.length !== 0){
+              data =  data.filter(p => p.userLogin === this.user.user)
+            }
+            return data
+          })
         )
         .subscribe(
         res => {

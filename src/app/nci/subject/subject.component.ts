@@ -27,7 +27,7 @@ export class SubjectComponent implements OnInit {
   ngOnInit(): void {
     this.getSubjectNci();
     this.cols = [
-      { field: 'name', header: 'Субъект РФ', width: '70%', isStatic :true}
+      { field: 'name', header: 'Субъект РФ', width: 'auto', isStatic :true}
     ]
   }
 

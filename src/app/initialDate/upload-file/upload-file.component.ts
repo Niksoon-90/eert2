@@ -31,10 +31,7 @@ export class UploadFileComponent implements OnInit {
     {value:2, label: 'тыс. тонн', type: 'THOUSAND_TONS'},
     {value:3, label: 'тонн', type: 'TONS'}
   ]
-
-
-
-
+  macroScenarioType = []
   constructor(
     private shipmentsService: ShipmentsService,
     private activateRoute: ActivatedRoute,
@@ -44,6 +41,8 @@ export class UploadFileComponent implements OnInit {
   ) {
     this.user = this.authenticationService.userValue;
     this.initialDateType = activateRoute.snapshot.params['initialDateType'];
+    console.log(this.initialDateType)
+
   }
 
   ngOnInit(): void {
@@ -53,6 +52,13 @@ export class UploadFileComponent implements OnInit {
     }
     if(this.initialDateType === 'cargoUpload'){
       this.dimensionLable = this.dimensionItems[0]
+    }
+    if(this.initialDateType === 'macroUpload'){
+      this.macroScenarioType = [
+        {name:'Базовые значения', type: 'BASE'},
+        {name:'Оптимистичные значения', type: 'OPTIMISTIC'},
+        {name:'Пессимистичные значения', type: 'PESSIMISTIC'},
+      ]
     }
     this.cargoTypes = [
       {id:1, name:'Грузоотправитель', type: 'SENDER_CLAIMS'},
@@ -65,7 +71,8 @@ export class UploadFileComponent implements OnInit {
     this.uploadFiles =  this.fb.group({
       nameFile: new FormControl('', [Validators.required, Validators.minLength(1)]),
       dimension: new FormControl(this.dimensionLable, [Validators.required]),
-      cargoType: new FormControl('', [Validators.required])
+      cargoType: new FormControl('', [Validators.required]),
+      macroScenario: new FormControl('', [Validators.required])
     });
   }
   onFileSelected(event) {
@@ -80,6 +87,8 @@ export class UploadFileComponent implements OnInit {
       this.shipmensUpload(formData, this.uploadFiles.value.cargoType.type)
     }else if(this.initialDateType === 'correspondUpload'){
       this.shipmensUpload(formData,'PERSPECTIVE_CORRESPONDENCES')
+    }else if(this.initialDateType === 'macroUpload'){
+      this.makroPokUpload(formData)
     }else{
      console.log('error onUpload')
     }
@@ -87,13 +96,26 @@ export class UploadFileComponent implements OnInit {
   showModalDialog() {
     this.displayModal = true;
   }
+  makroPokUpload(formData){
+    this.shipmentsService.postMacroUploadFile(formData, this.uploadFiles.value.nameFile, this.uploadFiles.controls.macroScenario.value.type, this.user.fio, this.user.user,)
+      .subscribe(event => {
+        if (event.type === HttpEventType.UploadProgress){
+          this.progress = Math.round(event.loaded / event.total * 100);
+        }else if (event.type === HttpEventType.Response){
+        }
+      }, error => {
+        this.clearForm();
+        this.modalService.open(error.error.message)
+      },() => {
+        this.clearForm();
+        this.showModalDialog();
+      });
+  }
   shipmensUpload(formData, type: string){
-    // console.log(this.user.fio, this.user.user)
     this.shipmentsService.postUploadFile(formData, this.uploadFiles.value.nameFile, type, this.user.fio, this.user.user, this.uploadFiles.controls.dimension.value.type)
       .subscribe(event => {
         if (event.type === HttpEventType.UploadProgress){
           this.progress = Math.round(event.loaded / event.total * 100);
-          // console.log('Прогресс загрузки: ' + Math.round(event.loaded / event.total * 100)  + '%')
         }else if (event.type === HttpEventType.Response){
         }
       }, error => {
@@ -112,10 +134,12 @@ export class UploadFileComponent implements OnInit {
   }
 
   disInvalidBut() {
-    if(this.initialDateType !== 'cargoUpload'){
+    if(this.initialDateType !== 'cargoUpload' && this.initialDateType !== 'macroUpload'){
       if(this.progress > 0 || this.selectedFile === null || this.uploadFiles.controls['dimension'].invalid || this.uploadFiles.controls['nameFile'].invalid ) return true
     }else if(this.initialDateType === 'cargoUpload') {
       if(this.progress > 0 || this.selectedFile === null || this.uploadFiles.invalid) return true
+    }else if(this.initialDateType === 'macroUpload'){
+      if(this.progress > 0 || this.selectedFile === null || this.uploadFiles.controls['macroScenario'].invalid) return true
     }
   }
 }

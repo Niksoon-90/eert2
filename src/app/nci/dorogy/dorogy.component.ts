@@ -32,9 +32,9 @@ export class DorogyComponent implements OnInit {
     this.getDorogyNci();
     this.createForm();
     this.cols = [
-      { field: 'name', header: 'Наименование железных дорог', width: '30%'},
-      { field: 'shortname', header: 'Сокращенное наименование дороги', width: '25%'},
-      { field: 'code', header: 'Код', width: '15%', isStatic :true}
+      { field: 'name', header: 'Наименование железных дорог', width: 'auto'},
+      { field: 'shortname', header: 'Сокращенное наименование дороги', width: 'auto'},
+      { field: 'code', header: 'Код', width: 'auto', isStatic :true}
     ]
   }
 

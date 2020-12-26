@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {Observable} from "rxjs";
 import {
@@ -16,6 +16,7 @@ import {
   IForecastIASModelId,
   IPathRequest
 } from "../models/forecastIAS.model";
+import {IMacroPokModel} from "../models/macroPok.model";
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +32,19 @@ export class CalculationsService {
   putUpdateMacroForecast(id: number, value: number){
     return this.http.put(this.urlCalc + `api/calc/forecast/value/${id}?newValue=${value}`, {})
   }
-  getCalculationMultiple(id: number, idHorizonforecast: number, type: string): Observable<ICalculatingPredictiveRegression[]>{
-    return this.http.get<ICalculatingPredictiveRegression[]>(this.urlCalc + `api/calc/regression/multiple/${id}?calcYearsNumber=${idHorizonforecast}&macroScenarioType=${type}`)
+  getMacroPokList(sessionId: number, horizont: number): Observable<IMacroPokModel[]>{
+    return this.http.get<IMacroPokModel[]>(this.urlCalc + `api/calc/allMacroForHistorical/${sessionId}?calcYearsNumber=${horizont}`)
+  }
+  getCalculationMultiple(id: number, idHorizonforecast: number, type: string, paramsMacroIndex: any): Observable<ICalculatingPredictiveRegression[]>{
+    let Url = ''
+    let params = new HttpParams()
+    for (const actor of paramsMacroIndex) {
+      params = params.append('macroIndexesIds', actor);
+    }
+    console.log(params.toString());
+    paramsMacroIndex.length === 0 ? Url = this.urlCalc + `api/calc/regression/multiple/${id}?calcYearsNumber=${idHorizonforecast}&macroScenarioType=${type}` : Url = this.urlCalc + `api/calc/regression/multiple/${id}?calcYearsNumber=${idHorizonforecast}&${params}&macroScenarioType=${type}`
+    console.log(Url)
+    return this.http.get<ICalculatingPredictiveRegression[]>(Url)
   }
   getCalculationSimple(id: number, idHorizonforecast: number, forecastName: string): Observable<IShipment[]> {
     return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/simple/${id}?calcYearsNumber=${idHorizonforecast}&forecastName=${forecastName}`)

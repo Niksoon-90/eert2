@@ -60,8 +60,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
       this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
       this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
     }else{
-      this.postCreateEmptySession()
-      //this.sessionId = null
+      this.sessionId = this.forecastModelService.ticketInformation.stepThree.sessionId;
     }
 
     this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
@@ -70,17 +69,6 @@ export class ForecastCorrespondenceComponent implements OnInit {
     if(this.forecastModelService.ticketInformation.stepThree.forecastingStrategy !== null){
       this.calculateForecastingStrategy();
     }
-
-  }
-  postCreateEmptySession(){
-    this.calculationsService.postCreateEmptySession(this.forecastName, this.user.fio, this.user.user_name).subscribe(
-      res => {
-        this.sessionId = Number(res),
-          this.forecastModelService.ticketInformation.stepThree.sessionId = Number(res)
-        console.log(res)
-      },
-      error => this.modalService.open(error.error.message),
-    )
   }
   //TODO FAIL!
   additionalInfo(items){
@@ -90,14 +78,6 @@ export class ForecastCorrespondenceComponent implements OnInit {
     }
   }
 
-  prevPage() {
-    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
-      this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.oldSessionId
-      this.router.navigate(['steps/mathForecast']);
-    }else {
-      this.router.navigate(['steps/import']);
-    }
-  }
 
 
   calculateForecastingStrategy() {
@@ -408,5 +388,14 @@ export class ForecastCorrespondenceComponent implements OnInit {
       }
     )
   }
+  prevPage() {
+    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+      this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.oldSessionId
+      this.router.navigate(['steps/mathForecast']);
+    }else {
+      this.router.navigate(['steps/import']);
+    }
+  }
+
 
 }

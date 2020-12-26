@@ -29,9 +29,9 @@ export class InfluenceFactorComponent implements OnInit {
     this.getInfluenceNci();
     this.createForm();
     this.cols = [
-      { field: 'id', header: 'id', width: '15px',  isStatic :true},
-      { field: 'name', header: 'Наименование', width: '100px', },
-      { field: 'weight', header: 'Коэффициент ', width: '15px', }
+      { field: 'id', header: 'id', width: '120px',  isStatic :true},
+      { field: 'name', header: 'Наименование', width: 'auto', },
+      { field: 'weight', header: 'Коэффициент ', width: '150px', }
     ]
   }
   createForm(){

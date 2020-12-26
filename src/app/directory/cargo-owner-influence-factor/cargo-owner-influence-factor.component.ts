@@ -33,10 +33,10 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     this.createForm();
     this.getInfluenceNci();
     this.cols = [
-      { field: 'id', header: 'id', width: '15px', isStatic :true},
-      { field: 'cargoOwnerName', header: 'Грузовладельцев', width: '30px', },
-      { field: 'influenceFactorName', header: 'Фактора влияния ', width: '45px'},
-      { field: 'koef', header: 'Коэффициент', width: '15px'}
+      { field: 'id', header: 'id', width: '120px', isStatic :true},
+      { field: 'cargoOwnerName', header: 'Грузовладельцев', width: 'auto', },
+      { field: 'influenceFactorName', header: 'Фактора влияния ', width: 'auto'},
+      { field: 'koef', header: 'Коэффициент', width: '150px'}
     ]
   }
   createForm() {

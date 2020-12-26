@@ -1,9 +1,9 @@
-<div style="background-color: #fff">
-  <h3>Макроэкономические показатели</h3>
-</div>
 <p-toast></p-toast>
 <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
-  <p-button label="Добавить показатель" icon="pi pi-plus" (click)="op.toggle($event)"></p-button>
+  <div class="p-d-flex p-p-3 card">
+    <p-button label="Добавить показатель" icon="pi pi-plus" (click)="op.toggle($event)"></p-button>
+    <p-button label="Загрузить файл" pRipple  type="button" icon="pi pi-search" class="p-ml-auto p-button-help"></p-button>
+  </div>
 </ng-container>
 <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '450px'}">
   <ng-template pTemplate="subtitle">
@@ -82,7 +82,7 @@
              [showCurrentPageReport]="true" [resizableColumns]="true">
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
-          <col>
+          <col style="width: 100px">
           <col>
           <col>
           <col>
@@ -91,7 +91,7 @@
           <col>
           <col>
           <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
-            <col>
+            <col style="width: 120px">
           </ng-container>
         </colgroup>
       </ng-template>
@@ -169,5 +169,4 @@
       </ng-template>
     </p-table>
   </div>
-
 </ng-container>

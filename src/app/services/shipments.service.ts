@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {Observable} from 'rxjs';
-import {ISession, IShipment} from '../models/shipmenst.model';
+import {ISession, IShipment, ISynonym} from '../models/shipmenst.model';
 import {IMacroPokModel} from "../models/macroPok.model";
 import {
   ICalculatingPredictiveRegression,
@@ -23,6 +23,12 @@ export class ShipmentsService {
 
   postUploadFile(fd, fileName: string, type: string, fio: string, login: string, dimension: string) {
     return this.http.post<any>(this.url + `api/file/upload?dimension=${dimension}&fileType=${type}&name=${fileName}&userFio=${fio}&userLogin=${login}`, fd, {
+      reportProgress: true,
+      observe: "events"
+    });
+  }
+  postMacroUploadFile(fd, fileName: string, macroScenarioType: string, fio: string, login: string) {
+    return this.http.post<any>(this.url + `api/file/uploadMacro?macroScenarioType=${macroScenarioType}&name=${fileName}&userFio=${fio}&userLogin=${login}`, fd, {
       reportProgress: true,
       observe: "events"
     });
@@ -68,7 +74,7 @@ export class ShipmentsService {
     return this.http.put(this.url + 'api/file/shipments', shipments)
   }
 
-  getTest(id: number, calculated: any[]): Observable<IShipment> {
+  getShipmentsYearsItems(id: number, calculated: any[]): Observable<IShipment> {
     return this.http.put<IShipment>(this.url + `api/file/shipments/${id}`, calculated)
   }
   //TODO Обновить признак 'Готово для ИАС Маршруты'
@@ -155,5 +161,15 @@ export class ShipmentsService {
   }
   getSubject(): Observable<ISubjectNci[]>{
     return this.http.get<ISubjectNci[]>(this.url + `api/dictionary/subject/all`)
+  }
+  //TODO 8
+  postSynonym(cargoOwnerId: number, name: string){
+    return this.http.post(this.url + `api/catalog/cargo/owner/${cargoOwnerId}/synonym/${name}`, {})
+  }
+  getSynonym(cargoOwnerId: number): Observable<ISynonym[]>{
+    return this.http.get<ISynonym[]>(this.url + `api/catalog/cargo/synonym/${cargoOwnerId}`)
+  }
+  deletetSynonym(cargoOwnerSynonymId: number){
+    return this.http.delete(this.url + `api/catalog/cargo/synonym/${cargoOwnerSynonymId}`)
   }
 }

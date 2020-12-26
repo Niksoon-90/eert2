@@ -7,6 +7,8 @@ import {ModalService} from "../../services/modal.service";
 import {map} from "rxjs/operators";
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
+import {IMacroPokModel} from "../../models/macroPok.model";
+
 
 @Component({
   selector: 'app-math-forecast',
@@ -18,6 +20,9 @@ export class MathForecastComponent implements OnInit, OnChanges {
   lastCalculatedVolumesTotal: number[];
   lastGroupVolumesByYearsTotal: number[];
   user: IAuthModel
+  macroPokList: IMacroPokModel[]
+  selectedMacro: any[];
+  macroPokListUpdate: any[];
 
   constructor(
     private router: Router,
@@ -34,13 +39,26 @@ export class MathForecastComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.createTable()
+    this.getMacroPokList();
   }
-  createTable(){
+
+  getMacroPokList(){
+    this.calculationsService.getMacroPokList(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'] )
+      .subscribe(
+      res => {
+        this.macroPokList = res
+        console.log(res)
+      },
+        error => this.modalService.open(error.error.message)
+    )
+  }
+
+  createTable(macPokId){
+    console.log(macPokId)
     console.log(this.forecastModelService.getTicketInformation().stepOne.Session['id'])
     console.log(this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
     console.log(this.forecastModelService.getTicketInformation().stepOne.nameNewShip)
-    this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'] )
+    this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'], macPokId )
       .pipe(
         map(data => {
           const transformedData = Object.keys(data).map(key => Object.assign(data[key], {id: Math.random() * 1000000}));
@@ -55,16 +73,7 @@ export class MathForecastComponent implements OnInit, OnChanges {
 
   }
 
-  nextPage() {
-    if(this.forecastModelService.ticketInformation.stepOne.newSessionId !== null){
-      this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.newSessionId
-    }
-    this.router.navigate(['steps/forecast']);
-  }
 
-  prevPage() {
-    this.router.navigate(['steps/import']);
-  }
   calculateLastTotal() {
     this.lastCalculatedVolumesTotal=[]
     this.lastGroupVolumesByYearsTotal=[]
@@ -98,5 +107,31 @@ export class MathForecastComponent implements OnInit, OnChanges {
         () => this.calculateLastTotal()
       )
     }
+  }
+  nextPage() {
+    if(this.forecastModelService.ticketInformation.stepOne.newSessionId !== null){
+      this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.newSessionId
     }
+    this.router.navigate(['steps/forecast']);
+  }
+
+  prevPage() {
+    this.router.navigate(['steps/import']);
+  }
+
+  test() {
+    let macPokId = []
+    console.log(this.selectedMacro !== undefined)
+    console.log(typeof this.selectedMacro)
+    if(this.selectedMacro !== undefined) {
+      this.macroPokListUpdate = this.macroPokList.filter(val => this.selectedMacro.includes(val));
+      if(this.macroPokListUpdate.length !== 0){
+        for(let item of this.macroPokListUpdate){
+          macPokId.push(item.id)
+        }
+      }
+    }
+    this.createTable(macPokId);
+    console.log(macPokId)
+  }
 }

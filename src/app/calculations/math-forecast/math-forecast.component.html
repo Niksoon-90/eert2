@@ -1,94 +1,149 @@
 <div class="stepsdemo-content">
   <p-card>
-    <ng-template pTemplate="title">
-      <h5>Математический прогноз с учетом макропоказателей</h5>
-      <p-table #dt
-               [value]="mathematicalForecastTable" dataKey="id"
-               [scrollable]="true"
-               [style]="{width:'94.7vw'}"
-               styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
-               [resizableColumns]="true"  editMode="row"
-                scrollHeight="flex"
-      >
+  <ng-template pTemplate="title">
+    Математический прогноз с учетом макропоказателей
+  </ng-template>
+  <ng-template pTemplate="body">
+        <div class="card">
+          <ng-template #Loader>
+            <div class="p-d-flex p-jc-center" style="height: 40vh">
+              <div class="p-grid p-ai-center vertical-container ">
+                <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+              </div>
+            </div>
+          </ng-template>
+          <ng-container *ngIf="macroPokList; else Loader">
+            <p-table #dtMacro [value]="macroPokList" [scrollable]="true"
+                     scrollHeight="30vh" dataKey="id"
+                     styleClass="p-datatable-sm p-datatable-gridlines"
+                     selectionMode="multiple" [(selection)]="selectedMacro"
+                     [showCurrentPageReport]="true" [resizableColumns]="true">
+              <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                  <col style="width: 100px">
+                  <col>
+                  <col>
+                  <col>
+                </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
+                  <th pResizableColumn pSortableColumn="cargoGroup">Номенклатура грузов<p-sortIcon field="cargoGroup"></p-sortIcon></th>
+                  <th pResizableColumn pSortableColumn="shipmentType">Тип<p-sortIcon field="shipmentType"></p-sortIcon></th>
+                  <th pResizableColumn pSortableColumn="macroIndex">Макро<p-sortIcon field="macroIndex"></p-sortIcon></th>
+                </tr>
+                <tr>
+                  <th ><input pInputText type="text" (input)="dtMacro.filter($event.target.value, 'id', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+                  <th ><input pInputText type="text" (input)="dtMacro.filter($event.target.value, 'cargoGroup', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+                  <th ><input pInputText type="text" (input)="dtMacro.filter($event.target.value, 'shipmentType', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+                  <th ><input pInputText type="text" (input)="dtMacro.filter($event.target.value, 'macroIndex', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                  <td>{{rowData.id}}</td>
+                  <td>{{rowData.cargoGroup}}</td>
+                  <td>{{rowData.shipmentType}}</td>
+                  <td>{{rowData.macroIndex}}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr>
+                  <td colspan="4" class="p-text-right"><button type="button" pButton pRipple icon="pi pi-cog" label="Расчитать" (click)="test()" class="p-button-info p-ml-auto" pTooltip="Применить" tooltipPosition="bottom"></button></td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </ng-container>
+          <ng-container *ngIf="mathematicalForecastTable">
+            <p-table
+              [value]="mathematicalForecastTable" dataKey="id"
+              [scrollable]="true"
+              styleClass="p-datatable-sm p-datatable-gridlines"  dataKey="id"
+              [resizableColumns]="true"  editMode="row"
+              scrollHeight="flex"
+            >
+              <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                  <col style="width:100px">
+                  <col style="width:100px">
+                  <ng-container *ngIf="mathematicalForecastTable">
+                    <col  style="width:100px" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears| keyvalue">
+                  </ng-container>
+                  <ng-container *ngIf="mathematicalForecastTable">
+                    <col  style="width:100px" *ngFor="let data2 of mathematicalForecastTable[0].forecastValues">
+                  </ng-container>
+                  <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+                    <col style="width:50px">
+                  </ng-container>
+                </colgroup>
+              </ng-template>
 
-        <ng-template pTemplate="colgroup" let-columns>
-          <colgroup>
-            <col style="width:100px">
-            <col style="width:100px">
-            <ng-container *ngIf="mathematicalForecastTable">
-              <col  style="width:100px" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears| keyvalue">
-            </ng-container>
-            <ng-container *ngIf="mathematicalForecastTable">
-              <col  style="width:100px" *ngFor="let data2 of mathematicalForecastTable[0].forecastValues">
-            </ng-container>
-            <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
-              <col style="width:50px">
-            </ng-container>
-          </colgroup>
-        </ng-template>
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Группа груза</th>
+                  <th>Вид сообщения</th>
+                  <ng-container *ngIf="mathematicalForecastTable">
+                    <th style="text-align: center" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears | keyvalue">
+                      {{data.key}}
+                    </th>
+                    <th style="text-align: center" *ngFor="let data2 of mathematicalForecastTable[0].forecastValues">
+                      {{data2.year}}
+                    </th>
+                  </ng-container>
+                  <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+                    <th>Действия</th>
+                  </ng-container>
+                </tr>
+              </ng-template>
 
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Группа груза</th>
-            <th>Вид сообщения</th>
-            <ng-container *ngIf="mathematicalForecastTable">
-              <th style="text-align: center" *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears | keyvalue">
-                {{data.key}}
-              </th>
-              <th style="text-align: center" *ngFor="let data2 of mathematicalForecastTable[0].forecastValues">
-                {{data2.year}}
-              </th>
-            </ng-container>
-            <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
-              <th>Действия</th>
-            </ng-container>
-          </tr>
-        </ng-template>
+              <ng-template pTemplate="body" let-item  let-ri="rowIndex" let-editing="editing" >
+                <tr [pEditableRow]="item">
+                  <td>{{item.cargoGroup}}</td>
+                  <td>{{item.shipmentType}}</td>
+                  <td *ngFor="let year of item.groupVolumesByYears  | keyvalue; let idx = index" style="background-color: rgba(0,64,255,0.07); text-align: right">
+                    {{year.value | number}}
+                  </td>
+                  <td *ngFor="let data of item.forecastValues; let idx = index" style="background-color: rgba(68,255,0,0.29); text-align: right">
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <input pInputText type="text" [(ngModel)]="data.value">
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        {{data.value | number}}
+                      </ng-template>
+                    </p-cellEditor>
+                  </td>
+                  <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+                    <td style="text-align:center">
+                      <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"  (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
+                      <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(item)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                      <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"  class="p-button-rounded p-button-text p-button-danger"></button>
+                    </td>
+                  </ng-container>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr>
+                  <td colspan="2" class="p-text-right">Сумма: </td>
+                  <ng-container *ngFor="let item of this.lastGroupVolumesByYearsTotal">
+                    <td style="text-align: right">{{item | number}}</td>
+                  </ng-container>
+                  <ng-container *ngFor="let item of this.lastCalculatedVolumesTotal">
+                    <td style="text-align: right">{{item | number}}</td>
+                  </ng-container>
+                </tr>
+              </ng-template>
+            </p-table>
+          </ng-container>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <div class="p-grid p-nogutter p-justify-between">
+          <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left" [disabled]="true"></p-button>
+          <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right" [disabled]="!mathematicalForecastTable"></p-button>
+        </div>
+      </ng-template>
 
-        <ng-template pTemplate="body" let-item  let-ri="rowIndex" let-editing="editing" >
-          <tr [pEditableRow]="item">
-            <td>{{item.cargoGroup}}</td>
-            <td>{{item.shipmentType}}</td>
-            <td *ngFor="let year of item.groupVolumesByYears  | keyvalue; let idx = index" style="background-color: rgba(0,64,255,0.07); text-align: right">
-              {{year.value | number}}
-            </td>
-            <td *ngFor="let data of item.forecastValues; let idx = index" style="background-color: rgba(68,255,0,0.29); text-align: right">
-              <p-cellEditor>
-                <ng-template pTemplate="input">
-                  <input pInputText type="text" [(ngModel)]="data.value">
-                </ng-template>
-                <ng-template pTemplate="output">
-                  {{data.value | number}}
-                </ng-template>
-              </p-cellEditor>
-            </td>
-            <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
-              <td style="text-align:center">
-                <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"  (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
-                <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(item)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-                <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"  class="p-button-rounded p-button-text p-button-danger"></button>
-              </td>
-            </ng-container>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="footer">
-          <tr>
-            <td colspan="2" class="p-text-right">Сумма: </td>
-            <ng-container *ngFor="let item of this.lastGroupVolumesByYearsTotal">
-              <td style="text-align: right">{{item | number}}</td>
-            </ng-container>
-            <ng-container *ngFor="let item of this.lastCalculatedVolumesTotal">
-              <td style="text-align: right">{{item | number}}</td>
-            </ng-container>
-          </tr>
-        </ng-template>
-      </p-table>
-    </ng-template>
-    <ng-template pTemplate="footer">
-      <div class="p-grid p-nogutter p-justify-between">
-        <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left" [disabled]="true"></p-button>
-        <p-button label="Вперед"  (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"></p-button>
-      </div>
-    </ng-template>
   </p-card>
 </div>
