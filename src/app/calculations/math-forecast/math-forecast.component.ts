@@ -91,8 +91,6 @@ export class MathForecastComponent implements OnInit, OnChanges {
       }
      this.lastCalculatedVolumesTotal.push(summColumn)
     }
-    console.log(this.lastCalculatedVolumesTotal)
-    console.log(this.lastGroupVolumesByYearsTotal)
   }
 
   onRowEditInit(item) {

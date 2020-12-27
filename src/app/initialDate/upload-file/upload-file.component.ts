@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ShipmentsService} from "../../services/shipments.service";
 import {HttpEventType} from "@angular/common/http";
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -17,6 +17,10 @@ import {AuthenticationService} from "../../services/authentication.service";
 export class UploadFileComponent implements OnInit {
   @ViewChild('fileUploader') fileUploader: ElementRef;
 
+  @Input() nsi
+
+  @Output() updateSynonym: EventEmitter<string> = new EventEmitter<string>();
+
   uploadFiles: FormGroup
   selectedFile: File = null;
   progress = 0;
@@ -26,6 +30,7 @@ export class UploadFileComponent implements OnInit {
   cargoTypes: any[];
   user: IAuthModel;
   dimensionLable
+
   dimensionItems = [
     {value:1, label: 'млн. тонн', type: 'MILLION_TONS'},
     {value:2, label: 'тыс. тонн', type: 'THOUSAND_TONS'},
@@ -41,12 +46,12 @@ export class UploadFileComponent implements OnInit {
   ) {
     this.user = this.authenticationService.userValue;
     this.initialDateType = activateRoute.snapshot.params['initialDateType'];
-    console.log(this.initialDateType)
-
   }
 
   ngOnInit(): void {
-
+    if(this.initialDateType === undefined) this.initialDateType = this.nsi
+    console.log(this.initialDateType)
+    console.log(this.nsi)
     if(this.initialDateType === 'shipmentsUpload' || this.initialDateType === 'correspondUpload' ){
       this.dimensionLable = this.dimensionItems[2]
     }
@@ -57,7 +62,7 @@ export class UploadFileComponent implements OnInit {
       this.macroScenarioType = [
         {name:'Базовые значения', type: 'BASE'},
         {name:'Оптимистичные значения', type: 'OPTIMISTIC'},
-        {name:'Пессимистичные значения', type: 'PESSIMISTIC'},
+        {name:'Консервативное значения', type: 'PESSIMISTIC'},
       ]
     }
     this.cargoTypes = [
@@ -89,6 +94,8 @@ export class UploadFileComponent implements OnInit {
       this.shipmensUpload(formData,'PERSPECTIVE_CORRESPONDENCES')
     }else if(this.initialDateType === 'macroUpload'){
       this.makroPokUpload(formData)
+    }else if(this.initialDateType === 'synonym'){
+      this.synonymUpload(formData)
     }else{
      console.log('error onUpload')
     }
@@ -126,6 +133,22 @@ export class UploadFileComponent implements OnInit {
         this.showModalDialog();
       });
   }
+  synonymUpload(formData: FormData) {
+    this.shipmentsService.postSynonymUploadFile(formData, this.uploadFiles.value.nameFile,  this.user.fio, this.user.user)
+      .subscribe(event => {
+        if (event.type === HttpEventType.UploadProgress){
+          this.progress = Math.round(event.loaded / event.total * 100);
+        }else if (event.type === HttpEventType.Response){
+        }
+      }, error => {
+        this.clearForm();
+        this.modalService.open(error.error.message)
+      },() => {
+        this.updateSynonym.emit('Child');
+        this.clearForm();
+        this.showModalDialog();
+      });
+  }
 
   clearForm(){
     this.uploadFiles.reset({ nameFile: '', dimension: this.dimensionLable, cargoType: ''});
@@ -134,12 +157,22 @@ export class UploadFileComponent implements OnInit {
   }
 
   disInvalidBut() {
-    if(this.initialDateType !== 'cargoUpload' && this.initialDateType !== 'macroUpload'){
+    if(this.initialDateType !== 'cargoUpload' && this.initialDateType !== 'macroUpload' && this.initialDateType !== 'synonym'){
       if(this.progress > 0 || this.selectedFile === null || this.uploadFiles.controls['dimension'].invalid || this.uploadFiles.controls['nameFile'].invalid ) return true
     }else if(this.initialDateType === 'cargoUpload') {
       if(this.progress > 0 || this.selectedFile === null || this.uploadFiles.invalid) return true
     }else if(this.initialDateType === 'macroUpload'){
       if(this.progress > 0 || this.selectedFile === null || this.uploadFiles.controls['macroScenario'].invalid) return true
+    }else if(this.initialDateType === 'synonym'){
+      if(this.progress > 0 || this.selectedFile === null) return true
+    }
+  }
+
+  dimensionDelete() {
+    if(this.initialDateType === 'macroUpload' || this.initialDateType === 'synonym'){
+      return false
+    }else{
+      return true
     }
   }
 }

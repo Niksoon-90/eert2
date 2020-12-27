@@ -1,14 +1,16 @@
 <div class="p-d-flex p-jc-center" >
-  <div style="padding-right: 200px">
+  <div style="width: 570px">
 
     <form [formGroup]="uploadFiles" (ngSubmit)="onUpload()">
       <div class=" p-d-flex p-jc-center">
         <h3 >ИАС «Грузопотоки»</h3>
       </div>
       <ng-container *ngIf="this.initialDateType !== 'macroUpload'; else macroUpload">
-        <div class="p-d-flex p-jc-center">
-          <p>Внимание!!! Файл должен соответствовать  выбранной Вами размерности.</p>
-        </div>
+        <ng-container *ngIf="this.initialDateType !== 'synonym'">
+          <div class="p-d-flex p-jc-center">
+            <p>Внимание!!! Файл должен соответствовать  выбранной Вами размерности.</p>
+          </div>
+        </ng-container>
       </ng-container>
       <ng-template #macroUpload>
         <div class="p-d-flex p-jc-center">
@@ -21,7 +23,6 @@
       <span class="p-float-label" style="margin-top: 10px">
         <input id="float-input" type="text" formControlName="nameFile" class="p-inputtext-sm"  pInputText />
         <label for="float-input">Введите имя</label>
-        <small id="float-input-help" class="p-invalid"*ngIf="uploadFiles.controls['nameFile'].invalid && uploadFiles.controls['nameFile'].touched">Укажите наименование файла</small>
       </span>
       <div class="p-d-flex p-jc-center">
         <input  type="file" (change)="onFileSelected($event)" class="choose" [disabled]="progress > 0" #fileUploader>
@@ -40,7 +41,7 @@
           </div>
         </div>
       </ng-container>
-      <ng-container *ngIf="this.initialDateType !== 'macroUpload'">
+      <ng-container *ngIf="dimensionDelete()">
         <div class="p-fluid p-grid">
           <div class="p-col-12">
             <p-dropdown optionLabel="label" formControlName="dimension"  [options]="dimensionItems" placeholder="Укажите размерность:"></p-dropdown>

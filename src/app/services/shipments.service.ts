@@ -33,6 +33,12 @@ export class ShipmentsService {
       observe: "events"
     });
   }
+  postSynonymUploadFile(fd, fileName: string, fio: string, login: string) {
+    return this.http.post<any>(this.url + `api/file/uploadCargoOwnerSynonyms?name=${fileName}&userFio=${fio}&userLogin=${login}`, fd, {
+      reportProgress: true,
+      observe: "events"
+    });
+  }
 
   getShipSession(): Observable<ISession[]> {
       return this.http.get<ISession[]>(this.url + `api/file/list?fileType=SHIPMENTS`);

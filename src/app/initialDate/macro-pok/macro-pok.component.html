@@ -2,7 +2,6 @@
 <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
   <div class="p-d-flex p-p-3 card">
     <p-button label="Добавить показатель" icon="pi pi-plus" (click)="op.toggle($event)"></p-button>
-    <p-button label="Загрузить файл" pRipple  type="button" icon="pi pi-search" class="p-ml-auto p-button-help"></p-button>
   </div>
 </ng-container>
 <p-overlayPanel #op [showCloseIcon]="true" [style]="{width: '450px'}">
@@ -41,7 +40,7 @@
         </div>
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12 form-group">
-            <label for="pissyValueMacros">Пессимистичное значение:</label>
+            <label for="pissyValueMacros">Консервативное значение:</label>
             <input formControlName="pissyValueMacro" id="pissyValueMacros" type="text" required pInputText  [ngClass]="{'p-invalid': (form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)}">
             <small *ngIf="(form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)" class="p-error">Укажите пессимистичное значение</small>
           </div>
@@ -102,7 +101,7 @@
           <th pResizableColumn pSortableColumn="shipmentType">Тип<p-sortIcon field="shipmentType"></p-sortIcon></th>
           <th pResizableColumn pSortableColumn="macroIndex">Макро<p-sortIcon field="macroIndex"></p-sortIcon></th>
           <th pResizableColumn pSortableColumn="year">Год<p-sortIcon field="year"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="valueLow">Пессимистичное значение<p-sortIcon field="id"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="valueLow">Консервативное значение<p-sortIcon field="id"></p-sortIcon></th>
           <th pResizableColumn pSortableColumn="valueMedium">Базовое значение<p-sortIcon field="id"></p-sortIcon></th>
           <th pResizableColumn pSortableColumn="valueHigh">Оптимистичное значение<p-sortIcon field="id"></p-sortIcon></th>
           <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">

@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {ModalService} from "../../services/modal.service";
 import {CalculationsService} from "../../services/calculations.service";
-import {ICargoNci} from "../../models/calculations.model";
+import {ICargoNci, ICargoOwnerInfluenceFactor, IInfluenceNci} from "../../models/calculations.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
+import {MathForecastCalcService} from "../../services/math-forecast-calc.service";
+
 
 @Component({
   selector: 'app-cargo-nci',
@@ -11,6 +13,9 @@ import {IAuthModel} from "../../models/auth.model";
   styleUrls: ['./cargo-nci.component.scss']
 })
 export class CargoNciComponent implements OnInit {
+  @ViewChild('fileUpload') fileUpload: any;
+
+
   cols: any[];
   totalRecords: any;
   cargoNci: ICargoNci[]
@@ -19,10 +24,15 @@ export class CargoNciComponent implements OnInit {
   displayMaximizable: boolean;
   cargoOwnerId: number
   cargoOwnerName: string
+  displayPosition: boolean;
+  position: string;
+  uploadFileNsi: string
+  influenceNci: ICargoOwnerInfluenceFactor[];
   constructor(
     private modalService: ModalService,
     private calculationsService: CalculationsService,
-    public authenticationService: AuthenticationService
+    public authenticationService: AuthenticationService,
+    private mathForecastCalcService: MathForecastCalcService
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -36,6 +46,7 @@ export class CargoNciComponent implements OnInit {
     ]
   }
   getCargoNci(){
+    console.log('sdsdsdsds')
       this.calculationsService.getAllCargoNci().subscribe(
         res => this.cargoNci = res,
         error => this.modalService.open(error.error.message),
@@ -93,5 +104,29 @@ export class CargoNciComponent implements OnInit {
   closeModal() {
     this.cargoOwnerId = 0;
     this.displayMaximizable=false
+  }
+
+  showPositionDialog(position: string) {
+    this.uploadFileNsi = 'synonym'
+    this.position = position;
+    this.displayPosition = true;
+  }
+
+  closeModalUpload() {
+    this.uploadFileNsi = '';
+    this.displayPosition=false
+  }
+
+  updateCargoNci(event: string) {
+    this.getCargoNci();
+  }
+
+  factor(id: number) {
+    this.calculationsService.getAllFactorCargoId(id)
+      .subscribe(
+        res => this.influenceNci = res,
+        error => this.modalService.open(error.error.message),
+        () => this.mathForecastCalcService.setValue(this.influenceNci)
+      )
   }
 }

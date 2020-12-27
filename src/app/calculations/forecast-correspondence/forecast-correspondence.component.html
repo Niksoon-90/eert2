@@ -10,8 +10,12 @@
        <div class="p-field p-col-6">
          <div class="p-fluid p-formgrid p-grid">
            <div class="p-field p-col-12">
-             <label>Стратегия прогнозирования:</label>
-             <p-dropdown [options]="methodUsers" optionLabel="name" [(ngModel)]="stepThree.forecastingStrategy" (onChange)="spying($event)" placeholder="Выберите один из вариантов:"></p-dropdown>
+             <label>Стратегия прогнозирования (устойчивые):</label>
+             <p-dropdown [options]="methodUsers" optionLabel="name" [(ngModel)]="stepThree.forecastingStrategySustainable"  placeholder="Укажите стратегию:"></p-dropdown>
+           </div>
+           <div class="p-field p-col-12">
+             <label>Стратегия прогнозирования (мелкие):</label>
+             <p-dropdown [options]="methodUsers" optionLabel="name" [(ngModel)]="stepThree.forecastingStrategySmall"  placeholder="Укажите стратегию:"></p-dropdown>
            </div>
          </div>
          <ng-container  *ngIf="this.additionalInformation">
@@ -26,7 +30,7 @@
       </div>
       <div class="p-d-flex p-jc-between">
         <div>
-          <button pButton pRipple type="button" label="Расчитать" class="p-button-success p-button-lg" (click)="calculateForecastingStrategy()" [disabled]="!stepThree.forecastingStrategy"></button>
+          <button pButton pRipple type="button" label="Расчитать" class="p-button-success p-button-lg" (click)="calculateForecastingStrategyAll()"></button>
         </div>
         <div>
           <button pButton pRipple type="button" label="Увязать " class="p-button-success" (click)="correlation()" [disabled]="disableCorrelation" style="margin-right: 10px"></button>

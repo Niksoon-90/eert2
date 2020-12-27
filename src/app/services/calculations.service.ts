@@ -65,12 +65,18 @@ export class CalculationsService {
   getCalculationAverageIncreasing(id: number, idHorizonforecast: number, forecastName: string): Observable<IShipment[]> {
     return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/average/increasing/${id}?calcYearsNumber=${idHorizonforecast}&forecastName=${forecastName}`)
   }
-  getCorrelation(idHorizonforecast: number, forecastType: string): Observable<IShipment[]>{
-    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correlation/${idHorizonforecast}?forecastType=${forecastType}`)
+  getCorrelation(sessionId: number): Observable<IShipment[]>{
+    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correlation/${sessionId}`)
   }
   getPerspective(urlPerspective: string): Observable<IShipment[]>{
     return this.http.get<IShipment[]>(this.urlCalc + urlPerspective)
-
+  }
+  getGeneralmethod(sessionId: number, idHorizonforecast: number, forecastName: string, sustainable: string, small: string): Observable<IShipment[]>{
+    let sustainableType = new HttpParams()
+    let smallType = new HttpParams()
+    sustainableType = sustainableType.append('primaryForecastType',sustainable)
+    smallType = smallType.append('secondaryForecastType', small)
+    return this.http.get<IShipment[]>( this.urlCalc + `api/calc/correspondence/general/${sessionId}?calcYearsNumber=${idHorizonforecast}&forecastName=${forecastName}&${sustainableType}&${smallType}`)
   }
   //TODO 4
   getOil(): Observable<MonoCargoSystemsModel[]>{
@@ -151,8 +157,9 @@ export class CalculationsService {
     return this.http.get<ICargoOwnerInfluenceFactor[]>(this.urlCalc + `api/cargo/factor/all`)
   }
   getAllFactorCargoId(cargoOwnerId: number): Observable<ICargoOwnerInfluenceFactor[]>{
-    return this.http.get<ICargoOwnerInfluenceFactor[]>(this.urlCalc + `api/cargo/factor/all`)
+    return this.http.get<ICargoOwnerInfluenceFactor[]>(this.urlCalc + `api/cargo/factor/all/${cargoOwnerId}`)
   }
+
   //TODO 8
   getCargoOwnerSessionId(cargoOwnerSessionId: number, historicalDataSessionId: number): Observable<IShipment[]>{
     return  this.http.get<IShipment[]>(this.urlCalc + `api/calc/claims/?cargoOwnerSessionId=${cargoOwnerSessionId}&historicalDataSessionId=${historicalDataSessionId}`)

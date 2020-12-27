@@ -2,8 +2,11 @@
   <p-card>
   <ng-template pTemplate="title">
     Математический прогноз с учетом макропоказателей
+    <h5>*Для учета макропоказателея кликните мышкой на строчку в таблице*</h5>
   </ng-template>
+
   <ng-template pTemplate="body">
+
         <div class="card">
           <ng-template #Loader>
             <div class="p-d-flex p-jc-center" style="height: 40vh">
@@ -13,6 +16,7 @@
             </div>
           </ng-template>
           <ng-container *ngIf="macroPokList; else Loader">
+
             <p-table #dtMacro [value]="macroPokList" [scrollable]="true"
                      scrollHeight="30vh" dataKey="id"
                      styleClass="p-datatable-sm p-datatable-gridlines"

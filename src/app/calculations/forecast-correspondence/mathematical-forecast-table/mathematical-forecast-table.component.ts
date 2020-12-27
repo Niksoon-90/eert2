@@ -58,6 +58,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.totalRecords = this.mathematicalForecastTable.length;
+    this.massSummYears(this.mathematicalForecastTable)
   }
   ngOnInit(): void {
     if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){

@@ -8,6 +8,7 @@
   </div>
 </ng-container>
 <div class="card" *ngIf="cargoNci; else Loader">
+
  <p-table #dt
     [style]="{width:'auto'}"
     [columns]="cols"
@@ -26,6 +27,7 @@
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
           <col style="width:120px" >
           <col style="width:90px" >
+          <col style="width:130px" >
         </ng-container>
       </colgroup>
     </ng-template>
@@ -38,16 +40,24 @@
           <th pResizableColumn >Действия</th>
         </ng-container>
         <th pResizableColumn>Синонимы</th>
+        <th pResizableColumn>Фактор влияния</th>
       </tr>
       <tr>
         <th *ngFor="let col of columns;" >
           <input pInputText type="text"  (input)="dt.filter($event.target.value, col['field'], 'contains')" class="p-column-filter">
         </th>
+        <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
+          <th>
+          </th>
+          <th style="text-align: center">
+            <p-button (click)="showPositionDialog('top-left')" icon="pi pi-upload" pTooltip="Загрузить синонимы из файла" styleClass="p-button-warning"></p-button>
+          </th>
+        </ng-container>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
       <tr [pEditableRow]="rowData">
-        <td pEditableColumn *ngFor="let col of this.cols;">
+        <td *ngFor="let col of this.cols;">
           <p-cellEditor *ngIf="!col.isStatic;else staticTemplate">
             <ng-template pTemplate="input">
               <input pInputText type="text" [(ngModel)]="rowData[col.field]">
@@ -69,14 +79,17 @@
           </td>
         </ng-container>
         <td style="text-align: center">
-          <button pButton pRipple type="button" (click)="showMaximizableDialog(rowData.id, rowData.name)" icon="pi pi-user-edit" class="p-button-rounded p-button-success p-button-text"></button>
+          <button pButton pRipple type="button" (click)="showMaximizableDialog(rowData.id, rowData.name)" pTooltip="Просмотреть все синонимы" icon="pi pi-user-edit" class="p-button-rounded p-button-success p-button-text"></button>
+        </td>
+        <td style="text-align: center">
+          <button pButton pRipple type="button" (click)="factor(rowData.id)" pTooltip="Просмотреть все синонимы" icon="pi pi-user-edit" class="p-button-rounded p-button-success p-button-text"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
 <ng-template #Loader>
-  <div class="p-d-flex p-jc-center" style="height: 80vh">
+  <div class="p-d-flex p-jc-center" style="height: 30vh">
     <div class="p-grid p-ai-center vertical-container ">
       <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
     </div>
@@ -101,6 +114,19 @@
       </app-synonym>
     <ng-template pTemplate="footer">
       <p-button icon="pi pi-check" (click)="closeModal()" label="Закрыть" styleClass="p-button-text"></p-button>
+    </ng-template>
+  </p-dialog>
+</ng-container>
+<ng-container *ngIf="this.uploadFileNsi">
+  <p-dialog header="Загрузка синонимов из файла" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}" [baseZIndex]="10000"
+            [draggable]="false" [resizable]="false">
+    <app-upload-file
+    [nsi]="this.uploadFileNsi"
+    (updateSynonym)="updateCargoNci($event)"
+    >
+    </app-upload-file>
+    <ng-template pTemplate="footer">
+      <p-button icon="pi pi-check" (click)="closeModalUpload()" label="Закрыть" styleClass="p-button-text"></p-button>
     </ng-template>
   </p-dialog>
 </ng-container>

@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
 import {ICargoNci, ICargoOwnerInfluenceFactor, IInfluenceNci} from "../../models/calculations.model";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
+import {MathForecastCalcService} from "../../services/math-forecast-calc.service";
 
 @Component({
   selector: 'app-cargo-owner-influence-factor',
@@ -12,23 +13,32 @@ import {IAuthModel} from "../../models/auth.model";
   styleUrls: ['./cargo-owner-influence-factor.component.scss']
 })
 export class CargoOwnerInfluenceFactorComponent implements OnInit {
+
   cargoOwnerInfluenceFactor: ICargoOwnerInfluenceFactor[];
   cols: any[];
   form: FormGroup;
   cargoNci:ICargoNci[];
   influenceNci: IInfluenceNci[];
   user: IAuthModel
+  loading: boolean = false
 
   constructor(
     private calculationsService: CalculationsService,
     private modalService: ModalService,
-    public authenticationService: AuthenticationService
+    public authenticationService: AuthenticationService,
+    private mathForecastCalcService: MathForecastCalcService
   ) {
     this.user = this.authenticationService.userValue;
   }
 
   ngOnInit(): void {
-    this.getAllCargoOwnerInfluenceFactor();
+    this.mathForecastCalcService.getValue()
+      .subscribe (
+        res => {
+        if(res.length !== 0){
+          this.cargoOwnerInfluenceFactor = res
+      }
+    })
     this.getCargoNci();
     this.createForm();
     this.getInfluenceNci();
@@ -54,14 +64,17 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
   }
   getInfluenceNci(){
     this.calculationsService.getInfluenceNci().subscribe(
-      res => {this.influenceNci = res; console.log('1', res)},
+      res => {this.influenceNci = res;},
       error => this.modalService.open(error.error.message),
     )
   }
   getAllCargoOwnerInfluenceFactor(){
+    this.loading = true;
     this.calculationsService.getAllCargoOwnerInfluenceFactor().subscribe(
-      res => {this.cargoOwnerInfluenceFactor = res; console.log(res)},
-      error => this.modalService.open(error.error.message)
+      res => {
+        this.mathForecastCalcService.setValue(res); console.log(res)},
+      error => this.modalService.open(error.error.message),
+      () => this.loading = false
     )
   }
 
@@ -102,5 +115,9 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
       error => this.modalService.open(error.error.message),
       () => this.getAllCargoOwnerInfluenceFactor()
     )
+  }
+
+  downAll() {
+    this.getAllCargoOwnerInfluenceFactor();
   }
 }
