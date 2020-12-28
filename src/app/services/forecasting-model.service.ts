@@ -34,9 +34,6 @@ export class ForecastingModelService {
     }
   };
 
-  private paymentComplete = new Subject<any>();
-
-  paymentComplete$ = this.paymentComplete.asObservable();
 
   getTicketInformation() {
     return this.ticketInformation;
@@ -46,7 +43,4 @@ export class ForecastingModelService {
     this.ticketInformation = ticketInformation;
   }
 
-  complete() {
-    this.paymentComplete.next(this.ticketInformation.stepOne);
-  }
 }

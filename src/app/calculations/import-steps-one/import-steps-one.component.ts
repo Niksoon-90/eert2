@@ -10,6 +10,8 @@ import {MonoCargoSystemsModel} from "../../models/mono-cargo-systems.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
 import {map} from "rxjs/operators";
+import {IStepInfoModel} from "../../models/stepInfo.model";
+import {StepInfoService} from "../../services/step-info.service";
 
 
 @Component({
@@ -23,13 +25,13 @@ export class ImportStepsOneComponent implements OnInit {
   cargoSessionSender: any[]
   cargoSessionReceiver: any[]
   horizonforecast: IHorizonforecast[];
+
   scenarioMacro = [
     {id: 1, name: 'Пессимистичное значение', type: 'PESSIMISTIC'},
     {id: 2, name: 'Базовое значение', type: 'BASE'},
     {id: 3, name: 'Оптимистичное значение', type: 'OPTIMISTIC'}
   ]
   stepOne: any;
-
   oilCargo: MonoCargoSystemsModel[];
   ore: MonoCargoSystemsModel[];
   metallurgy: MonoCargoSystemsModel[];
@@ -41,7 +43,8 @@ export class ImportStepsOneComponent implements OnInit {
     private router: Router,
     private modalService: ModalService,
     private calculationsService: CalculationsService,
-    public authenticationService: AuthenticationService
+    public authenticationService: AuthenticationService,
+    private stepInfoService: StepInfoService
   ) {
     this.user = this.authenticationService.userValue;
     if( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null){
@@ -193,6 +196,7 @@ export class ImportStepsOneComponent implements OnInit {
   }
 
   nextPage() {
+    this.stepsInfo();
     console.log('this.stepOne.Session', this.stepOne.Session)
     if(this.stepOne.Session !== null){
       this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
@@ -211,6 +215,21 @@ export class ImportStepsOneComponent implements OnInit {
     }else{
       this.postCreateEmptySession();
     }
+  }
+  stepsInfo(){
+    const stepInfo: IStepInfoModel = {
+      calculationName: this.stepOne.nameNewShip === '' ? 'не выбран' : this.stepOne.nameNewShip,
+      sessionName: this.stepOne.Session === null ? 'не выбран' : this.stepOne.Session.name,
+      scenarioEconomy: this.stepOne.scenarioMacro === null ? 'не выбран' : this.stepOne.scenarioMacro['name'],
+      horizont: this.stepOne.calcYearsNumber === null ? 'не выбран' : this.stepOne.calcYearsNumber['name'],
+      shippersCargo: this.stepOne.cargoSessionSender === null ? 'не выбран' : this.stepOne.cargoSessionSender['name'],
+      shippersConsignee: this.stepOne.cargoSessionReceiver === null ? 'не выбран' : this.stepOne.cargoSessionReceiver['name'],
+      correspondence: this.stepOne.correspondenceSession === null ? 'не выбран' : this.stepOne.correspondenceSession['name'],
+      oilName: this.stepOne.oilCargo === null ? 'не выбран' : this.stepOne.oilCargo['title'],
+      oreName: this.stepOne.ore === null ? 'не выбран' : this.stepOne.ore['title'],
+      metallurgyName: this.stepOne.metallurgy === null ? 'не выбран' : this.stepOne.metallurgy['title']
+    }
+    this.stepInfoService.setValue(stepInfo);
   }
 
 }

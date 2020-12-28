@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {MenuItem} from "primeng/api";
+import {StepInfoService} from "../../services/step-info.service";
+import {IStepInfoModel} from "../../models/stepInfo.model";
 
 @Component({
   selector: 'app-steps',
@@ -8,18 +10,29 @@ import {MenuItem} from "primeng/api";
 })
 export class StepsComponent implements OnInit {
   forecastingModel: MenuItem[];
-  forecastingModelIndex: 0;
+  stepInfos: IStepInfoModel
+  displayPosition: boolean;
+  position: string;
 
-  constructor() { }
+  constructor(
+    private stepInfoService: StepInfoService
+  ) { }
 
   ngOnInit() {
+    this.stepInfoService.getValue().subscribe (
+      res => {
+          this.stepInfos = res
+      })
     this.forecastingModel = [
       {label: 'Шаг 1', routerLink: 'import'},
       {label: 'Шаг 2', routerLink: 'mathForecast'},
       {label: 'Шаг 3', routerLink: 'forecast'},
       {label: 'Шаг 4', routerLink: 'payment'},
-      // {label: 'Шаг 5', routerLink: 'summVolumes'},
-      //{label: 'Шаг 5', routerLink: 'export'},
     ];
+  }
+
+  showPositionDialog(position: string) {
+    this.position = position;
+    this.displayPosition = true;
   }
 }

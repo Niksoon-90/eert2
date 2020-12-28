@@ -3,8 +3,81 @@
 </div>
 <div class="card">
   <p-steps [model]="forecastingModel" ></p-steps>
+  <div style="text-align: right">
+    <p-button (click)="showPositionDialog('top-right')"  label="Параметры" class="p-button-secondary"></p-button>
+  </div>
+
 </div>
 <router-outlet></router-outlet>
-<div class="stepsdemo-content">
-</div>
-<!--[readonly]="false" [(activeIndex)]="forecastingModelIndex"-->
+<p-dialog  [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '25rem'}" [baseZIndex]="10000"
+           [draggable]="false" [resizable]="false">
+
+<ng-container *ngIf="this.stepInfos">
+  <div class="p-d-flex p-flex-column">
+    <div class="p-mb-2">
+      <ng-container *ngIf="this.stepInfos.calculationName">
+        <h4>Наименование расчета</h4>
+        <div>{{this.stepInfos['calculationName']}}</div>
+      </ng-container>
+    </div>
+    <div class="p-mb-2">
+      <ng-container *ngIf="this.stepInfos.sessionName">
+        <h4>Исходные данные</h4>
+        <div>{{this.stepInfos['sessionName']}} </div>
+      </ng-container>
+    </div>
+    <div>
+      <ng-container *ngIf="this.stepInfos.scenarioEconomy">
+        <h4>Сценарий развития экономики</h4>
+        <div>{{this.stepInfos['scenarioEconomy']}}</div>
+      </ng-container>
+    </div>
+    <div>
+      <ng-container *ngIf="this.stepInfos.horizont">
+        <h4>Горизонт прогноза (лет)</h4>
+        <div>{{this.stepInfos['horizont']}} </div>
+      </ng-container>
+    </div>
+    <div>
+      <ng-container *ngIf="this.stepInfos.shippersCargo">
+        <h4>Файл с заявками грузоотправителей</h4>
+        <div>{{this.stepInfos['shippersCargo']}}</div>
+      </ng-container>
+    </div>
+    <div>
+      <ng-container *ngIf="this.stepInfos.shippersConsignee">
+        <h4>Файл с заявками грузополучателей</h4>
+        <div>{{this.stepInfos['shippersСonsignee']}}</div>
+      </ng-container>
+    </div>
+    <div>
+      <ng-container *ngIf="this.stepInfos.correspondence">
+        <h4>Файл с перспективными корреспонденциями</h4>
+        <div>{{this.stepInfos['correspondence']}}</div>
+      </ng-container>
+    </div>
+    <div>
+      <ng-container *ngIf="this.stepInfos.oilName">
+        <h4>Перспективые корреспонденции система "Нефтегрузы"</h4>
+        <div>{{this.stepInfos['oilName']}}</div>
+      </ng-container>
+    </div>
+    <div>
+      <ng-container *ngIf="this.stepInfos.oreName">
+        <h4>Перспективые корреспонденции система "Руда"</h4>
+        <div>{{this.stepInfos['oreName']}}</div>
+      </ng-container>
+    </div>
+    <div>
+      <ng-container *ngIf="this.stepInfos.metallurgyName">
+        <h4>Перспективые корреспонденции система "Металлургия"</h4>
+        <div>{{this.stepInfos['metallurgyName']}}</div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-check" (click)="displayPosition=false" label="Закрыть" styleClass="p-button-text"></p-button>
+  </ng-template>
+</p-dialog>
+
