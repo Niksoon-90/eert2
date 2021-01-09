@@ -41,9 +41,7 @@ export class CalculationsService {
     for (const actor of paramsMacroIndex) {
       params = params.append('macroIndexesIds', actor);
     }
-    console.log(params.toString());
     paramsMacroIndex.length === 0 ? Url = this.urlCalc + `api/calc/regression/multiple/${id}?calcYearsNumber=${idHorizonforecast}&macroScenarioType=${type}` : Url = this.urlCalc + `api/calc/regression/multiple/${id}?calcYearsNumber=${idHorizonforecast}&${params}&macroScenarioType=${type}`
-    console.log(Url)
     return this.http.get<ICalculatingPredictiveRegression[]>(Url)
   }
   getCalculationSimple(id: number, idHorizonforecast: number, forecastName: string): Observable<IShipment[]> {

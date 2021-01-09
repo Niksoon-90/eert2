@@ -1,4 +1,4 @@
-import {Component,  OnInit, } from '@angular/core';
+import {Component, OnDestroy, OnInit,} from '@angular/core';
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ISession, IShipment, IShipmentPagination} from "../../../models/shipmenst.model";
 
@@ -6,6 +6,7 @@ import {ModalService} from "../../../services/modal.service";
 import {IAuthModel} from "../../../models/auth.model";
 import {AuthenticationService} from "../../../services/authentication.service";
 import {map} from "rxjs/operators";
+import {Subscription} from "rxjs";
 
 
 @Component({
@@ -13,12 +14,13 @@ import {map} from "rxjs/operators";
   templateUrl: './data-shipments.component.html',
   styleUrls: ['./data-shipments.component.scss']
 })
-export class DataShipmentsComponent implements OnInit {
+export class DataShipmentsComponent implements OnInit, OnDestroy {
 
   shipmentsSession: ISession[];
   customers: any[];
-  mathematicalForecastTable: IShipment[];
-  // mathematicalForecastTable2: IShipmentPagination;
+ // mathematicalForecastTable: IShipment[];
+  mathematicalForecastTable: IShipmentPagination;
+  sub: Subscription
 
   loading: boolean = true;
   first = 0;
@@ -38,14 +40,11 @@ export class DataShipmentsComponent implements OnInit {
   ngOnInit(): void {
     this.getShipmentsSession();
   }
-
-  next() {
-    this.first = this.first + this.rows;
+  ngOnDestroy() {
+    this.sub.unsubscribe()
   }
 
-  prev() {
-    this.first = this.first - this.rows;
-  }
+
 
   reset() {
     this.first = 0;
@@ -116,24 +115,12 @@ export class DataShipmentsComponent implements OnInit {
   openShipItemSession(id: number) {
     this.sessionId = id
     this.loading = true
-    // this.shipmentsService.getShipmetsPaginations(id, 1).subscribe(
-    //   res => {
-    //     console.log(res),
-    //       this.mathematicalForecastTable2 = res
-    //       this.mathematicalForecastTable = this.mathematicalForecastTable2.content
-    //       this.showDialog();
-    //   },
-    //       error => {
-    //         this.modalService.open(error.error.message);
-    //         this.loading = false;
-    //       },
-    //   () => console.log('sdsds')
-    // )
-    this.shipmentsService.getShipments(id).subscribe(
+    this.sub = this.shipmentsService.getShipmetsPaginations(id, 1).subscribe(
       res => {
-        this.mathematicalForecastTable = res;
-        this.showDialog();
-        },
+        console.log(res),
+          this.mathematicalForecastTable = res
+          this.showDialog();
+      },
           error => {
             this.modalService.open(error.error.message);
             this.loading = false;
@@ -157,5 +144,13 @@ export class DataShipmentsComponent implements OnInit {
 
   updateRowTable(id: number) {
     this.openShipItemSession(id)
+  }
+
+  next() {
+    this.first = this.first + this.rows;
+  }
+
+  prev() {
+    this.first = this.first - this.rows;
   }
 }

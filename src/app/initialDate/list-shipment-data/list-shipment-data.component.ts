@@ -87,7 +87,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
 
 
   ngOnChanges() {
-
     this.massSummYears(this.mathematicalForecastTable)
   }
 

@@ -1,1 +1,74 @@
+<div class="card" *ngIf="mathematicalForecastContent;">
+  <p-dialog header="Загруженные данные"
+            [(visible)]="dialogVisible"
+            [style]="{width: '50vw'}"
+            [baseZIndex]="1"
+            [maximizable]="true"
+            [modal]="false"
+            [resizable]="true"
+            [contentStyle]="{height: '50vh'}"
+            [closeOnEscape]="false"
+            [closable]="false" >
+    <p-table
+      [value]="mathematicalForecastContent"
+      [lazy]="true"
+      [columns]="cols"
+      (onLazyLoad)="loadCustomers($event)"
+      [paginator]="true"
+      [rows]="50"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      [scrollable]="true"
+      scrollHeight="auto"
+      [style]="{width:'auto'}"
+      dataKey="id"
+      [resizableColumns]="true"
+      editMode="row"
+      columnResizeMode="expand"
+      styleClass="p-datatable-sm p-datatable-gridlines"
+    >
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+          <col *ngFor="let col of columns" [style.width]="col.width" >
+          <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+            <col style="width:80px" >
+          </ng-container>
+        </colgroup>
+      </ng-template>
 
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field"> <p-sortIcon [field]="col.field"></p-sortIcon>
+            {{col.header}}
+          </th>
+          <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+            <th pResizableColumn>Действия</th>
+          </ng-container>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+        <tr [pEditableRow]="rowData">
+          <td  *ngFor="let col of this.cols; let idx = index">
+            <p-cellEditor>
+              <ng-template pTemplate="output" >
+                <div>
+                  {{rowData[col.field]}}
+                </div>
+              </ng-template>
+            </p-cellEditor>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+
+
+    <ng-template pTemplate="footer">
+      <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+        <p-button (click)="showModalDialog()" icon="pi pi-external-link" label="Добавить строку"></p-button>
+      </ng-container>
+      <button type="button" pButton pRipple icon="pi pi-times" (click)="closeModalTable()" label="Закрыть" class="p-button-text"></button>
+    </ng-template>
+  </p-dialog>
+</div>

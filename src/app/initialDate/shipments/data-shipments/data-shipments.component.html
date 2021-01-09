@@ -60,16 +60,26 @@
   </div>
 </ng-template>
 <ng-container *ngIf="mathematicalForecastTable">
-  <app-list-chipment-data
-  [dialogVisible]="this.dialogVisible"
-  [mathematicalForecastTable]="this.mathematicalForecastTable"
-  [loading]="this.loading"
-  (change)="loadingChange($event)"
-  (changes)="CloseModalChange($event)"
-  [carrgoTypes] = "null"
-  (changesNewRow)="updateRowTable($event)"
-  [sessionId]="this.sessionId"
->
-</app-list-chipment-data>
+<!--  <app-list-chipment-data-->
+<!--  [dialogVisible]="this.dialogVisible"-->
+<!--  [mathematicalForecastTable]="this.mathematicalForecastTable"-->
+<!--  [loading]="this.loading"-->
+<!--  (change)="loadingChange($event)"-->
+<!--  (changes)="CloseModalChange($event)"-->
+<!--  [carrgoTypes] = "null"-->
+<!--  (changesNewRow)="updateRowTable($event)"-->
+<!--  [sessionId]="this.sessionId"-->
+<!--&gt;-->
+<!--</app-list-chipment-data>-->
+
+  <app-list-shipment
+    [sessionId]="this.sessionId"
+    [mathematicalForecastTable]="this.mathematicalForecastTable"
+    [dialogVisible]="this.dialogVisible"
+    [loading]="this.loading"
+    (change)="loadingChange($event)"
+    (changes)="CloseModalChange($event)"
+
+  ></app-list-shipment>
 </ng-container>
 

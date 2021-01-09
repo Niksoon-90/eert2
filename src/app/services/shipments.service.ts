@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {Observable} from 'rxjs';
 import {ISession, IShipment, IShipmentPagination, ISynonym} from '../models/shipmenst.model';
@@ -51,8 +51,12 @@ export class ShipmentsService {
   getShipments(id: number): Observable<IShipment[]> {
     return this.http.get<IShipment[]>(this.url + `api/file/shipments?sessionId=${id}`)
   }
-  getShipmetsPaginations(sessionId: number, page: number, size: number = 50): Observable<IShipmentPagination>{
-    return this.http.get<IShipmentPagination>(this.url + `api/file/pages/shipments?page=${page}&sessionId=${sessionId}&size=${size}`)
+  getShipmetsPaginations(sessionId: number, page: number, size: number = 50, sortColumn?: string, sortOrder?: string): Observable<IShipmentPagination>{
+    let sort = new HttpParams()
+    sort = sort.append('sort',sortColumn+',asc')
+
+    console.log(this.url + `api/file/pages/shipments?page=${page}&sessionId=${sessionId}&size=${size}&${sort}`)
+    return this.http.get<IShipmentPagination>(this.url + `api/file/pages/shipments?page=${page}&sessionId=${sessionId}&size=${size}&${sort}`)
   }
 
   getMacroPok(): Observable<IMacroPokModel[]> {
