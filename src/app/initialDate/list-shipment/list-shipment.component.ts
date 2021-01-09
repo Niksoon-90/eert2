@@ -31,7 +31,9 @@ export class ListShipmentComponent implements OnInit, OnDestroy {
   cols: any[];
   columsYears: number= 0;
   sub: Subscription
+  loadingTable: boolean
 
+  primary2 = [ { label: 'Да', value: true },{ label: 'Нет', value: false }]
   displayModal: boolean = false
   user: IAuthModel
 
@@ -87,27 +89,67 @@ export class ListShipmentComponent implements OnInit, OnDestroy {
   }
 
   loadCustomers(event: LazyLoadEvent) {
+    this.loadingTable = true
     //event.sortField = Field name to sort with
     //event.sortOrder = Sort order as number, 1 for asc and -1 for dec
+    console.log(event)
     console.log('сортировка по полю: ' ,event.sortField)
     let currentPage = event.first / event.rows + 1;
-
     if(event.sortField){
       let sortOrder = ''
-      event.sortOrder === 1 ?  sortOrder = 'asc' : sortOrder = 'dec'
-      this.sub = this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, 50,event.sortField, sortOrder).subscribe(
+      event.sortOrder === 1 ?  sortOrder = 'asc' : sortOrder = 'desc'
+      this.sub = this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows ,event.sortField, sortOrder).subscribe(
         res => {
-          this.mathematicalForecastContent = res.content,
-            this.totalRecords = res.totalElements
-        }
+          console.log(res)
+          this.mathematicalForecastContent = res.content
+          this.totalRecords = res.totalElements
+        },
+        error => this.modalService.open(error.error.message),
+        () => this.loadingTable = false
       )
     } else {
-      this.sub = this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage).subscribe(
+      this.sub = this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows).subscribe(
         res => {
-          this.mathematicalForecastContent = res.content,
-            this.totalRecords = res.totalElements
-        }
+          console.log(res)
+          this.mathematicalForecastContent = res.content
+          this.totalRecords = res.totalElements
+
+        },
+        error => this.modalService.open(error.error.message),
+        () => this.loadingTable = false
       )
     }
+  }
+
+  colorYears(rowData, col: any) {
+    const mass = col['field'].toString().split('.');
+    return rowData.shipmentYearValuePairs[mass[1]].calculated === true ?  true :  false
+  }
+
+  editColumn(row: any, col: any, $event: any) {
+    if(col['keyS'] === true){
+      const mass = col['field'].toString().split('.');
+      console.log(row.shipmentYearValuePairs[mass[1]])
+      console.log([mass[1]])
+      row.shipmentYearValuePairs[mass[1]].value = Number($event);
+    }else{
+      const item = col['field'];
+      row[item] = $event
+    }
+  }
+  onRowEditInit(rowData) {
+    console.log(rowData)
+  }
+
+  onRowEditSave(rowData) {
+    console.log(rowData)
+    this.shipmentsService.putShipments(rowData).subscribe(
+      res => (console.log('god')),
+      error => this.modalService.open(error.error.message)
+    )
+  }
+
+  onRowEditCancel() {
+
   }
 }

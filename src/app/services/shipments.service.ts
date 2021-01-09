@@ -52,11 +52,11 @@ export class ShipmentsService {
     return this.http.get<IShipment[]>(this.url + `api/file/shipments?sessionId=${id}`)
   }
   getShipmetsPaginations(sessionId: number, page: number, size: number = 50, sortColumn?: string, sortOrder?: string): Observable<IShipmentPagination>{
-    let sort = new HttpParams()
-    sort = sort.append('sort',sortColumn+',asc')
-
-    console.log(this.url + `api/file/pages/shipments?page=${page}&sessionId=${sessionId}&size=${size}&${sort}`)
-    return this.http.get<IShipmentPagination>(this.url + `api/file/pages/shipments?page=${page}&sessionId=${sessionId}&size=${size}&${sort}`)
+    let params  = new HttpParams()
+    if(sortColumn){
+      params  = params.set('sort', sortColumn+','+sortOrder);
+    }
+    return this.http.get<IShipmentPagination>(this.url + `api/file/pages/shipments?page=${page}&sessionId=${sessionId}&size=${size}`, {params})
   }
 
   getMacroPok(): Observable<IMacroPokModel[]> {
