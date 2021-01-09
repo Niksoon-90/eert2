@@ -31,14 +31,23 @@ import {IShipment} from "../../models/shipmenst.model";
   styleUrls: ['./list-shipment-data.component.scss']
 })
 export class ListShipmentDataComponent implements OnInit, OnChanges {
+
   @ViewChild('dt') table: Table;
+
   @Input() carrgoTypes;
+
   @Input() dialogVisible;
+
   @Input() sessionId;
+
   @Input() mathematicalForecastTable;
+
   @Input() loading;
+
   @Output() change: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   @Output() changes: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   @Output() changesNewRow: EventEmitter<number> = new EventEmitter<number>();
 
   columsYears: number= 0;
@@ -78,11 +87,12 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
 
 
   ngOnChanges() {
-    this.totalRecords = this.mathematicalForecastTable.length;
+
     this.massSummYears(this.mathematicalForecastTable)
   }
 
   ngOnInit(): void {
+    this.totalRecords = this.mathematicalForecastTable.length;
     this.formApi();
     this.test();
     if(this.mathematicalForecastTable[0].shipmentYearValuePairs.length > 0){this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length}
@@ -399,5 +409,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
       this.modalService.open(`В справочнике нет станции с признаком Дорога: ${this.dynamicForm.controls.toRoad.value.name}`)
     }
   }
+
 }
 

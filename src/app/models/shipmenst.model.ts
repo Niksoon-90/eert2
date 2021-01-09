@@ -38,6 +38,32 @@ interface IShipmentYearValuePairs {
   shipment?: number,
   calculated?: boolean
 }
+export interface IShipmentPagination {
+  content: IShipment[]
+  empty: boolean
+  first: boolean
+  last: boolean
+  number: number
+  numberOfElements: number
+  pageable: IPageable
+  size: number
+  sort: ISort
+  totalElements: number
+  totalPages: number
+}
+interface IPageable {
+  offset: number
+  pageNumber: number
+  pageSize: number
+  paged: boolean
+  sort: ISort
+  unpaged: boolean
+}
+interface ISort {
+  sorted: boolean,
+  unsorted: boolean,
+  empty: boolean
+}
 
 export interface ISynonym{
   cargoOwnerId?: number,

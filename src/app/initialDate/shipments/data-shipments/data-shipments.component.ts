@@ -1,6 +1,6 @@
 import {Component,  OnInit, } from '@angular/core';
 import {ShipmentsService} from "../../../services/shipments.service";
-import {ISession, IShipment} from "../../../models/shipmenst.model";
+import {ISession, IShipment, IShipmentPagination} from "../../../models/shipmenst.model";
 
 import {ModalService} from "../../../services/modal.service";
 import {IAuthModel} from "../../../models/auth.model";
@@ -18,6 +18,8 @@ export class DataShipmentsComponent implements OnInit {
   shipmentsSession: ISession[];
   customers: any[];
   mathematicalForecastTable: IShipment[];
+  // mathematicalForecastTable2: IShipmentPagination;
+
   loading: boolean = true;
   first = 0;
   rows = 25;
@@ -114,6 +116,19 @@ export class DataShipmentsComponent implements OnInit {
   openShipItemSession(id: number) {
     this.sessionId = id
     this.loading = true
+    // this.shipmentsService.getShipmetsPaginations(id, 1).subscribe(
+    //   res => {
+    //     console.log(res),
+    //       this.mathematicalForecastTable2 = res
+    //       this.mathematicalForecastTable = this.mathematicalForecastTable2.content
+    //       this.showDialog();
+    //   },
+    //       error => {
+    //         this.modalService.open(error.error.message);
+    //         this.loading = false;
+    //       },
+    //   () => console.log('sdsds')
+    // )
     this.shipmentsService.getShipments(id).subscribe(
       res => {
         this.mathematicalForecastTable = res;

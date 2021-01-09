@@ -68,6 +68,7 @@ import { DataMacroPokComponent } from './initialDate/macro-pok/data-macro-pok/da
 import { SynonymComponent } from './directory/cargo-nci/synonym/synonym.component';
 import {FileUploadModule} from "primeng/fileupload";
 import {AccordionModule} from "primeng/accordion";
+import { ListShipmentComponent } from './initialDate/list-shipment/list-shipment.component';
 
 
 const itemRoutesShipments: Routes = [
@@ -157,6 +158,7 @@ registerLocaleData(localeRu, 'ru');
     StationNsiComponent,
     DataMacroPokComponent,
     SynonymComponent,
+    ListShipmentComponent,
   ],
     imports: [
         BrowserModule,
