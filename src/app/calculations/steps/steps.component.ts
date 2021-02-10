@@ -32,6 +32,7 @@ export class StepsComponent implements OnInit {
   }
 
   showPositionDialog(position: string) {
+
     this.position = position;
     this.displayPosition = true;
   }

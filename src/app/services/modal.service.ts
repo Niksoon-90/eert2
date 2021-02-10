@@ -1,12 +1,15 @@
 import {Injectable} from '@angular/core';
-
 import {BehaviorSubject, Observable} from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ModalService {
   errorMessage: string;
+  confirmMessage: string
+
+
   private display: BehaviorSubject<'open' | 'close'> =
     new BehaviorSubject('close');
 
@@ -21,6 +24,8 @@ export class ModalService {
 
   close() {
     this.errorMessage = '';
+    this.confirmMessage = '';
+
     this.display.next('close');
   }
 }

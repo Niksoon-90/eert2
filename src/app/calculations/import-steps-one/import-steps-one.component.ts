@@ -196,6 +196,7 @@ export class ImportStepsOneComponent implements OnInit {
   }
 
   nextPage() {
+    console.log('this.stepOne.metallurgy', this.stepOne.metallurgy)
     this.stepsInfo();
     console.log('this.stepOne.Session', this.stepOne.Session)
     if(this.stepOne.Session !== null){

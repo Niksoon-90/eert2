@@ -14,8 +14,8 @@
         <col style="width:80px">
         <col>
         <col>
-<!--        <col>-->
-<!--        <col>-->
+        <col>
+        <col>
         <col>
         <col style="width:110px">
       </colgroup>
@@ -25,8 +25,8 @@
         <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
         <th pResizableColumn pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
         <th pResizableColumn pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
-<!--        <th pResizableColumn pSortableColumn="userLogin">Логин<p-sortIcon field="userLogin"></p-sortIcon></th>-->
-<!--        <th pResizableColumn pSortableColumn="userFio">ФИО<p-sortIcon field="userFio"></p-sortIcon></th>-->
+        <th pResizableColumn pSortableColumn="userLogin">Логин<p-sortIcon field="userLogin"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userFio">ФИО<p-sortIcon field="userFio"></p-sortIcon></th>
         <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
         <th> Действия</th>
       </tr>
@@ -36,18 +36,18 @@
         <td>{{itemShipmentsSession.id}}</td>
         <td>{{itemShipmentsSession.name}}</td>
         <td>{{itemShipmentsSession.historicalYears}}</td>
-<!--        <td>{{itemShipmentsSession.userLogin}}</td>-->
-<!--        <td>{{itemShipmentsSession.userFio}}</td>-->
+        <td>{{itemShipmentsSession.userLogin}}</td>
+        <td>{{itemShipmentsSession.userFio}}</td>
         <td>{{itemShipmentsSession.dateWrite | date:'full' }}</td>
         <td>
-          <button pButton pRipple icon="pi pi-arrow-circle-right"  class="p-button-rounded p-button-text p-button-plain" type="button"  pTooltip="Перейти" tooltipPosition="bottom"  (click)="openThreeStep(itemShipmentsSession.id, itemShipmentsSession.name, itemShipmentsSession.historicalYears, itemShipmentsSession.forecastConfirmed)"></button>
+          <button pButton pRipple icon="pi pi-arrow-circle-right"  class="p-button-rounded p-button-text p-button-plain" type="button"  pTooltip="Перейти" tooltipPosition="bottom"  (click)="openThreeStep(itemShipmentsSession.id, itemShipmentsSession.name, itemShipmentsSession.historicalYears, itemShipmentsSession.forecastConfirmed, itemShipmentsSession.firstRouteId, itemShipmentsSession.secondRouteId)"></button>
           <ng-container *ngIf="itemShipmentsSession.forecastConfirmed !== true">
             <ng-container *ngIf="this.user.authorities.includes('P_P_p11') === true">
               <button pButton pRipple icon="pi pi-star"  class="p-button-rounded p-button-warning p-button-text" type="button"  pTooltip="Утвердить" tooltipPosition="bottom"  (click)="confirmSession(itemShipmentsSession.id)"></button>
             </ng-container>
           </ng-container>
           <ng-container *ngIf="this.user.authorities.includes('P_P_p3') === true">
-            <button pButton pRipple icon="pi pi-times"  class="p-button-rounded p-button-danger p-button-text" type="button"  pTooltip="Удалить" tooltipPosition="bottom"  (click)="deletedThreeStep(itemShipmentsSession.id)"></button>
+            <button pButton pRipple icon="pi pi-times"  class="p-button-rounded p-button-danger p-button-text" type="button"  pTooltip="Удалить" tooltipPosition="bottom"  (click)="deletedThreeStep(itemShipmentsSession.id, itemShipmentsSession.name)"></button>
           </ng-container>
         </td>
       </tr>

@@ -379,7 +379,6 @@ export class ListShipmentDataComponent implements OnInit, OnChanges {
         this.clearForm(),
           this.changesNewRow.emit(this.sessionId);
       }
-
     )
   }
   clearForm() {

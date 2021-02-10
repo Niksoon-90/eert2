@@ -5,6 +5,8 @@ import {CalculationsService} from "../../services/calculations.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
+import {MathForecastCalcService} from "../../services/math-forecast-calc.service";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-influence-factor',
@@ -20,7 +22,8 @@ export class InfluenceFactorComponent implements OnInit {
   constructor(
     private modalService: ModalService,
     private calculationsService: CalculationsService,
-    public authenticationService: AuthenticationService
+    public authenticationService: AuthenticationService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -60,12 +63,19 @@ export class InfluenceFactorComponent implements OnInit {
     )
   }
 
-  deleteInfluenceNci(id: number) {
-    this.calculationsService.deleteInfluenceNci(id).subscribe(
-      res => console.log(),
-      error => this.modalService.open(error.error.message),
-      () => this.getInfluenceNci()
-    )
+  deleteInfluenceNci(id: number, name: string) {
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить фактор: ${name}?`,
+      header: 'Удаление фактора',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.calculationsService.deleteInfluenceNci(id).subscribe(
+          res => console.log(),
+          error => this.modalService.open(error.error.message),
+          () => this.getInfluenceNci()
+        )
+      }
+    });
   }
 
   onRowEditInit() {

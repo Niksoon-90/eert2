@@ -46,7 +46,7 @@
         </td>
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
           <td style="text-align:center">
-            <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" pTooltip="Удалить" (click)="deleteSynonymItem(rowData.id)" class="p-button-rounded p-button-text p-button-danger"></button>
+            <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" pTooltip="Удалить" (click)="deleteSynonymItem(rowData.id, rowData.name)" class="p-button-rounded p-button-text p-button-danger"></button>
           </td>
         </ng-container>
       </tr>

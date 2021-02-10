@@ -9,6 +9,7 @@ export class StepInfoService {
 
   private stepInfo: Subject<IStepInfoModel>;
 
+
   constructor() {
     this.stepInfo = new Subject<IStepInfoModel>();
   }
@@ -19,4 +20,5 @@ export class StepInfoService {
   setValue(newStepInfo): void {
     this.stepInfo.next(newStepInfo);
   }
+
 }

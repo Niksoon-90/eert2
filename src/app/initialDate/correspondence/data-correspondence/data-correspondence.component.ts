@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ModalService} from "../../../services/modal.service";
-import {ISession, IShipment} from "../../../models/shipmenst.model";
+import {ISession, IShipment, IShipmentPagination} from "../../../models/shipmenst.model";
 import {IAuthModel} from "../../../models/auth.model";
 import {AuthenticationService} from "../../../services/authentication.service";
 import {map} from "rxjs/operators";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-data-correspondence',
@@ -19,13 +20,14 @@ export class DataCorrespondenceComponent implements OnInit {
   loading: boolean = true;
   user: IAuthModel
   sessionId: number = 0
-  mathematicalForecastTable: IShipment[];
+  mathematicalForecastTable: IShipmentPagination;
   dialogVisible: boolean;
 
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -89,20 +91,20 @@ export class DataCorrespondenceComponent implements OnInit {
   openShipItemSession(id: any) {
     this.sessionId = id
     this.loading = true
-    this.shipmentsService.getShipments(id).subscribe(
-      res => this.mathematicalForecastTable = res,
+    this.shipmentsService.getShipmetsPaginations(id, 0).subscribe(
+      res => {
+        this.mathematicalForecastTable = res
+        this.showDialog();
+      },
       error => {
         this.modalService.open(error.error.message);
-        this.loading = false;
       },
-      () => {
-        this.showDialog();
-
-      }
+      () => console.log('sdsds')
     )
   }
+
   showDialog() {
-    this.dialogVisible === true? '' :this.dialogVisible = true;
+    this.dialogVisible === true? '' : this.dialogVisible = true;
     this.loading = false;
   }
   loadingChange(event) {
@@ -110,22 +112,27 @@ export class DataCorrespondenceComponent implements OnInit {
   }
 
   CloseModalChange(event: boolean) {
+    this.mathematicalForecastTable = null
     this.dialogVisible = event;
   }
 
-  removeShipSession(id: number) {
-    this.loading = true
-    this.shipmentsService.deleteShipSession(id).subscribe(
-      () =>  this.getCorrespondenceSession(),
-      error => {
-        this.modalService.open(error.error.message);
-        this.loading = false;
-      },
-      () => this.loading = false
-    )
+  removeShipSession(id: number, name: string) {
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить данные о перспективных корреспонденция: ${name}?`,
+      header: `Удалить ${name}?`,
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.loading = true
+        this.shipmentsService.deleteShipSession(id).subscribe(
+          () =>  this.getCorrespondenceSession(),
+          error => {
+            this.modalService.open(error.error.message);
+            this.loading = false;
+          },
+          () => this.loading = false
+        )
+      }
+    });
   }
 
-  updateRowTable(id: number) {
-    this.openShipItemSession(id)
-  }
 }

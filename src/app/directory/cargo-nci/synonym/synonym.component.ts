@@ -4,6 +4,7 @@ import {ModalService} from "../../../services/modal.service";
 import {ISynonym} from "../../../models/shipmenst.model";
 import {IAuthModel} from "../../../models/auth.model";
 import {AuthenticationService} from "../../../services/authentication.service";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-synonym',
@@ -22,7 +23,8 @@ export class SynonymComponent implements OnInit, OnChanges {
   constructor(
     public authenticationService: AuthenticationService,
     private shipmentsService: ShipmentsService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -51,12 +53,20 @@ export class SynonymComponent implements OnInit, OnChanges {
         }
     )
   }
-  deleteSynonymItem(cargoOwnerSynonymId: number){
-    this.shipmentsService.deletetSynonym(cargoOwnerSynonymId).subscribe(
-      res => console.log(),
-      error => this.modalService.open(error.error.message),
-      () => this.getSynonymAll(this.cargoOwnerId)
-    )
+  deleteSynonymItem(cargoOwnerSynonymId: number, name: string){
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить синоним: ${name}?`,
+      header: 'Удаление синонима',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.shipmentsService.deletetSynonym(cargoOwnerSynonymId).subscribe(
+          res => console.log(),
+          error => this.modalService.open(error.error.message),
+          () => this.getSynonymAll(this.cargoOwnerId)
+        )
+      }
+    });
+
   }
 
   createSysonym() {

@@ -1,29 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IDorogyNci, IStationNci, ISubjectNci} from "../../models/calculations.model";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ShipmentsService} from "../../services/shipments.service";
 import {ModalService} from "../../services/modal.service";
+import {ConfirmationService} from "primeng/api";
+import {Subscribable, Subscription} from "rxjs";
 
 @Component({
   selector: 'app-station',
   templateUrl: './station.component.html',
   styleUrls: ['./station.component.scss']
 })
-export class StationComponent implements OnInit {
+export class StationComponent implements OnInit, OnDestroy {
   user: IAuthModel
   cols: any
   stationNci: IStationNci[];
   form: FormGroup
   subjectNci: ISubjectNci[];
   dorogyNci: IDorogyNci[];
+  uploadFileNsi: string
+  displayPosition: boolean;
+  position: string;
 
+  delStationSub: Subscription
+  stationAllSub: Subscription
 
   constructor(
     public authenticationService: AuthenticationService,
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -34,13 +42,23 @@ export class StationComponent implements OnInit {
     this.getDorogyNci();
     this.createForm();
     this.cols = [
-      { field: 'subjectGvc', header: 'Субъект РФ', width: 'auto'},
-      { field: 'road', header: 'Дорога', width: 'auto'},
-      { field: 'name', header: 'Название станции ', width: 'auto'},
-      { field: 'code', header: 'Код станции', width: 'auto', isStatic :true}
+      {field: 'subjectGvc', header: 'Субъект РФ', width: 'auto'},
+      {field: 'road', header: 'Дорога', width: 'auto'},
+      {field: 'name', header: 'Название станции ', width: 'auto'},
+      {field: 'code', header: 'Код станции', width: 'auto', isStatic: true}
     ]
   }
-  createForm(){
+
+  ngOnDestroy() {
+    if (this.stationAllSub) {
+      this.stationAllSub.unsubscribe()
+    }
+    if (this.delStationSub) {
+      this.delStationSub.unsubscribe()
+    }
+  }
+
+  createForm() {
     this.form = new FormGroup({
       nameStation: new FormControl('', [Validators.required]),
       code: new FormControl('', [Validators.required]),
@@ -50,14 +68,16 @@ export class StationComponent implements OnInit {
   }
 
   getSubjectNci() {
-    this.shipmentsService.getSubject().subscribe(
-      res => this.subjectNci = res,
-      error => this.modalService.open(error.error.message)
-    )
+    this.shipmentsService.getSubject()
+      .subscribe(
+        res => this.subjectNci = res.sort((a, b) => a.name > b.name ? 1 : -1),
+        error => this.modalService.open(error.error.message)
+      )
   }
+
   getDorogyNci() {
     this.shipmentsService.getDictionaryDictionaryRailway().subscribe(
-      res =>  this.dorogyNci =res,
+      res => this.dorogyNci = res.sort((a, b) => a.name > b.name ? 1 : -1),
       error => this.modalService.open(error.error.message),
     )
   }
@@ -90,12 +110,20 @@ export class StationComponent implements OnInit {
 
   }
 
-  deleteItemCargoNci(id: any) {
-    this.shipmentsService.deleteDictionaryStation(id).subscribe(
-      res => console.log(),
-      error => this.modalService.open(error.error.message),
-      () => this.getStationNci()
-    )
+  deleteItemCargoNci(id: any, name: string) {
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить станцию: ${name}?`,
+      header: 'Удаление станции',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.delStationSub = this.shipmentsService.deleteDictionaryStation(id).subscribe(
+          () => {
+            this.stationNci = this.stationNci.filter(station => station.code !== id)
+          },
+          error => this.modalService.open(error.error.message)
+        )
+      }
+    });
   }
 
   createStatioNci() {
@@ -118,13 +146,27 @@ export class StationComponent implements OnInit {
           this.getStationNci()
       }
     )
-
   }
 
- getStationNci() {
-    this.shipmentsService.getDictionaryDictionaryStation().subscribe(
-      res =>  this.stationNci =res,
+  getStationNci() {
+    this.stationAllSub = this.shipmentsService.getDictionaryDictionaryStation().subscribe(
+      res => this.stationNci = res,
       error => this.modalService.open(error.error.message),
     )
+  }
+
+  updateStationNci(event: string) {
+    this.getStationNci()
+  }
+
+  closeModalUpload() {
+    this.uploadFileNsi = '';
+    this.displayPosition = false
+  }
+
+  showPositionDialog(position: string) {
+    this.uploadFileNsi = 'station'
+    this.position = position;
+    this.displayPosition = true;
   }
 }

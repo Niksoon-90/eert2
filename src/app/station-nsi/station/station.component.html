@@ -1,4 +1,8 @@
 <ng-container *ngIf="this.user.authorities.includes('P_P_p7') === true">
+  <div class="p-d-flex p-jc-between">
+  <div style="padding: 7px">
+    <button pButton pRipple type="submit" label="Загрузить" class="p-button-raised p-button-secondary" (click)="showPositionDialog('top-left')"></button>
+  </div>
   <form [formGroup]="form" (ngSubmit)="createStatioNci(); form.reset()">
     <div class="p-grid p-jc-end" style="padding: 15px">
       <p-dropdown  [options]="subjectNci" optionLabel="name"  [showClear]="true" formControlName="subjectGvc"  placeholder="Субъект:" [ngStyle]="{'paddingRight': '10px'}"></p-dropdown>
@@ -14,6 +18,7 @@
       <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary " [disabled]="this.form.invalid"></button>
     </div>
   </form>
+  </div>
 </ng-container>
 <div class="card" *ngIf="stationNci; else Loader">
   <p-table #dt
@@ -70,7 +75,7 @@
             <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit()" class="p-button-rounded p-button-text"></button>
             <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(rowData)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
             <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
-            <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" (click)="deleteItemCargoNci(rowData.code)" class="p-button-rounded p-button-text p-button-danger"></button>
+            <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" (click)="deleteItemCargoNci(rowData.code, rowData.name)" class="p-button-rounded p-button-text p-button-danger"></button>
           </td>
         </ng-container>
       </tr>
@@ -84,3 +89,26 @@
     </div>
   </div>
 </ng-template>
+
+<ng-container *ngIf="this.uploadFileNsi">
+  <p-dialog header="Загрузка станций из файла" [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '50vw'}" [baseZIndex]="10000"
+            [draggable]="false" [resizable]="false">
+    <app-upload-file
+      [nsi]="this.uploadFileNsi"
+      (updateStations)="updateStationNci($event)"
+    >
+    </app-upload-file>
+    <ng-template pTemplate="footer">
+      <p-button icon="pi pi-check" (click)="closeModalUpload()" label="Закрыть" styleClass="p-button-text"></p-button>
+    </ng-template>
+  </p-dialog>
+</ng-container>
+
+
+<p-confirmDialog #cd icon="pi pi-exclamation-triangle"  [style]="{width: 'auto'}" [baseZIndex]="10000">
+  <p-footer>
+    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()" class="p-button-danger"></button>
+    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"  class="p-button-secondary"></button>
+  </p-footer>
+</p-confirmDialog>
+

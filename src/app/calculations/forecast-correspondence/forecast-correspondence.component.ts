@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {ISelectMethodUsers} from "../../models/calculations.model";
 import {ForecastingModelService} from '../../services/forecasting-model.service';
 import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
-import {IShipment} from "../../models/shipmenst.model";
+import {ISession} from "../../models/shipmenst.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
 import {ShipmentsService} from "../../services/shipments.service";
-import {MathForecastCalcService} from "../../services/math-forecast-calc.service";
 
 @Component({
   selector: 'app-forecast-correspondence',
@@ -16,19 +15,23 @@ import {MathForecastCalcService} from "../../services/math-forecast-calc.service
   styleUrls: ['./forecast-correspondence.component.scss']
 })
 export class ForecastCorrespondenceComponent implements OnInit {
+
   methodUsers: ISelectMethodUsers[];
   stepThree: any;
-  mathematicalForecastTable: IShipment[];
-  reportingYears= [];
-  additionalInformation: boolean = false;
+  mathematicalForecastTableSession: ISession
+  reportingYears = [];
+  monoCargo: boolean = false;
   sessionId: number;
-  stepOnecalcYearsNumber:number;
+  stepOnecalcYearsNumber: number;
   disableCorrelation: boolean = true;
   loading: boolean = false
   user: IAuthModel
   payment: boolean = false
-  urlPerspective =  'api/calc/correspondence/perspective?';
   forecastName: string
+  settlemenType: string = '';
+  calculated: boolean = false
+  loadingHistoryShipment: boolean = false;
+
   constructor(
     private router: Router,
     public forecastModelService: ForecastingModelService,
@@ -39,28 +42,50 @@ export class ForecastCorrespondenceComponent implements OnInit {
   ) {
     this.user = this.authenticationService.userValue;
     this.methodUsers = [
-      {id: 1, type: 'LESS_SQUARE', name:'Вычисление прогноза корреспонденций по методу наименьших квадратов'},
-      {id: 2, type: 'FISCAL_YEAR', name:'Вычисление прогноза корреспонденций по отчётному году'},
-      {id: 3, type: 'TENDENCY_FIXED_DELTA',  name:'Вычисление прогноза корреспонденций по тенденции (по фиксированным промежуткам)'},
-      {id: 4, type: 'TENDENCY_INCREASING_DELTA',  name:'Вычисление прогноза корреспонденций по тенденции (по увеличивающимся промежуткам)'},
-      {id: 5, type: 'AVERAGE_FIXED_INTERVAL', name:'Вычисление прогноза корреспонденций по среднему арифметическому (по фиксированным промежуткам)'},
-      {id: 6, type: 'AVERAGE_INCREASING_INTERVAL', name:'Вычисление прогноза корреспонденций по среднему арифметическому (по увеличивающимся промежуткам)'},
+      {id: 1, type: 'LESS_SQUARE', name: 'Вычисление прогноза корреспонденций по методу наименьших квадратов'},
+      {id: 2, type: 'FISCAL_YEAR', name: 'Вычисление прогноза корреспонденций по отчётному году'},
+      {
+        id: 3,
+        type: 'TENDENCY_FIXED_DELTA',
+        name: 'Вычисление прогноза корреспонденций по тенденции (по фиксированным промежуткам)'
+      },
+      {
+        id: 4,
+        type: 'TENDENCY_INCREASING_DELTA',
+        name: 'Вычисление прогноза корреспонденций по тенденции (по увеличивающимся промежуткам)'
+      },
+      {
+        id: 5,
+        type: 'AVERAGE_FIXED_INTERVAL',
+        name: 'Вычисление прогноза корреспонденций по среднему арифметическому (по фиксированным промежуткам)'
+      },
+      {
+        id: 6,
+        type: 'AVERAGE_INCREASING_INTERVAL',
+        name: 'Вычисление прогноза корреспонденций по среднему арифметическому (по увеличивающимся промежуткам)'
+      },
     ]
   }
 
   ngOnInit(): void {
-    if(this.forecastModelService.ticketInformation.stepOne.oldSessionId === null && this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+    this.calculated = this.forecastModelService.getTicketInformation().stepThree.calculated
+    if(this.calculated === true){
+      console.log('test')
+      this.disableCorrelation = false;
+      this.loading = true
+    }
+    if (this.forecastModelService.ticketInformation.stepOne.oldSessionId === null && this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.forecastModelService.ticketInformation.stepOne.oldSessionId = this.forecastModelService.ticketInformation.stepOne.Session['id']
     }
-    if(this.forecastModelService.ticketInformation.stepOne.newSessionId !== null && this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+    if (this.forecastModelService.ticketInformation.stepOne.newSessionId !== null && this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.newSessionId
     }
     this.forecastName = this.forecastModelService.getTicketInformation().stepOne.nameNewShip
 
-    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+    if (this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
       this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
-    }else{
+    } else {
       this.sessionId = this.forecastModelService.ticketInformation.stepThree.sessionId;
     }
 
@@ -70,51 +95,82 @@ export class ForecastCorrespondenceComponent implements OnInit {
     this.stepThree.forecastingStrategySustainable = this.methodUsers[0]
     this.stepThree.forecastingStrategySmall = this.methodUsers[1]
 
-    // if(this.forecastModelService.ticketInformation.stepThree.forecastingStrategy !== null){
-    //   this.calculateForecastingStrategy();
-    // }
   }
+
   //TODO FAIL!
-  additionalInfo(items){
+  additionalInfo(items) {
     const res = items.split(',')
     for (let item of res) {
-        this.reportingYears.push({"name": item});
+      this.reportingYears.push({"name": item});
     }
   }
-  calculateForecastingStrategyAll() {
-    this.payment = true
-    this.disableCorrelation= true;
-    this.loading = false;
-    this.calculationsService.getGeneralmethod(this.sessionId,
-      this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
-      this.forecastModelService.getTicketInformation().stepOne.nameNewShip,
-      this.stepThree.forecastingStrategySustainable.type,
-      this.stepThree.forecastingStrategySmall.type)
-      .subscribe(
-        res => {
-          console.log(res),
-            this.mathematicalForecastTable = res
-        },
-          error => {
-          this.modalService.open(error.error.message),
-            this.loading = true
-        },
-        () => {
-          if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
-             this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
-          }
-          this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session
-          this.sessionId = this.mathematicalForecastTable[0].session
-          this.loading = true
-          this.disableCorrelation = false
-        }
-      )
+
+  checkStrategyType() {
+    if (this.stepThree.forecastingStrategySustainable.type === 'FISCAL_YEAR' && (this.stepThree.primaryForecastFiscalYear === null || this.stepThree.primaryForecastFiscalYear === undefined)) {
+      this.modalService.open('Стратегия прогнозирования (устойчивые). Укажите год!');
+      return false
+    } else if (this.stepThree.forecastingStrategySmall.type === 'FISCAL_YEAR' && (this.stepThree.secondaryForecastFiscalYear === null || this.stepThree.secondaryForecastFiscalYear === undefined)) {
+      this.modalService.open('Стратегия прогнозирования (мелкие). Укажите год!');
+      return false
+    } else {
+      return true
+    }
   }
+
+
+  calculateForecastingStrategyAll() {
+    if(this.checkStrategyType() === true){
+      this.forecastModelService.ticketInformation.stepThree.calculated = true
+      this.disableCorrelation = false
+      this.loading = false;
+      this.settlemenType = 'payment'
+      this.calculationsService.getGeneralmethod2(this.sessionId,
+        this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
+        this.forecastModelService.getTicketInformation().stepOne.nameNewShip,
+        this.stepThree.forecastingStrategySustainable.type,
+        this.stepThree.forecastingStrategySmall.type,
+        this.user.fio,
+        this.user.user,
+        this.stepThree.forecastingStrategySustainable.type !== 'FISCAL_YEAR' ?  null : this.stepThree.primaryForecastFiscalYear['name'],
+        this.stepThree.forecastingStrategySmall.type !== 'FISCAL_YEAR' ? null : this.stepThree.secondaryForecastFiscalYear['name'],
+      )
+        .subscribe(
+          res => {
+            console.log('tyt', res)
+            this.mathematicalForecastTableSession = res
+          },
+          error => {
+            this.modalService.open(error.error.message)
+            this.loading = true
+          },
+          () => {
+            if (this.forecastModelService.ticketInformation.stepOne.newSessionId === null) {
+              this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTableSession.id
+            }
+            this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTableSession.id
+            this.sessionId = this.mathematicalForecastTableSession.id
+            this.clearForecastFiscalYear();
+            this.calculated = true
+            this.loading = true
+            this.disableCorrelation = false
+          }
+        )
+    }
+  }
+  clearForecastFiscalYear(){
+    this.stepThree.secondaryForecastFiscalYear = null;
+    this.stepThree.primaryForecastFiscalYear = null;
+  }
+
   correlation() {
     console.log(this.sessionId)
+    this.loading = false;
+    this.settlemenType = 'correlation'
     this.calculationsService.getCorrelation(this.sessionId)
       .subscribe(
-        res => {this.mathematicalForecastTable = res},
+        res => {
+          console.log(res)
+        },
         error => {
           this.modalService.open(error.error.message),
             this.loading = true
@@ -122,258 +178,53 @@ export class ForecastCorrespondenceComponent implements OnInit {
         () => {
           this.loading = true
         }
-        )
+      )
   }
 
-  // calculateForecastingStrategy() {
-  //   this.payment = true
-  //   this.disableCorrelation= true;
-  //   this.loading = false;
-  //   switch (this.stepThree.forecastingStrategy.type) {
-  //     case 'simple':
-  //      this.calculationsService.getCalculationSimple(this.sessionId, this.stepOnecalcYearsNumber, this.forecastName)
-  //        .subscribe(
-  //          res => {this.mathematicalForecastTable = res, console.log('simple', res)},
-  //          error => {
-  //            this.modalService.open(error.error.message),
-  //              this.loading = true
-  //          },
-  //          () => {
-  //            //подмена  сессии
-  //            if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
-  //              this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
-  //            }
-  //            this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
-  //            this.sessionId = this.mathematicalForecastTable[0].session,
-  //            this.disableCorrelation = false,
-  //              this.loading = true}
-  //        )
-  //       break;
-  //     case 'fiscal':
-  //       this.calculationsService.getCalculationFiscal(this.sessionId, this.stepOnecalcYearsNumber, this.stepThree.yearsSession['name'], this.forecastName)
-  //         .subscribe(
-  //           res => {this.mathematicalForecastTable = res,  console.log('fiscal', res)},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => {
-  //             if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
-  //               this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
-  //             }
-  //             this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
-  //               this.sessionId = this.mathematicalForecastTable[0].session,
-  //             this.disableCorrelation = false,
-  //               this.loading = true
-  //           }
-  //         )
-  //       break;
-  //     case 'fixed':
-  //       this.calculationsService.getCalculationFixed(this.sessionId, this.stepOnecalcYearsNumber, this.forecastName)
-  //         .subscribe(
-  //             res => {this.mathematicalForecastTable = res, console.log('fixed', res)},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => {
-  //             if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
-  //               this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
-  //             }
-  //             this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
-  //               this.sessionId = this.mathematicalForecastTable[0].session,
-  //               this.disableCorrelation = false,
-  //                 this.loading = true}
-  //         )
-  //       break;
-  //     case 'increasing':
-  //       this.calculationsService.getCalculationIncreasing(this.sessionId, this.stepOnecalcYearsNumber, this.forecastName)
-  //         .subscribe(
-  //           res => {this.mathematicalForecastTable = res, console.log('increasing', res)},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => {
-  //             if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
-  //               this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
-  //             }
-  //             this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
-  //               this.sessionId = this.mathematicalForecastTable[0].session,
-  //             this.disableCorrelation = false,
-  //               this.loading = true}
-  //         )
-  //       break;
-  //     case 'average':
-  //       this.calculationsService.getCalculationAverage(this.sessionId, this.stepOnecalcYearsNumber, this.forecastName)
-  //         .subscribe(
-  //           res => {this.mathematicalForecastTable = res, console.log('average', res)},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => {
-  //             if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
-  //               this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
-  //             }
-  //             this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
-  //               this.sessionId = this.mathematicalForecastTable[0].session,
-  //             this.disableCorrelation = false,
-  //               this.loading = true}
-  //         )
-  //       break;
-  //       case 'averageIncreasing':
-  //       this.calculationsService.getCalculationAverageIncreasing(this.sessionId, this.stepOnecalcYearsNumber, this.forecastName)
-  //         .subscribe(
-  //           res => {this.mathematicalForecastTable = res, console.log('averageIncreasing', res)},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => {
-  //             if(this.forecastModelService.ticketInformation.stepOne.newSessionId === null){
-  //               this.forecastModelService.ticketInformation.stepOne.newSessionId = this.mathematicalForecastTable[0].session
-  //             }
-  //             this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.mathematicalForecastTable[0].session,
-  //               this.sessionId = this.mathematicalForecastTable[0].session,
-  //               this.disableCorrelation = false,
-  //               this.loading = true}
-  //         )
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
-
-  // spying(event: any) {
-  //   event.value.type === 'fiscal'?  this.additionalInformation = true :  this.additionalInformation = false
-  // }
-
-  // correlation() {
-  //   this.loading = false;
-  //   switch (this.stepThree.forecastingStrategy.type) {
-  //     case 'simple':
-  //       console.log('this.sessionId', this.sessionId)
-  //       this.calculationsService.getCorrelation(this.sessionId, 'LESS_SQUARE')
-  //         .subscribe(
-  //           res => {this.mathematicalForecastTable = res},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => this.loading = true
-  //         )
-  //       break;
-  //     case 'fiscal':
-  //       this.calculationsService.getCorrelation(this.sessionId, 'FISCAL_YEAR')
-  //         .subscribe(
-  //           res => {this.mathematicalForecastTable = res},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => this.loading = true
-  //         )
-  //       break;
-  //     case 'fixed':
-  //       this.calculationsService.getCorrelation(this.sessionId, 'TENDENCY_FIXED_DELTA')
-  //         .subscribe(
-  //           res => {this.mathematicalForecastTable = res},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => this.loading = true
-  //         )
-  //       break;
-  //     case 'increasing':
-  //       this.calculationsService.getCorrelation(this.sessionId, 'TENDENCY_INCREASING_DELTA')
-  //         .subscribe(
-  //           res => {this.mathematicalForecastTable = res},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => this.loading = true
-  //         )
-  //       break;
-  //     case 'average':
-  //       this.calculationsService.getCorrelation(this.sessionId, 'AVERAGE_FIXED_INTERVAL')
-  //         .subscribe(
-  //           res => {this.mathematicalForecastTable = res},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => this.loading = true
-  //         )
-  //       break;
-  //       case 'averageIncreasing':
-  //       this.calculationsService.getCorrelation(this.sessionId, 'AVERAGE_INCREASING_INTERVAL')
-  //         .subscribe(
-  //           res => {this.mathematicalForecastTable = res},
-  //           error => {
-  //             this.modalService.open(error.error.message),
-  //               this.loading = true
-  //           },
-  //           () => this.loading = true
-  //         )
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
 
   corresponTie() {
-      this.loading = false;
-      if(this.forecastModelService.ticketInformation.stepOne.metallurgy !== null){
-        this.urlPerspective += 'iasMetalForecastId=' + this.forecastModelService.ticketInformation.stepOne.metallurgy['id'].toString() + '&';
-      }
-      if(this.forecastModelService.ticketInformation.stepOne.oilCargo !== null){
-        this.urlPerspective += 'iasOilForecastId=' + this.forecastModelService.ticketInformation.stepOne.oilCargo['id'].toString() + '&';
-      }
-      if(this.forecastModelService.ticketInformation.stepOne.ore !== null){
-        this.urlPerspective += 'iasRudaForecastId=' + this.forecastModelService.ticketInformation.stepOne.ore['id'].toString() + '&';
-      }
-      if(this.forecastModelService.ticketInformation.stepOne.correspondenceSession !== null){
-        this.urlPerspective += 'perspectiveSessionId=' + this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'].toString() + '&';
-      }
-      this.urlPerspective += 'sessionId=' + this.sessionId;
-      console.log(this.urlPerspective)
-      this.calculationsService.getPerspective(this.urlPerspective )
-        .subscribe(
-          res => {this.mathematicalForecastTable = res, console.log(res)},
-          error => {
-            this.modalService.open(error.error.message),
-              this.loading = true
-          },
-          () => {
-            this.loading = true;
-            this.disableCorrelation = !this.disableCorrelation
-          }
-        )
+    this.loading = false;
+    let metallurgy: null
+    let oilCargo: null
+    let ore: null
+    let correspondenceSession: null
+    this.forecastModelService.getTicketInformation().stepOne.metallurgy === null ? metallurgy = null : metallurgy = this.forecastModelService.getTicketInformation().stepOne.metallurgy['id'];
+    this.forecastModelService.getTicketInformation().stepOne.oilCargo === null ? oilCargo = null : oilCargo = this.forecastModelService.getTicketInformation().stepOne.oilCargo['id'];
+    this.forecastModelService.getTicketInformation().stepOne.ore === null ? ore = null : ore = this.forecastModelService.getTicketInformation().stepOne.ore['id'];
+    this.forecastModelService.getTicketInformation().stepOne.correspondenceSession === null ? correspondenceSession = null : correspondenceSession = this.forecastModelService.getTicketInformation().stepOne.correspondenceSession['id'];
+
+    this.calculationsService.getPerspective(this.sessionId, metallurgy, oilCargo, ore, correspondenceSession)
+      .subscribe(
+        res => {
+          console.log(res)
+        },
+        error => {
+          this.modalService.open(error.error.message),
+            this.loading = true
+        },
+        () => {
+          this.loading = true;
+          this.disableCorrelation = !this.disableCorrelation
+        }
+      )
   }
 
   corresponTiers() {
-    this.payment = true
     this.loading = false;
-    if(this.forecastModelService.ticketInformation.stepOne.metallurgy !== null){
-      this.urlPerspective += 'iasMetalForecastId=' + this.forecastModelService.ticketInformation.stepOne.metallurgy['id'].toString() + '&';
-    }
-    if(this.forecastModelService.ticketInformation.stepOne.oilCargo !== null){
-      this.urlPerspective += 'iasOilForecastId=' + this.forecastModelService.ticketInformation.stepOne.oilCargo['id'].toString() + '&';
-    }
-    if(this.forecastModelService.ticketInformation.stepOne.ore !== null){
-      this.urlPerspective += 'iasRudaForecastId=' + this.forecastModelService.ticketInformation.stepOne.ore['id'].toString() + '&';
-    }
-    if(this.forecastModelService.ticketInformation.stepOne.correspondenceSession !== null){
-      this.urlPerspective += 'perspectiveSessionId=' + this.forecastModelService.ticketInformation.stepOne.correspondenceSession['id'].toString() + '&';
-    }
-    this.urlPerspective += 'sessionId=' + this.sessionId;
-    console.log(this.urlPerspective)
-    this.calculationsService.getPerspective(this.urlPerspective )
+    let metallurgy: null
+    let oilCargo: null
+    let ore: null
+    let correspondenceSession: null
+    this.forecastModelService.getTicketInformation().stepOne.metallurgy === null ? metallurgy = null : metallurgy = this.forecastModelService.getTicketInformation().stepOne.metallurgy['id'];
+    this.forecastModelService.getTicketInformation().stepOne.oilCargo === null ? oilCargo = null : oilCargo = this.forecastModelService.getTicketInformation().stepOne.oilCargo['id'];
+    this.forecastModelService.getTicketInformation().stepOne.ore === null ? ore = null : ore = this.forecastModelService.getTicketInformation().stepOne.ore['id'];
+    this.forecastModelService.getTicketInformation().stepOne.correspondenceSession === null ? correspondenceSession = null : correspondenceSession = this.forecastModelService.getTicketInformation().stepOne.correspondenceSession['id'];
+
+    this.calculationsService.getPerspective(this.sessionId, metallurgy, oilCargo, ore, correspondenceSession)
       .subscribe(
-        res => {this.mathematicalForecastTable = res, console.log(res)},
+        res => {
+          console.log(res)
+        },
         error => {
           this.modalService.open(error.error.message),
             this.loading = true
@@ -384,14 +235,15 @@ export class ForecastCorrespondenceComponent implements OnInit {
         }
       )
   }
+
   cargoSessionSenders() {
-    if(this.forecastModelService.ticketInformation.stepOne.cargoSessionSender === null){
+    if (this.forecastModelService.ticketInformation.stepOne.cargoSessionSender === null) {
       this.modalService.open('Вы забыли выбрать на первом шаге Файл с заявками грузоотправителей!')
-    }else {
+    } else {
       this.loading = false;
       this.calculationsService.getCargoOwnerSessionId(this.forecastModelService.ticketInformation.stepOne.cargoSessionSender['id'], this.sessionId).subscribe(
         res => {
-          this.mathematicalForecastTable = res
+          console.log(res)
         },
         error => {
           this.modalService.open(error.error.message),
@@ -408,21 +260,22 @@ export class ForecastCorrespondenceComponent implements OnInit {
     if (this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver === null) {
       this.modalService.open('Вы забыли выбрать на первом шаге Файл с заявками грузополучателей!')
     } else {
-    }
-    this.loading = false;
-    this.calculationsService.getCargoOwnerSessionId(this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver['id'], this.sessionId).subscribe(
-      res => {
-        this.mathematicalForecastTable = res
-      },
-      error => {
-        this.modalService.open(error.error.message),
+      this.loading = false;
+      this.calculationsService.getCargoOwnerSessionId(this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver['id'], this.sessionId).subscribe(
+        res => {
+          console.log(res)
+        },
+        error => {
+          this.modalService.open(error.error.message),
+            this.loading = true
+        },
+        () => {
           this.loading = true
-      },
-      () => {
-        this.loading = true
-      }
-    )
+        }
+      )
+    }
   }
+
   nextPage() {
     this.shipmentsService.putTransformFile(this.sessionId, true).subscribe(
       res => console.log(),
@@ -436,15 +289,39 @@ export class ForecastCorrespondenceComponent implements OnInit {
       }
     )
   }
+
   prevPage() {
-    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+    if (this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.oldSessionId
       this.router.navigate(['steps/mathForecast']);
-    }else {
+    } else {
       this.router.navigate(['steps/import']);
     }
   }
 
+  monoCargoDialog() {
+    this.monoCargo = !this.monoCargo;
+  }
 
-
+  toApplyOptimalShipment() {
+    this.loadingHistoryShipment = true
+    this.settlemenType = 'payment'
+    this.shipmentsService.getCopySissionShipments(this.user.fio, this.user.user,this.forecastModelService.getTicketInformation().stepOne.nameNewShip, this.sessionId ).subscribe(
+      res => {
+        this.sessionId = Number(res)
+      }, error => {
+        this.modalService.open(error.error.message)
+        this.loadingHistoryShipment = false
+      },
+      () => {
+        this.forecastModelService.ticketInformation.stepThree.calculated = true
+        this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.sessionId
+        this.clearForecastFiscalYear();
+        this.disableCorrelation = false
+        this.loadingHistoryShipment = false
+        this.calculated = true
+        this.loading = true
+      }
+    )
+  }
 }

@@ -1,6 +1,6 @@
-import {Component, OnChanges, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {from, Subscription} from "rxjs";
+import { Subscription} from "rxjs";
 import {IAuthModel} from "../../../models/auth.model";
 import {CalculationsService} from "../../../services/calculations.service";
 import {ModalService} from "../../../services/modal.service";
@@ -10,39 +10,43 @@ import {IShipment} from "../../../models/shipmenst.model";
 import {HttpResponse} from "@angular/common/http";
 import {UploadFileService} from "../../../services/upload-file.service";
 import {Table} from "primeng/table";
-import {concatMap, mergeMap} from "rxjs/operators";
 import {ForecastingModelService} from "../../../services/forecasting-model.service";
+
+
+
 
 @Component({
   selector: 'app-step',
   templateUrl: './step.component.html',
   styleUrls: ['./step.component.scss']
 })
-export class StepComponent implements OnInit, OnChanges {
-  @ViewChild('dt')  table: Table;
+export class StepComponent implements OnInit {
+  @ViewChild('dt') table: Table;
 
-  sessionId: number;
-  nameSession: string
-  private subscription: Subscription;
-  user: IAuthModel
-  forecastingStrategy: any;
-  yearsSession: any;
-  mathematicalForecastTable: IShipment[];
+  mathematicalForecastTable: IShipment[]
   loading: boolean;
-  totalRecords: number;
-  massSummYear: any[];
-  summYears: 0;
-  columsYears: number= 0;
+  columsYears: number = 0;
   cols: any[];
-  virtTable: any[];
+  user: IAuthModel;
   loader: boolean = false
   downloadShipLoading: boolean = false
   downloadRoadLoading: boolean = false
-  primeryBol = [ { label: 'Все', value: '' },{ label: 'Да', value: true },{ label: 'Нет', value: false }]
+  primeryBol = [{label: 'Все', value: ''}, {label: 'Да', value: true}, {label: 'Нет', value: false}]
   selectedPrimery: any;
-  virtTable2: any;
-  forecastConfirmed: boolean = false
-  primary2 = [ { label: 'Да', value: true },{ label: 'Нет', value: false }]
+  sessionId: number
+  primary2 = [{label: 'Да', value: true}, {label: 'Нет', value: false}]
+  first: number = 0;
+  loadingTable: boolean = true;
+  operator: ''
+  filters: string = ''
+  massSummYear: {} = {}
+  filterTableEvant: any
+  totalRecords: number = 0
+  private subscription: Subscription
+  nameSession: string
+
+  position: string;
+  displayPosition: boolean;
 
   constructor(
     private router: Router,
@@ -52,7 +56,7 @@ export class StepComponent implements OnInit, OnChanges {
     private shipmentsService: ShipmentsService,
     private activateRoute: ActivatedRoute,
     private uploadFileService: UploadFileService,
-    private forecastingModelService: ForecastingModelService
+    private forecastingModelService: ForecastingModelService,
   ) {
     this.subscription = activateRoute.params.subscribe(params => {
       this.sessionId = params['id'], this.nameSession = params['name']
@@ -60,83 +64,90 @@ export class StepComponent implements OnInit, OnChanges {
     this.user = this.authenticationService.userValue;
   }
 
-  ngOnChanges() {
-    this.totalRecords = this.mathematicalForecastTable.length;
-    this.massSummYears(this.mathematicalForecastTable)
-  }
 
   ngOnInit(): void {
-    this.forecastConfirmed = this.forecastingModelService.ticketInformation.history.forecastConfirmed;
-    this.allShipItemSession(this.sessionId);
+    this.allShipItemSession();
   }
 
-  allShipItemSession(id: number) {
+
+  allShipItemSession() {
     this.loader = true
-    this.shipmentsService.getShipments(id).subscribe(
-      res => {
-        this.mathematicalForecastTable = res;
-      },
-      error => {
-        this.modalService.open(error.error.message);
-      },
-      () => {
-        this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
-        this.massSummYears(this.mathematicalForecastTable),
-          this.cols = [
-            { field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
-            { field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false },
-            { field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false },
-            { field: 'fromRoad', header: 'Дорога отправления', width: '100px', keyS: false },
-            { field: 'fromStation', header: 'Станция отправления РФ', width: '100px', keyS: false },
-            { field: 'fromStationCode', header: 'Код станции отправления РФ', width: '100px', keyS: false },
-            { field: 'fromSubject', header: 'Субъект отправления', width: '100px', keyS: false },
-            { field: 'senderName', header: 'Грузоотправитель', width: '100px', keyS: false },
-            { field: 'toRoad', header: 'Дорога назначения', width: '100px', keyS: false },
-            { field: 'toStation', header: 'Станция назначения РФ', width: '100px', keyS: false },
-            { field: 'toStationCode', header: 'Код станции назначения РФ', width: '100px', keyS: false },
-            { field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false },
-            { field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false },
-            { field: 'primary', header: 'Уст.', width: '80px', keyS: false },
-
-          ];
-        for(let i=0; i< this.columsYears ; i++){
-          this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })
+    this.shipmentsService.getShipmetsPaginations(this.sessionId)
+      .subscribe(
+        res => {
+          console.log(res)
+          res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
+          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
+        },
+        error => {
+          this.modalService.open(error.error.message)
+          this.loader = false
+        },
+        () => {
+          this.createColumnTable()
+          this.loader = false
         }
-        this.loader = false
-      }
-    )
-  }
-  columnFilter(event: any, field) {
-    this.table.filter(event.target.value, field, 'contains');
+      )
   }
 
-  massSummYears($event: any) {
-    this.virtTable2 = $event;               //исходное значение
-    this.virtTable = $event.filteredValue; //фильтр
-    this.massSummYear = [ ]
-    if($event['filteredValue'] !== undefined){
-      if($event.filteredValue.length > 0){
-        for (let i = 0; i < $event.filteredValue[0].shipmentYearValuePairs.length ; i++){
-          this.summYears = 0;
-          for (let x = 0; x < $event.filteredValue.length; x++){
-            this.summYears += $event.filteredValue[x].shipmentYearValuePairs[i].value;
-          }
-          this.massSummYear.push(this.summYears);
-        }
-      }
-    }else{
-      this.virtTable = [...this.mathematicalForecastTable];
-      if(this.columsYears > 0){
-        for (let i = 0; i <  this.mathematicalForecastTable[0].shipmentYearValuePairs.length ; i++){
-          this.summYears = 0;
-          for (let x = 0; x <  this.mathematicalForecastTable.length; x++){
-            this.summYears +=  this.mathematicalForecastTable[x].shipmentYearValuePairs[i].value;
-          }
-          this.massSummYear.push(this.summYears);
-        }
-      }
+  createColumnTable() {
+    this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
+    this.cols = [
+      {field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
+      {field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false},
+      {field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false},
+      {field: 'fromRoad', header: 'Дорога отправления', width: '100px', keyS: false},
+      {field: 'fromStation', header: 'Станция отправления РФ', width: '100px', keyS: false},
+      {field: 'fromStationCode', header: 'Код станции отправления РФ', width: '100px', keyS: false},
+      {field: 'fromSubject', header: 'Субъект отправления', width: '100px', keyS: false},
+      {field: 'senderName', header: 'Грузоотправитель', width: '100px', keyS: false},
+      {field: 'toRoad', header: 'Дорога назначения', width: '100px', keyS: false},
+      {field: 'toStation', header: 'Станция назначения РФ', width: '100px', keyS: false},
+      {field: 'toStationCode', header: 'Код станции назначения РФ', width: '100px', keyS: false},
+      {field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false},
+      {field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false},
+      {field: 'primary', header: 'Уст.', width: '80px', keyS: false},
+    ];
+    for (let i = 0; i < this.columsYears; i++) {
+      this.cols.push({
+        field: `shipmentYearValuePairs.${i}.value`,
+        header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year,
+        width: '100px',
+        keyS: true
+      })
     }
   }
+
+  summFooter(sessionId: number) {
+    this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
+      res => {
+        console.log(res)
+        this.massSummYear = res
+      },
+      error => this.modalService.open(error.error.message)
+    )
+  }
+
+  primeryBolChange(value: any, field: any, equals: string) {
+    this.table.filter(value, field, equals)
+    this.forecastingModelService.ticketInformation.history.primeryBolChange = this.selectedPrimery
+  }
+
+  colorYears(rowData, col: any) {
+    const mass = col['field'].toString().split('.');
+    return rowData.shipmentYearValuePairs[mass[1]].calculated === true ? true : false
+  }
+
+  editColumn(row: any, col: any, $event: any) {
+    if (col['keyS'] === true) {
+      const mass = col['field'].toString().split('.');
+      row.shipmentYearValuePairs[mass[1]].value = Number($event);
+    } else {
+      const item = col['field'];
+      row[item] = $event
+    }
+  }
+
 
   onRowEditInit(item: any) {
     console.log('item', item)
@@ -147,67 +158,13 @@ export class StepComponent implements OnInit, OnChanges {
     this.shipmentsService.putShipments(item).subscribe(
       res => (console.log('god')),
       error => this.modalService.open(error.error.message),
-      () => this.massSummYears(this.mathematicalForecastTable)
+      () => this.summFooter(this.sessionId)
     )
   }
 
   onRowEditCancel() {
   }
 
-
-  test(idx: number, value: any) {
-    const saveMass = []
-    const dec = Number(value / this.massSummYear[idx]).toFixed(3);
-    for(let i=0; i< this.virtTable.length; i++) {
-      this.virtTable[i].shipmentYearValuePairs[idx].value = Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(3))
-      console.log(Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(2)))
-      delete this.virtTable[i].session;
-      saveMass.push(this.virtTable[i])
-    }
-    if(saveMass.length !== 0){
-      this.loader = true
-      from(saveMass).pipe(
-        concatMap(param => this.shipmentsService.putShipments(param)) //concatMap
-      ).subscribe(
-        res =>   this.massSummYears(this.mathematicalForecastTable),
-        error => {
-          this.modalService.open(error.error.message),
-            this.loader = false;
-        },
-        () => {
-          this.massSummYears(this.mathematicalForecastTable),
-            this.loader = true;
-          setTimeout(()=>{
-            this.loader = false;
-          }, 10);
-        }
-      );
-    }
-  }
-
-  colorYears(rowData, col: any) {
-    const mass = col['field'].toString().split('.');
-    return rowData.shipmentYearValuePairs[mass[1]].calculated === true ?  true :  false
-  }
-
-  editColumn(row: any, col: any, $event: any) {
-    if(col['keyS'] === true){
-      const mass = col['field'].toString().split('.');
-      row.shipmentYearValuePairs[mass[1]].value = Number($event);
-    }else{
-      const item = col['field'];
-      row[item] = $event
-    }
-  }
-
-  test2(item: any, idx: number) {
-    return this.mathematicalForecastTable[0].shipmentYearValuePairs[idx].calculated === true ? true : false
-  }
-
-  primeryBolChange(value: any, field: any, equals: string) {
-    this.table.filter(value, field, equals)
-    this.forecastingModelService.ticketInformation.history.primeryBolChange = this.selectedPrimery
-  }
 
   downloadShip() {
     this.downloadShipLoading = true;
@@ -218,7 +175,7 @@ export class StepComponent implements OnInit, OnChanges {
         let binaryData = [];
         binaryData.push(response.body);
         let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
         downloadLink.setAttribute('download', filename);
         document.body.appendChild(downloadLink);
         downloadLink.click();
@@ -230,6 +187,7 @@ export class StepComponent implements OnInit, OnChanges {
       () => this.downloadShipLoading = false
     )
   }
+
   downloadRoad() {
     this.downloadRoadLoading = true;
     this.uploadFileService.getDownload(this.sessionId, 'ROAD_TO_ROAD').subscribe(
@@ -239,7 +197,7 @@ export class StepComponent implements OnInit, OnChanges {
         let binaryData = [];
         binaryData.push(response.body);
         let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
         downloadLink.setAttribute('download', filename);
         document.body.appendChild(downloadLink);
         downloadLink.click();
@@ -248,17 +206,129 @@ export class StepComponent implements OnInit, OnChanges {
         this.modalService.open(error.error.message),
           this.downloadRoadLoading = false
       },
-      () =>  this.downloadRoadLoading = false
+      () => this.downloadRoadLoading = false
     )
   }
+
+  filterFieldHeaders(name: string, value: string) {
+    switch (name) {
+      case 'cargoGroup':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'cargoSubGroup':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'shipmentType':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'fromRoad':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'fromStation':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'fromStationCode':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'fromSubject':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'senderName':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'toRoad':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'toStation':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'toStationCode':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'toSubject':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'receiverName':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'primary':
+        this.filters = ',' + 'isPrimary' + '~' + value;
+        break;
+      default:
+        this.parseFiltersYears(name, value);
+    }
+  }
+
+  parseFiltersYears(name: string, value: string) {
+    if (value.match(/^[><=]/)) {
+      return value[0] === '=' ? this.filters = ',' + name + ':' + value.trim().slice(1) : this.filters = ',' + name + value
+    }
+    if (value.search('-') !== -1) {
+      let massiv = value.split('-')
+      if (massiv.length === 2) {
+        return this.filters = ',' + name + '>' + massiv[0] + ',' + name + '<' + massiv[1];
+      }
+    } else {
+      return this.filters = ',' + name + '>' + value;
+    }
+  }
+
+  loadCustomers(event: any) {
+    let sortField = ''
+    let sortOrder = ''
+    let currentPage = event.first / event.rows;
+    let resultFilterUrl = []
+    this.loadingTable = true
+    if (Object.keys(event.filters).length !== 0) {
+      for (let i = 0; i < Object.keys(event.filters).length; i++) {
+        this.filterFieldHeaders(Object.keys(event.filters)[i], Object.values(event.filters[Object.keys(event.filters)[i]])[0].toString());
+        console.log(this.filters)
+        resultFilterUrl.push(this.filters)
+      }
+    }
+    event.sortField === 'primary' ? sortField = 'isPrimary' : sortField = event.sortField
+    event.sortOrder === 1 ? sortOrder = 'asc' : sortOrder = 'desc'
+
+    console.log('сортировка по полю: ', event.sortField)
+    this.filterTableEvant = {
+      sessionId: this.sessionId,
+      currentPage: currentPage,
+      rows: event.rows,
+      sortField: sortField,
+      sortOrder: sortOrder,
+      resultFilterUrl: resultFilterUrl.join('')
+    }
+    this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
+      .subscribe(
+        res => {
+          console.log(res)
+          res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
+          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
+        },
+        error => {
+          this.modalService.open(error.error.message)
+          this.loadingTable = false
+        },
+        () => {
+          this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
+          this.summFooter(this.sessionId)
+        }
+      )
+  }
+
 
   prevPage() {
     this.router.navigate(['/payments']);
   }
 
   nextPage() {
-    if(this.selectedPrimery !== null){
+    if (this.selectedPrimery !== null) {
       this.router.navigate(['payments/ias/', this.sessionId, this.nameSession]);
     }
+  }
+
+  showPositionDialog(position: string) {
+    this.position = position;
+    this.displayPosition = true;
   }
 }

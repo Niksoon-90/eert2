@@ -4,6 +4,7 @@ import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {ModalService} from "../../services/modal.service";
 import {ShipmentsService} from "../../services/shipments.service";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-subject',
@@ -20,7 +21,8 @@ export class SubjectComponent implements OnInit {
   constructor(
     public authenticationService: AuthenticationService,
     private modalService: ModalService,
-    private shipmentsService: ShipmentsService
+    private shipmentsService: ShipmentsService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -42,14 +44,20 @@ export class SubjectComponent implements OnInit {
 
   }
 
-  deleteItemSubjectNci(id: any) {
-    this.shipmentsService.deleteSubject(id).subscribe(
-      res => console.log(),
-      error => {
-        this.modalService.open(error.error.message)
-      },
-      () =>  this.getSubjectNci()
-    )
+  deleteItemSubjectNci(id: any, name: string) {
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить субъект: ${name}?`,
+      header: 'Удаление субъекта',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.shipmentsService.deleteSubject(id).subscribe(
+          res => console.log(),
+          error => this.modalService.open(error.error.message),
+          () =>  this.getSubjectNci()
+        )
+      }
+    });
+
 
   }
 

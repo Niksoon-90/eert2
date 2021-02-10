@@ -25,12 +25,16 @@ export class ForecastingModelService {
         forecastingStrategy: null,
         yearsSession: null,
         primeryBolChange: false,
-        sessionId: null
+        sessionId: null,
+        calculated: false
     },
     history: {
+      historicalName: null,
       primeryBolChange: false,
       historicalYears: null,
-      forecastConfirmed: false
+      forecastConfirmed: false,
+      firstRouteId: null,
+      secondRouteId: null
     }
   };
 

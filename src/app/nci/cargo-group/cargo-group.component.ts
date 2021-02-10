@@ -4,6 +4,7 @@ import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {ModalService} from "../../services/modal.service";
 import {ShipmentsService} from "../../services/shipments.service";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-cargo-group',
@@ -21,7 +22,8 @@ export class CargoGroupComponent implements OnInit {
   constructor(
     public authenticationService: AuthenticationService,
     private modalService: ModalService,
-    private shipmentsService: ShipmentsService
+    private shipmentsService: ShipmentsService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -72,11 +74,18 @@ export class CargoGroupComponent implements OnInit {
 
   }
 
-  deleteItemCargoNci(id: any) {
-    this.shipmentsService.deleteDictionaryCargo(id).subscribe(
-      res => console.log(),
-      error => this.modalService.open(error.error.message),
-      () => this.getCargoGroupNci()
-    )
+  deleteItemCargoNci(id: any, name: string) {
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить группу груза: ${name}?`,
+      header: 'Удаление группы груза',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.shipmentsService.deleteDictionaryCargo(id).subscribe(
+          res => console.log(),
+          error => this.modalService.open(error.error.message),
+          () => this.getCargoGroupNci()
+        )
+      }
+    });
   }
 }

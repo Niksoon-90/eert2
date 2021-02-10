@@ -5,6 +5,8 @@ import {ICargoNci, ICargoOwnerInfluenceFactor, IInfluenceNci} from "../../models
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
 import {MathForecastCalcService} from "../../services/math-forecast-calc.service";
+import {ShipmentsService} from "../../services/shipments.service";
+import {ConfirmationService} from "primeng/api";
 
 
 @Component({
@@ -32,7 +34,8 @@ export class CargoNciComponent implements OnInit {
     private modalService: ModalService,
     private calculationsService: CalculationsService,
     public authenticationService: AuthenticationService,
-    private mathForecastCalcService: MathForecastCalcService
+    private mathForecastCalcService: MathForecastCalcService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -70,12 +73,19 @@ export class CargoNciComponent implements OnInit {
   onRowEditCancel() {
   }
 
-  deleteItemCargoNci(id: number) {
-    this.calculationsService.deleteCargoNci(id).subscribe(
-      res => console.log(),
-      error => this.modalService.open(error.error.message),
-      () =>   this.getCargoNci()
-    )
+  deleteItemCargoNci(id: number, name: string) {
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить грузовладельца: ${name}?`,
+      header: 'Удаление грузовладельца',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.calculationsService.deleteCargoNci(id).subscribe(
+          res => console.log(),
+          error => this.modalService.open(error.error.message),
+          () =>   this.getCargoNci()
+        )
+      }
+    });
   }
   createCargoNci(){
     if(this.nameNewCargoNci != '') {

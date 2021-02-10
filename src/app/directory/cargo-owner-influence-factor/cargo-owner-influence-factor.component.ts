@@ -6,6 +6,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
 import {MathForecastCalcService} from "../../services/math-forecast-calc.service";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-cargo-owner-influence-factor',
@@ -26,7 +27,8 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     private calculationsService: CalculationsService,
     private modalService: ModalService,
     public authenticationService: AuthenticationService,
-    private mathForecastCalcService: MathForecastCalcService
+    private mathForecastCalcService: MathForecastCalcService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -44,8 +46,8 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     this.getInfluenceNci();
     this.cols = [
       { field: 'id', header: 'id', width: '120px', isStatic :true},
-      { field: 'cargoOwnerName', header: 'Грузовладельцев', width: 'auto', },
-      { field: 'influenceFactorName', header: 'Фактора влияния ', width: 'auto'},
+      { field: 'cargoOwnerName', header: 'Грузовладельцы', width: 'auto', },
+      { field: 'influenceFactorName', header: 'Факторы влияния ', width: 'auto'},
       { field: 'koef', header: 'Коэффициент', width: '150px'}
     ]
   }
@@ -78,13 +80,19 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     )
   }
 
-  deleteCargoOwnerInfluenceFactor(id: number) {
-    console.log(id)
-    this.calculationsService.deleteCargoOwnerInfluenceFactorId(id).subscribe(
-      res => console.log(),
-      error => this.modalService.open(error.error.message),
-      () => this.getAllCargoOwnerInfluenceFactor()
-    )
+  deleteCargoOwnerInfluenceFactor(id: number, name: string) {
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить фактор: ${name}?`,
+      header: 'Удаление фактора',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.calculationsService.deleteCargoOwnerInfluenceFactorId(id).subscribe(
+          res => console.log(),
+          error => this.modalService.open(error.error.message),
+          () => this.getAllCargoOwnerInfluenceFactor()
+        )
+      }
+    });
   }
 
   onRowEditSave(rowData) {

@@ -5,6 +5,7 @@ import {ModalService} from "../../services/modal.service";
 import {AuthenticationService} from "../../services/authentication.service";
 import {ShipmentsService} from "../../services/shipments.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-dorogy',
@@ -16,14 +17,14 @@ export class DorogyComponent implements OnInit {
   cols: any[];
   totalRecords: any;
   dorogyNci: IDorogyNci[]
-  //nameNewDorogyNci: string = '';
   user: IAuthModel
   form: FormGroup
 
   constructor(
     public authenticationService: AuthenticationService,
     private modalService: ModalService,
-    private shipmentsService: ShipmentsService
+    private shipmentsService: ShipmentsService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -92,11 +93,18 @@ export class DorogyComponent implements OnInit {
 
   }
 
-  deleteItemCargoNci(id: any) {
-    this.shipmentsService.deleteDictionaryRailway(id).subscribe(
-      res => console.log(),
-      error => this.modalService.open(error.error.message),
-      () => this.getDorogyNci()
-    )
+  deleteItemCargoNci(id: any, name: string) {
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить дорогу: ${name}?`,
+      header: 'Удаление дороги',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.shipmentsService.deleteDictionaryRailway(id).subscribe(
+          res => console.log(),
+          error => this.modalService.open(error.error.message),
+          () => this.getDorogyNci()
+        )
+      }
+    });
   }
 }

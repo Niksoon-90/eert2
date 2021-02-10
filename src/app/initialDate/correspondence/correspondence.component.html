@@ -3,3 +3,10 @@
 </div>
 <p-menubar [model]="correspondenceMenu"></p-menubar>
 <router-outlet></router-outlet>
+<p-confirmDialog #cd icon="pi pi-exclamation-triangle"  [style]="{width: 'auto'}" [baseZIndex]="10000">
+  <p-footer>
+    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()" class="p-button-danger"></button>
+    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"  class="p-button-secondary"></button>
+  </p-footer>
+</p-confirmDialog>
+

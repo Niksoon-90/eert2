@@ -1,7 +1,6 @@
 import {
   Component,
   Input,
-  OnChanges,
   OnInit,
   ViewChild
 } from '@angular/core';
@@ -13,9 +12,10 @@ import {AuthenticationService} from "../../../services/authentication.service";
 import {IAuthModel} from "../../../models/auth.model";
 import {HttpResponse} from "@angular/common/http";
 import {UploadFileService} from "../../../services/upload-file.service";
-import {from} from "rxjs";
-import {concatMap, mergeMap} from "rxjs/operators";
-
+import {IShipment} from "../../../models/shipmenst.model";
+import {CalculationsService} from "../../../services/calculations.service";
+import {ISelectMethodUsers} from "../../../models/calculations.model";
+import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 
 @Component({
@@ -23,107 +23,129 @@ import {concatMap, mergeMap} from "rxjs/operators";
   templateUrl: './mathematical-forecast-table.component.html',
   styleUrls: ['./mathematical-forecast-table.component.scss']
 })
-export class MathematicalForecastTableComponent implements OnInit, OnChanges {
-  @ViewChild('dt')  table: Table;
-  @Input() mathematicalForecastTable;
+export class MathematicalForecastTableComponent implements OnInit {
 
+  @ViewChild('dt') table: Table;
 
+  @Input() settlemenType;
+
+  @Input() forecastingStrategySustainable;
+
+  @Input() forecastingStrategySmall;
+
+  @Input() totalRecords;
+
+  loadingMathematicalForecastTable: boolean = true
+  mathematicalForecastTable: IShipment[]
   loading: boolean;
-  totalRecords: number;
-  massSummYear: any[];
-  summYears: 0;
-  columsYears: number= 0;
+  columsYears: number = 0;
   cols: any[];
-  virtTable: any[];
   user: IAuthModel;
   loader: boolean = false
   downloadShipLoading: boolean = false
   downloadRoadLoading: boolean = false
-  primeryBol = [ { label: 'Все', value: '' },{ label: 'Да', value: true },{ label: 'Нет', value: false }]
+  primeryBol = [{label: 'Все', value: ''}, {label: 'Да', value: true}, {label: 'Нет', value: false}]
   selectedPrimery: any;
-  virtTable2: any;
   sessionId: number
-  primary2 = [ { label: 'Да', value: true },{ label: 'Нет', value: false }]
+  primary2 = [{label: 'Да', value: true}, {label: 'Нет', value: false}]
+  first: number = 0;
+  loadingTable: boolean = true;
+  operator: ''
+  filters: string = ''
+  massSummYear: {} = {}
+  filterTableEvant: any
+  reportingYears = [];
+  methodUsers: ISelectMethodUsers[];
+  forecastingStrategyFilter: any;
+  yearsColm: any;
+  primeColm: any;
+  forecastFiscalYear: any;
+  dynamicForm: FormGroup;
 
   constructor(
+    private formBuilder: FormBuilder,
+
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
     private forecastingModelService: ForecastingModelService,
     private authenticationService: AuthenticationService,
     private uploadFileService: UploadFileService,
     public forecastModelService: ForecastingModelService,
+    public calculationsService: CalculationsService,
   ) {
     this.user = this.authenticationService.userValue;
   }
 
-  ngOnChanges() {
-    this.totalRecords = this.mathematicalForecastTable.length;
-    this.massSummYears(this.mathematicalForecastTable)
-  }
+
   ngOnInit(): void {
-    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+    this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
+    this.dynamicForm = this.formBuilder.group({
+      summYearsInput: new FormArray([])
+    });
+
+    if (this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
-    }else{
+      console.log('sdssd')
+    } else {
       this.sessionId = this.forecastModelService.getTicketInformation().stepThree.sessionId;
     }
-
-    this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
-    this.massSummYears(this.mathematicalForecastTable)
-    this.cols = [
-      { field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
-      { field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false },
-      { field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false },
-      { field: 'fromRoad', header: 'Дорога отправления', width: '100px', keyS: false },
-      { field: 'fromStation', header: 'Станция отправления РФ', width: '100px', keyS: false },
-      { field: 'fromStationCode', header: 'Код станции отправления РФ', width: '100px', keyS: false },
-      { field: 'fromSubject', header: 'Субъект отправления', width: '100px', keyS: false },
-      { field: 'senderName', header: 'Грузоотправитель', width: '100px', keyS: false },
-      { field: 'toRoad', header: 'Дорога назначения', width: '100px', keyS: false },
-      { field: 'toStation', header: 'Станция назначения РФ', width: '100px', keyS: false },
-      { field: 'toStationCode', header: 'Код станции назначения РФ', width: '100px', keyS: false },
-      { field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false },
-      { field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false },
-      { field: 'primary', header: 'Уст.', width: '80px', keyS: false },
-    ];
-    for(let i=0; i< this.columsYears ; i++){
-      this.cols.push({ field: `shipmentYearValuePairs.${i}.value`, header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year, width: '100px',keyS: true })
-    }
+    this.methodUsers = [
+      {id: 1, type: 'LESS_SQUARE', name: 'Вычисление прогноза корреспонденций по методу наименьших квадратов'},
+      {id: 2, type: 'FISCAL_YEAR', name: 'Вычисление прогноза корреспонденций по отчётному году'},
+      {
+        id: 3,
+        type: 'TENDENCY_FIXED_DELTA',
+        name: 'Вычисление прогноза корреспонденций по тенденции (по фиксированным промежуткам)'
+      },
+      {
+        id: 4,
+        type: 'TENDENCY_INCREASING_DELTA',
+        name: 'Вычисление прогноза корреспонденций по тенденции (по увеличивающимся промежуткам)'
+      },
+      {
+        id: 5,
+        type: 'AVERAGE_FIXED_INTERVAL',
+        name: 'Вычисление прогноза корреспонденций по среднему арифметическому (по фиксированным промежуткам)'
+      },
+      {
+        id: 6,
+        type: 'AVERAGE_INCREASING_INTERVAL',
+        name: 'Вычисление прогноза корреспонденций по среднему арифметическому (по увеличивающимся промежуткам)'
+      },
+    ]
   }
 
-  columnFilter(event: any, field) {
-    this.table.filter(event.target.value, field, 'contains');
-  }
 
-  massSummYears($event: any) {
-    this.virtTable2 = $event;               //исходное значение
-    this.virtTable = $event.filteredValue; //фильтр
-    this.massSummYear = [ ]
-    if($event['filteredValue'] !== undefined){
-      if($event.filteredValue.length > 0){
-        for (let i = 0; i < $event.filteredValue[0].shipmentYearValuePairs.length ; i++){
-          this.summYears = 0;
-          for (let x = 0; x < $event.filteredValue.length; x++){
-            this.summYears += $event.filteredValue[x].shipmentYearValuePairs[i].value;
-          }
-          this.massSummYear.push(this.summYears);
-        }
+
+  get f() { return this.dynamicForm.controls; }
+  get t() { return this.f.summYearsInput as FormArray; }
+
+
+
+  onChangeTickets() {
+    if (this.t.length < this.columsYears) {
+      for (let i = this.t.length; i < this.columsYears; i++) {
+        this.t.push(this.formBuilder.group({
+          name: ['', Validators.required],
+        }));
       }
-    }else{
-      this.virtTable = [...this.mathematicalForecastTable];
-      if(this.columsYears > 0){
-        for (let i = 0; i <  this.mathematicalForecastTable[0].shipmentYearValuePairs.length ; i++){
-          this.summYears = 0;
-          for (let x = 0; x <  this.mathematicalForecastTable.length; x++){
-            this.summYears +=  this.mathematicalForecastTable[x].shipmentYearValuePairs[i].value;
-          }
-          this.massSummYear.push(this.summYears);
-        }
+    } else {
+      for (let i = this.t.length; i >= this.columsYears; i--) {
+        this.t.removeAt(i);
       }
     }
   }
+
+  additionalInfo(items) {
+    const res = items.split(',')
+    for (let item of res) {
+      this.reportingYears.push({"name": item});
+    }
+  }
+
 
   onRowEditInit(item: any) {
-  console.log('item', item)
+    console.log('item', item)
   }
 
   onRowEditSave(item: any) {
@@ -131,62 +153,59 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
     this.shipmentsService.putShipments(item).subscribe(
       res => (console.log('god')),
       error => this.modalService.open(error.error.message),
-      () => this.massSummYears(this.mathematicalForecastTable)
+      () => this.summFooter(this.sessionId)
     )
   }
 
   onRowEditCancel() {
   }
 
-
-  test(idx: number, value: any) {
-  const saveMass = []
-  const dec = Number(value / this.massSummYear[idx]).toFixed(3);
-  for(let i=0; i< this.virtTable.length; i++) {
-    this.virtTable[i].shipmentYearValuePairs[idx].value = Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(3))
-    console.log(Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(2)))
-    delete this.virtTable[i].session;
-    saveMass.push(this.virtTable[i])
+  createColumnTable() {
+    this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
+    this.onChangeTickets()
+    this.cols = [
+      {field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
+      {field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false},
+      {field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false},
+      {field: 'fromRoad', header: 'Дорога отправления', width: '100px', keyS: false},
+      {field: 'fromStation', header: 'Станция отправления РФ', width: '100px', keyS: false},
+      {field: 'fromStationCode', header: 'Код станции отправления РФ', width: '100px', keyS: false},
+      {field: 'fromSubject', header: 'Субъект отправления', width: '100px', keyS: false},
+      {field: 'senderName', header: 'Грузоотправитель', width: '100px', keyS: false},
+      {field: 'toRoad', header: 'Дорога назначения', width: '100px', keyS: false},
+      {field: 'toStation', header: 'Станция назначения РФ', width: '100px', keyS: false},
+      {field: 'toStationCode', header: 'Код станции назначения РФ', width: '100px', keyS: false},
+      {field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false},
+      {field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false},
+      {field: 'primary', header: 'Уст.', width: '80px', keyS: false},
+    ];
+    for (let i = 0; i < this.columsYears; i++) {
+      this.cols.push({
+        field: `shipmentYearValuePairs.${i}.value`,
+        header: this.mathematicalForecastTable[0].shipmentYearValuePairs[i].year,
+        width: '100px',
+        keyS: true,
+      })
+    }
+    this.loadingTable = false
   }
-  if(saveMass.length !== 0){
-    this.loader = true;
-    from(saveMass).pipe(
-      concatMap(param => this.shipmentsService.putShipments(param)) //concatMap
-    ).subscribe(
-      res =>   this.massSummYears(this.mathematicalForecastTable),
-      error => {
-        this.modalService.open(error.error.message),
-          this.loader = false;
-      },
-      () => {
-        this.massSummYears(this.mathematicalForecastTable),
-          this.loader = true;
-        setTimeout(()=>{
-          this.loader = false;
-        }, 10);
-      }
-    );
-  }
-}
 
   colorYears(rowData, col: any) {
     const mass = col['field'].toString().split('.');
-    return rowData.shipmentYearValuePairs[mass[1]].calculated === true ?  true :  false
+    return rowData.shipmentYearValuePairs[mass[1]].calculated === true ? true : false
   }
 
   editColumn(row: any, col: any, $event: any) {
-    if(col['keyS'] === true){
+    if (col['keyS'] === true) {
       const mass = col['field'].toString().split('.');
       row.shipmentYearValuePairs[mass[1]].value = Number($event);
-    }else{
+    } else {
       const item = col['field'];
       row[item] = $event
     }
   }
 
-  test2(item: any, idx: number) {
-    return this.mathematicalForecastTable[0].shipmentYearValuePairs[idx].calculated === true ? true : false
-  }
+
 
   primeryBolChange(value: any, field: any, equals: string) {
     this.table.filter(value, field, equals)
@@ -202,7 +221,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
         let binaryData = [];
         binaryData.push(response.body);
         let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
         downloadLink.setAttribute('download', filename);
         document.body.appendChild(downloadLink);
         downloadLink.click();
@@ -214,6 +233,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
       () => this.downloadShipLoading = false
     )
   }
+
   downloadRoad() {
     this.downloadRoadLoading = true;
     this.uploadFileService.getDownload(this.sessionId, 'ROAD_TO_ROAD').subscribe(
@@ -223,7 +243,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
         let binaryData = [];
         binaryData.push(response.body);
         let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
         downloadLink.setAttribute('download', filename);
         document.body.appendChild(downloadLink);
         downloadLink.click();
@@ -232,37 +252,238 @@ export class MathematicalForecastTableComponent implements OnInit, OnChanges {
         this.modalService.open(error.error.message),
           this.downloadRoadLoading = false
       },
-      () =>  this.downloadRoadLoading = false
+      () => this.downloadRoadLoading = false
+    )
+  }
+
+  filterFieldHeaders(name: string, value: string) {
+    switch (name) {
+      case 'cargoGroup':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'cargoSubGroup':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'shipmentType':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'fromRoad':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'fromStation':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'fromStationCode':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'fromSubject':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'senderName':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'toRoad':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'toStation':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'toStationCode':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'toSubject':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'receiverName':
+        this.filters = ',' + name + '~' + value;
+        break;
+      case 'primary':
+        this.filters = ',' + 'isPrimary' + ':' + value;
+        break;
+      default:
+        this.parseFiltersYears(name, value);
+    }
+  }
+
+
+  parseFiltersYears(name: string, value: string) {
+    if (value.match(/^[><=]/)) {
+      return value[0] === '=' ? this.filters = ',' + name + ':' + value.trim().slice(1) : this.filters = ',' + name + value
+    }
+    if (value.search('-') !== -1) {
+      let massiv = value.split('-')
+      if (massiv.length === 2) {
+        return this.filters = ',' + name + '>' + massiv[0] + ',' + name + '<' + massiv[1];
+      }
+    } else {
+      return this.filters = ',' + name + '>' + value;
+    }
+  }
+
+  loadCustomers(event: any) {
+    let sortField = ''
+    let sortOrder = ''
+    let currentPage = event.first / event.rows;
+    let resultFilterUrl = []
+    this.loadingTable = true
+    if (Object.keys(event.filters).length !== 0) {
+      for (let i = 0; i < Object.keys(event.filters).length; i++) {
+        console.log(event)
+        console.log(event.filters)
+        this.filterFieldHeaders(Object.keys(event.filters)[i], Object.values(event.filters[Object.keys(event.filters)[i]])[0].toString());
+        console.log(this.filters)
+        resultFilterUrl.push(this.filters)
+      }
+    }
+    event.sortField === 'primary' ? sortField = 'isPrimary' : sortField = event.sortField
+    event.sortOrder === 1 ? sortOrder = 'asc' : sortOrder = 'desc'
+
+    console.log('сортировка по полю: ', event.sortField)
+    this.filterTableEvant = {
+      sessionId: this.sessionId,
+      currentPage: currentPage,
+      rows: event.rows,
+      sortField: sortField,
+      sortOrder: sortOrder,
+      resultFilterUrl: resultFilterUrl.join('')
+    }
+    this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
+      .subscribe(
+        res => {
+          console.log(res)
+          res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
+          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
+        },
+        error => {
+          this.modalService.open(error)
+          this.loadingTable = false
+        },
+        () => {
+          this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
+          this.summFooter(this.sessionId)
+        }
+      )
+  }
+
+  particalListFilter() {
+    if (this.forecastingStrategyFilter.type === 'FISCAL_YEAR' && (this.forecastFiscalYear === null || this.forecastFiscalYear === undefined)) {
+      this.modalService.open('Стратегия прогнозирования корреспонденций. Укажите год!');
+    } else {
+        this.loadingMathematicalForecastTable = false
+        this.calculationsService.getPartialListFilter(
+        this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
+        this.forecastingStrategyFilter.type,
+        this.sessionId,
+        this.forecastingStrategyFilter.type === 'FISCAL_YEAR' ? this.forecastFiscalYear['name'] : null,
+        this.filterTableEvant.currentPage,
+        this.filterTableEvant.rows,
+        this.filterTableEvant.sortField,
+        this.filterTableEvant.sortOrder,
+        this.filterTableEvant.resultFilterUrl
+      )
+        .subscribe(
+          res => console.log(res),
+          error => {
+            this.modalService.open(error.error.message)
+            this.loadingMathematicalForecastTable = true
+          },
+          () => {
+            this.loadingMathematicalForecastTable = true
+            this.shipmentPagination()
+          }
+        )
+    }
+  }
+  divideSum(idx: string, value: any) {
+    let yearSumm: null;
+    this.mathematicalForecastTable.length !== 0 ? yearSumm = this.mathematicalForecastTable[0].shipmentYearValuePairs[idx].year : yearSumm = null
+    console.log(yearSumm)
+    console.log(value)
+    if (value !== '') {
+      this.loadingTable = true
+      this.calculationsService.getDivideSum(this.sessionId, this.filterTableEvant.resultFilterUrl, value, yearSumm)
+        .subscribe(
+          res => console.log(res),
+          error => this.modalService.open(error.error.message),
+          () => {
+            this.t.reset();
+            this.shipmentPagination()
+          }
+        )
+    }
+  }
+  shipmentPagination() {
+    this.shipmentsService.getShipmetsPaginations(this.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl)
+      .subscribe(
+        res => {
+          console.log(res)
+          res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
+          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
+        },
+        error => {
+          this.modalService.open(error.error.message)
+          this.loadingTable = false
+        },
+        () => {
+          this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
+          this.summFooter(this.sessionId)
+        }
+      )
+  }
+
+  summFooter(sessionId: number) {
+    this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
+      res => {
+        console.log('23', res)
+          this.massSummYear = res
+      },
+      error => this.modalService.open(error.error.message)
+    )
+  }
+
+  // createIdListFilterRow(list: IShipment[]) {
+  //   this.idListFilterRow = [];
+  //   if (list.length > 0) {
+  //     for (let item of list) {
+  //       this.idListFilterRow.push(item.id)
+  //     }
+  //   }
+  // }
+
+
+
+  downloadBorder() {
+    this.calculationsService.getLandBorder(this.sessionId).subscribe(
+      (response: HttpResponse<Blob>) => {
+        console.log(response)
+        let filename: string = 'land_border.xlsx'
+        let binaryData = [];
+        binaryData.push(response.body);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
+        downloadLink.setAttribute('download', filename);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      error => this.modalService.open(error.error.message),
+    )
+  }
+
+  downloadPort() {
+    this.calculationsService.getSeaPort(this.sessionId).subscribe(
+      (response: HttpResponse<Blob>) => {
+        console.log(response)
+        let filename: string = 'sea_port.xlsx'
+        let binaryData = [];
+        binaryData.push(response.body);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
+        downloadLink.setAttribute('download', filename);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      error => this.modalService.open(error.error.message),
     )
   }
 }
-// test(idx: number, value: any) {
-//   const shipmentYer
-//   const saveMass = []
-//   const dec = Number(value / this.massSummYear[idx]).toFixed(3);
-//   for(let i=0; i< this.virtTable.length; i++) {
-//     this.virtTable[i].shipmentYearValuePairs[idx].value = Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(3))
-//     console.log(Number((this.virtTable[i].shipmentYearValuePairs[idx].value * Number(dec)).toFixed(2)))
-//     delete this.virtTable[i].session;
-//     saveMass.push(this.virtTable[i])
-//   }
-//   if(saveMass.length !== 0){
-//     this.loader = true;
-//     from(saveMass).pipe(
-//       concatMap(param => this.shipmentsService.putShipments(param)) //concatMap
-//     ).subscribe(
-//       res =>   this.massSummYears(this.mathematicalForecastTable),
-//       error => {
-//         this.modalService.open(error.error.message),
-//           this.loader = false;
-//       },
-//       () => {
-//         this.massSummYears(this.mathematicalForecastTable),
-//           this.loader = true;
-//         setTimeout(()=>{
-//           this.loader = false;
-//         }, 10);
-//       }
-//     );
-//   }
-// }
+

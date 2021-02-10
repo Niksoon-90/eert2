@@ -1,61 +1,80 @@
-<div class="p-d-flex p-jc-center" >
+<div class="p-d-flex p-jc-center">
   <div style="width: 570px">
 
     <form [formGroup]="uploadFiles" (ngSubmit)="onUpload()">
       <div class=" p-d-flex p-jc-center">
-        <h3 >ИАС «Грузопотоки»</h3>
+        <h3>ИАС «Грузопотоки»</h3>
       </div>
       <ng-container *ngIf="this.initialDateType !== 'macroUpload'; else macroUpload">
-        <ng-container *ngIf="this.initialDateType !== 'synonym'">
+        <ng-container *ngIf="this.initialDateType !== 'synonym' && this.initialDateType !== 'station'">
           <div class="p-d-flex p-jc-center">
-            <p>Внимание!!! Файл должен соответствовать  выбранной Вами размерности.</p>
+            <p>Внимание!!! Файл должен соответствовать выбранной Вами размерности.</p>
           </div>
         </ng-container>
       </ng-container>
       <ng-template #macroUpload>
         <div class="p-d-flex p-jc-center">
-          <p>Внимание!!! Файл должен содержать выбранные Вами значения.</p>
+          <p>Внимание!!! Для загрузки файла в систему необходи ввести его имя.</p>
         </div>
       </ng-template>
+
       <div class="p-d-flex p-jc-center" *ngIf="progress > 0">
         <p>Ожидайте окончания Загрузки. Прогресс: {{progress}}%</p>
       </div>
-      <span class="p-float-label" style="margin-top: 10px">
-        <input id="float-input" type="text" formControlName="nameFile" class="p-inputtext-sm"  pInputText />
+      <ng-container *ngIf="this.initialDateType !== 'station'">
+        <span class="p-float-label" style="margin-top: 10px">
+        <input id="float-input" type="text" formControlName="nameFile" class="p-inputtext-sm" pInputText/>
         <label for="float-input">Введите имя</label>
       </span>
+      </ng-container>
       <div class="p-d-flex p-jc-center">
-        <input  type="file" (change)="onFileSelected($event)" class="choose" [disabled]="progress > 0" #fileUploader>
+        <input type="file" (change)="onFileSelected($event)" class="choose" [disabled]="progress > 0" #fileUploader>
       </div>
       <ng-container *ngIf="this.initialDateType === 'cargoUpload'">
         <div class="p-fluid p-grid">
           <div class=" p-col-12">
-            <p-dropdown formControlName="cargoType" optionLabel="name" [options]="cargoTypes" placeholder="Выберете один из вариантов:"></p-dropdown>
+            <p-dropdown formControlName="cargoType" optionLabel="name" [options]="cargoTypes"
+                        placeholder="Выберете один из вариантов:"></p-dropdown>
           </div>
         </div>
       </ng-container>
-      <ng-container *ngIf="this.initialDateType === 'macroUpload'">
-        <div class="p-fluid p-grid">
-          <div class=" p-col-12">
-            <p-dropdown formControlName="macroScenario" optionLabel="name" [options]="macroScenarioType" placeholder="Выберете один из вариантов:"></p-dropdown>
-          </div>
-        </div>
-      </ng-container>
+      <!--      <ng-container *ngIf="this.initialDateType === 'macroUpload'">-->
+      <!--        <div class="p-fluid p-grid">-->
+      <!--          <div class=" p-col-12">-->
+      <!--            <p-dropdown formControlName="macroScenario" optionLabel="name" [options]="macroScenarioType" placeholder="Выберете один из вариантов:"></p-dropdown>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </ng-container>-->
       <ng-container *ngIf="dimensionDelete()">
         <div class="p-fluid p-grid">
           <div class="p-col-12">
-            <p-dropdown optionLabel="label" formControlName="dimension"  [options]="dimensionItems" placeholder="Укажите размерность:"></p-dropdown>
+            <p-dropdown optionLabel="label" formControlName="dimension" [options]="dimensionItems"
+                        placeholder="Укажите размерность:"></p-dropdown>
           </div>
         </div>
       </ng-container>
       <div *ngIf="progress > 0" class="p-jc-center" style="margin-top: 5px; margin-bottom: 5px">
-        <p-progressBar  [value]="progress"  [showValue]="false"></p-progressBar>
+        <p-progressBar [value]="progress" [showValue]="false"></p-progressBar>
       </div>
-      <button pButton pRipple type="submit" label="Загрузить" [disabled]="disInvalidBut()" style="width: 100%; margin-bottom: 18px" class="p-button-success"></button>
+      <button pButton pRipple type="submit" label="Загрузить" [disabled]="disInvalidBut()"
+              style="width: 100%; margin-bottom: 18px" class="p-button-success"></button>
     </form>
   </div>
 </div>
 
 <p-dialog header="Успех!" [(visible)]="displayModal" [style]="{width: '30vw'}" [baseZIndex]="10000">
-  <p>Файл успешно загружен на сервер!<p>
+  <ng-container *ngIf="this.initialDateType === 'shipmentsUpload'; else messageDialog">
+    <p>{{this.messageDialogStats}}</p>
+    <ul *ngFor="let item of this.test">
+      <li>{{item}}</li>
+    </ul>
+    <div class="p-d-flex p-jc-center">
+    <button pButton pRipple type="button" label="Скачать" icon="pi pi-download" class="p-button-rounded p-button-success"
+              (click)="downloadAbsentcargo()"></button>
+    </div>
+  </ng-container>
+  <ng-template #messageDialog>
+    <p>Файл успешно загружен на сервер!
+    <p>
+  </ng-template>
 </p-dialog>

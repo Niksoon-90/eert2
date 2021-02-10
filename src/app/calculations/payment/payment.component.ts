@@ -14,6 +14,7 @@ import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
 import {HttpResponse} from "@angular/common/http";
 import {UploadFileService} from "../../services/upload-file.service";
+import {ShipmentsService} from "../../services/shipments.service";
 
 @Component({
   selector: 'app-payment',
@@ -55,6 +56,7 @@ export class PaymentComponent implements OnInit {
     private calculationsService: CalculationsService,
     private modalService: ModalService,
     private uploadFileService: UploadFileService,
+    private shipmentsService: ShipmentsService
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -101,6 +103,16 @@ export class PaymentComponent implements OnInit {
     this.loadingOne = true;
     this.loadingTwo = true;
     this.loading = false;
+    console.log(this.form.controls.forecastCorrespondence.value.var_id)
+    console.log(this.form.controls.smallCorrespondence)
+    this.shipmentsService.putIasSaveId(
+      this.sessionId,
+      this.form.controls.forecastCorrespondence.value.var_id,
+      this.selectedPrimery === true ? this.form.controls.smallCorrespondence.value.var_id : 0,
+    ).subscribe(
+      res => console.log(res),
+      error => this.modalService.open(error.error.message)
+    )
       this.calculationsService.getIasForecastId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
         res => {
           this.correspondencesIiasForecast = res

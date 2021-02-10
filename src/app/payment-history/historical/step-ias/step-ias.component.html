@@ -2,7 +2,10 @@
   <p-card>
     <ng-template pTemplate="content">
       <ng-container *ngIf="this.user.authorities.includes('P_P_p10') === true">
-        <h3>Работа с ИАС Маршруты</h3>
+        <div class="p-justify-between p-d-flex">
+          <div><h3>Работа с ИАС Маршруты</h3></div>
+          <div class="p-d-flex p-align-center"><h3>{{this.nameSession}}</h3></div>
+        </div>
         <div>
           <div class="p-col-12 p-md-4">
             <form [formGroup]="form" (ngSubmit)="corresIiasForecast()">
@@ -89,10 +92,10 @@
                   <ng-container  *ngIf="this.selectedPrimery === true">
 
                     <ng-container *ngIf="this.downloadTotalSmallIasLoading === false; else DownloadLoading">
-                      <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left"  label="Участки (мелкие)" class="p-button-success p-mr-2 p-button p-component" (click)="downTotalSmallloadIas()" style="margin-right: 0.5em;"></button>
+                      <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left"  label="Участки (мелкие)" class="p-button-success p-mr-2 p-button p-component" (click)="downTotalSmallloadIas()" style="margin-right: 0.5em;" [disabled]="this.form.controls.smallCorrespondence.value === ''" ></button>
                     </ng-container>
                     <ng-container *ngIf="this.downloadTotalIasLoading === false; else DownloadLoading">
-                      <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left"  label="Участки (мелкие + основные)" class="p-button-success p-mr-2 p-button p-component" (click)="downTotalloadIas()" style="margin-right: 0.5em;"></button>
+                      <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left"  label="Участки (мелкие + основные)" class="p-button-success p-mr-2 p-button p-component" (click)="downTotalloadIas()" style="margin-right: 0.5em;" [disabled]="this.form.controls.smallCorrespondence.value === '' || this.form.controls.forecastCorrespondence.value === ''"></button>
                     </ng-container>
                   </ng-container>
                   <ng-template #DownloadLoading>

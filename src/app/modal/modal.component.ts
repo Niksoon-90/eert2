@@ -15,6 +15,7 @@ export class ModalComponent implements OnInit, DoCheck {
   constructor(
     private modalService: ModalService
   ) {}
+
   ngDoCheck(){
     this.erroMessage = this.modalService.errorMessage;
   }
@@ -24,5 +25,10 @@ export class ModalComponent implements OnInit, DoCheck {
 
   close() {
     this.modalService.close();
+  }
+
+  closeConfirm() {
+    this.modalService.close();
+    return false
   }
 }

@@ -69,6 +69,14 @@ import { SynonymComponent } from './directory/cargo-nci/synonym/synonym.componen
 import {FileUploadModule} from "primeng/fileupload";
 import {AccordionModule} from "primeng/accordion";
 import { ListShipmentComponent } from './initialDate/list-shipment/list-shipment.component';
+import { CreateRowShipmentComponent } from './initialDate/list-shipment/create-row-shipment/create-row-shipment.component';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {TabViewModule} from "primeng/tabview";
+import { SearchSynonymComponent } from './directory/search-synonym/search-synonym.component';
+import {CheckboxModule} from "primeng/checkbox";
+import { MonoCargoComponent } from './calculations/forecast-correspondence/mono-cargo/mono-cargo.component';
+import { HistoryShipmentComponent } from './calculations/forecast-correspondence/history-shipment/history-shipment.component';
 
 
 const itemRoutesShipments: Routes = [
@@ -159,40 +167,49 @@ registerLocaleData(localeRu, 'ru');
     DataMacroPokComponent,
     SynonymComponent,
     ListShipmentComponent,
+    CreateRowShipmentComponent,
+    SearchSynonymComponent,
+    MonoCargoComponent,
+    HistoryShipmentComponent,
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        InputTextModule,
-        ButtonModule,
-        HttpClientModule,
-        ProgressBarModule,
-        BrowserAnimationsModule,
-        ReactiveFormsModule,
-        MenuModule,
-        RouterModule.forRoot(appRoutes),
-        MenubarModule,
-        TooltipModule,
-        PanelMenuModule,
-        StepsModule,
-        ToastModule,
-        CardModule,
-        DropdownModule,
-        FormsModule,
-        DialogModule,
-        OverlayPanelModule,
-        CalendarModule,
-        RadioButtonModule,
-        SidebarModule,
-        ProgressSpinnerModule,
-        MultiSelectModule,
-        TableModule,
-        InputSwitchModule,
-        FileUploadModule,
-        AccordionModule,
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    InputTextModule,
+    ButtonModule,
+    HttpClientModule,
+    ProgressBarModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    MenuModule,
+    RouterModule.forRoot(appRoutes),
+    MenubarModule,
+    TooltipModule,
+    PanelMenuModule,
+    StepsModule,
+    ToastModule,
+    CardModule,
+    DropdownModule,
+    FormsModule,
+    DialogModule,
+    OverlayPanelModule,
+    CalendarModule,
+    RadioButtonModule,
+    SidebarModule,
+    ProgressSpinnerModule,
+    MultiSelectModule,
+    TableModule,
+    InputSwitchModule,
+    FileUploadModule,
+    AccordionModule,
+    ConfirmDialogModule,
+    TabViewModule,
+    CheckboxModule,
+  ],
 
   providers: [
+    ConfirmationService,
+    MessageService,
     RedirectGuard,
     { provide: LOCALE_ID, useValue: 'ru' },
     {provide: LocationStrategy, useClass: HashLocationStrategy}

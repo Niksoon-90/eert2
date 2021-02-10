@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ShipmentsService} from "../../services/shipments.service";
 import {IMacroPokModel} from "../../models/macroPok.model";
-import {MessageService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ModalService} from "../../services/modal.service";
 import {AuthenticationService} from "../../services/authentication.service";
@@ -22,7 +22,8 @@ export class MacroPokComponent implements OnInit {
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService:ModalService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -126,13 +127,20 @@ export class MacroPokComponent implements OnInit {
   }
 
   mackPokDel(id: number) {
-    this.shipmentsService.deleteMackPok(id).subscribe(
-      res => {
-        this.getMacroPok();
-        this.resetForm();
-      },
-      error => this.modalService.open(error.error.message),
-      () => console.log('HTTP request completed.')
-    )
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить макроэкономический показатель?`,
+      header: 'Удаление макроэкономического показателя',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.shipmentsService.deleteMackPok(id).subscribe(
+          res => {
+            this.getMacroPok();
+            this.resetForm();
+          },
+          error => this.modalService.open(error.error.message),
+          () => console.log('HTTP request completed.')
+        )
+      }
+    });
   }
 }

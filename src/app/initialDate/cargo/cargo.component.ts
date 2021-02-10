@@ -14,7 +14,7 @@ export class CargoComponent implements OnInit {
   user: IAuthModel
 
   constructor(
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
   ) {
     this.user = this.authenticationService.userValue;
 }
