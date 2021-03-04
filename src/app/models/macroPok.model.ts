@@ -19,3 +19,20 @@ export interface IMultipleMakpok{
   sessionId?: number
   shipmentType?:	string
 }
+
+export interface IMacroIndexesIds {
+  macroIndexesIds?: number[],
+  macroIndexesData?: IMacroIndexesData[]
+}
+
+export interface IMacroIndexesData {
+  macroIndexesIds?: number[],
+  macroIndexesNames?: any[],
+  cargoGroup?: string,
+  shipmentType?: string,
+  r2?: number,
+  mape?: number,
+  mse?: number,
+  f?: number,
+  mae?: number
+}

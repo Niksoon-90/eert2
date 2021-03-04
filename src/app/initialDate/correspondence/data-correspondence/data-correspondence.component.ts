@@ -63,7 +63,7 @@ export class DataCorrespondenceComponent implements OnInit {
           this.correspondenceSession = res;
           console.log(res)
         },
-        error => this.modalService.open(error.message),
+        error => this.modalService.open(error.error.message),
         () => this.loading = false
       )
     }else{
@@ -82,7 +82,7 @@ export class DataCorrespondenceComponent implements OnInit {
           console.log(this.user.user)
           console.log(res)
         },
-        error => this.modalService.open(error.message),
+        error => this.modalService.open(error.error.message),
         () => this.loading = false
       )
     }

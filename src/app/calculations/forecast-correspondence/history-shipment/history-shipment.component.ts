@@ -18,7 +18,17 @@ export class HistoryShipmentComponent implements OnInit {
   primeryBol = [{label: 'Все', value: ''}, {label: 'Да', value: true}, {label: 'Нет', value: false}]
   massSummYear: {} = {}
   primary2 = [{label: 'Да', value: true}, {label: 'Нет', value: false}]
+  typeCalculation= [
+    {label: 'Все', value: ''},
+    {label: 'по методу наименьших квадратов', value: 'LESS_SQUARE'},
+    {label: 'по отчётному году', value: 'FISCAL_YEAR'},
+    {label: 'по тенденции (по фиксированным промежуткам)', value: 'TENDENCY_FIXED_DELTA'},
+    {label: 'по тенденции (по увеличивающимся промежуткам)', value: 'TENDENCY_INCREASING_DELTA'},
+    {label: 'по среднему арифметическому (по фиксированным промежуткам)', value: 'AVERAGE_FIXED_INTERVAL'},
+    {label: 'по среднему арифметическому (по увеличивающимся промежуткам)', value: 'AVERAGE_INCREASING_INTERVAL'},
+    ]
   selectedPrimery: any;
+  selectedForecastType: any;
   totalRecords: number
   filters: string = ''
   loadingTable: boolean = true
@@ -27,6 +37,7 @@ export class HistoryShipmentComponent implements OnInit {
   first: number = 0;
   sub: Subscription
   filterTableEvant: any
+
 
   constructor(
     private modalService: ModalService,
@@ -39,9 +50,7 @@ export class HistoryShipmentComponent implements OnInit {
   }
 
   createColumnTable() {
-    if (this.mathematicalForecastTable[0].shipmentYearValuePairs.length > 0) {
-      this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
-    }
+    this.mathematicalForecastTable.length === 0 ? this.columsYears = 0 : this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
     this.cols = [
       {field: 'forecastType', header: 'Предлагаемая стратегия прогнозирования', width: '100px', keyS: false},
       {field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false, isStatic: true},
@@ -73,6 +82,8 @@ export class HistoryShipmentComponent implements OnInit {
   openShipItemSession() {
     this.sub = this.shipmentsService.getShipmetsPaginations(this.sessionId, 0).subscribe(
       res => {
+        console.log(res)
+
         this.mathematicalForecastTable = res.content
       },
       error => {
@@ -86,7 +97,10 @@ export class HistoryShipmentComponent implements OnInit {
 
   filterFieldHeaders(name: string, value: string) {
     switch (name) {
-      case 'cargoGroup':
+      case 'forecastType':
+        this.filters = ',' + name + ':' + value;
+        break;
+        case 'cargoGroup':
         this.filters = ',' + name + '~' + value;
         break;
       case 'cargoSubGroup':
@@ -218,25 +232,25 @@ export class HistoryShipmentComponent implements OnInit {
   sdsd(name: string) {
     switch (name) {
       case 'LESS_SQUARE':
-        return 'Вычисление прогноза корреспонденций по методу наименьших квадратов'
+        return 'по методу наименьших квадратов'
         break;
       case 'FISCAL_YEAR':
-        return 'Вычисление прогноза корреспонденций по отчётному году'
+        return 'по отчётному году'
         break;
       case 'TENDENCY_FIXED_DELTA':
-        return 'Вычисление прогноза корреспонденций по тенденции (по фиксированным промежуткам)'
+        return 'по тенденции (по фиксированным промежуткам)'
         break;
       case 'TENDENCY_INCREASING_DELTA':
-        return 'Вычисление прогноза корреспонденций по тенденции (по увеличивающимся промежуткам)'
+        return 'по тенденции (по увеличивающимся промежуткам)'
         break;
       case 'AVERAGE_FIXED_INTERVAL':
-        return 'Вычисление прогноза корреспонденций по среднему арифметическому (по фиксированным промежуткам)'
+        return 'по среднему арифметическому (по фиксированным промежуткам)'
         break;
       case 'AVERAGE_INCREASING_INTERVAL':
-        return 'Вычисление прогноза корреспонденций по среднему арифметическому (по увеличивающимся промежуткам)'
+        return 'по среднему арифметическому (по увеличивающимся промежуткам)'
         break;
       default:
-        return 'Ошибка вычислений'
+        return 'Подбирается оптимальный метод'
         break;
     }
   }

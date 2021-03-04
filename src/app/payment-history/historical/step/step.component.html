@@ -1,26 +1,7 @@
-<!--<p-dialog  [(visible)]="displayPosition" [position]="position" [modal]="true" [style]="{width: '25rem'}" [baseZIndex]="10000"-->
-<!--           [draggable]="false" [resizable]="false">-->
-<!--  <ng-container *ngIf="this.nameSession">-->
-<!--    <div class="p-d-flex p-flex-column">-->
-<!--      <div class="p-mb-2">-->
-<!--          <h4>Наименование расчета</h4>-->
-<!--          <div>{{this.nameSession}}</div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </ng-container>-->
 
-<!--  <ng-template pTemplate="footer">-->
-<!--    <p-button icon="pi pi-check" (click)="displayPosition=false" label="Закрыть" styleClass="p-button-text"></p-button>-->
-<!--  </ng-template>-->
-<!--</p-dialog>-->
 <div class="stepsdemo-content">
-
-
   <p-card>
     <ng-template pTemplate="content">
-<!--      <div style="text-align: right">-->
-<!--        <p-button (click)="showPositionDialog('top-right')"  label="Параметры" class="p-button-secondary"></p-button>-->
-<!--      </div>-->
     <ng-template #load>
       <div class="p-d-flex p-jc-center" style="height: 40vh">
         <div class="p-grid p-ai-center vertical-container ">
@@ -136,7 +117,16 @@
                   <p-cellEditor>
                     <ng-template pTemplate="input">
                       <ng-container *ngIf="col['field'] !== 'primary'; else primaryEdit">
-                        <input pInputText type="text" [ngModel]="rowData | field:col" (ngModelChange)="editColumn(rowData, col, $event)">
+                        <ng-container *ngIf=" idx < 14">
+                          <input pInputText type="text" [ngModel]="rowData | field:col"
+                                 (ngModelChange)="editColumn(rowData, col, $event)" [ngModelOptions]="{standalone: true}">
+
+                        </ng-container>
+                        <ng-container *ngIf=" idx > 13">
+                          <input pInputText type="number" [ngModel]="rowData | field:col"
+                                 (ngModelChange)="editColumn(rowData, col, $event)" [ngModelOptions]="{standalone: true}">
+
+                        </ng-container>
                       </ng-container>
                       <ng-template #primaryEdit>
                         <p-dropdown appendTo="body" [options]="primary2"  [(ngModel)]="rowData[col.field]" ></p-dropdown>

@@ -40,7 +40,7 @@
         <td>{{itemShipmentsSession.userFio}}</td>
         <td>{{itemShipmentsSession.dateWrite | date:'full' }}</td>
         <td>
-          <button pButton pRipple icon="pi pi-arrow-circle-right"  class="p-button-rounded p-button-text p-button-plain" type="button"  pTooltip="Перейти" tooltipPosition="bottom"  (click)="openThreeStep(itemShipmentsSession.id, itemShipmentsSession.name, itemShipmentsSession.historicalYears, itemShipmentsSession.forecastConfirmed, itemShipmentsSession.firstRouteId, itemShipmentsSession.secondRouteId)"></button>
+          <button pButton pRipple icon="pi pi-arrow-circle-right"  class="p-button-rounded p-button-text p-button-plain" type="button"  pTooltip="Перейти" tooltipPosition="bottom"  (click)="openThreeStep(itemShipmentsSession.id, itemShipmentsSession.name, itemShipmentsSession.historicalYears, itemShipmentsSession.forecastConfirmed, itemShipmentsSession.firstRouteId, itemShipmentsSession.secondRouteId, itemShipmentsSession.allCorrespondensRouteId)"></button>
           <ng-container *ngIf="itemShipmentsSession.forecastConfirmed !== true">
             <ng-container *ngIf="this.user.authorities.includes('P_P_p11') === true">
               <button pButton pRipple icon="pi pi-star"  class="p-button-rounded p-button-warning p-button-text" type="button"  pTooltip="Утвердить" tooltipPosition="bottom"  (click)="confirmSession(itemShipmentsSession.id)"></button>

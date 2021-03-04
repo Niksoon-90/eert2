@@ -27,11 +27,16 @@ export class ShipmentsService {
       observe: "events"
     });
   }
-  getDownloadAbsentcargo(id: number){
-    return this.http.get<Blob>(this.url + `api/file/download/absentcargo/${id}`, { observe: 'response', responseType: 'blob' as 'json' } )
+
+  getDownloadAbsentcargo(id: number) {
+    return this.http.get<Blob>(this.url + `api/file/download/absentcargo/${id}`, {
+      observe: 'response',
+      responseType: 'blob' as 'json'
+    })
   }
-  putIasSaveId(sessionId: number, forecastCorrespondence: string, smallCorrespondence: string){
-    return this.http.put(this.url + `api/file/routeId/${sessionId}?firstRouteId=${forecastCorrespondence}&secondRouteId=${smallCorrespondence}`, {})
+
+  putIasSaveId(sessionId: number, allCorrespondensRouteId: number, forecastCorrespondence: number, smallCorrespondence: number) {
+      return this.http.put(this.url + `api/file/routeId/${sessionId}?allCorrespondensRouteId=${allCorrespondensRouteId}&firstRouteId=${forecastCorrespondence}&secondRouteId=${smallCorrespondence}`, {})
   }
 
   postMacroUploadFile(fd, fileName: string, fio: string, login: string) {
@@ -56,9 +61,8 @@ export class ShipmentsService {
   }
 
   getSummFooter(sessionId: number, filters: string) {
-    return this.http.get(this.url + `api/file/pages/shipments/footer?search=sessionId:${sessionId}${filters}`)
+    return this.http.get(this.url + `api/file/pages/shipments/footer?search=sessionId:${sessionId}${encodeURI(filters)}`)
   }
-
 
 
   getShipSession(): Observable<ISession[]> {
@@ -70,8 +74,8 @@ export class ShipmentsService {
     return this.http.delete(this.url + `api/session/${id}`)
   }
 
-  getCopySissionShipments(fio: string, login: string, name: string ,sessionId: number) {
-    return this.http.get(this.url + `api/session/copySession?fio=${fio}&login=${login}&name=${name}&sessionId=${sessionId}`)
+  getCopySissionShipments(fio: string, horizont: number, login: string, name: string, sessionId: number) {
+    return this.http.get(this.url + `api/session/copySession?fio=${fio}&horizont=${horizont}&login=${login}&name=${name}&sessionId=${sessionId}`)
   }
 
   getShipmetsPaginations(sessionId: number, page: number = 0, size: number = 50, sortColumn?: string, sortOrder?: string, filters?: string): Observable<IShipmentPagination> {
@@ -80,7 +84,7 @@ export class ShipmentsService {
       params = params.set('sort', sortColumn + ',' + sortOrder);
     }
     if (filters) {
-      return this.http.get<IShipmentPagination>(this.url + `api/file/pages/shipments?search=sessionId:${sessionId}${filters}&page=${page}&size=${size}`, {params})
+      return this.http.get<IShipmentPagination>(this.url + `api/file/pages/shipments?search=sessionId:${sessionId}${encodeURI(filters)}&page=${page}&size=${size}`, {params})
     }
     return this.http.get<IShipmentPagination>(this.url + `api/file/pages/shipments?search=sessionId:${sessionId}&page=${page}&size=${size}`, {params})
   }
@@ -240,7 +244,12 @@ export class ShipmentsService {
   deletetSynonym(cargoOwnerSynonymId: number) {
     return this.http.delete(this.url + `api/catalog/cargo/synonym/${cargoOwnerSynonymId}`)
   }
-  postSearchSynonym(name: string){
+
+  postSearchSynonym(name: string) {
     return this.http.get(this.url + `/api/catalog/cargo/synonyms/${name}`)
+  }
+  //TODO
+  deleteShipment(id: number){
+    return this.http.delete(this.url + `api/shipments/${id}`)
   }
 }

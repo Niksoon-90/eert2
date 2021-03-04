@@ -100,7 +100,7 @@ export class ImportStepsOneComponent implements OnInit {
           this.correspondenceSession = res;
           console.log(res)
         },
-        error => this.modalService.open(error.message),
+        error => this.modalService.open(error.error.message),
         () => console.log()
       )
     } else {
@@ -113,7 +113,7 @@ export class ImportStepsOneComponent implements OnInit {
             this.correspondenceSession = res;
             console.log(res)
           },
-          error => this.modalService.open(error.message),
+          error => this.modalService.open(error.error.message),
           () => console.log()
         )
     }
@@ -125,7 +125,7 @@ export class ImportStepsOneComponent implements OnInit {
           this.cargoSessionSender = res;
           console.log('res', res)
         },
-        error => this.modalService.open(error.message),
+        error => this.modalService.open(error.error.message),
         () => console.log()
       )
     } else {
@@ -138,7 +138,7 @@ export class ImportStepsOneComponent implements OnInit {
             this.cargoSessionSender = res;
             console.log('res', res)
           },
-          error => this.modalService.open(error.message),
+          error => this.modalService.open(error.error.message),
           () => console.log()
         )
     }
@@ -146,28 +146,28 @@ export class ImportStepsOneComponent implements OnInit {
   getCargoSessionSessionReceiver() {
     this.shipmentsService.getClaimSession('RECEIVER_CLAIMS').subscribe(
       res => {this.cargoSessionReceiver = res; console.log('res', res)},
-      error => this.modalService.open(error.message),
+      error => this.modalService.open(error.error.message),
       () =>  console.log()
     )
   }
   getOil(){
     this.calculationsService.getOil().subscribe(
       res => {this.oilCargo = res; console.log('res', res)},
-      error => this.modalService.open(error.message),
+      error => this.modalService.open(error.error.message),
       () =>  console.log()
     )
   }
   getOre(){
     this.calculationsService.getOre().subscribe(
       res => {this.ore = res; console.log('res', res)},
-      error => this.modalService.open(error.message),
+      error => this.modalService.open(error.error.message),
       () =>  console.log()
     )
   }
   getMetallurgy(){
     this.calculationsService.getMetallurgy().subscribe(
       res => {this.metallurgy = res; console.log('res', res)},
-      error => this.modalService.open(error.message),
+      error => this.modalService.open(error.error.message),
       () =>  console.log()
 )
 }
@@ -179,6 +179,7 @@ export class ImportStepsOneComponent implements OnInit {
       },
       error => this.modalService.open(error.error.message),
       () => {
+        console.log('this.stepOne.calcYearsNumber', this.stepOne.calcYearsNumber)
         this.router.navigate(['steps/forecast']);
         this.forecastModelService.ticketInformation.stepOne.Session =  null
         this.forecastModelService.ticketInformation.stepOne.nameNewShip =  this.stepOne.nameNewShip;
@@ -196,25 +197,32 @@ export class ImportStepsOneComponent implements OnInit {
   }
 
   nextPage() {
-    console.log('this.stepOne.metallurgy', this.stepOne.metallurgy)
     this.stepsInfo();
-    console.log('this.stepOne.Session', this.stepOne.Session)
     if(this.stepOne.Session !== null){
-      this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
-      this.forecastModelService.ticketInformation.stepOne.nameNewShip = this.stepOne.nameNewShip;
-      this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
-      this.forecastModelService.ticketInformation.stepOne.scenarioMacro = this.stepOne.scenarioMacro;
-      this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
-      this.forecastModelService.ticketInformation.stepOne.cargoSessionSender = this.stepOne.cargoSessionSender;
-      this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver = this.stepOne.cargoSessionReceiver;
-      this.forecastModelService.ticketInformation.stepOne.oilCargo = this.stepOne.oilCargo;
-      this.forecastModelService.ticketInformation.stepOne.ore = this.stepOne.ore;
-      this.forecastModelService.ticketInformation.stepOne.metallurgy = this.stepOne.metallurgy;
-      this.forecastModelService.ticketInformation.stepOne.oldSessionId = null;
-      this.forecastModelService.ticketInformation.stepOne.newSessionId = null;
-      this.router.navigate(['steps/mathForecast']);
+      if(this.stepOne.calcYearsNumber !== null){
+        this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
+        this.forecastModelService.ticketInformation.stepOne.nameNewShip = this.stepOne.nameNewShip;
+        this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
+        this.forecastModelService.ticketInformation.stepOne.scenarioMacro = this.stepOne.scenarioMacro;
+        this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
+        this.forecastModelService.ticketInformation.stepOne.cargoSessionSender = this.stepOne.cargoSessionSender;
+        this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver = this.stepOne.cargoSessionReceiver;
+        this.forecastModelService.ticketInformation.stepOne.oilCargo = this.stepOne.oilCargo;
+        this.forecastModelService.ticketInformation.stepOne.ore = this.stepOne.ore;
+        this.forecastModelService.ticketInformation.stepOne.metallurgy = this.stepOne.metallurgy;
+        this.forecastModelService.ticketInformation.stepOne.oldSessionId = null;
+        this.forecastModelService.ticketInformation.stepOne.newSessionId = null;
+        this.router.navigate(['steps/mathForecast']);
+      }else{
+        this.modalService.open('Укажите горизонт прогноза!')
+      }
     }else{
-      this.postCreateEmptySession();
+      if(this.stepOne.metallurgy === null  && this.stepOne.ore === null && this.stepOne.oilCargo === null){
+        this.modalService.open('Укажите исходные данные или перспективные корреспонденции!')
+      }else{
+        this.postCreateEmptySession();
+      }
+
     }
   }
   stepsInfo(){

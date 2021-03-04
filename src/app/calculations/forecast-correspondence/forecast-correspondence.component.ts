@@ -70,9 +70,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
   ngOnInit(): void {
     this.calculated = this.forecastModelService.getTicketInformation().stepThree.calculated
     if(this.calculated === true){
-      console.log('test')
-      this.disableCorrelation = false;
       this.loading = true
+      this.disableCorrelation = false;
     }
     if (this.forecastModelService.ticketInformation.stepOne.oldSessionId === null && this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.forecastModelService.ticketInformation.stepOne.oldSessionId = this.forecastModelService.ticketInformation.stepOne.Session['id']
@@ -85,13 +84,17 @@ export class ForecastCorrespondenceComponent implements OnInit {
     if (this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
       this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
+      this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     } else {
+      this.stepOnecalcYearsNumber = 0
       this.sessionId = this.forecastModelService.ticketInformation.stepThree.sessionId;
+      this.calculated = true;
+      this.loading = true
+      this.corresponTiers()
     }
 
-    this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
+   // this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     this.stepThree = this.forecastModelService.ticketInformation.stepThree;
-
     this.stepThree.forecastingStrategySustainable = this.methodUsers[0]
     this.stepThree.forecastingStrategySmall = this.methodUsers[1]
 
@@ -120,8 +123,9 @@ export class ForecastCorrespondenceComponent implements OnInit {
 
   calculateForecastingStrategyAll() {
     if(this.checkStrategyType() === true){
-      this.forecastModelService.ticketInformation.stepThree.calculated = true
-      this.disableCorrelation = false
+      this.loadingHistoryShipment = true
+      //this.disableCorrelation = false
+      this.calculated === true
       this.loading = false;
       this.settlemenType = 'payment'
       this.calculationsService.getGeneralmethod2(this.sessionId,
@@ -141,6 +145,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
           },
           error => {
             this.modalService.open(error.error.message)
+            this.calculated === false
             this.loading = true
           },
           () => {
@@ -153,6 +158,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
             this.calculated = true
             this.loading = true
             this.disableCorrelation = false
+            this.forecastModelService.ticketInformation.stepThree.calculated = true
           }
         )
     }
@@ -208,32 +214,50 @@ export class ForecastCorrespondenceComponent implements OnInit {
         }
       )
   }
+  transferToIAS(type: string){
+    let idTransferToIAS = 0;
+    switch (type) {
+      case 'oil':
+        idTransferToIAS = this.forecastModelService.getTicketInformation().stepOne.oilCargo.id
+        break;
+      case 'ruda':
+        idTransferToIAS = this.forecastModelService.getTicketInformation().stepOne.ore.id
+        break;
+      case 'metal':
+        idTransferToIAS = this.forecastModelService.getTicketInformation().stepOne.metallurgy.id
+        break;
+      default:
+        break;
+    }
 
+
+    this.calculationsService.postDownloadIASData(type,idTransferToIAS,  this.sessionId).subscribe(
+      res => {
+        console.log('из ИАС МоногрузЫ', res)
+      },
+      error => {
+        this.modalService.open(error.error.message),
+          this.loading = true
+      },
+      () => {
+        this.loading = true;
+        this.disableCorrelation = false;
+      }
+    )
+  }
   corresponTiers() {
-    this.loading = false;
-    let metallurgy: null
-    let oilCargo: null
-    let ore: null
-    let correspondenceSession: null
-    this.forecastModelService.getTicketInformation().stepOne.metallurgy === null ? metallurgy = null : metallurgy = this.forecastModelService.getTicketInformation().stepOne.metallurgy['id'];
-    this.forecastModelService.getTicketInformation().stepOne.oilCargo === null ? oilCargo = null : oilCargo = this.forecastModelService.getTicketInformation().stepOne.oilCargo['id'];
-    this.forecastModelService.getTicketInformation().stepOne.ore === null ? ore = null : ore = this.forecastModelService.getTicketInformation().stepOne.ore['id'];
-    this.forecastModelService.getTicketInformation().stepOne.correspondenceSession === null ? correspondenceSession = null : correspondenceSession = this.forecastModelService.getTicketInformation().stepOne.correspondenceSession['id'];
-
-    this.calculationsService.getPerspective(this.sessionId, metallurgy, oilCargo, ore, correspondenceSession)
-      .subscribe(
-        res => {
-          console.log(res)
-        },
-        error => {
-          this.modalService.open(error.error.message),
-            this.loading = true
-        },
-        () => {
-          this.loading = true;
-          this.disableCorrelation = !this.disableCorrelation;
-        }
-      )
+    let typeCargo = ''
+    let stepOneTypeTransportationQuantity = 0
+    this.forecastModelService.getTicketInformation().stepOne.oilCargo !== null ? (stepOneTypeTransportationQuantity++, typeCargo = 'oil') : null;
+    this.forecastModelService.getTicketInformation().stepOne.ore !== null ? (stepOneTypeTransportationQuantity++, typeCargo = 'ruda') : null;
+    this.forecastModelService.getTicketInformation().stepOne.metallurgy !== null ? (stepOneTypeTransportationQuantity++, typeCargo = 'metal') : null;
+    if(stepOneTypeTransportationQuantity === 1){
+      this.loading = false;
+      this.disableCorrelation = true
+      this.transferToIAS(typeCargo)
+    }else{
+      this.modalService.open('На первом шаге выбрано более одной перспективной корреспонденции!')
+    }
   }
 
   cargoSessionSenders() {
@@ -300,13 +324,21 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   monoCargoDialog() {
-    this.monoCargo = !this.monoCargo;
+    let stepOneTypeTransportationQuantity = 0
+    this.forecastModelService.getTicketInformation().stepOne.oilCargo !== null ? stepOneTypeTransportationQuantity++ : null;
+    this.forecastModelService.getTicketInformation().stepOne.ore !== null ? stepOneTypeTransportationQuantity++ : null;
+    this.forecastModelService.getTicketInformation().stepOne.metallurgy !== null ? stepOneTypeTransportationQuantity++ : null;
+    if(stepOneTypeTransportationQuantity === 1){
+      this.monoCargo = !this.monoCargo;
+    }else{
+      this.modalService.open('На первом шаге выбрано более одной перспективной корреспонденции!')
+    }
   }
 
   toApplyOptimalShipment() {
     this.loadingHistoryShipment = true
     this.settlemenType = 'payment'
-    this.shipmentsService.getCopySissionShipments(this.user.fio, this.user.user,this.forecastModelService.getTicketInformation().stepOne.nameNewShip, this.sessionId ).subscribe(
+    this.shipmentsService.getCopySissionShipments(this.user.fio, this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],  this.user.user,this.forecastModelService.getTicketInformation().stepOne.nameNewShip, this.sessionId ).subscribe(
       res => {
         this.sessionId = Number(res)
       }, error => {
@@ -314,6 +346,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
         this.loadingHistoryShipment = false
       },
       () => {
+        this.calculated = this.forecastModelService.getTicketInformation().stepThree.calculated
         this.forecastModelService.ticketInformation.stepThree.calculated = true
         this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.sessionId
         this.clearForecastFiscalYear();
@@ -324,4 +357,6 @@ export class ForecastCorrespondenceComponent implements OnInit {
       }
     )
   }
+
+
 }

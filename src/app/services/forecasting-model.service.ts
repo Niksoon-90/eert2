@@ -33,8 +33,9 @@ export class ForecastingModelService {
       primeryBolChange: false,
       historicalYears: null,
       forecastConfirmed: false,
-      firstRouteId: null,
-      secondRouteId: null
+      firstRouteId: 0,
+      secondRouteId: 0,
+      allCorrespondensRouteId: 0,
     }
   };
 

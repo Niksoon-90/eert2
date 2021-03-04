@@ -63,7 +63,7 @@
 </div>
 
 <p-dialog header="Успех!" [(visible)]="displayModal" [style]="{width: '30vw'}" [baseZIndex]="10000">
-  <ng-container *ngIf="this.initialDateType === 'shipmentsUpload'; else messageDialog">
+  <ng-container *ngIf="this.initialDateType === 'shipmentsUpload' || this.initialDateType === 'cargoUpload'; else messageDialog">
     <p>{{this.messageDialogStats}}</p>
     <ul *ngFor="let item of this.test">
       <li>{{item}}</li>

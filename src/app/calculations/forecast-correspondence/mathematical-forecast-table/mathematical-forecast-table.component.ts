@@ -16,6 +16,7 @@ import {IShipment} from "../../../models/shipmenst.model";
 import {CalculationsService} from "../../../services/calculations.service";
 import {ISelectMethodUsers} from "../../../models/calculations.model";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {ConfirmationService} from "primeng/api";
 
 
 @Component({
@@ -61,10 +62,20 @@ export class MathematicalForecastTableComponent implements OnInit {
   primeColm: any;
   forecastFiscalYear: any;
   dynamicForm: FormGroup;
+  numberHistroricalYears = 0
+  typeCalculation = [
+    {label: 'Все', value: ''},
+    {label: 'по методу наименьших квадратов', value: 'LESS_SQUARE'},
+    {label: 'по отчётному году', value: 'FISCAL_YEAR'},
+    {label: 'по тенденции (по фиксированным промежуткам)', value: 'TENDENCY_FIXED_DELTA'},
+    {label: 'по тенденции (по увеличивающимся промежуткам)', value: 'TENDENCY_INCREASING_DELTA'},
+    {label: 'по среднему арифметическому (по фиксированным промежуткам)', value: 'AVERAGE_FIXED_INTERVAL'},
+    {label: 'по среднему арифметическому (по увеличивающимся промежуткам)', value: 'AVERAGE_INCREASING_INTERVAL'},
+  ]
+  selectedForecastType: any;
 
   constructor(
     private formBuilder: FormBuilder,
-
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
     private forecastingModelService: ForecastingModelService,
@@ -72,20 +83,20 @@ export class MathematicalForecastTableComponent implements OnInit {
     private uploadFileService: UploadFileService,
     public forecastModelService: ForecastingModelService,
     public calculationsService: CalculationsService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
 
 
   ngOnInit(): void {
-    this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
     this.dynamicForm = this.formBuilder.group({
       summYearsInput: new FormArray([])
     });
 
     if (this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
-      console.log('sdssd')
+      this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
     } else {
       this.sessionId = this.forecastModelService.getTicketInformation().stepThree.sessionId;
     }
@@ -116,21 +127,28 @@ export class MathematicalForecastTableComponent implements OnInit {
   }
 
 
+  get f() {
+    return this.dynamicForm.controls;
+  }
 
-  get f() { return this.dynamicForm.controls; }
-  get t() { return this.f.summYearsInput as FormArray; }
-
+  get t() {
+    return this.f.summYearsInput as FormArray;
+  }
 
 
   onChangeTickets() {
-    if (this.t.length < this.columsYears) {
-      for (let i = this.t.length; i < this.columsYears; i++) {
+    this.numberHistroricalYears =0
+    if(this.mathematicalForecastTable.length !== 0){
+      this.mathematicalForecastTable[0].shipmentYearValuePairs.forEach(elements => (elements.calculated === false ? this.numberHistroricalYears++ : '') );
+    }
+    if (this.t.length < this.columsYears - this.numberHistroricalYears) {
+      for (let i = this.t.length; i < this.columsYears -  this.numberHistroricalYears; i++) {
         this.t.push(this.formBuilder.group({
           name: ['', Validators.required],
         }));
       }
     } else {
-      for (let i = this.t.length; i >= this.columsYears; i--) {
+      for (let i = this.t.length; i >= this.columsYears - this.numberHistroricalYears; i--) {
         this.t.removeAt(i);
       }
     }
@@ -161,9 +179,11 @@ export class MathematicalForecastTableComponent implements OnInit {
   }
 
   createColumnTable() {
-    this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
+    this.mathematicalForecastTable.length === 0 ? this.columsYears = 0 : this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
+
     this.onChangeTickets()
     this.cols = [
+      {field: 'forecastType', header: 'Предлагаемая стратегия прогнозирования', width: '100px', keyS: false},
       {field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
       {field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false},
       {field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false},
@@ -206,7 +226,6 @@ export class MathematicalForecastTableComponent implements OnInit {
   }
 
 
-
   primeryBolChange(value: any, field: any, equals: string) {
     this.table.filter(value, field, equals)
     this.forecastingModelService.ticketInformation.stepThree.primeryBolChange = this.selectedPrimery
@@ -226,8 +245,9 @@ export class MathematicalForecastTableComponent implements OnInit {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => {
-        this.modalService.open(error.error.message),
+      async (error) => {
+        const message = JSON.parse(await error.error.text()).message;
+        this.modalService.open(message)
           this.downloadShipLoading = false
       },
       () => this.downloadShipLoading = false
@@ -248,8 +268,9 @@ export class MathematicalForecastTableComponent implements OnInit {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => {
-        this.modalService.open(error.error.message),
+      async (error) => {
+        const message = JSON.parse(await error.error.text()).message;
+        this.modalService.open(message)
           this.downloadRoadLoading = false
       },
       () => this.downloadRoadLoading = false
@@ -258,6 +279,9 @@ export class MathematicalForecastTableComponent implements OnInit {
 
   filterFieldHeaders(name: string, value: string) {
     switch (name) {
+      case 'forecastType':
+        this.filters = ',' + name + ':' + value;
+        break;
       case 'cargoGroup':
         this.filters = ',' + name + '~' + value;
         break;
@@ -350,7 +374,7 @@ export class MathematicalForecastTableComponent implements OnInit {
     this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
       .subscribe(
         res => {
-          console.log(res)
+          console.log('ERERE', res)
           res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
           res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
         },
@@ -369,8 +393,8 @@ export class MathematicalForecastTableComponent implements OnInit {
     if (this.forecastingStrategyFilter.type === 'FISCAL_YEAR' && (this.forecastFiscalYear === null || this.forecastFiscalYear === undefined)) {
       this.modalService.open('Стратегия прогнозирования корреспонденций. Укажите год!');
     } else {
-        this.loadingMathematicalForecastTable = false
-        this.calculationsService.getPartialListFilter(
+      this.loadingMathematicalForecastTable = false
+      this.calculationsService.getPartialListFilter(
         this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
         this.forecastingStrategyFilter.type,
         this.sessionId,
@@ -394,9 +418,13 @@ export class MathematicalForecastTableComponent implements OnInit {
         )
     }
   }
-  divideSum(idx: string, value: any) {
+
+  divideSum(idx: number, value: any) {
+    let idxYear = idx + this.numberHistroricalYears
     let yearSumm: null;
-    this.mathematicalForecastTable.length !== 0 ? yearSumm = this.mathematicalForecastTable[0].shipmentYearValuePairs[idx].year : yearSumm = null
+    console.log(idxYear)
+    this.mathematicalForecastTable.length !== 0 ? yearSumm = this.mathematicalForecastTable[0].shipmentYearValuePairs[idxYear.toString()].year : yearSumm = null
+    console.log(idxYear)
     console.log(yearSumm)
     console.log(value)
     if (value !== '') {
@@ -404,7 +432,10 @@ export class MathematicalForecastTableComponent implements OnInit {
       this.calculationsService.getDivideSum(this.sessionId, this.filterTableEvant.resultFilterUrl, value, yearSumm)
         .subscribe(
           res => console.log(res),
-          error => this.modalService.open(error.error.message),
+          error => {
+            this.modalService.open(error.error.message)
+            this.loadingTable = false
+          },
           () => {
             this.t.reset();
             this.shipmentPagination()
@@ -412,11 +443,12 @@ export class MathematicalForecastTableComponent implements OnInit {
         )
     }
   }
+
   shipmentPagination() {
+    this.loadingTable = true
     this.shipmentsService.getShipmetsPaginations(this.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl)
       .subscribe(
         res => {
-          console.log(res)
           res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
           res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
         },
@@ -435,21 +467,11 @@ export class MathematicalForecastTableComponent implements OnInit {
     this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
       res => {
         console.log('23', res)
-          this.massSummYear = res
+        this.massSummYear = res
       },
       error => this.modalService.open(error.error.message)
     )
   }
-
-  // createIdListFilterRow(list: IShipment[]) {
-  //   this.idListFilterRow = [];
-  //   if (list.length > 0) {
-  //     for (let item of list) {
-  //       this.idListFilterRow.push(item.id)
-  //     }
-  //   }
-  // }
-
 
 
   downloadBorder() {
@@ -465,7 +487,10 @@ export class MathematicalForecastTableComponent implements OnInit {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => this.modalService.open(error.error.message),
+      async (error) => {
+        const message = JSON.parse(await error.error.text()).message;
+        this.modalService.open(message)
+      }
     )
   }
 
@@ -482,8 +507,72 @@ export class MathematicalForecastTableComponent implements OnInit {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => this.modalService.open(error.error.message),
+      async (error) => {
+        const message = JSON.parse(await error.error.text()).message;
+        this.modalService.open(message)
+      }
     )
+  }
+
+  sdsd(name: string) {
+    switch (name) {
+      case 'LESS_SQUARE':
+        return 'по методу наименьших квадратов'
+        break;
+      case 'FISCAL_YEAR':
+        return 'по отчётному году'
+        break;
+      case 'TENDENCY_FIXED_DELTA':
+        return 'по тенденции (по фиксированным промежуткам)'
+        break;
+      case 'TENDENCY_INCREASING_DELTA':
+        return 'по тенденции (по увеличивающимся промежуткам)'
+        break;
+      case 'AVERAGE_FIXED_INTERVAL':
+        return 'по среднему арифметическому (по фиксированным промежуткам)'
+        break;
+      case 'AVERAGE_INCREASING_INTERVAL':
+        return 'по среднему арифметическому (по увеличивающимся промежуткам)'
+        break;
+      default:
+        return ''
+        break;
+    }
+  }
+
+  hierarchicalShipment() {
+    this.loadingTable = true
+    this.calculationsService.postHierarchicalShipment(this.sessionId).subscribe(
+      () => console.log(),
+      error => {
+        this.modalService.open(error.message)
+        this.loadingTable = false
+      },
+      () => {
+        this.shipmentPagination()
+        this.loadingTable = false
+      }
+    )
+  }
+
+  deleteShipments(id: number) {
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить корреспонденцию?`,
+      header: 'Удаление корреспонденции',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.shipmentsService.deleteShipment(id).subscribe(
+          () => console.log(),
+          error => this.modalService.open(error.message),
+          () => this.shipmentPagination()
+        )
+      }
+    });
+
+  }
+
+  arrayHstoriYears(numberHistroricalYears: number) {
+    return Array(numberHistroricalYears)
   }
 }
 

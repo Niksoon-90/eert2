@@ -1,0 +1,352 @@
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-template pTemplate="content">
+      <ng-container *ngIf="this.user.authorities.includes('P_P_p10') === true">
+        <div class="p-justify-between p-d-flex">
+          <div><h3>Работа с ИАС Маршруты</h3></div>
+          <div class="p-d-flex p-align-center"><h3>{{this.nameSession}}</h3></div>
+        </div>
+        <div>
+          <div class="p-col-12 p-md-4">
+            <form [formGroup]="form" (ngSubmit)="corresIiasForecast()">
+              <ng-container *ngIf="formIs === true; else notDataInput">
+                <ng-container *ngIf="this.selectedPrimery === true; else All">
+                  <div class="p-d-flex p-flex-column" [style]="{'minWidth':'100%'}">
+                    <h5>Загрузка сети набором основными корреспонденциями </h5>
+                    <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="forecastCorrespondence"
+                                optionLabel="descr" [showClear]="true" formControlName="forecastCorrespondence"
+                                placeholder="Выгрузить загрузку участков прогнозными корреспонденциями:"></p-dropdown>
+                    <ng-container
+                      *ngIf="this.form.controls.smallCorrespondence.value !== '' && this.form.controls.smallCorrespondence.value !== 0">
+                      <h5>Загрузка сети набором мелкими корреспонденциями </h5>
+                      <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="smallCorrespondence"
+                                  optionLabel="descr" [showClear]="true" formControlName="smallCorrespondence"
+                                  placeholder="Выгрузить загрузку участков мелкими корреспонденциями:"></p-dropdown>
+                    </ng-container>
+                  </div>
+                </ng-container>
+                <ng-template #All>
+                  <div class="p-d-flex p-flex-column" [style]="{'minWidth':'100%'}">
+                    <h5>Загрузка сети всеми корреспонденциями</h5>
+                    <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="forecastCorrespondence"
+                                optionLabel="descr" [showClear]="true" formControlName="forecastCorrespondence"
+                                placeholder="Выгрузить загрузку участков прогнозными корреспонденциями:"></p-dropdown>
+                  </div>
+                </ng-template>
+
+              </ng-container>
+              <ng-template #notDataInput>
+                <div class="p-d-flex p-flex-column" [style]="{'minWidth':'100%'}">
+                  <ng-container *ngIf="this.selectedPrimery !== true; else Main">
+                    <h5>Загрузка сети всеми корреспонденциями</h5>
+                  </ng-container>
+                  <ng-template #Main>
+                    <h5>Загрузка сети набором основными корреспонденциями </h5>
+                  </ng-template>
+                  <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="forecastCorrespondence"
+                              optionLabel="descr" [showClear]="true" formControlName="forecastCorrespondence"
+                              placeholder="Выгрузить загрузку участков прогнозными корреспонденциями:"></p-dropdown>
+                  <ng-container
+                    *ngIf="this.selectedPrimery === true ">
+                    <h5>Загрузка сети набором мелкими корреспонденциями </h5>
+                    <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="smallCorrespondence"
+                                optionLabel="descr" [showClear]="true" formControlName="smallCorrespondence"
+                                placeholder="Выгрузить загрузку участков мелкими корреспонденциями:"></p-dropdown>
+                  </ng-container>
+                </div>
+              </ng-template>
+
+              <ng-container *ngIf="formIs !== true; else notData">
+                <div class="p-d-flex p-justify-between">
+                  <ng-container *ngIf="this.selectedPrimery !== true; else TwoButton">
+                    <div></div>
+                    <div>
+                      <button pButton type="button" label="Обновить" icon="pi pi-refresh"
+                              class="p-mr-2 p-button-raised p-button-warning"
+                              (click)="forecastListIas()"></button>
+                      <button pButton type="submit" label="Загрузить" class="p-button-raised p-button-secondary"
+                              [disabled]="this.form.controls.forecastCorrespondence.invalid"></button>
+                    </div>
+                  </ng-container>
+                </div>
+                <div class="p-d-flex p-justify-between">
+                  <ng-template #TwoButton>
+                    <div></div>
+                    <div>
+                      <button pButton type="button" label="Обновить" icon="pi pi-refresh"
+                              class="p-mr-2 p-button-raised p-button-warning"
+                              (click)="forecastListIas()"></button>
+                      <button pButton type="submit" label="Загрузить" class="p-button-raised p-button-secondary"
+                              [disabled]="this.form.controls.forecastCorrespondence.invalid || this.form.controls.smallCorrespondence.invalid"></button>
+                    </div>
+                  </ng-template>
+                </div>
+              </ng-container>
+
+              <ng-template #notData>
+
+              </ng-template>
+            </form>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="this.loading === false">
+        <h4>№1 Форма корреспонденций</h4>
+        <ng-container *ngIf="this.loadingOne === false; else Loader">
+          <p-table
+            #dts
+            *ngIf="correspondencesIiasForecast"
+            [style]="{width:'94.7vw'}"
+            [columns]="cols"
+            [value]="correspondencesIiasForecast"
+            [scrollable]="true" scrollHeight="18vh"
+            styleClass="p-datatable-sm p-datatable-gridlines" dataKey="corr_id"
+            [resizableColumns]="true" editMode="row" columnResizeMode="expand"
+            [paginator]="true"
+            [rows]="500"
+            [filterDelay]="0"
+            [autoLayout]="true"
+            [rowsPerPageOptions]="[50,100,150]"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Отображено с {first} по {last} запись. Всего: {totalRecords}"
+          >
+
+            <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
+              <ng-template pTemplate="caption">
+                <div class="p-grid p-ai-center vertical-container">
+                  <ng-container *ngIf="this.downloadIasLoadingCorrespondences === false; else DownloadLoading">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать"
+                            class="p-button-success p-mr-2 p-button p-component" (click)="downloadIasCorrespondences()"
+                            style="margin-right: 0.5em;"></button>
+                  </ng-container>
+                  <ng-template #DownloadLoading>
+                    <p-progressSpinner [style]="{width: '30px', height: '30px', margin: '0 100px 0 100px'}"
+                                       styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE"
+                                       animationDuration="1s"></p-progressSpinner>
+                  </ng-template>
+                </div>
+              </ng-template>
+            </ng-container>
+            <ng-template pTemplate="colgroup" let-columns>
+              <colgroup>
+                <col style="width:80px">
+                <col *ngFor="let col of columns" [style.width]="col.width">
+                <col style="width:80px">
+              </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th>№_</th>
+                <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field">
+                  <p-sortIcon [field]="col.field"></p-sortIcon>
+                  {{col.header}}
+                </th>
+                <th>Действия</th>
+              </tr>
+              <tr>
+                <th></th>
+                <th *ngFor="let col of columns;">
+                  <input pInputText type="text" (click)="$event.stopPropagation()"
+                         (keyup.enter)="dts.filter($event.target.value, col['field'], 'contains')"
+                         class="p-column-filter">
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+              <tr [pEditableRow]="rowData">
+                <td>{{ri + 1}}</td>
+                <td *ngFor="let col of this.cols">
+                  {{rowData[col.field]}}
+                </td>
+                <td>
+                  <button pButton pRipple type="button" icon="pi pi-search" (click)="searchInIAS(rowData)"
+                          class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+
+
+        <h4>№2 Форму загрузки участков</h4>
+        <ng-container *ngIf="this.loadingTwo === false; else Loader">
+          <p-table
+            #dt
+            *ngIf="forecastIASModelId"
+            [style]="{width:'94.7vw'}"
+            [columns]="columnF"
+            [value]="this.resultTwoTable"
+            (onFilter)="loadCustomers($event)"
+            [resizableColumns]="true"
+            styleClass="p-datatable-gridlines"
+
+            [scrollable]="true"
+            scrollHeight="15vh"
+            [columnResizeMode]="'expand'"
+            [autoLayout]="true"
+            [paginator]="true"
+            [rows]="50"
+            [rowsPerPageOptions]="[50,100,150]"
+            [showCurrentPageReport]="true"
+            currentPageReportTemplate="Отображено с {first} по {last} запись. Всего: {totalRecords}">
+            >
+            <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
+              <ng-template pTemplate="caption">
+                <div class="p-grid p-ai-center vertical-container">
+                  <ng-container *ngIf="this.downloadIasLoading === false; else DownloadLoading">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать"
+                            class="p-button-success p-mr-2 p-button p-component" (click)="downloadIas()"
+                            style="margin-right: 0.5em;"></button>
+                  </ng-container>
+                  <ng-container *ngIf="this.selectedPrimery === true">
+
+                    <ng-container *ngIf="this.downloadTotalSmallIasLoading === false; else DownloadLoading">
+                      <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left"
+                              label="Участки (мелкие)" class="p-button-success p-mr-2 p-button p-component"
+                              (click)="downTotalSmallloadIas()" style="margin-right: 0.5em;"></button>
+                    </ng-container>
+                    <ng-container *ngIf="this.downloadTotalIasLoading === false; else DownloadLoading">
+                      <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left"
+                              label="Участки (мелкие + основные)" class="p-button-success p-mr-2 p-button p-component"
+                              (click)="downTotalloadIas()" style="margin-right: 0.5em;"></button>
+                    </ng-container>
+                  </ng-container>
+                  <ng-template #DownloadLoading>
+                    <p-progressSpinner [style]="{width: '30px', height: '30px', margin: '0 100px 0 100px'}"
+                                       styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE"
+                                       animationDuration="1s"></p-progressSpinner>
+                  </ng-template>
+                </div>
+              </ng-template>
+            </ng-container>
+            <ng-template pTemplate="colgroup" let-columns>
+              <colgroup>
+                <col *ngFor="let col of columns" [style.width]="col.width">
+              </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th [attr.rowspan]="2" pSortableColumn="dor_name">Дорога
+                  <p-sortIcon field="id"></p-sortIcon>
+                </th>
+                <th [attr.rowspan]="2" pSortableColumn="st1_u_name">Начальная станция участка
+                  <p-sortIcon field="id"></p-sortIcon>
+                </th>
+                <th [attr.rowspan]="2" pSortableColumn="st1_u">Единая сетевая разметка начальной станции
+                  <p-sortIcon field="id"></p-sortIcon>
+                </th>
+                <th [attr.rowspan]="2" pSortableColumn="st2_u_name">Конечная станция участка
+                  <p-sortIcon field="id"></p-sortIcon>
+                </th>
+                <th [attr.rowspan]="2" pSortableColumn="st2_u">Единая сетевая разметка конечной станции
+                  <p-sortIcon field="id"></p-sortIcon>
+                </th>
+                <th [attr.rowspan]="2" pSortableColumn="len" style="text-align: center">км
+                  <p-sortIcon field="id"></p-sortIcon>
+                </th>
+                <th [attr.colspan]="this.yearsHohoho.length" style="text-align: center">к концу участка</th>
+                <th [attr.colspan]="this.yearsHohoho.length" style="text-align: center">к началу участка</th>
+              </tr>
+              <tr>
+                <ng-container *ngFor="let col of columns; let idx = index">
+                  <th *ngIf="idx > 5" [pSortableColumn]="col.field">
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
+                    {{col.header}}
+                  </th>
+                </ng-container>
+              </tr>
+
+              <tr>
+                <th *ngFor="let col of columns;" pResizableColumn>
+                  <input pInputText type="text" (click)="$event.stopPropagation()"
+                         (keyup.enter)="dt.filter($event.target.value, col['field'], 'contains')"
+                         class="p-column-filter">
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+              <tr [pEditableRow]="rowData">
+                <td *ngFor="let col of this.columnF; let idx = index">
+                  <div *ngIf="idx < 6">
+                    {{rowData[col.field]}}
+                  </div>
+                  <div *ngIf="idx > 5" style="text-align: right">
+                    {{rowData | field:col}}
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="footer">
+              <tr>
+                <td colspan="6" class="p-text-right">Итого:</td>
+                <td *ngFor="let item of this.footersumYearsTwoTable" style="text-align: right">{{item | number}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </ng-container>
+      </ng-container>
+      <ng-template #Loader>
+        <div class="p-d-flex p-jc-center" style="height: 20vh">
+          <div class="p-grid p-ai-center vertical-container ">
+            <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+                               fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+          </div>
+        </div>
+      </ng-template>
+    </ng-template>
+
+    <p-dialog
+      [baseZIndex]="1"
+      [maximizable]="true"
+      [modal]="false"
+      [resizable]="true"
+      [contentStyle]="{height: '50vh'}"
+      [closeOnEscape]="false"
+      [closable]="false"
+      [(visible)]="productDialog"
+      [style]="{width: '700px'}"
+      header="Отчет по пути следования"
+      styleClass="p-fluid">
+      <ng-template pTemplate="content">
+        <p-table
+          [value]="pathRequest"
+          [columns]="columnS"
+          [scrollable]="true" scrollHeight="75vh"
+          styleClass="p-datatable-sm p-datatable-gridlines"
+          [resizableColumns]="true" columnResizeMode="expand"
+          [paginator]="true"
+          [rows]="500"
+          [filterDelay]="0"
+        >
+
+          <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+              <col *ngFor="let col of columns" [style.width]="col.width">
+            </colgroup>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field">
+                <p-sortIcon [field]="col.field"></p-sortIcon>
+                {{col.header}}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+            <tr [pEditableRow]="rowData">
+              <td *ngFor="let col of this.columnS">
+                {{rowData[col.field]}}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <button type="button" pButton pRipple icon="pi pi-times" (click)="closeModalTable()" label="Закрыть"
+                class="p-button-text"></button>
+      </ng-template>
+    </p-dialog>
+
+  </p-card>
+</div>

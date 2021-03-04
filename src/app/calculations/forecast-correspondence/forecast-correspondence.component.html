@@ -58,9 +58,9 @@
                       (click)="calculateForecastingStrategyAll()"></button>
 
               <ng-container *ngIf="this.calculated === false">
-                  <button pButton pRipple type="button" label="Применить" class="p-button-success p-button-lg"
-                          (click)="toApplyOptimalShipment()"></button>
-                </ng-container>
+                <button pButton pRipple type="button" label="Применить" class="p-button-success p-button-lg"
+                        (click)="toApplyOptimalShipment()"></button>
+              </ng-container>
 
             </div>
             <div>
@@ -80,19 +80,9 @@
         </ng-container>
 
         <ng-template #sessionIdnull>
-          <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success"
-                  (click)="corresponTiers();"></button>
+<!--          <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success"-->
+<!--                  (click)="corresponTiers();"></button>-->
         </ng-template>
-
-<!--        <ng-container *ngIf="this.loading === true; else loader">-->
-<!--          <app-mathematical-forecast-table-->
-<!--            [forecastingStrategySustainable]="this.stepThree.forecastingStrategySustainable.type"-->
-<!--            [forecastingStrategySmall]="this.stepThree.forecastingStrategySmall.type"-->
-<!--            [settlemenType]="this.settlemenType"-->
-<!--          >-->
-<!--          </app-mathematical-forecast-table>-->
-<!--        </ng-container>-->
-
         <ng-container *ngIf="this.calculated === true">
           <ng-container *ngIf="this.loading === true; else LoaderMathematical">
             <app-mathematical-forecast-table
@@ -132,30 +122,12 @@
       </ng-template>
     </ng-template>
 
-    <ng-template #loader>
-<!--      <ng-container *ngIf="this.calculated === false ; else Payment">-->
-<!--          <app-history-shipment-->
-<!--            [sessionId]="this.sessionId"-->
-<!--          >-->
-<!--          </app-history-shipment>-->
-<!--      </ng-container>-->
-      <ng-template #Payment>
-        <div class="p-d-flex p-jc-center" style="height: 40vh">
-          <div class="p-grid p-ai-center vertical-container ">
-            <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
-                               fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
-          </div>
-        </div>
-      </ng-template>
-    </ng-template>
-
-
-
     <ng-template pTemplate="footer">
       <div class="p-grid p-nogutter p-justify-between">
         <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left" class="p-button-sm"></p-button>
         <div>
-          <p-button label="Передавать информацию в моногрузы" (onClick)="monoCargoDialog()"
+          <p-button *ngIf="this.forecastModelService.getTicketInformation().stepOne.Session === null"
+                    label="взаимодействие с ИАС Моногрузы" (onClick)="monoCargoDialog()"
                     class="p-button-sm" [ngStyle]="{'margin-right': '10px'}"></p-button>
           <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
             <p-button label="Выгрузить в ИАС Маршруты" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"
@@ -166,3 +138,9 @@
     </ng-template>
   </p-card>
 </div>
+<p-confirmDialog #cd icon="pi pi-exclamation-triangle"  [style]="{width: 'auto'}" [baseZIndex]="10000">
+  <p-footer>
+    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()" class="p-button-danger"></button>
+    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"  class="p-button-secondary"></button>
+  </p-footer>
+</p-confirmDialog>

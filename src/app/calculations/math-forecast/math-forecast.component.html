@@ -2,17 +2,13 @@
   <p-card>
     <ng-template pTemplate="title">
       Математический прогноз с учетом макропоказателей
-<!--      <h5 [style]="{'margin': '0px'}">*Для учета макропоказателя кликните мышкой на строчку в таблице*-->
-        <div class="p-field-checkbox">
-          <p-checkbox [(ngModel)]="checkedAutoRegression" binary="true" inputId="binary"></p-checkbox>
-          <label for="binary">Разрешить Авторегрессию</label>
-        </div>
-        <ng-container *ngIf="this.lastGroupVolumesByYearsTotal">
-          <ng-container *ngIf="this.lastGroupVolumesByYearsTotal.length < 5">
-            <p>для получения метрик множественной регрессии глубина исторических данных должна быть >= 5 лет</p>
-          </ng-container>
+      <!--      <h5 [style]="{'margin': '0px'}">*Для учета макропоказателя кликните мышкой на строчку в таблице*-->
+      <ng-container *ngIf="this.lastGroupVolumesByYearsTotal">
+        <ng-container *ngIf="this.lastGroupVolumesByYearsTotal.length < 5">
+          <p>для получения метрик множественной регрессии глубина исторических данных должна быть >= 5 лет</p>
         </ng-container>
-<!--      </h5>-->
+      </ng-container>
+      <!--      </h5>-->
     </ng-template>
 
     <ng-template pTemplate="body">
@@ -32,7 +28,23 @@
                        scrollHeight="30vh" dataKey="id"
                        styleClass="p-datatable-sm p-datatable-gridlines"
                        selectionMode="multiple" [(selection)]="selectedMacro"
-                       [showCurrentPageReport]="true" [resizableColumns]="true">
+                       [showCurrentPageReport]="true" [resizableColumns]="true"
+                       [loading]="loadingTableMacroPokList">
+                <ng-template pTemplate="caption">
+                  <div class="p-d-flex p-justify-between">
+                    <div class="p-field-checkbox">
+                      <p-checkbox [(ngModel)]="checkedAutoRegression" binary="true" inputId="binary"></p-checkbox>
+                      <label for="binary">Разрешить Авторегрессию</label>
+                    </div>
+                    <div class="p-d-flex">
+                      <p-button label="Фильтр" icon="pi pi-filter" styleClass="p-button-warning p-mr-2"
+                                [badge]="this.selectedMacro.length" badgeClass="p-badge-danger"
+                                (click)="filterSelectedMacro()"></p-button>
+                      <p-button label="Очистить" (click)="clearfilterSelectedMacro()"></p-button>
+                    </div>
+                  </div>
+
+                </ng-template>
                 <ng-template pTemplate="colgroup" let-columns>
                   <colgroup>
                     <col style="width: 100px">
@@ -85,6 +97,10 @@
                               class="p-button-info p-ml-auto" pTooltip="Скачать" tooltipPosition="bottom"></button>
                     </td>
                     <td colspan="3" class="p-text-right">
+                      <button type="button" pButton pRipple icon="pi pi-cog" label="Наилучший"
+                              (click)="optionalCalculatedMakro()"
+                              class="p-button-info p-ml-auto p-mr-2" pTooltip="Наилучший"
+                              tooltipPosition="bottom"></button>
                       <button type="button" pButton pRipple icon="pi pi-cog" label="Расчитать" (click)="test()"
                               class="p-button-info p-ml-auto" pTooltip="Расчитать" tooltipPosition="bottom"></button>
                     </td>

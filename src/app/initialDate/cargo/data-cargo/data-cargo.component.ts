@@ -6,6 +6,7 @@ import {IAuthModel} from "../../../models/auth.model";
 import {AuthenticationService} from "../../../services/authentication.service";
 import {map} from "rxjs/operators";
 import {ConfirmationService} from "primeng/api";
+import {HttpResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-data-cargo',
@@ -23,6 +24,7 @@ export class DataCargoComponent implements OnInit {
   carrgoTypes: string;
   user: IAuthModel
   sessionId: number = 0
+  doenloadItemId: number [] = []
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -55,7 +57,7 @@ export class DataCargoComponent implements OnInit {
           this.cargoSession = res;
           console.log('res', res)
         },
-        error => this.modalService.open(error.message),
+        error => this.modalService.open(error.error.message),
         () => this.loading = false
       )
     } else {
@@ -73,7 +75,7 @@ export class DataCargoComponent implements OnInit {
             this.cargoSession = res;
             console.log('res', res)
           },
-          error => this.modalService.open(error.message),
+          error => this.modalService.open(error.error.message),
           () => this.loading = false
         )
     }
@@ -136,5 +138,27 @@ export class DataCargoComponent implements OnInit {
         )
       }
     });
+  }
+  downloadAbsentcargo(id: number) {
+    this.doenloadItemId.push(id)
+    this.shipmentsService.getDownloadAbsentcargo(id).subscribe(
+      (response: HttpResponse<Blob>) => {
+        console.log(response)
+        let filename: string = 'absentcargo.xlsx'
+        let binaryData = [];
+        binaryData.push(response.body);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
+        downloadLink.setAttribute('download', filename);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      },
+      async (error) => {
+        const message = JSON.parse(await error.error.text()).message;
+        this.modalService.open(message)
+        this.doenloadItemId =  this.doenloadItemId.filter(item => item !== id)
+      },
+      () =>  this.doenloadItemId =  this.doenloadItemId.filter(item => item !== id)
+    )
   }
 }

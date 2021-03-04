@@ -4,7 +4,7 @@ import {ModalService} from "../../services/modal.service";
 import {ShipmentsService} from "../../services/shipments.service";
 import {IShipment} from "../../models/shipmenst.model";
 import {IAuthModel} from "../../models/auth.model";
-import {LazyLoadEvent} from "primeng/api";
+import {ConfirmationService, LazyLoadEvent} from "primeng/api";
 import {Subscription} from "rxjs";
 import {ICargoNci} from "../../models/calculations.model";
 import {CalculationsService} from "../../services/calculations.service";
@@ -51,7 +51,8 @@ export class ListShipmentComponent implements OnInit, OnChanges {
     private shipmentsService: ShipmentsService,
     private authenticationService: AuthenticationService,
     private calculationsService: CalculationsService,
-    private testService: TestService
+    private testService: TestService,
+    private confirmationService: ConfirmationService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -213,6 +214,24 @@ export class ListShipmentComponent implements OnInit, OnChanges {
         }
       )
   }
+  shipmentPagination() {
+    this.loadingTable = true
+    this.shipmentsService.getShipmetsPaginations(this.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl)
+      .subscribe(
+        res => {
+          res === null ? this.mathematicalForecastContent = [] : this.mathematicalForecastContent = res.content
+          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
+        },
+        error => {
+          this.modalService.open(error.error.message)
+          this.loadingTable = false
+        },
+        () => {
+          this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
+          this.summFooter(this.sessionId)
+        }
+      )
+  }
 
   colorYears(rowData, col: any) {
     const mass = col['field'].toString().split('.');
@@ -279,5 +298,20 @@ export class ListShipmentComponent implements OnInit, OnChanges {
       },
       error => this.modalService.open(error.error.message)
     )
+  }
+
+  deleteShipments(id: number) {
+    this.confirmationService.confirm({
+      message: `Вы уверенны, что хотите удалить?`,
+      header: 'Удаление!',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.shipmentsService.deleteShipment(id).subscribe(
+          () => console.log(),
+          error => this.modalService.open(error.message),
+          () => this.shipmentPagination()
+        )
+      }
+    });
   }
 }

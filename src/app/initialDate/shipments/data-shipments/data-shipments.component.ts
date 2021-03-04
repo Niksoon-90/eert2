@@ -170,8 +170,9 @@ export class DataShipmentsComponent implements OnInit {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => {
-        this.modalService.open(error.error.message)
+      async (error) => {
+        const message = JSON.parse(await error.error.text()).message;
+        this.modalService.open(message)
         this.doenloadItemId =  this.doenloadItemId.filter(item => item !== id)
       },
       () =>  this.doenloadItemId =  this.doenloadItemId.filter(item => item !== id)

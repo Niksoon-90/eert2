@@ -8,7 +8,7 @@ import {
   ICargoOwnerInfluenceFactor,
   IInfluenceNci
 } from "../models/calculations.model";
-import {MonoCargoSystemsModel} from "../models/mono-cargo-systems.model";
+import {IMongoObject, MonoCargoSystemsModel} from "../models/mono-cargo-systems.model";
 import {ISession, IShipment, IShipmentPagination} from "../models/shipmenst.model";
 import {
   ICorrespondencesIiasForecast,
@@ -16,7 +16,7 @@ import {
   IForecastIASModelId,
   IPathRequest
 } from "../models/forecastIAS.model";
-import {IMacroPokModel, IMultipleMakpok} from "../models/macroPok.model";
+import {IMacroIndexesIds, IMacroPokModel, IMultipleMakpok} from "../models/macroPok.model";
 
 @Injectable({
   providedIn: 'root'
@@ -32,20 +32,27 @@ export class CalculationsService {
   putUpdateMacroForecast(id: number, value: number) {
     return this.http.put(this.urlCalc + `api/calc/forecast/value/${id}?newValue=${value}`, {})
   }
-
-  postCorrespondenceOptimal(sessionId: number){
-    return this.http.post(this.urlCalc + `api/calc/correspondence/optimal/${sessionId}`, {})
+  postDownloadIASData(type: string, idTransferToIAS:number, sessionId: number){
+    return this.http.post(this.urlCalc + `api/external/${type}/forecast/${idTransferToIAS}?sessionId=${sessionId}`, {})
   }
 
-  getDivideSum(sessionId: number, filters: string, summ: number, year: string){
+  postCorrespondenceOptimal(sessionId: number) {
+    return this.http.post(this.urlCalc + `api/calc/correspondence/optimal/${sessionId}?calculatedYears=15&probeYears=2`, {})
+  }
+
+  getDivideSum(sessionId: number, filters: string, summ: number, year: string) {
     return this.http.get(this.urlCalc + `api/calc/correspondence/divideSum/filter?search=sessionId:${sessionId}${filters}&sum=${summ}&year=${year}`)
+  }
+
+  getOptimalMacro(sessionId: number, macroScenarioType: string): Observable<IMacroIndexesIds> {
+    return this.http.get<IMacroIndexesIds>(this.urlCalc + `api/calc/regression/multiple/${sessionId}/optimal?macroScenarioType=${macroScenarioType}`)
   }
 
   getPartialListFilter(calcYearsNumber: number, forecastType: string, sessionId: number, forecastFiscalYear: string, page: number = 0, size: number = 50, sortColumn?: string, sortOrder?: string, filters?: string) {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
-    if(forecastFiscalYear !== null){
+    if (forecastFiscalYear !== null) {
       params = params.set('forecastFiscalYear', forecastFiscalYear)
     }
     if (sortColumn) {
@@ -76,35 +83,31 @@ export class CalculationsService {
     return this.http.get<IShipmentPagination>(this.urlCalc + `api/calc/correlation/${sessionId}`)
   }
 
-
+  postHierarchicalShipment(sessionId: number){
+    return this.http.post(this.urlCalc + `api/calc/correspondence/hierarchical/${sessionId}`, {})
+  }
 
   getPerspective(sessionId: number, iasMetalForecastId?: number, iasOilForecastId?: number, iasRudaForecastId?: number, perspectiveSessionId?: number): Observable<IShipment[]> {
     let params = new HttpParams()
-    if(iasMetalForecastId !== null) params = params.set('iasMetalForecastId', iasMetalForecastId.toString())
-    if(iasOilForecastId !== null) params = params.set('iasOilForecastId', iasOilForecastId.toString())
-    if(iasRudaForecastId !== null) params = params.set('iasRudaForecastId', iasRudaForecastId.toString())
-    if(perspectiveSessionId !== null) params = params.set('perspectiveSessionId', perspectiveSessionId.toString())
+    if (iasMetalForecastId !== null) params = params.set('iasMetalForecastId', iasMetalForecastId.toString())
+    if (iasOilForecastId !== null) params = params.set('iasOilForecastId', iasOilForecastId.toString())
+    if (iasRudaForecastId !== null) params = params.set('iasRudaForecastId', iasRudaForecastId.toString())
+    if (perspectiveSessionId !== null) params = params.set('perspectiveSessionId', perspectiveSessionId.toString())
     params = params.set('sessionId', sessionId.toString())
     return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/perspective?`, {params})
   }
-  getGeneralmethod(sessionId: number, idHorizonforecast: number, forecastName: string, sustainable: string, small: string): Observable<IShipment[]> {
-    let sustainableType = new HttpParams()
-    let smallType = new HttpParams()
-    sustainableType = sustainableType.append('primaryForecastType', sustainable)
-    smallType = smallType.append('secondaryForecastType', small)
-    return this.http.get<IShipment[]>(this.urlCalc + `api/calc/correspondence/general/${sessionId}?calcYearsNumber=${idHorizonforecast}&forecastName=${forecastName}&${sustainableType}&${smallType}`)
-  }
 
-  getGeneralmethod2(sessionId: number, idHorizonforecast: number, forecastName: string, sustainable: string, small: string, userFio: string, userLogin: string, primaryForecastFiscalYear: string, secondaryForecastFiscalYear : string, page: number = 0, size: number = 50, sortColumn?: string, sortOrder?: string): Observable<ISession> {
+
+  getGeneralmethod2(sessionId: number, idHorizonforecast: number, forecastName: string, sustainable: string, small: string, userFio: string, userLogin: string, primaryForecastFiscalYear: string, secondaryForecastFiscalYear: string, page: number = 0, size: number = 50, sortColumn?: string, sortOrder?: string): Observable<ISession> {
     let sustainableType = new HttpParams()
     let smallType = new HttpParams()
     sustainableType = sustainableType.append('primaryForecastType', sustainable)
     smallType = smallType.append('secondaryForecastType', small)
     let params = new HttpParams()
-    if(primaryForecastFiscalYear !== null){
+    if (primaryForecastFiscalYear !== null) {
       params = params.set('primaryForecastFiscalYear', primaryForecastFiscalYear);
     }
-    if(secondaryForecastFiscalYear !== null){
+    if (secondaryForecastFiscalYear !== null) {
       params = params.set('secondaryForecastFiscalYear', secondaryForecastFiscalYear);
     }
     if (sortColumn) {
@@ -142,8 +145,9 @@ export class CalculationsService {
   getForcastIas(): Observable<IForecastIASModel[]> {
     return this.http.get<IForecastIASModel[]>(this.urlCalc + `api/external/routes/forecast`)
   }
-  postExternalForecast(type: string, description: string, parentCalculationId: number, sessionId: number) {
-    return this.http.post(this.urlCalc + `api/external/${type}/forecast?description=${description}&parentCalculationId=${parentCalculationId}&sessionId=${sessionId}`, {})
+
+  postExternalForecast(mongo: IMongoObject, type: string) {
+    return this.http.post(this.urlCalc + `api/external/${type}/forecast`, mongo)
   }
 
   //TODO 5
@@ -240,11 +244,18 @@ export class CalculationsService {
     })
   }
 
-  getLandBorder(sessionId: number){
-    return this.http.get(this.urlCalc + `api/reports/download/land_border/{sessionId}?sessionId=${sessionId}`, { observe: 'response', responseType: 'blob' as 'json' })
+  getLandBorder(sessionId: number) {
+    return this.http.get(this.urlCalc + `api/reports/download/land_border/{sessionId}?sessionId=${sessionId}`, {
+      observe: 'response',
+      responseType: 'blob' as 'json'
+    })
   }
-  getSeaPort(sessionId: number){
-    return this.http.get(this.urlCalc + `api/reports/download/sea_ports/{sessionId}?sessionId=${sessionId}`, { observe: 'response', responseType: 'blob' as 'json' })
+
+  getSeaPort(sessionId: number) {
+    return this.http.get(this.urlCalc + `api/reports/download/sea_ports/{sessionId}?sessionId=${sessionId}`, {
+      observe: 'response',
+      responseType: 'blob' as 'json'
+    })
   }
 
 }

@@ -53,12 +53,13 @@ export class HistoricalComponent implements OnInit {
     )
   }
 
-  openThreeStep(id: number, name: string, historicalYears: any, forecastConfirmed: boolean, firstRouteId: string, secondRouteId: string) {
+  openThreeStep(id: number, name: string, historicalYears: any, forecastConfirmed: boolean, firstRouteId: number, secondRouteId: number, allCorrespondensRouteId: number) {
     this.forecastModelService.ticketInformation.history.historicalName = name;
     this.forecastModelService.ticketInformation.history.historicalYears = historicalYears;
     this.forecastModelService.ticketInformation.history.forecastConfirmed = forecastConfirmed;
     this.forecastModelService.ticketInformation.history.firstRouteId = firstRouteId
     this.forecastModelService.ticketInformation.history.secondRouteId = secondRouteId
+    this.forecastModelService.ticketInformation.history.allCorrespondensRouteId = allCorrespondensRouteId
 
     this.router.navigate(['payments/match/', id, name]);
   }

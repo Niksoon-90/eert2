@@ -45,8 +45,7 @@ export class StepComponent implements OnInit {
   private subscription: Subscription
   nameSession: string
 
-  position: string;
-  displayPosition: boolean;
+
 
   constructor(
     private router: Router,
@@ -91,7 +90,7 @@ export class StepComponent implements OnInit {
   }
 
   createColumnTable() {
-    this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
+    this.mathematicalForecastTable.length === 0 ? this.columsYears = 0 : this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
     this.cols = [
       {field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
       {field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false},
@@ -116,6 +115,7 @@ export class StepComponent implements OnInit {
         keyS: true
       })
     }
+
   }
 
   summFooter(sessionId: number) {
@@ -180,8 +180,9 @@ export class StepComponent implements OnInit {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => {
-        this.modalService.open(error.error.message),
+      async (error) => {
+        const message = JSON.parse(await error.error.text()).message;
+        this.modalService.open(message)
           this.downloadShipLoading = false
       },
       () => this.downloadShipLoading = false
@@ -202,13 +203,15 @@ export class StepComponent implements OnInit {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => {
-        this.modalService.open(error.error.message),
+      async (error) => {
+        const message = JSON.parse(await error.error.text()).message;
+        this.modalService.open(message)
           this.downloadRoadLoading = false
       },
       () => this.downloadRoadLoading = false
     )
   }
+
 
   filterFieldHeaders(name: string, value: string) {
     switch (name) {
@@ -312,6 +315,7 @@ export class StepComponent implements OnInit {
         () => {
           this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
           this.summFooter(this.sessionId)
+          this.loadingTable = false
         }
       )
   }
@@ -323,12 +327,18 @@ export class StepComponent implements OnInit {
 
   nextPage() {
     if (this.selectedPrimery !== null) {
-      this.router.navigate(['payments/ias/', this.sessionId, this.nameSession]);
+      this.shipmentsService.putTransformFile(this.sessionId, true).subscribe(
+        res => console.log(),
+        error => {
+          this.modalService.open(error.error.message),
+            this.loading = true
+        },
+        () => {
+          this.router.navigate(['payments/ias/', this.sessionId, this.nameSession]);
+        }
+      )
+
     }
   }
 
-  showPositionDialog(position: string) {
-    this.position = position;
-    this.displayPosition = true;
-  }
 }

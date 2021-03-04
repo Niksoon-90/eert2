@@ -139,7 +139,7 @@ export class UploadFileComponent implements OnInit {
           this.progress = Math.round(event.loaded / event.total * 100);
         }else if (event.type === HttpEventType.Response){
           console.log(event.body)
-          if(this.initialDateType === 'shipmentsUpload'){
+          if(this.initialDateType === 'shipmentsUpload' || this.initialDateType === 'cargoUpload'){
             this.test = [];
             this.fileId = event.body.message.match(regex);
             let synonym = event.body.loadStats.itemsInFile - event.body.loadStats.itemsGroupedBySynonyms
@@ -157,7 +157,17 @@ export class UploadFileComponent implements OnInit {
           if(this.initialDateType === 'shipmentsUpload'){
             this.calculationsService.postCorrespondenceOptimal(this.fileId).subscribe(
               () => console.log(),
-              error => this.modalService.open(error.error.message)
+              error => this.modalService.open(error.error.message),
+              //
+              () => {
+                this.calculationsService.postHierarchicalShipment(this.fileId).subscribe(
+                  () => console.log(),
+                  error => {
+                    this.modalService.open(error.error.message)
+                  },
+                )
+              }
+              //
             )
          }
         this.clearForm();
@@ -238,9 +248,10 @@ export class UploadFileComponent implements OnInit {
           document.body.appendChild(downloadLink);
           downloadLink.click();
         },
-        error => {
-          this.modalService.open(error.error.message)
-        },
+        async (error) => {
+          const message = JSON.parse(await error.error.text()).message;
+          this.modalService.open(message)
+        }
       )
     }
   }

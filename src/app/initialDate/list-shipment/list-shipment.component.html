@@ -96,8 +96,16 @@
             <p-cellEditor>
               <ng-template pTemplate="input">
                 <ng-container *ngIf="col['field'] !== 'primary'; else primaryEdit">
-                  <input pInputText type="text" [ngModel]="rowData | field:col"
-                         (ngModelChange)="editColumn(rowData, col, $event)">
+                  <ng-container *ngIf=" idx < 14">
+                    <input pInputText type="text" [ngModel]="rowData | field:col"
+                           (ngModelChange)="editColumn(rowData, col, $event)" [ngModelOptions]="{standalone: true}">
+
+                  </ng-container>
+                  <ng-container *ngIf=" idx > 13">
+                    <input pInputText type="number" [ngModel]="rowData | field:col"
+                           (ngModelChange)="editColumn(rowData, col, $event)" [ngModelOptions]="{standalone: true}">
+
+                  </ng-container>
                 </ng-container>
                 <ng-template #primaryEdit>
                   <p-dropdown appendTo="body" [options]="primary2" [(ngModel)]="rowData[col.field]"></p-dropdown>
@@ -130,6 +138,7 @@
                       class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
               <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
                       (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
+              <button  pButton pRipple type="button"  icon="pi pi-trash" pTooltip="Удалить" (click)="deleteShipments(rowData.id)" class="p-button-rounded p-button-text p-button-danger"></button>
             </td>
           </ng-container>
         </tr>
@@ -161,4 +170,3 @@
   >
   </app-create-row-shipment>
 </ng-container>
-

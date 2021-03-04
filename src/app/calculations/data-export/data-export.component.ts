@@ -81,7 +81,10 @@ export class DataExportComponent implements OnInit {
       document.body.appendChild(downloadLink);
       downloadLink.click();
     },
-      error => this.modalService.open(error.error.message)
+      async (error) => {
+        const message = JSON.parse(await error.error.text()).message;
+        this.modalService.open(message)
+      }
   )
   }
   forecastListIas(){
@@ -110,7 +113,10 @@ export class DataExportComponent implements OnInit {
             document.body.appendChild(downloadLink);
             downloadLink.click();
           },
-          error => this.modalService.open(error.error.message)
+          async (error) => {
+            const message = JSON.parse(await error.error.text()).message;
+            this.modalService.open(message)
+          }
         )
       if(this.selectedPrimery === true){
         this.uploadFileService.getDownload(this.form.controls.smallCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
@@ -125,7 +131,10 @@ export class DataExportComponent implements OnInit {
             document.body.appendChild(downloadLink);
             downloadLink.click();
           },
-          error => this.modalService.open(error.error.message)
+          async (error) => {
+            const message = JSON.parse(await error.error.text()).message;
+            this.modalService.open(message)
+          }
         )
       }
     }

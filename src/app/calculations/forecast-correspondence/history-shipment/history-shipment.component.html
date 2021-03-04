@@ -51,10 +51,18 @@
       <tr>
         <th></th>
         <th *ngFor="let col of columns;let idx = index;">
-          <ng-container *ngIf="col['field'] === 'primary'; else primeCol">
-            <p-dropdown appendTo="body" [options]="primeryBol" [(ngModel)]="selectedPrimery"
-                        (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>
+          <ng-container *ngIf="col['field'] === 'primary' || col['field'] === 'forecastType'; else primeCol">
+            <ng-container *ngIf="col['field'] === 'primary'">
+              <p-dropdown appendTo="body" [options]="primeryBol" [(ngModel)]="selectedPrimery"
+                          (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>
+            </ng-container>
+            <ng-container *ngIf="col['field'] === 'forecastType'">
+              <p-dropdown appendTo="body" [options]="typeCalculation" [(ngModel)]="selectedForecastType"
+                          (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>
+            </ng-container>
           </ng-container>
+
+
           <ng-template #primeCol>
             <ng-container *ngIf=" idx < 15; else yearsCol">
               <input pInputText type="text" (click)="$event.stopPropagation()"
@@ -76,15 +84,6 @@
         <td>{{ri + 1}}</td>
         <td *ngFor="let col of this.cols; let idx = index">
           <p-cellEditor>
-            <ng-template pTemplate="input">
-              <ng-container *ngIf="col['field'] !== 'primary'; else primaryEdit">
-                <input pInputText type="text" [ngModel]="rowData | field:col"
-                       (ngModelChange)="editColumn(rowData, col, $event)">
-              </ng-container>
-              <ng-template #primaryEdit>
-                <p-dropdown appendTo="body" [options]="primary2" [(ngModel)]="rowData[col.field]"></p-dropdown>
-              </ng-template>
-            </ng-template>
             <ng-template pTemplate="output">
               <div *ngIf="col['field'] !== 'primary' && idx < 15 && col['field'] !== 'forecastType'">
                 {{rowData[col.field]}}

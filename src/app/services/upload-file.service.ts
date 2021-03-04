@@ -19,4 +19,7 @@ export class UploadFileService {
     return this.http.get<Blob>(this.url + `api/reports/download/routes/total?iasForecastPrimaryId=${iasForecastPrimaryId}&iasForecastSecondaryId=${iasForecastSecondaryId}&sessionId=${sessionId}`, { observe: 'response', responseType: 'blob' as 'json' } )
 
   }
+  getDownloadIasCalc(sessionId: number, iasId:number, reportType: string){
+    return this.http.get<Blob>(this.url + `api/reports/download/ias/${iasId}?reportType=${reportType}&sessionId=${sessionId}`, { observe: 'response', responseType: 'blob' as 'json' })
+  }
 }

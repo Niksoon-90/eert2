@@ -51,8 +51,9 @@ export class CalculationsComponent implements OnInit {
           primeryBolChange: false,
           historicalYears: null,
           forecastConfirmed: false,
-          firstRouteId: null,
-          secondRouteId: null
+          firstRouteId: 0,
+          secondRouteId: 0,
+          allCorrespondensRouteId: 0
         }
     };
     this.forecastModelService.ticketInformation = ticketInformation;

@@ -11,7 +11,6 @@ import {IMacroPokModel, IMultipleMakpok} from "../../models/macroPok.model";
 import {HttpResponse} from "@angular/common/http";
 
 
-
 @Component({
   selector: 'app-math-forecast',
   templateUrl: './math-forecast.component.html',
@@ -29,7 +28,9 @@ export class MathForecastComponent implements OnInit, OnChanges {
   tbViewRegressionMultiMetrics: boolean = true
   historycalYears: number = 0
   checkedAutoRegression: boolean = false;
-
+  macroIndexesIds: number[]
+  filterSelectedMacroType: boolean = false
+  loadingTableMacroPokList: boolean = false
   constructor(
     private router: Router,
     public forecastModelService: ForecastingModelService,
@@ -49,19 +50,24 @@ export class MathForecastComponent implements OnInit, OnChanges {
     this.getMacroPokList();
   }
 
-  getMacroPokList(){
-    this.calculationsService.getMacroPokList(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'] )
+  getMacroPokList() {
+    this.loadingTableMacroPokList = true
+    this.calculationsService.getMacroPokList(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
       .subscribe(
-      res => {
-        this.macroPokList = res
-        console.log(res)
-      },
-        error => this.modalService.open(error.error.message)
-    )
+        res => {
+          this.macroPokList = res
+        },
+        error => {
+          this.modalService.open(error.error.message)
+          this.loadingTableMacroPokList = false
+        },
+        () => this.loadingTableMacroPokList = false
+      )
   }
 
-  createTable(macPokId){
-    this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'], macPokId )
+  createTable(macPokId) {
+    console.log('macPokId2', macPokId)
+    this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'], this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'], macPokId)
       .pipe(
         map(data => {
           const transformedData = Object.keys(data).map(key => Object.assign(data[key], {id: Math.random() * 1000000}));
@@ -69,7 +75,10 @@ export class MathForecastComponent implements OnInit, OnChanges {
         })
       )
       .subscribe(
-        res => { console.log('res',res); this.mathematicalForecastTable = res},
+        res => {
+          console.log('res', res);
+          this.mathematicalForecastTable = res
+        },
         error => this.modalService.open(error.error.message),
         () => {
           this.calculateLastTotal()
@@ -78,12 +87,12 @@ export class MathForecastComponent implements OnInit, OnChanges {
       )
 
   }
-  regressionMultiMetrics(){
+
+  regressionMultiMetrics() {
     this.calculationsService.getRegressionMetrics(this.forecastModelService.getTicketInformation().stepOne.Session['id'])
       .subscribe(
         res => {
           this.macroPokListReg = res
-          console.log('2323',res)
         },
         error => this.modalService.open(error.error.message),
         () => this.tbViewRegressionMultiMetrics = false
@@ -92,21 +101,21 @@ export class MathForecastComponent implements OnInit, OnChanges {
 
 
   calculateLastTotal() {
-    this.lastCalculatedVolumesTotal=[]
-    this.lastGroupVolumesByYearsTotal=[]
-    for(let a = 0; a < Object.values(this.mathematicalForecastTable[0].groupVolumesByYears).length; a++){
+    this.lastCalculatedVolumesTotal = []
+    this.lastGroupVolumesByYearsTotal = []
+    for (let a = 0; a < Object.values(this.mathematicalForecastTable[0].groupVolumesByYears).length; a++) {
       let summColumn = 0
-      for(let i = 0; i< this.mathematicalForecastTable.length; i++){
+      for (let i = 0; i < this.mathematicalForecastTable.length; i++) {
         summColumn += Number(Object.values(this.mathematicalForecastTable[i].groupVolumesByYears)[a])
       }
       this.lastGroupVolumesByYearsTotal.push(summColumn)
     }
-    for(let a = 0; a < Object.values(this.mathematicalForecastTable[0].forecastValues).length; a++){
+    for (let a = 0; a < Object.values(this.mathematicalForecastTable[0].forecastValues).length; a++) {
       let summColumn = 0
-      for(let i = 0; i< this.mathematicalForecastTable.length; i++){
+      for (let i = 0; i < this.mathematicalForecastTable.length; i++) {
         summColumn += Number(Object.values(this.mathematicalForecastTable[i].forecastValues)[a].value)
       }
-     this.lastCalculatedVolumesTotal.push(summColumn)
+      this.lastCalculatedVolumesTotal.push(summColumn)
     }
   }
 
@@ -115,7 +124,7 @@ export class MathForecastComponent implements OnInit, OnChanges {
   }
 
   onRowEditSave(item) {
-    for(let i of item.forecastValues){
+    for (let i of item.forecastValues) {
       this.calculationsService.putUpdateMacroForecast(i.id, i.value).subscribe(
         res => console.log(),
         error => this.modalService.open(error.error.message),
@@ -123,8 +132,9 @@ export class MathForecastComponent implements OnInit, OnChanges {
       )
     }
   }
+
   nextPage() {
-    if(this.forecastModelService.ticketInformation.stepOne.newSessionId !== null){
+    if (this.forecastModelService.ticketInformation.stepOne.newSessionId !== null) {
       this.forecastModelService.ticketInformation.stepOne.Session['id'] = this.forecastModelService.ticketInformation.stepOne.newSessionId
     }
     this.router.navigate(['steps/forecast']);
@@ -135,45 +145,87 @@ export class MathForecastComponent implements OnInit, OnChanges {
   }
 
   test() {
-    console.log(this.checkedAutoRegression)
-    console.log(this.selectedMacro.length)
-    console.log(this.selectedMacro.length !== 0 && this.checkedAutoRegression === true)
     let macPokId = []
-    if(this.selectedMacro.length !== 0 && this.checkedAutoRegression === true) {
+    if (this.selectedMacro.length !== 0 && this.checkedAutoRegression !== true) {
       this.macroPokListUpdate = this.macroPokList.filter(val => this.selectedMacro.includes(val));
-      if(this.macroPokListUpdate.length !== 0){
-        for(let item of this.macroPokListUpdate){
+      if (this.macroPokListUpdate.length !== 0) {
+        for (let item of this.macroPokListUpdate) {
           macPokId.push(item.id)
         }
       }
     }
-    if(this.checkedAutoRegression === false && this.selectedMacro.length === 0){
+    if (this.checkedAutoRegression === false && this.selectedMacro.length === 0) {
       this.modalService.open('Выберите  показатель или разрешите авторегрессию!')
-    }else {
+    } else {
+      console.log('macPokId', macPokId)
       this.createTable(macPokId);
-       console.log(macPokId)
+
     }
   }
-
-
 
 
   multipleDownload() {
     this.calculationsService.getDownloadMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id']).subscribe(
       (response: HttpResponse<Blob>) => {
-        console.log(response)
         let filename: string = 'multiple_regression_report.xlsx'
         let binaryData = [];
         binaryData.push(response.body);
         let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: 'blob' }));
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
         downloadLink.setAttribute('download', filename);
         document.body.appendChild(downloadLink);
         downloadLink.click();
       },
-      error => {
-        this.modalService.open(error.error.message)
+      async (error) => {
+        const message = JSON.parse(await error.error.text()).message;
+        this.modalService.open(message)
       }
     )
+  }
+
+  optionalCalculatedMakro() {
+    this.loadingTableMacroPokList = true
+    this.getMacroPokList()
+    this.calculationsService.getOptimalMacro(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'])
+      .subscribe(
+        res => {
+          this.macroIndexesIds = res.macroIndexesIds
+        },
+        error => {
+          this.modalService.open(error.error.message)
+            this.loadingTableMacroPokList = false
+        },
+        () => this.searchIdMacro()
+      )
+  }
+
+  searchIdMacro() {
+    this.selectedMacro = []
+    if (this.macroIndexesIds.length !== 0) {
+      for (let item of this.macroIndexesIds) {
+        let selecterMacroItem = this.macroPokList.find(macro => macro.id === item)
+        if (selecterMacroItem) {
+          this.selectedMacro.push(selecterMacroItem)
+        }
+      }
+      this.checkedAutoRegression = false
+    }if(this.selectedMacro.length === 0) {
+      this.checkedAutoRegression = true
+    }
+    this.loadingTableMacroPokList = false
+  }
+
+  filterSelectedMacro() {
+    this.filterSelectedMacroType = !this.filterSelectedMacroType
+    if (this.filterSelectedMacroType === true) {
+      this.macroPokList = this.selectedMacro
+    } else {
+      this.getMacroPokList()
+    }
+  }
+
+  clearfilterSelectedMacro() {
+    this.selectedMacro = []
+    this.getMacroPokList()
   }
 }

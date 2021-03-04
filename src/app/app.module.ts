@@ -77,6 +77,9 @@ import { SearchSynonymComponent } from './directory/search-synonym/search-synony
 import {CheckboxModule} from "primeng/checkbox";
 import { MonoCargoComponent } from './calculations/forecast-correspondence/mono-cargo/mono-cargo.component';
 import { HistoryShipmentComponent } from './calculations/forecast-correspondence/history-shipment/history-shipment.component';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+import { IasRouteComponent } from './calculations/payment/ias-route/ias-route.component';
+import {PaymentHistoricalIasComponent} from "./payment-history/historical/step-ias/payment-historical-ias/payment-historical-ias.component";
 
 
 const itemRoutesShipments: Routes = [
@@ -171,6 +174,8 @@ registerLocaleData(localeRu, 'ru');
     SearchSynonymComponent,
     MonoCargoComponent,
     HistoryShipmentComponent,
+    IasRouteComponent,
+    PaymentHistoricalIasComponent,
   ],
   imports: [
     BrowserModule,
@@ -205,6 +210,7 @@ registerLocaleData(localeRu, 'ru');
     ConfirmDialogModule,
     TabViewModule,
     CheckboxModule,
+    InputTextareaModule,
   ],
 
   providers: [
