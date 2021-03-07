@@ -70,3 +70,7 @@ export interface ISynonym{
   id?: number,
   name?: string
 }
+
+export interface FbCreateResponse {
+  name: string
+}

@@ -9,7 +9,7 @@ import {
   IInfluenceNci
 } from "../models/calculations.model";
 import {IMongoObject, MonoCargoSystemsModel} from "../models/mono-cargo-systems.model";
-import {ISession, IShipment, IShipmentPagination} from "../models/shipmenst.model";
+import {FbCreateResponse, ISession, IShipment, IShipmentPagination} from "../models/shipmenst.model";
 import {
   ICorrespondencesIiasForecast,
   IForecastIASModel,
@@ -17,6 +17,7 @@ import {
   IPathRequest
 } from "../models/forecastIAS.model";
 import {IMacroIndexesIds, IMacroPokModel, IMultipleMakpok} from "../models/macroPok.model";
+import {map} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'

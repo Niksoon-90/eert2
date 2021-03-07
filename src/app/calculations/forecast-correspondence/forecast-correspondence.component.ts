@@ -84,15 +84,17 @@ export class ForecastCorrespondenceComponent implements OnInit {
     if (this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
       this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
+      //TODO правки
       this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     } else {
+      //TODO правки
       this.stepOnecalcYearsNumber = 0
       this.sessionId = this.forecastModelService.ticketInformation.stepThree.sessionId;
       this.calculated = true;
       this.loading = true
       this.corresponTiers()
     }
-
+    //TODO правки
    // this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     this.stepThree = this.forecastModelService.ticketInformation.stepThree;
     this.stepThree.forecastingStrategySustainable = this.methodUsers[0]

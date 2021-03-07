@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
 import {ICargoNci, ICargoOwnerInfluenceFactor, IInfluenceNci} from "../../models/calculations.model";
@@ -7,6 +7,7 @@ import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
 import {MathForecastCalcService} from "../../services/math-forecast-calc.service";
 import {ConfirmationService} from "primeng/api";
+import {Table} from "primeng/table";
 
 @Component({
   selector: 'app-cargo-owner-influence-factor',
@@ -14,6 +15,8 @@ import {ConfirmationService} from "primeng/api";
   styleUrls: ['./cargo-owner-influence-factor.component.scss']
 })
 export class CargoOwnerInfluenceFactorComponent implements OnInit {
+  @ViewChild(Table)
+  dt: Table
 
   cargoOwnerInfluenceFactor: ICargoOwnerInfluenceFactor[];
   cols: any[];
@@ -86,11 +89,17 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
       header: 'Удаление фактора',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
+        //изменение удаление
         this.calculationsService.deleteCargoOwnerInfluenceFactorId(id).subscribe(
-          res => console.log(),
-          error => this.modalService.open(error.error.message),
-          () => this.getAllCargoOwnerInfluenceFactor()
+          () => {
+            this.cargoOwnerInfluenceFactor = this.cargoOwnerInfluenceFactor.filter(cargoOwnerInfluenceFactor => cargoOwnerInfluenceFactor.id !== id)
+          },
+          error => this.modalService.open(error.error.message)
         )
+        //   res => console.log(),
+        //   error => this.modalService.open(error.error.message),
+        //   () => this.getAllCargoOwnerInfluenceFactor()
+        // )
       }
     });
   }
@@ -106,8 +115,11 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     console.log('cargoOwnerInfluenceFactor', cargoOwnerInfluenceFactor)
     this.calculationsService.putCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
       res => console.log(),
-      error => this.modalService.open(error.error.message),
-      () => this.getAllCargoOwnerInfluenceFactor()
+      error => {
+        this.modalService.open(error.error.message),
+          this.dt.isRowEditing(rowData)
+      },
+      // () => this.getAllCargoOwnerInfluenceFactor()
     )
   }
 
@@ -119,9 +131,12 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     }
     console.log('cargoOwnerInfluenceFactor', cargoOwnerInfluenceFactor)
     this.calculationsService.postCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
-      res => console.log(),
+      // изменение создание
+      res =>  this.cargoOwnerInfluenceFactor.unshift(res),
       error => this.modalService.open(error.error.message),
-      () => this.getAllCargoOwnerInfluenceFactor()
+      () => {
+        //this.getAllCargoOwnerInfluenceFactor()
+      }
     )
   }
 
