@@ -16,7 +16,6 @@ import {UploadFileService} from "../../../services/upload-file.service";
 import {ShipmentsService} from "../../../services/shipments.service";
 import {HttpResponse} from "@angular/common/http";
 import {PaymantIasService} from "../../../services/paymant-ias.service";
-import {LazyLoadEvent} from "primeng/api";
 
 @Component({
   selector: 'app-ias-route',
@@ -103,7 +102,7 @@ export class IasRouteComponent implements OnInit {
     this.selectedPrimery = this.primeryBolChange;
     this.columnS = [
       { field: 'orderNum', header: 'Порядковый номер', width: '100px', keyS: false},
-      { field: 'len', header: 'Длина', width: '100px', keyS: false},
+      { field: 'len', header: 'Длинна', width: '100px', keyS: false},
       { field: 'stationName', header: 'Станция', width: '100px', keyS: false},
       { field: 'stationCode', header: 'Код станции', width: '100px', keyS: false},
       { field: 'stationNameGS', header: 'Станция (ГС)', width: '100px', keyS: false},
@@ -523,5 +522,61 @@ export class IasRouteComponent implements OnInit {
 
   loadCustomers(event: any) {
     this.footerSumTwoTable(event.filteredValue)
+  }
+
+
+  exportRoutesExcel() {
+    import("xlsx").then(xlsx => {
+      const worksheet = xlsx.utils.book_new();
+      let Heading: any[] = [['Порядковый номер', 'Длинна' ,'Станция','Станция (ГС)','Код станции','Дорога']]
+      xlsx.utils.sheet_add_aoa(worksheet, Heading);
+      xlsx.utils.sheet_add_json(worksheet, this.pathRequest, {origin: 'A2', header: ['orderNum','len', 'stationName', 'stationNameGS', 'stationCode', 'dorName'], skipHeader: true});
+      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+      this.saveAsExcelFile(excelBuffer, "products");
+    });
+  }
+// тестирование
+  exportRoutesExcelIas(id: number) {
+    let resultIas = []
+    this.calculationsService.getPathRequest(this.form.controls.forecastCorrespondence.value.var_id, id).subscribe(
+      res => {
+        resultIas = res
+      },
+      error => this.modalService.open(error.error.message),
+      () => {
+        import("xlsx").then(xlsx => {
+          const worksheet = xlsx.utils.book_new();
+          let Heading: any[] = [['Порядковый номер', 'Длинна' ,'Станция','Станция (ГС)','Код станции','Дорога']]
+          xlsx.utils.sheet_add_aoa(worksheet, Heading);
+          xlsx.utils.sheet_add_json(worksheet, resultIas, {origin: 'A2', header: ['orderNum','len', 'stationName', 'stationNameGS', 'stationCode', 'dorName'], skipHeader: true});
+          const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+          const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+          this.saveAsExcelFile(excelBuffer, "products");
+        });
+      }
+    )
+  }
+  saveAsExcelFile(buffer: any, fileName: string): void {
+    import("file-saver").then(FileSaver => {
+      let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+      let EXCEL_EXTENSION = '.xlsx';
+      const data: Blob = new Blob([buffer], {
+        type: EXCEL_TYPE
+      });
+      FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
+    });
+  }
+
+  exportTest() {
+    console.log('resultTwoTable', this.resultTwoTable)
+    import("xlsx").then(xlsx => {
+      const worksheet = xlsx.utils.book_new();
+      let Heading: any[] = [['Дорога', 'Начальная станция участка' ,'Единая сетевая разметка начальной станции','Конечная станция участка','Единая сетевая разметка конечной станции','км']]
+      xlsx.utils.sheet_add_json(worksheet, this.resultTwoTable );
+      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
+      this.saveAsExcelFile(excelBuffer, "resultTwoTable");
+    });
   }
 }

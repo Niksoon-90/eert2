@@ -5,7 +5,7 @@
       <form [formGroup]="form" (ngSubmit)="createcargoOwnerInfluenceFactor(); form.reset()">
         <div class="p-d-flex p-jc-end">
           <div style="padding-right: 10px;">
-            <p-dropdown  [options]="cargoNci" optionLabel="name"  [showClear]="true" formControlName="cargoOwnerId"  placeholder="Грузовладелец:"></p-dropdown>
+            <p-dropdown  [style]="{'minWidth':'100%'}" [options]="cargoNci" optionLabel="name"  [showClear]="true" [virtualScroll]="true" itemSize="10" formControlName="cargoOwnerId"  placeholder="Грузовладелец:"></p-dropdown>
           </div>
           <div style="padding-right: 10px;">
             <p-dropdown  [options]="influenceNci" optionLabel="name"  [showClear]="true" formControlName="influenceFactorId"  placeholder="Фактор:"></p-dropdown>

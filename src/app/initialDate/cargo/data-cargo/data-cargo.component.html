@@ -33,7 +33,7 @@
         <col>
         <col>
         <col>
-        <col style="width:100px">
+        <col style="width:120px">
       </colgroup>
     </ng-template>
     <ng-template pTemplate="header">
@@ -86,6 +86,7 @@
           <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text" type="button"
                   icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom"
                   (click)="openShipItemSession(itemCargoSession.id)"></button>
+
           <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
             <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-danger"
                     type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom"
@@ -93,9 +94,9 @@
           </ng-container>
           <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
             <ng-container *ngIf="this.doenloadItemId.includes(itemCargoSession.id) === false; else loader">
-              <button  pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-button-text"
-                       type="button" icon="pi pi-copy" pTooltip="Скачать" tooltipPosition="bottom"
-                       (click)="downloadAbsentcargo(itemCargoSession.id)"></button>
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-button-text"
+                      type="button" icon="pi pi-copy" pTooltip="Скачать" tooltipPosition="bottom"
+                      (click)="downloadAbsentcargo(itemCargoSession.id)"></button>
             </ng-container>
             <ng-template #loader>
               <p-progressSpinner [style]="{width: '25px', height: '25px'}" styleClass="custom-spinner" strokeWidth="8"

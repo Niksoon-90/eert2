@@ -167,7 +167,6 @@ export class UploadFileComponent implements OnInit {
                   },
                 )
               }
-              //
             )
          }
         this.clearForm();

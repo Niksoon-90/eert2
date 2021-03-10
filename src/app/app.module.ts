@@ -80,6 +80,8 @@ import { HistoryShipmentComponent } from './calculations/forecast-correspondence
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import { IasRouteComponent } from './calculations/payment/ias-route/ias-route.component';
 import {PaymentHistoricalIasComponent} from "./payment-history/historical/step-ias/payment-historical-ias/payment-historical-ias.component";
+import {SplitButtonModule} from "primeng/splitbutton";
+import {ContextMenuModule} from "primeng/contextmenu";
 
 
 const itemRoutesShipments: Routes = [
@@ -211,6 +213,8 @@ registerLocaleData(localeRu, 'ru');
     TabViewModule,
     CheckboxModule,
     InputTextareaModule,
+    SplitButtonModule,
+    ContextMenuModule,
   ],
 
   providers: [

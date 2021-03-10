@@ -33,34 +33,38 @@
                  currentPageReportTemplate="Отображено с {first} по {last} запись. Всего: {totalRecords}"
         >
           <ng-template pTemplate="caption">
-            <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
-              <div class="p-d-flex p-jc-between">
-                <div>
-                  <p-dropdown [options]="methodUsers" optionLabel="name" [(ngModel)]="forecastingStrategyFilter"
-                              placeholder="Укажите стратегию:" [ngStyle]="{'padding-right':'10px'}"
-                              [ngModelOptions]="{standalone: true}"></p-dropdown>
-                  <ng-container *ngIf="this.forecastingStrategyFilter">
-                    <ng-container *ngIf="this.forecastingStrategyFilter.type === 'FISCAL_YEAR'">
-                      <p-dropdown [options]="this.reportingYears" optionLabel="name" [(ngModel)]="forecastFiscalYear"
-                                  placeholder="Укажите год:" [ngModelOptions]="{standalone: true}"></p-dropdown>
-                    </ng-container>
-                  </ng-container>
-                  <button type="button" pButton pRipple label="Применить"
-                          class="p-button-success p-mr-2 p-button p-component" (click)="particalListFilter()"
-                          style="margin-right: 0.5em;" [disabled]="!forecastingStrategyFilter"></button>
-                </div>
-                <div>
 
-<!--                    <button pButton pRipple type="button" label="Иерархический прогноз"  class="p-button-success p-mr-2 p-button p-component"-->
-<!--                            (click)="hierarchicalShipment()"></button>-->
-<!--                  <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">-->
-<!--                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Порт"-->
-<!--                            class="p-button-success p-mr-2 p-button p-component" (click)="downloadPort()"-->
-<!--                            style="margin-right: 0.5em;"></button>-->
-<!--                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Погран"-->
-<!--                            class="p-button-success p-mr-2 p-button p-component" (click)="downloadBorder()"-->
-<!--                            style="margin-right: 0.5em;"></button>-->
-<!--                  </ng-container>-->
+
+            <div class="p-d-flex p-jc-between">
+              <div>
+                <p-button icon="pi pi-refresh" (onClick)="clearfilter()" class="p-mr-2"></p-button>
+                <p-dropdown [options]="methodUsers" optionLabel="name" [(ngModel)]="forecastingStrategyFilter"
+                            placeholder="Укажите стратегию:" [ngStyle]="{'padding-right':'10px'}"
+                            [ngModelOptions]="{standalone: true}"></p-dropdown>
+                <ng-container *ngIf="this.forecastingStrategyFilter">
+                  <ng-container *ngIf="this.forecastingStrategyFilter.type === 'FISCAL_YEAR'">
+                    <p-dropdown [options]="this.reportingYears" optionLabel="name" [(ngModel)]="forecastFiscalYear"
+                                placeholder="Укажите год:" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                  </ng-container>
+                </ng-container>
+                <button type="button" pButton pRipple label="Применить"
+                        class="p-button-success p-mr-2 p-button p-component" (click)="particalListFilter()"
+                        style="margin-right: 0.5em;" [disabled]="!forecastingStrategyFilter"></button>
+              </div>
+              <div>
+
+                <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
+                  <button pButton pRipple type="button" label="Иерархический прогноз"
+                          class="p-button-success p-mr-2 p-button p-component"
+                          (click)="hierarchicalShipment()"></button>
+                  <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Порт"
+                            class="p-button-success p-mr-2 p-button p-component" (click)="downloadPort()"
+                            style="margin-right: 0.5em;"></button>
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Погран"
+                            class="p-button-success p-mr-2 p-button p-component" (click)="downloadBorder()"
+                            style="margin-right: 0.5em;"></button>
+                  </ng-container>
                   <ng-container *ngIf="this.downloadShipLoading === false; else DownloadShipLoading">
                     <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать"
                             class="p-button-success p-mr-2 p-button p-component" (click)="downloadShip()"
@@ -81,9 +85,13 @@
                                        styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE"
                                        animationDuration="1s"></p-progressSpinner>
                   </ng-template>
-                </div>
+                </ng-container>
+
+
               </div>
-            </ng-container>
+            </div>
+
+
           </ng-template>
 
           <ng-template pTemplate="colgroup" let-columns>
@@ -118,12 +126,16 @@
               <th *ngFor="let col of columns;let idx = index;">
                 <ng-container *ngIf="col['field'] === 'primary' || col['field'] === 'forecastType'; else primeCol">
                   <ng-container *ngIf="col['field'] === 'primary'">
-                    <p-dropdown appendTo="body" [options]="primeryBol" [(ngModel)]="selectedPrimery"
-                                (onChange)="primeryBolChange($event.value, col.field, 'equals')"  [ngModelOptions]="{standalone: true}"></p-dropdown>
+                    <p-dropdown appendTo="body" #dropdownPrimary [options]="primeryBol" [(ngModel)]="selectedPrimery"
+                                (onChange)="dt.filter($event.value, col.field, 'equals')"
+                                [ngModelOptions]="{standalone: true}"></p-dropdown>
                   </ng-container>
                   <ng-container *ngIf="col['field'] === 'forecastType'">
-                    <p-dropdown appendTo="body" [options]="typeCalculation" [(ngModel)]="selectedForecastType"
-                                (onChange)="dt.filter($event.value, col.field, 'equals')"  [ngModelOptions]="{standalone: true}"></p-dropdown>
+                    <p-dropdown appendTo="body" #dropdownForecastType [options]="typeCalculation"
+                                [(ngModel)]="selectedForecastType"
+                                (onChange)="dt.filter($event.value, col.field, 'equals')"
+                                [ngModelOptions]="{standalone: true}"
+                    ></p-dropdown>
                   </ng-container>
                 </ng-container>
 
@@ -131,11 +143,13 @@
                   <ng-container *ngIf=" idx < 15; else yearsCol">
                     <input pInputText type="text" (click)="$event.stopPropagation()"
                            (keyup.enter)="dt.filter($event.target.value, col.field, 'contains')"
+                           [value]="dt.filters[col.field] ? dt.filters[col.field].value : ''"
                            class="p-column-filter">
                   </ng-container>
                   <ng-template #yearsCol>
                     <input pInputText type="text" (click)="$event.stopPropagation()"
                            (keyup.enter)="dt.filter($event.target.value, col.header, 'contains')"
+                           [value]="dt.filters[col.field] ? dt.filters[col.field].value : ''"
                            class="p-column-filter">
                   </ng-template>
                 </ng-template>
@@ -151,7 +165,8 @@
               <td *ngFor="let col of this.cols; let idx = index">
                 <p-cellEditor>
                   <ng-template pTemplate="input">
-                    <ng-container *ngIf="col['field'] !== 'primary' && col['field'] !== 'forecastType'; else primaryEdit">
+                    <ng-container
+                      *ngIf="col['field'] !== 'primary' && col['field'] !== 'forecastType'; else primaryEdit">
 
                       <ng-container *ngIf=" idx < 15">
                         <input pInputText type="text" [ngModel]="rowData | field:col"
@@ -169,16 +184,18 @@
 
                     </ng-container>
                     <ng-template #primaryEdit>
-                      <ng-container  *ngIf="col['field'] === 'primary'">
+                      <ng-container *ngIf="col['field'] === 'primary'">
                         <p-dropdown appendTo="body" [options]="primary2" [(ngModel)]="rowData[col.field]"
                                     [ngModelOptions]="{standalone: true}"></p-dropdown>
-                      </ng-container >
+                      </ng-container>
 
-                      <ng-container  *ngIf="col['field'] === 'forecastType'">
+                      <ng-container *ngIf="col['field'] === 'forecastType'">
                         {{this.sdsd(rowData[col.field])}}
                       </ng-container>
                     </ng-template>
                   </ng-template>
+
+
                   <ng-template pTemplate="output">
                     <div *ngIf="col['field'] !== 'primary' && idx < 15 && col['field'] !== 'forecastType'">
                       {{rowData[col.field]}}
@@ -194,7 +211,8 @@
                         нет
                       </ng-template>
                     </div>
-                    <div *ngIf="idx > 14" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
+                    <div *ngIf="idx > 14"
+                         [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
                       {{rowData | field:col}}
                     </div>
                   </ng-template>
@@ -209,7 +227,9 @@
                           class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
                   <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
                           (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
-                  <button  pButton pRipple type="button"  icon="pi pi-trash" pTooltip="Удалить" (click)="deleteShipments(rowData.id)" class="p-button-rounded p-button-text p-button-danger"></button>
+                  <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить"
+                          (click)="deleteShipments(rowData.id)"
+                          class="p-button-rounded p-button-text p-button-danger"></button>
                 </td>
               </ng-container>
             </tr>
@@ -221,7 +241,8 @@
             </tr>
             <tr>
               <td [attr.colspan]="16" class="p-text-right">Сумма:</td>
-              <td *ngFor="let years of arrayHstoriYears(this.numberHistroricalYears);" class="list-group list-group-flush">
+              <td *ngFor="let years of arrayHstoriYears(this.numberHistroricalYears);"
+                  class="list-group list-group-flush">
                 {{years}}
               </td>
               <td *ngFor="let ticket of t.controls; let i = index" class="list-group list-group-flush">

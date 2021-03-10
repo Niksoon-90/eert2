@@ -17,6 +17,7 @@ import {CalculationsService} from "../../../services/calculations.service";
 import {ISelectMethodUsers} from "../../../models/calculations.model";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ConfirmationService} from "primeng/api";
+import {Dropdown} from "primeng/dropdown";
 
 
 @Component({
@@ -27,6 +28,9 @@ import {ConfirmationService} from "primeng/api";
 export class MathematicalForecastTableComponent implements OnInit {
 
   @ViewChild('dt') table: Table;
+
+  @ViewChild("dropdownPrimary", {static: false}) dropdownPrimary: Dropdown
+  @ViewChild("dropdownForecastType", {static: false}) dropdownForecastType: Dropdown
 
   @Input() settlemenType;
 
@@ -228,7 +232,7 @@ export class MathematicalForecastTableComponent implements OnInit {
 
   primeryBolChange(value: any, field: any, equals: string) {
     this.table.filter(value, field, equals)
-    this.forecastingModelService.ticketInformation.stepThree.primeryBolChange = this.selectedPrimery
+    //this.forecastingModelService.ticketInformation.stepThree.primeryBolChange = this.selectedPrimery
   }
 
   downloadShip() {
@@ -573,6 +577,13 @@ export class MathematicalForecastTableComponent implements OnInit {
 
   arrayHstoriYears(numberHistroricalYears: number) {
     return Array(numberHistroricalYears)
+  }
+
+  clearfilter() {
+    this.dropdownPrimary.clear(null);
+    this.dropdownForecastType.clear(null);
+      this.table.reset();
+
   }
 }
 

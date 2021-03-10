@@ -96,10 +96,6 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
           },
           error => this.modalService.open(error.error.message)
         )
-        //   res => console.log(),
-        //   error => this.modalService.open(error.error.message),
-        //   () => this.getAllCargoOwnerInfluenceFactor()
-        // )
       }
     });
   }
@@ -119,7 +115,6 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
         this.modalService.open(error.error.message),
           this.dt.isRowEditing(rowData)
       },
-      // () => this.getAllCargoOwnerInfluenceFactor()
     )
   }
 
@@ -132,12 +127,21 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     console.log('cargoOwnerInfluenceFactor', cargoOwnerInfluenceFactor)
     this.calculationsService.postCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
       // изменение создание
-      res =>  this.cargoOwnerInfluenceFactor.unshift(res),
+      res =>  console.log(),
       error => this.modalService.open(error.error.message),
       () => {
-        //this.getAllCargoOwnerInfluenceFactor()
+        this.factor(cargoOwnerInfluenceFactor.cargoOwnerId)
       }
     )
+  }
+  factor(id: number) {
+    this.loading = true
+    this.calculationsService.getAllFactorCargoId(id)
+      .subscribe(
+        res => this.cargoOwnerInfluenceFactor = res,
+        error => this.modalService.open(error.error.message),
+        () =>  this.loading = false
+      )
   }
 
   downAll() {

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ISession, IShipment, IShipmentPagination} from "../../../models/shipmenst.model";
+import {ISession, IShipmentPagination} from "../../../models/shipmenst.model";
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ModalService} from "../../../services/modal.service";
 import {IAuthModel} from "../../../models/auth.model";
@@ -7,6 +7,7 @@ import {AuthenticationService} from "../../../services/authentication.service";
 import {map} from "rxjs/operators";
 import {ConfirmationService} from "primeng/api";
 import {HttpResponse} from "@angular/common/http";
+
 
 @Component({
   selector: 'app-data-cargo',
@@ -26,11 +27,14 @@ export class DataCargoComponent implements OnInit {
   sessionId: number = 0
   doenloadItemId: number [] = []
 
+
   constructor(
+
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
     private authenticationService: AuthenticationService,
     private confirmationService: ConfirmationService,
+
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -38,6 +42,7 @@ export class DataCargoComponent implements OnInit {
   ngOnInit(): void {
     this.chekedCargoType()
   }
+
 
   next() {
     this.first = this.first + this.rows;

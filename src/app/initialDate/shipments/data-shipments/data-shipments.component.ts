@@ -7,8 +7,9 @@ import {IAuthModel} from "../../../models/auth.model";
 import {AuthenticationService} from "../../../services/authentication.service";
 import {map} from "rxjs/operators";
 import {Subscription} from "rxjs";
-import {ConfirmationService} from "primeng/api";
-import {HttpResponse} from "@angular/common/http";
+import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
+import {HttpEventType, HttpResponse} from "@angular/common/http";
+import {CalculationsService} from "../../../services/calculations.service";
 
 
 @Component({
@@ -29,14 +30,17 @@ export class DataShipmentsComponent implements OnInit {
   dialogVisible: boolean;
   user: IAuthModel
   sessionId: number = 0
-
   doenloadItemId: number [] = []
+  items: MenuItem[];
+  selectedShipmentsSession: ISession
 
   constructor(
+    private messageService: MessageService,
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
     private authenticationService: AuthenticationService,
     private confirmationService: ConfirmationService,
+    private calculationsService: CalculationsService,
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -44,6 +48,22 @@ export class DataShipmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getShipmentsSession();
+    this.items = [
+      {label: 'Открыть', icon: 'pi pi-fw pi-search', command: () => this.openShipItemSession(this.selectedShipmentsSession.id)},
+      {label: 'Delete', icon: 'pi pi-fw pi-times', command: () => this.update(this.selectedShipmentsSession.id)}
+    ];
+  }
+
+  save() {
+    this.messageService.add({summary: 'Success', detail: 'Data Saved'});
+  }
+
+  update(id: number) {
+    this.messageService.add({severity: 'success', summary: 'Success', detail: `Data Updated ${id}`});
+  }
+
+  delete() {
+    this.messageService.add({severity: 'success', summary: 'Success', detail: 'Data Deleted'});
   }
 
   reset() {
@@ -67,7 +87,7 @@ export class DataShipmentsComponent implements OnInit {
           map((data: ISession[]) => {
             if (data.length !== 0) {
               data = data.filter(p => p.fileType === "SHIPMENTS")
-            //  const transformedData = Object.keys(data).map(key => Object.assign(data[key], {id: Math.random() * 1000000}))
+              //  const transformedData = Object.keys(data).map(key => Object.assign(data[key], {id: Math.random() * 1000000}))
             }
             return data
           })
@@ -156,26 +176,98 @@ export class DataShipmentsComponent implements OnInit {
     this.first = this.first - this.rows;
   }
 
+// {
+//   observe: 'response',
+//   responseType: 'blob' as 'json'
+// })
+//
+//
+
+
   downloadAbsentcargo(id: number) {
     this.doenloadItemId.push(id)
     this.shipmentsService.getDownloadAbsentcargo(id).subscribe(
-      (response: HttpResponse<Blob>) => {
-        console.log(response)
-        let filename: string = 'absentcargo.xlsx'
-        let binaryData = [];
-        binaryData.push(response.body);
-        let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
-        downloadLink.setAttribute('download', filename);
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
+      result => {
+        switch (result.type) {
+          case HttpEventType.Sent:
+            console.log('Request sent!');
+            break;
+          case HttpEventType.ResponseHeader:
+            console.log('Response header received!');
+            break;
+          case HttpEventType.DownloadProgress:
+            const kbLoaded = Math.round(  result.total / result.loaded * 100);
+            console.log('result', result);
+            console.log('result.total', result.total);
+            console.log('result.loaded', result.loaded);
+            console.log(`Download in progress! ${kbLoaded}Kb loaded`);
+            break;
+          case HttpEventType.UploadProgress:
+            const kbUploaded = Math.round(result.loaded / 1024);
+            console.log(`Upload in progress! ${kbUploaded}Kb loaded`);
+            break;
+          case HttpEventType.Response:
+            let filename: string = 'absentcargo.xlsx'
+            let binaryData = [];
+            binaryData.push(result.body);
+            let downloadLink = document.createElement('a');
+            downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
+            downloadLink.setAttribute('download', filename);
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            return [];
+        }
+
+
       },
       async (error) => {
         const message = JSON.parse(await error.error.text()).message;
         this.modalService.open(message)
-        this.doenloadItemId =  this.doenloadItemId.filter(item => item !== id)
+        this.doenloadItemId = this.doenloadItemId.filter(item => item !== id)
       },
-      () =>  this.doenloadItemId =  this.doenloadItemId.filter(item => item !== id)
+      () => this.doenloadItemId = this.doenloadItemId.filter(item => item !== id)
     )
+  }
+
+  opimal(id: number) {
+    this.calculationsService.postCorrespondenceOptimal(id).subscribe(
+      () => console.log(),
+      error => this.modalService.open(error.error.message),
+      () => {
+
+      }
+    )
+    this.calculationsService.postHierarchicalShipment(id).subscribe(
+      () => console.log(),
+      error => {
+        this.modalService.open(error.error.message)
+      },
+    )
+  }
+
+  getItemsMenu(id: number, name: string): MenuItem[] {
+    const item: MenuItem[] = [
+      {
+        label: 'Update', icon: 'pi pi-refresh', command: () => {
+          this.update(id);
+        }
+      }
+    ]
+    if (this.user.authorities.includes('P_P_p9') !== true) {
+      item.push({
+        label: 'Удалить', icon: 'pi pi-times', command: () => {
+          this.removeShipSession(id, name);
+        }
+      })
+    }
+    if (this.user.authorities.includes('P_P_p8') === true) {
+      item.push({separator: true},
+        {
+          label: 'Скачать', icon: 'pi pi-times', command: () => {
+            this.downloadAbsentcargo(id);
+          }
+        })
+    }
+    return item
   }
 }

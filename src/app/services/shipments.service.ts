@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {Observable} from 'rxjs';
 import {ISession, IShipment, IShipmentPagination, ISynonym} from '../models/shipmenst.model';
@@ -28,10 +28,14 @@ export class ShipmentsService {
     });
   }
 
+
   getDownloadAbsentcargo(id: number) {
     return this.http.get<Blob>(this.url + `api/file/download/absentcargo/${id}`, {
-      observe: 'response',
-      responseType: 'blob' as 'json'
+      responseType: 'blob' as 'json',
+      reportProgress: true,
+      observe: "events",
+      // headers: new HttpHeaders()
+      //   .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     })
   }
 
@@ -52,6 +56,7 @@ export class ShipmentsService {
       observe: "events"
     });
   }
+
 
   postStationploadFile(fd) {
     return this.http.post<any>(this.url + `api/file/uploadStations`, fd, {

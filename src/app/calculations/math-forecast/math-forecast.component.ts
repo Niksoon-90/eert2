@@ -55,7 +55,7 @@ export class MathForecastComponent implements OnInit, OnChanges {
     this.calculationsService.getMacroPokList(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
       .subscribe(
         res => {
-          this.macroPokList = res
+          res.length === 0 ? this.macroPokList = [] : this.macroPokList = res
         },
         error => {
           this.modalService.open(error.error.message)
@@ -77,7 +77,7 @@ export class MathForecastComponent implements OnInit, OnChanges {
       .subscribe(
         res => {
           console.log('res', res);
-          this.mathematicalForecastTable = res
+          res.length === 0 ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res
         },
         error => this.modalService.open(error.error.message),
         () => {
@@ -103,19 +103,21 @@ export class MathForecastComponent implements OnInit, OnChanges {
   calculateLastTotal() {
     this.lastCalculatedVolumesTotal = []
     this.lastGroupVolumesByYearsTotal = []
-    for (let a = 0; a < Object.values(this.mathematicalForecastTable[0].groupVolumesByYears).length; a++) {
-      let summColumn = 0
-      for (let i = 0; i < this.mathematicalForecastTable.length; i++) {
-        summColumn += Number(Object.values(this.mathematicalForecastTable[i].groupVolumesByYears)[a])
+    if(this.mathematicalForecastTable.length !== 0){
+      for (let a = 0; a < Object.values(this.mathematicalForecastTable[0].groupVolumesByYears).length; a++) {
+        let summColumn = 0
+        for (let i = 0; i < this.mathematicalForecastTable.length; i++) {
+          summColumn += Number(Object.values(this.mathematicalForecastTable[i].groupVolumesByYears)[a])
+        }
+        this.lastGroupVolumesByYearsTotal.push(summColumn)
       }
-      this.lastGroupVolumesByYearsTotal.push(summColumn)
-    }
-    for (let a = 0; a < Object.values(this.mathematicalForecastTable[0].forecastValues).length; a++) {
-      let summColumn = 0
-      for (let i = 0; i < this.mathematicalForecastTable.length; i++) {
-        summColumn += Number(Object.values(this.mathematicalForecastTable[i].forecastValues)[a].value)
+      for (let a = 0; a < Object.values(this.mathematicalForecastTable[0].forecastValues).length; a++) {
+        let summColumn = 0
+        for (let i = 0; i < this.mathematicalForecastTable.length; i++) {
+          summColumn += Number(Object.values(this.mathematicalForecastTable[i].forecastValues)[a].value)
+        }
+        this.lastCalculatedVolumesTotal.push(summColumn)
       }
-      this.lastCalculatedVolumesTotal.push(summColumn)
     }
   }
 
