@@ -16,6 +16,7 @@ import {UploadFileService} from "../../../services/upload-file.service";
 import {ShipmentsService} from "../../../services/shipments.service";
 import {HttpResponse} from "@angular/common/http";
 import {PaymantIasService} from "../../../services/paymant-ias.service";
+import {ExportExcelService} from "../../../services/export-excel.service";
 
 @Component({
   selector: 'app-ias-route',
@@ -53,8 +54,11 @@ export class IasRouteComponent implements OnInit {
   pathRequestItemFin: IForecastIASModelIdResult
   yearsHohoho = []
   footersumYearsTwoTable = []
+  dataForExcel = [];
+  papapapapa = false
 
   constructor(
+    public ete: ExportExcelService,
     private router: Router,
     public authenticationService: AuthenticationService,
     private forecastModelService: ForecastingModelService,
@@ -68,53 +72,133 @@ export class IasRouteComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
-      this.headerYears = this.forecastModelService.ticketInformation.stepOne.Session['historicalYears'].split(',')
-      if( this.headerYears.length !== 0 ){
-        const maxItems = Math.max(...this.headerYears) + 1
-        this.headerYears = []
-        this.headerYears.push(maxItems)
-        for(let i = 1; this.headerYears.length < 10; i++){
-          this.headerYears.push(maxItems + i)
+    if (this.forecastModelService.getTicketInformation().stepThree.mathematicalForecastTable !== null) {
+      this.headerYears = this.forecastModelService.getTicketInformation().stepThree.mathematicalForecastTable
+      if (this.headerYears.length !== 0) {
+        for (let i = 0; this.headerYears.length < 15; i++) {
+          this.headerYears.push(Math.max(...this.headerYears) + 1)
         }
       }
-      if(this.headerYears.length > 10){
-        this.headerYears = this.headerYears.slice(0, 10);
+      if (this.headerYears.length > 15) {
+        this.headerYears = this.headerYears.slice(0, 15);
       }
 
-    }else{
-      this.headerYears = ['Прогнозный год - 1', 'Прогнозный год - 2', 'Прогнозный год - 3', 'Прогнозный год - 4','Прогнозный год - 5','Прогнозный год - 6','Прогнозный год - 7','Прогнозный год - 8','Прогнозный год - 9','Прогнозный год - 10']
+    } else {
+      this.headerYears = ['Прогнозный год - 1', 'Прогнозный год - 2', 'Прогнозный год - 3', 'Прогнозный год - 4', 'Прогнозный год - 5', 'Прогнозный год - 6', 'Прогнозный год - 7', 'Прогнозный год - 8', 'Прогнозный год - 9', 'Прогнозный год - 10', 'Прогнозный год - 11', 'Прогнозный год - 12', 'Прогнозный год - 13', 'Прогнозный год - 14', 'Прогнозный год - 15']
     }
-    console.log(this.headerYears)
     this.cols = [
-      { field: 'cargo_group', header: 'Группа груза', width: '100px', keyS: false},
-      { field: 'from_station', header: 'Станция отправления РФ', width: '100px', keyS: false },
-      { field: 'from_station_code', header: 'Код станции отправления РФ', width: '100px', keyS: false },
-      { field: 'to_station', header: 'Станция назначения РФ', width: '100px', keyS: false },
-      { field: 'to_station_code', header: 'Код станции назначения РФ', width: '100px', keyS: false },
+      {field: 'cargo_group', header: 'Группа груза', width: '100px', keyS: false},
+      {field: 'from_station', header: 'Станция отправления РФ', width: '100px', keyS: false},
+      {field: 'from_station_code', header: 'Код станции отправления РФ', width: '100px', keyS: false},
+      {field: 'to_station', header: 'Станция назначения РФ', width: '100px', keyS: false},
+      {field: 'to_station_code', header: 'Код станции назначения РФ', width: '100px', keyS: false},
     ];
-    for(let i=0; i < this.headerYears.length; i++){
-      this.cols.push({ field: 'n'+ (i+1), header: this.headerYears[i], width: '100px', keyS: false })
+    for (let i = 0; i < this.headerYears.length; i++) {
+      this.cols.push({field: 'n' + (i + 1), header: this.headerYears[i], width: '100px', keyS: false})
     }
     this.createForm();
     this.forecastListIas();
-  //  this.selectedPrimery = this.forecastModelService.ticketInformation.stepThree.primeryBolChange;
+    //  this.selectedPrimery = this.forecastModelService.ticketInformation.stepThree.primeryBolChange;
     this.selectedPrimery = this.primeryBolChange;
     this.columnS = [
-      { field: 'orderNum', header: 'Порядковый номер', width: '100px', keyS: false},
-      { field: 'len', header: 'Длинна', width: '100px', keyS: false},
-      { field: 'stationName', header: 'Станция', width: '100px', keyS: false},
-      { field: 'stationCode', header: 'Код станции', width: '100px', keyS: false},
-      { field: 'stationNameGS', header: 'Станция (ГС)', width: '100px', keyS: false},
-      { field: 'dorName', header: 'Дорога', width: '100px', keyS: false},
+      {field: 'orderNum', header: 'Порядковый номер', width: '100px', keyS: false},
+      {field: 'len', header: 'Длинна', width: '100px', keyS: false},
+      {field: 'stationName', header: 'Станция', width: '100px', keyS: false},
+      {field: 'stationCode', header: 'Код станции', width: '100px', keyS: false},
+      {field: 'stationNameGS', header: 'Станция (ГС)', width: '100px', keyS: false},
+      {field: 'dorName', header: 'Дорога', width: '100px', keyS: false},
     ]
   }
 
-  corresIiasForecast(){
+
+  exportToExcel(id: number) {
+
+    let resultIas = []
+    this.dataForExcel = []
+    let mass = []
+    this.calculationsService.getPathRequest(this.form.controls.forecastCorrespondence.value.var_id, id).subscribe(
+      res => {
+        res.length !== 0 ? resultIas = res : resultIas = []
+      },
+      error => this.modalService.open(error.error.message),
+      () => {
+        for (let item of resultIas) {
+          mass = []
+          mass.push(item['orderNum'], item['len'], item['stationName'], item['stationCode'], item['stationNameGS'], item['dorName'])
+          this.dataForExcel.push(mass)
+        }
+        let reportData = {
+          title: `forecast-${id}`,
+          data: this.dataForExcel,
+          headers: ['Порядковый номер', 'Длинна', 'Станция', 'Код станции', 'Станция (ГС)', 'Дорога']
+        }
+        this.ete.exportExcel(reportData);
+
+      })
+  }
+
+  exportToExcelOne() {
+    let headersTable = []
+    this.dataForExcel = []
+    let yearSumm = []
+    let mass = []
+    let itemYearsSumm = 0
+    if (this.correspondencesIiasForecast) {
+      for (let item of this.cols) {
+        headersTable.push(item.header)
+      }
+      headersTable.unshift('Порядковый номер')
+      for (let i = 0; i < this.correspondencesIiasForecast.length; i++) {
+        mass = []
+        mass.push(
+          i + 1,
+          this.correspondencesIiasForecast[i].cargo_group,
+          this.correspondencesIiasForecast[i].from_station,
+          this.correspondencesIiasForecast[i].from_station_code,
+          this.correspondencesIiasForecast[i].to_station,
+          this.correspondencesIiasForecast[i].to_station_code,
+          this.correspondencesIiasForecast[i].n1 !== null ? Number(this.correspondencesIiasForecast[i].n1) : 0,
+          this.correspondencesIiasForecast[i].n2 !== null ? Number(this.correspondencesIiasForecast[i].n2) : 0,
+          this.correspondencesIiasForecast[i].n3 !== null ? Number(this.correspondencesIiasForecast[i].n3) : 0,
+          this.correspondencesIiasForecast[i].n4 !== null ? Number(this.correspondencesIiasForecast[i].n4) : 0,
+          this.correspondencesIiasForecast[i].n5 !== null ? Number(this.correspondencesIiasForecast[i].n5) : 0,
+          this.correspondencesIiasForecast[i].n6 !== null ? Number(this.correspondencesIiasForecast[i].n6) : 0,
+          this.correspondencesIiasForecast[i].n7 !== null ? Number(this.correspondencesIiasForecast[i].n7) : 0,
+          this.correspondencesIiasForecast[i].n8 !== null ? Number(this.correspondencesIiasForecast[i].n8) : 0,
+          this.correspondencesIiasForecast[i].n9 !== null ? Number(this.correspondencesIiasForecast[i].n9) : 0,
+          this.correspondencesIiasForecast[i].n10 !== null ? Number(this.correspondencesIiasForecast[i].n10) : 0,
+          this.correspondencesIiasForecast[i].n11 !== null ? Number(this.correspondencesIiasForecast[i].n11) : 0,
+          this.correspondencesIiasForecast[i].n12 !== null ? Number(this.correspondencesIiasForecast[i].n12) : 0,
+          this.correspondencesIiasForecast[i].n13 !== null ? Number(this.correspondencesIiasForecast[i].n13) : 0,
+          this.correspondencesIiasForecast[i].n14 !== null ? Number(this.correspondencesIiasForecast[i].n14) : 0,
+          this.correspondencesIiasForecast[i].n15 !== null ? Number(this.correspondencesIiasForecast[i].n15) : 0,
+        )
+        this.dataForExcel.push(mass)
+      }
+      for (let x = 1; x < 16; x++) {
+        itemYearsSumm = 0
+        for (let i = 0; i < this.correspondencesIiasForecast.length; i++) {
+          itemYearsSumm += this.correspondencesIiasForecast[i][`n${x}`] !== null ? Number(this.correspondencesIiasForecast[i][`n${x}`]) : 0
+        }
+        yearSumm.push(itemYearsSumm)
+      }
+      let reportData = {
+        title: `oneTable`,
+        data: this.dataForExcel,
+        headers: headersTable,
+        yearSumm: yearSumm,
+      }
+      console.log(reportData)
+      this.ete.exportExcelOne(reportData);
+    }
+  }
+
+
+  corresIiasForecast() {
     this.loadingOne = true;
     this.loadingTwo = true;
     this.loading = false;
-    if(this.selectedPrimery === true){
+    if (this.selectedPrimery === true) {
       this.shipmentsService.putIasSaveId(
         this.sessionId,
         this.paymantIasService.getPaymentInformation().allCorrespondensRouteId === 0 ? 0 : this.paymantIasService.getPaymentInformation().allCorrespondensRouteId,
@@ -128,7 +212,7 @@ export class IasRouteComponent implements OnInit {
           this.paymantIasService.settPaymentSmallCorrespondence(this.form.controls.smallCorrespondence.value !== '' ? this.form.controls.smallCorrespondence.value.var_id : 0)
         }
       )
-    }else if(this.selectedPrimery === false){
+    } else if (this.selectedPrimery === false) {
       this.shipmentsService.putIasSaveId(
         this.sessionId,
         this.form.controls.forecastCorrespondence.value !== '' ? this.form.controls.forecastCorrespondence.value.var_id : 0,
@@ -144,7 +228,7 @@ export class IasRouteComponent implements OnInit {
     }
     this.calculationsService.getIasForecastId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
       res => {
-        console.log(res)
+        console.log('correspondencesIiasForecast', res)
         this.correspondencesIiasForecast = res
       },
       error => this.modalService.open(error.error.message),
@@ -156,9 +240,9 @@ export class IasRouteComponent implements OnInit {
       },
       error => this.modalService.open(error.error.message),
       () => {
-        if(this.forecastIASModelId.length !== 0){
+        if (this.forecastIASModelId.length !== 0) {
           this.headerYearsTable(this.forecastIASModelId)
-        }else{
+        } else {
           this.resultTwoTable = []
           this.loadingTwo = false
         }
@@ -167,23 +251,23 @@ export class IasRouteComponent implements OnInit {
   }
 
 
-  headerYearsTable(forecastIASModelId: IForecastIASModelId[]){
+  headerYearsTable(forecastIASModelId: IForecastIASModelId[]) {
     this.loadingTwo = true
     this.resultTwoTable = []
     this.columnF = [
-      { field: 'dor_name', header: 'Дорога', width: '100px', keyS: false},
-      { field: 'st1_u_name', header: 'Начальная станция участка', width: '100px', keyS: false},
-      { field: 'st1_u', header: 'Единая сетевая разметка начальной станции', width: '100px', keyS: false},
-      { field: 'st2_u_name', header: 'Конечная станция участка', width: '100px', keyS: false},
-      { field: 'st2_u', header: 'Единая сетевая разметка конечной станции', width: '100px', keyS: false},
-      { field: 'len', header: 'км', width: '100px', keyS: false},
+      {field: 'dor_name', header: 'Дорога', width: '100px', keyS: false},
+      {field: 'st1_u_name', header: 'Начальная станция участка', width: '100px', keyS: false},
+      {field: 'st1_u', header: 'Единая сетевая разметка начальной станции', width: '100px', keyS: false},
+      {field: 'st2_u_name', header: 'Конечная станция участка', width: '100px', keyS: false},
+      {field: 'st2_u', header: 'Единая сетевая разметка конечной станции', width: '100px', keyS: false},
+      {field: 'len', header: 'км', width: '100px', keyS: false},
     ]
     let oldMass = [];
     let newMassiv = [];
     const fin3 = []
     let fin4 = []
     let resultse = []
-    for(let i = 0; i<forecastIASModelId.length; i++) {
+    for (let i = 0; i < forecastIASModelId.length; i++) {
       if (i === 0) {
         oldMass = forecastIASModelId.filter(data => data.st1_u_name === forecastIASModelId[i].st1_u_name && data.st2_u_name === forecastIASModelId[i].st2_u_name && data.dor_name === forecastIASModelId[i].dor_name)
         oldMass.sort((a, b) => a.year > b.year ? 1 : -1);
@@ -275,18 +359,20 @@ export class IasRouteComponent implements OnInit {
         oldMass = newMassiv
       }
     }
-    for(let item of resultse){
-      for(let x= 0; x < item.length; x++){
-        if(!this.yearsHohoho.includes(item[x].year, 0))
+    for (let item of resultse) {
+      for (let x = 0; x < item.length; x++) {
+        if (!this.yearsHohoho.includes(item[x].year, 0))
           this.yearsHohoho.push(item[x].year)
       }
     }
-    this.yearsHohoho.sort(function(a, b){return a - b});
-    for(let item of resultse){
-      if(item.length < this.yearsHohoho.length){
-        for(let years of this.yearsHohoho){
+    this.yearsHohoho.sort(function (a, b) {
+      return a - b
+    });
+    for (let item of resultse) {
+      if (item.length < this.yearsHohoho.length) {
+        for (let years of this.yearsHohoho) {
           const checkObj = obj => obj.year === years;
-          if(!item.some(checkObj)){
+          if (!item.some(checkObj)) {
             this.pathRequestItem = {
               dor_name: item[0].dor_name,
               st1_u_name: item[0].st1_u_name,
@@ -306,7 +392,7 @@ export class IasRouteComponent implements OnInit {
     }
     // console.log('2',this.yearsHohoho)
     // console.log(resultse)
-    for(let item of resultse){
+    for (let item of resultse) {
       this.pathRequestItemFin = {
         dor_name: item[0].dor_name,
         st1_u_name: item[0].st1_u_name,
@@ -315,32 +401,45 @@ export class IasRouteComponent implements OnInit {
         st2_u: item[0].st2_u,
         len: item[0].len,
         ntuda: [],
-        nobratno:  []
+        nobratno: []
       }
-      for(let i = 0; i < item.length; i++){
-        this.pathRequestItemFin.ntuda.push({ntuda: item[i].ntuda === null ? 0 :item[i].ntuda, year: item[i].year})
-        this.pathRequestItemFin.nobratno.push({nobratno: item[i].nobratno === null ? 0 :item[i].nobratno, year: item[i].year})
+      for (let i = 0; i < item.length; i++) {
+        this.pathRequestItemFin.ntuda.push({ntuda: item[i].ntuda === null ? 0 : item[i].ntuda, year: item[i].year})
+        this.pathRequestItemFin.nobratno.push({
+          nobratno: item[i].nobratno === null ? 0 : item[i].nobratno,
+          year: item[i].year
+        })
       }
       this.resultTwoTable.push(this.pathRequestItemFin)
     }
     //this.resultTwoTable = resultse
-    for(let i =0; i < this.yearsHohoho.length; i++){
-      this.columnF.push({field: `ntuda.${i}.ntuda`, header: this.resultTwoTable[0].ntuda[i].year, width: '100px', keyS: false})
+    for (let i = 0; i < this.yearsHohoho.length; i++) {
+      this.columnF.push({
+        field: `ntuda.${i}.ntuda`,
+        header: this.resultTwoTable[0].ntuda[i].year,
+        width: '100px',
+        keyS: false
+      })
     }
-    for(let i =0; i < this.yearsHohoho.length; i++){
-      this.columnF.push({field: `nobratno.${i}.nobratno`, header: this.resultTwoTable[0].nobratno[i].year, width: '100px', keyS: false})
+    for (let i = 0; i < this.yearsHohoho.length; i++) {
+      this.columnF.push({
+        field: `nobratno.${i}.nobratno`,
+        header: this.resultTwoTable[0].nobratno[i].year,
+        width: '100px',
+        keyS: false
+      })
     }
     this.footerSumTwoTable(this.resultTwoTable)
   }
 
-  footerSumTwoTable(resultTwoTable: any[]){
+  footerSumTwoTable(resultTwoTable: any[]) {
     this.footersumYearsTwoTable = []
     let resultNtuda = []
     let resultNobratno = []
-    for (let i = 0; i < resultTwoTable[0].ntuda.length; i++){
+    for (let i = 0; i < resultTwoTable[0].ntuda.length; i++) {
       let ntuda = 0
       let nobratno = 0
-      for (let x = 0; x < resultTwoTable.length; x++){
+      for (let x = 0; x < resultTwoTable.length; x++) {
         ntuda += resultTwoTable[x].ntuda[i].ntuda
         nobratno += resultTwoTable[x].nobratno[i].nobratno
       }
@@ -352,9 +451,9 @@ export class IasRouteComponent implements OnInit {
   }
 
   createForm() {
-    if(this.forecastModelService.getTicketInformation().stepOne.Session !== null){
+    if (this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
-    }else{
+    } else {
       this.sessionId = this.forecastModelService.getTicketInformation().stepThree.sessionId;
     }
     this.form = new FormGroup({
@@ -365,7 +464,8 @@ export class IasRouteComponent implements OnInit {
       name: new FormControl('', [Validators.required])
     })
   }
-  forecastListIas(){
+
+  forecastListIas() {
     this.calculationsService.getForcastIas().subscribe(
       res => {
         this.forecastCorrespondence = res;
@@ -376,7 +476,6 @@ export class IasRouteComponent implements OnInit {
   }
 
 
-
   searchInIAS(rowData) {
     console.log('iasForecastId', this.form.controls.forecastCorrespondence.value.var_id)
     console.log('iasCorrespondenceId', rowData.corr_id)
@@ -384,7 +483,7 @@ export class IasRouteComponent implements OnInit {
     this.calculationsService.getPathRequest(this.form.controls.forecastCorrespondence.value.var_id, rowData.corr_id).subscribe(
       res => {
         this.pathRequest = res,
-          console.log('Ias',res)
+          console.log('Ias', res)
       },
       error => this.modalService.open(error.error.message),
       () => {
@@ -399,7 +498,7 @@ export class IasRouteComponent implements OnInit {
   }
 
   downloadIas() {
-    if(this.form.controls.forecastCorrespondence.valid){
+    if (this.form.controls.forecastCorrespondence.valid) {
       this.downloadIasLoading = true;
       this.uploadFileService.getDownload(this.form.controls.forecastCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
         (response: HttpResponse<Blob>) => {
@@ -416,11 +515,11 @@ export class IasRouteComponent implements OnInit {
         async (error) => {
           const message = JSON.parse(await error.error.text()).message;
           this.modalService.open(message)
-            this.downloadIasLoading = false
+          this.downloadIasLoading = false
         },
         () => this.downloadIasLoading = false
       )
-    }else{
+    } else {
       this.modalService.open('Укажите Маршрут')
     }
   }
@@ -429,7 +528,7 @@ export class IasRouteComponent implements OnInit {
     console.log('Id прогноза из ИАС Маршруты (основные): ', this.form.controls.forecastCorrespondence.value.var_id)
     console.log('Id прогноза из ИАС Маршруты (мелкие): ', this.form.controls.smallCorrespondence.value.var_id)
     console.log('Id сессии загрузки исторических данных: ', this.sessionId)
-    if(this.form.valid){
+    if (this.form.valid) {
       this.downloadTotalIasLoading = true;
       this.uploadFileService.getDownloadTotal(this.sessionId, this.form.controls.forecastCorrespondence.value.var_id, this.form.controls.smallCorrespondence.value.var_id).subscribe(
         (response: HttpResponse<Blob>) => {
@@ -446,11 +545,11 @@ export class IasRouteComponent implements OnInit {
         async (error) => {
           const message = JSON.parse(await error.error.text()).message;
           this.modalService.open(message)
-            this.downloadTotalIasLoading = false
+          this.downloadTotalIasLoading = false
         },
         () => this.downloadTotalIasLoading = false
       )
-    }else{
+    } else {
       this.modalService.open('Заполните все поля!')
     }
   }
@@ -491,7 +590,7 @@ export class IasRouteComponent implements OnInit {
       async (error) => {
         const message = JSON.parse(await error.error.text()).message;
         this.modalService.open(message)
-          this.downloadTotalSmallIasLoading = false
+        this.downloadTotalSmallIasLoading = false
       },
       () => this.downloadTotalSmallIasLoading = false
     )
@@ -514,7 +613,7 @@ export class IasRouteComponent implements OnInit {
       async (error) => {
         const message = JSON.parse(await error.error.text()).message;
         this.modalService.open(message)
-          this.downloadIasLoadingCorrespondences = false
+        this.downloadIasLoadingCorrespondences = false
       },
       () => this.downloadIasLoadingCorrespondences = false
     )
@@ -522,61 +621,5 @@ export class IasRouteComponent implements OnInit {
 
   loadCustomers(event: any) {
     this.footerSumTwoTable(event.filteredValue)
-  }
-
-
-  exportRoutesExcel() {
-    import("xlsx").then(xlsx => {
-      const worksheet = xlsx.utils.book_new();
-      let Heading: any[] = [['Порядковый номер', 'Длинна' ,'Станция','Станция (ГС)','Код станции','Дорога']]
-      xlsx.utils.sheet_add_aoa(worksheet, Heading);
-      xlsx.utils.sheet_add_json(worksheet, this.pathRequest, {origin: 'A2', header: ['orderNum','len', 'stationName', 'stationNameGS', 'stationCode', 'dorName'], skipHeader: true});
-      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-      this.saveAsExcelFile(excelBuffer, "products");
-    });
-  }
-// тестирование
-  exportRoutesExcelIas(id: number) {
-    let resultIas = []
-    this.calculationsService.getPathRequest(this.form.controls.forecastCorrespondence.value.var_id, id).subscribe(
-      res => {
-        resultIas = res
-      },
-      error => this.modalService.open(error.error.message),
-      () => {
-        import("xlsx").then(xlsx => {
-          const worksheet = xlsx.utils.book_new();
-          let Heading: any[] = [['Порядковый номер', 'Длинна' ,'Станция','Станция (ГС)','Код станции','Дорога']]
-          xlsx.utils.sheet_add_aoa(worksheet, Heading);
-          xlsx.utils.sheet_add_json(worksheet, resultIas, {origin: 'A2', header: ['orderNum','len', 'stationName', 'stationNameGS', 'stationCode', 'dorName'], skipHeader: true});
-          const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-          const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-          this.saveAsExcelFile(excelBuffer, "products");
-        });
-      }
-    )
-  }
-  saveAsExcelFile(buffer: any, fileName: string): void {
-    import("file-saver").then(FileSaver => {
-      let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-      let EXCEL_EXTENSION = '.xlsx';
-      const data: Blob = new Blob([buffer], {
-        type: EXCEL_TYPE
-      });
-      FileSaver.saveAs(data, fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION);
-    });
-  }
-
-  exportTest() {
-    console.log('resultTwoTable', this.resultTwoTable)
-    import("xlsx").then(xlsx => {
-      const worksheet = xlsx.utils.book_new();
-      let Heading: any[] = [['Дорога', 'Начальная станция участка' ,'Единая сетевая разметка начальной станции','Конечная станция участка','Единая сетевая разметка конечной станции','км']]
-      xlsx.utils.sheet_add_json(worksheet, this.resultTwoTable );
-      const workbook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-      const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
-      this.saveAsExcelFile(excelBuffer, "resultTwoTable");
-    });
   }
 }

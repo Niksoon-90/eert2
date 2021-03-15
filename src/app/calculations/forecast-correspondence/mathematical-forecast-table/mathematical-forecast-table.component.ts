@@ -30,6 +30,7 @@ export class MathematicalForecastTableComponent implements OnInit {
   @ViewChild('dt') table: Table;
 
   @ViewChild("dropdownPrimary", {static: false}) dropdownPrimary: Dropdown
+
   @ViewChild("dropdownForecastType", {static: false}) dropdownForecastType: Dropdown
 
   @Input() settlemenType;
@@ -67,6 +68,7 @@ export class MathematicalForecastTableComponent implements OnInit {
   forecastFiscalYear: any;
   dynamicForm: FormGroup;
   numberHistroricalYears = 0
+  mathematicalForecastTableShipmentYearCalculated = []
   typeCalculation = [
     {label: 'Все', value: ''},
     {label: 'по методу наименьших квадратов', value: 'LESS_SQUARE'},
@@ -142,8 +144,13 @@ export class MathematicalForecastTableComponent implements OnInit {
 
   onChangeTickets() {
     this.numberHistroricalYears =0
+    this.mathematicalForecastTableShipmentYearCalculated = []
     if(this.mathematicalForecastTable.length !== 0){
       this.mathematicalForecastTable[0].shipmentYearValuePairs.forEach(elements => (elements.calculated === false ? this.numberHistroricalYears++ : '') );
+      this.mathematicalForecastTable[0].shipmentYearValuePairs.forEach(elements => (elements.calculated === true ? this.mathematicalForecastTableShipmentYearCalculated.push(elements.year) : '') );
+      this.mathematicalForecastTableShipmentYearCalculated.length !== 0 ? this.forecastModelService.setTicketInformationMathematicalForecastTable(this.mathematicalForecastTableShipmentYearCalculated) : this.forecastModelService.setTicketInformationMathematicalForecastTable(null)
+
+      console.log(this.mathematicalForecastTableShipmentYearCalculated)
     }
     if (this.t.length < this.columsYears - this.numberHistroricalYears) {
       for (let i = this.t.length; i < this.columsYears -  this.numberHistroricalYears; i++) {

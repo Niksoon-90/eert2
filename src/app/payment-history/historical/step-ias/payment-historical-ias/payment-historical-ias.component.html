@@ -101,23 +101,25 @@
             [columns]="cols"
             [value]="correspondencesIiasForecast"
             [scrollable]="true" scrollHeight="18vh"
-            styleClass="p-datatable-sm p-datatable-gridlines" dataKey="corr_id"
-            [resizableColumns]="true" editMode="row" columnResizeMode="expand"
+            styleClass=" p-datatable-gridlines" dataKey="corr_id"
+            [resizableColumns]="true" columnResizeMode="expand" editMode="row"
             [paginator]="true"
             [rows]="500"
             [filterDelay]="0"
             [autoLayout]="true"
             [rowsPerPageOptions]="[50,100,150]"
             [showCurrentPageReport]="true"
-            currentPageReportTemplate="Отображено с {first} по {last} запись. Всего: {totalRecords}"
-          >
-
+            currentPageReportTemplate="Отображено с {first} по {last} запись. Всего: {totalRecords}">
+            >
             <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
               <ng-template pTemplate="caption">
                 <div class="p-grid p-ai-center vertical-container">
                   <ng-container *ngIf="this.downloadIasLoadingCorrespondences === false; else DownloadLoading">
                     <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать"
                             class="p-button-success p-mr-2 p-button p-component" (click)="downloadIasCorrespondences()"
+                            style="margin-right: 0.5em;"></button>
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать2"
+                            class="p-button-success p-mr-2 p-button p-component" (click)="exportToExcelOne()"
                             style="margin-right: 0.5em;"></button>
                   </ng-container>
                   <ng-template #DownloadLoading>
@@ -132,7 +134,7 @@
               <colgroup>
                 <col style="width:80px">
                 <col *ngFor="let col of columns" [style.width]="col.width">
-                <col style="width:80px">
+                <col style="width:100px">
               </colgroup>
             </ng-template>
             <ng-template pTemplate="header" let-columns>
@@ -159,14 +161,17 @@
                 <td *ngFor="let col of this.cols">
                   {{rowData[col.field]}}
                 </td>
-                <td>
+                <td style="text-align: center">
                   <button pButton pRipple type="button" icon="pi pi-search" (click)="searchInIAS(rowData)"
                           class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                  <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportToExcel(rowData.corr_id)"
+                          class="p-button-success p-mr-2" pTooltip="Скачать «пути следования»" tooltipPosition="bottom"></button>
                 </td>
               </tr>
             </ng-template>
           </p-table>
         </ng-container>
+
 
 
         <h4>№2 Форму загрузки участков</h4>

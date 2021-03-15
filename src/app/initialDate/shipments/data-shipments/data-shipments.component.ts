@@ -1,14 +1,14 @@
 import {Component, OnDestroy, OnInit,} from '@angular/core';
 import {ShipmentsService} from "../../../services/shipments.service";
-import {ISession, IShipment, IShipmentPagination} from "../../../models/shipmenst.model";
+import {ISession, IShipmentPagination} from "../../../models/shipmenst.model";
 
 import {ModalService} from "../../../services/modal.service";
 import {IAuthModel} from "../../../models/auth.model";
 import {AuthenticationService} from "../../../services/authentication.service";
 import {map} from "rxjs/operators";
 import {Subscription} from "rxjs";
-import {ConfirmationService, MenuItem, MessageService} from "primeng/api";
-import {HttpEventType, HttpResponse} from "@angular/common/http";
+import {ConfirmationService, MessageService} from "primeng/api";
+import {HttpEventType} from "@angular/common/http";
 import {CalculationsService} from "../../../services/calculations.service";
 
 
@@ -17,13 +17,11 @@ import {CalculationsService} from "../../../services/calculations.service";
   templateUrl: './data-shipments.component.html',
   styleUrls: ['./data-shipments.component.scss']
 })
-export class DataShipmentsComponent implements OnInit {
+export class DataShipmentsComponent implements OnInit, OnDestroy {
 
   shipmentsSession: ISession[];
   customers: any[];
   mathematicalForecastTable: IShipmentPagination;
-  sub: Subscription
-
   loading: boolean = true;
   first = 0;
   rows = 25;
@@ -31,8 +29,7 @@ export class DataShipmentsComponent implements OnInit {
   user: IAuthModel
   sessionId: number = 0
   doenloadItemId: number [] = []
-  items: MenuItem[];
-  selectedShipmentsSession: ISession
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     private messageService: MessageService,
@@ -48,22 +45,9 @@ export class DataShipmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getShipmentsSession();
-    this.items = [
-      {label: 'Открыть', icon: 'pi pi-fw pi-search', command: () => this.openShipItemSession(this.selectedShipmentsSession.id)},
-      {label: 'Delete', icon: 'pi pi-fw pi-times', command: () => this.update(this.selectedShipmentsSession.id)}
-    ];
   }
-
-  save() {
-    this.messageService.add({summary: 'Success', detail: 'Data Saved'});
-  }
-
-  update(id: number) {
-    this.messageService.add({severity: 'success', summary: 'Success', detail: `Data Updated ${id}`});
-  }
-
-  delete() {
-    this.messageService.add({severity: 'success', summary: 'Success', detail: 'Data Deleted'});
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   reset() {
@@ -82,12 +66,11 @@ export class DataShipmentsComponent implements OnInit {
   getShipmentsSession() {
     this.loading = true
     if (this.user.authorities.includes('P_P_p5') === true) {
-      this.shipmentsService.getHistoricalSession()
+      this.subscriptions.add(this.shipmentsService.getHistoricalSession()
         .pipe(
           map((data: ISession[]) => {
             if (data.length !== 0) {
               data = data.filter(p => p.fileType === "SHIPMENTS")
-              //  const transformedData = Object.keys(data).map(key => Object.assign(data[key], {id: Math.random() * 1000000}))
             }
             return data
           })
@@ -99,8 +82,9 @@ export class DataShipmentsComponent implements OnInit {
           error => this.modalService.open(error.error.message),
           () => this.loading = false,
         )
+      )
     } else {
-      this.shipmentsService.getShipSession()
+      this.subscriptions.add(this.shipmentsService.getShipSession()
         .pipe(
           map((data: ISession[]) => {
             if (data.length !== 0) {
@@ -116,6 +100,7 @@ export class DataShipmentsComponent implements OnInit {
           error => this.modalService.open(error.error.message),
           () => this.loading = false,
         )
+      )
     }
   }
 
@@ -138,12 +123,11 @@ export class DataShipmentsComponent implements OnInit {
         )
       }
     });
-
   }
 
   openShipItemSession(id: number) {
     this.sessionId = id
-    this.sub = this.shipmentsService.getShipmetsPaginations(id, 0).subscribe(
+    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(id, 0).subscribe(
       res => {
         this.mathematicalForecastTable = res
         this.showDialog();
@@ -151,6 +135,7 @@ export class DataShipmentsComponent implements OnInit {
       error => {
         this.modalService.open(error.error.message);
       },
+    )
     )
   }
 
@@ -176,17 +161,10 @@ export class DataShipmentsComponent implements OnInit {
     this.first = this.first - this.rows;
   }
 
-// {
-//   observe: 'response',
-//   responseType: 'blob' as 'json'
-// })
-//
-//
-
 
   downloadAbsentcargo(id: number) {
     this.doenloadItemId.push(id)
-    this.shipmentsService.getDownloadAbsentcargo(id).subscribe(
+    this.subscriptions.add(this.shipmentsService.getDownloadAbsentcargo(id).subscribe(
       result => {
         switch (result.type) {
           case HttpEventType.Sent:
@@ -217,8 +195,6 @@ export class DataShipmentsComponent implements OnInit {
             downloadLink.click();
             return [];
         }
-
-
       },
       async (error) => {
         const message = JSON.parse(await error.error.text()).message;
@@ -227,47 +203,17 @@ export class DataShipmentsComponent implements OnInit {
       },
       () => this.doenloadItemId = this.doenloadItemId.filter(item => item !== id)
     )
+    )
   }
 
   opimal(id: number) {
-    this.calculationsService.postCorrespondenceOptimal(id).subscribe(
+    this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(id).subscribe(
       () => console.log(),
       error => this.modalService.open(error.error.message),
-      () => {
-
-      }
-    )
-    this.calculationsService.postHierarchicalShipment(id).subscribe(
+    ))
+    this.subscriptions.add(this.calculationsService.postHierarchicalShipment(id).subscribe(
       () => console.log(),
-      error => {
-        this.modalService.open(error.error.message)
-      },
-    )
-  }
-
-  getItemsMenu(id: number, name: string): MenuItem[] {
-    const item: MenuItem[] = [
-      {
-        label: 'Update', icon: 'pi pi-refresh', command: () => {
-          this.update(id);
-        }
-      }
-    ]
-    if (this.user.authorities.includes('P_P_p9') !== true) {
-      item.push({
-        label: 'Удалить', icon: 'pi pi-times', command: () => {
-          this.removeShipSession(id, name);
-        }
-      })
-    }
-    if (this.user.authorities.includes('P_P_p8') === true) {
-      item.push({separator: true},
-        {
-          label: 'Скачать', icon: 'pi pi-times', command: () => {
-            this.downloadAbsentcargo(id);
-          }
-        })
-    }
-    return item
+      error => this.modalService.open(error.error.message)
+    ))
   }
 }

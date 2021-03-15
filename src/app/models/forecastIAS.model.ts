@@ -62,6 +62,11 @@ export interface ICorrespondencesIiasForecast {
   n7?:	string
   n8?:	string
   n9?:	string
+  n11?:	string
+  n12?:	string
+  n13?:	string
+  n14?:	string
+  n15?:	string
   to_station?:	string
   to_station_code?: string
 }

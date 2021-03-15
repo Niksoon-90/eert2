@@ -26,7 +26,8 @@ export class ForecastingModelService {
         yearsSession: null,
         primeryBolChange: false,
         sessionId: null,
-        calculated: false
+        calculated: false,
+        mathematicalForecastTable: null
     },
     history: {
       historicalName: null,
@@ -46,6 +47,9 @@ export class ForecastingModelService {
 
   setTicketInformation(ticketInformation) {
     this.ticketInformation = ticketInformation;
+  }
+  setTicketInformationMathematicalForecastTable(mathematicalForecastTable) {
+    this.ticketInformation.stepThree.mathematicalForecastTable = mathematicalForecastTable;
   }
 
 }

@@ -44,7 +44,8 @@ export class CalculationsComponent implements OnInit {
           yearsSession: null,
           primeryBolChange: false,
           sessionId: null,
-          calculated: false
+          calculated: false,
+          mathematicalForecastTable: null
         },
         history: {
           historicalName: null,

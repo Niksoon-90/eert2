@@ -7,6 +7,7 @@ import {ModalService} from "../../services/modal.service";
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {CalculationsService} from "../../services/calculations.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-upload-file',
@@ -16,6 +17,7 @@ import {CalculationsService} from "../../services/calculations.service";
 
 
 export class UploadFileComponent implements OnInit {
+
   @ViewChild('fileUploader') fileUploader: ElementRef;
 
   @Input() nsi
@@ -36,7 +38,7 @@ export class UploadFileComponent implements OnInit {
   messageDialogStats = ''
   fileId: number = 0;
   test: any[] = []
-
+  subscriptions: Subscription = new Subscription();
 
 
   dimensionItems = [
@@ -59,8 +61,6 @@ export class UploadFileComponent implements OnInit {
 
   ngOnInit(): void {
     if(this.initialDateType === undefined) this.initialDateType = this.nsi
-    console.log(this.initialDateType)
-    console.log(this.nsi)
     if(this.initialDateType === 'shipmentsUpload' || this.initialDateType === 'correspondUpload' ){
       this.dimensionLable = this.dimensionItems[2]
     }
@@ -79,6 +79,9 @@ export class UploadFileComponent implements OnInit {
       {id:2, name:'Грузополучатель', type: 'RECEIVER_CLAIMS'}
     ]
     this.createForm();
+  }
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   createForm(){

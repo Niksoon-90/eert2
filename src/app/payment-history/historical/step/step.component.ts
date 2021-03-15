@@ -44,7 +44,7 @@ export class StepComponent implements OnInit {
   totalRecords: number = 0
   private subscription: Subscription
   nameSession: string
-
+  mathematicalForecastTableShipmentYearCalculated = []
 
 
   constructor(
@@ -91,6 +91,9 @@ export class StepComponent implements OnInit {
 
   createColumnTable() {
     this.mathematicalForecastTable.length === 0 ? this.columsYears = 0 : this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
+    this.mathematicalForecastTable.length !== 0 ? this.mathematicalForecastTable[0].shipmentYearValuePairs.forEach(elements => (elements.calculated === true ? this.mathematicalForecastTableShipmentYearCalculated.push(elements.year) : '') ) : this.mathematicalForecastTableShipmentYearCalculated = null
+    this.mathematicalForecastTableShipmentYearCalculated.length !== 0 ? this.forecastingModelService.setTicketInformationMathematicalForecastTable(this.mathematicalForecastTableShipmentYearCalculated) : this.forecastingModelService.setTicketInformationMathematicalForecastTable(null)
+
     this.cols = [
       {field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
       {field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false},

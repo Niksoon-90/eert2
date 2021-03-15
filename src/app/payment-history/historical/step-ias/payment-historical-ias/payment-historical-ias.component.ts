@@ -16,6 +16,7 @@ import {ModalService} from "../../../../services/modal.service";
 import {UploadFileService} from "../../../../services/upload-file.service";
 import {ShipmentsService} from "../../../../services/shipments.service";
 import {HttpResponse} from "@angular/common/http";
+import {ExportExcelService} from "../../../../services/export-excel.service";
 
 @Component({
   selector: 'app-payment-historical-ias',
@@ -57,8 +58,11 @@ export class PaymentHistoricalIasComponent implements OnInit {
   test: any
   downloadIasLoadingCorrespondences: boolean = false;
   footersumYearsTwoTable = []
+  dataForExcel = [];
+
   constructor(
     private router: Router,
+    public ete: ExportExcelService,
     public authenticationService: AuthenticationService,
     private forecastModelService: ForecastingModelService,
     private calculationsService: CalculationsService,
@@ -77,32 +81,19 @@ export class PaymentHistoricalIasComponent implements OnInit {
   ngOnInit(): void {
     this.createForm()
     this.forecastListIas();
-    if (this.forecastModelService.getTicketInformation().history.historicalYears !== null) {
-      this.headerYears = this.forecastModelService.ticketInformation.history['historicalYears'].split(',')
-      // if (this.headerYears.length < 10) {
-      //   let lenghtMas: number = 10 - this.headerYears.length;
-      //   const maxItem: number = Math.max(...this.headerYears);
-      //   for (let a = 1; a <= lenghtMas; a++) {
-      //     this.headerYears.push(maxItem + a)
-      //   }
-      //   if (this.headerYears.length > 10) {
-      //     this.headerYears = this.headerYears.slice(0, 10);
-      //   }
-      // }
-      if( this.headerYears.length !== 0 ){
-        const maxItems = Math.max(...this.headerYears) + 1
-        this.headerYears = []
-        this.headerYears.push(maxItems)
-        for(let i = 1; this.headerYears.length < 10; i++){
-          this.headerYears.push(maxItems + i)
+    if (this.forecastModelService.getTicketInformation().stepThree.mathematicalForecastTable !== null) {
+      this.headerYears = this.forecastModelService.getTicketInformation().stepThree.mathematicalForecastTable
+      if (this.headerYears.length !== 0) {
+        for (let i = 0; this.headerYears.length < 15; i++) {
+          this.headerYears.push(Math.max(...this.headerYears) + 1)
         }
       }
-      if(this.headerYears.length > 10){
-        this.headerYears = this.headerYears.slice(0, 10);
+      if (this.headerYears.length > 15) {
+        this.headerYears = this.headerYears.slice(0, 15);
       }
 
     } else {
-      this.headerYears = ['Прогнозный год - 1', 'Прогнозный год - 2', 'Прогнозный год - 3', 'Прогнозный год - 4', 'Прогнозный год - 5', 'Прогнозный год - 6', 'Прогнозный год - 7', 'Прогнозный год - 8', 'Прогнозный год - 9', 'Прогнозный год - 10']
+      this.headerYears = ['Прогнозный год - 1', 'Прогнозный год - 2', 'Прогнозный год - 3', 'Прогнозный год - 4', 'Прогнозный год - 5', 'Прогнозный год - 6', 'Прогнозный год - 7', 'Прогнозный год - 8', 'Прогнозный год - 9', 'Прогнозный год - 10', 'Прогнозный год - 11', 'Прогнозный год - 12', 'Прогнозный год - 13', 'Прогнозный год - 14', 'Прогнозный год - 15']
     }
     this.cols = [
       {field: 'cargo_group', header: 'Группа груза', width: '100px', keyS: false},
@@ -128,6 +119,85 @@ export class PaymentHistoricalIasComponent implements OnInit {
       { field: 'dorName', header: 'Дорога', width: '100px', keyS: false},
     ]
   }
+  exportToExcel(id: number) {
+    let resultIas = []
+    this.dataForExcel = []
+    let mass = []
+    this.calculationsService.getPathRequest(this.form.controls.forecastCorrespondence.value.var_id, id).subscribe(
+      res => {
+        res.length !== 0 ? resultIas = res : resultIas = []
+      },
+      error => this.modalService.open(error.error.message),
+      () => {
+        for (let item of resultIas) {
+          mass = []
+          mass.push(item['orderNum'], item['len'], item['stationName'], item['stationCode'], item['stationNameGS'], item['dorName'])
+          this.dataForExcel.push(mass)
+        }
+        let reportData = {
+          title: `forecast-${id}`,
+          data: this.dataForExcel,
+          headers: ['Порядковый номер', 'Длинна', 'Станция', 'Код станции', 'Станция (ГС)', 'Дорога']
+        }
+        this.ete.exportExcel(reportData);
+      })
+  }
+
+  exportToExcelOne() {
+    let headersTable = []
+    this.dataForExcel = []
+    let yearSumm = []
+    let mass = []
+    let itemYearsSumm = 0
+    if (this.correspondencesIiasForecast) {
+      for (let item of this.cols) {
+        headersTable.push(item.header)
+      }
+      headersTable.unshift('Порядковый номер')
+      for (let i = 0; i < this.correspondencesIiasForecast.length; i++) {
+        mass = []
+        mass.push(
+          i + 1,
+          this.correspondencesIiasForecast[i].cargo_group,
+          this.correspondencesIiasForecast[i].from_station,
+          this.correspondencesIiasForecast[i].from_station_code,
+          this.correspondencesIiasForecast[i].to_station,
+          this.correspondencesIiasForecast[i].to_station_code,
+          this.correspondencesIiasForecast[i].n1 !== null ? Number(this.correspondencesIiasForecast[i].n1) : 0,
+          this.correspondencesIiasForecast[i].n2 !== null ? Number(this.correspondencesIiasForecast[i].n2) : 0,
+          this.correspondencesIiasForecast[i].n3 !== null ? Number(this.correspondencesIiasForecast[i].n3) : 0,
+          this.correspondencesIiasForecast[i].n4 !== null ? Number(this.correspondencesIiasForecast[i].n4) : 0,
+          this.correspondencesIiasForecast[i].n5 !== null ? Number(this.correspondencesIiasForecast[i].n5) : 0,
+          this.correspondencesIiasForecast[i].n6 !== null ? Number(this.correspondencesIiasForecast[i].n6) : 0,
+          this.correspondencesIiasForecast[i].n7 !== null ? Number(this.correspondencesIiasForecast[i].n7) : 0,
+          this.correspondencesIiasForecast[i].n8 !== null ? Number(this.correspondencesIiasForecast[i].n8) : 0,
+          this.correspondencesIiasForecast[i].n9 !== null ? Number(this.correspondencesIiasForecast[i].n9) : 0,
+          this.correspondencesIiasForecast[i].n10 !== null ? Number(this.correspondencesIiasForecast[i].n10) : 0,
+          this.correspondencesIiasForecast[i].n11 !== null ? Number(this.correspondencesIiasForecast[i].n11) : 0,
+          this.correspondencesIiasForecast[i].n12 !== null ? Number(this.correspondencesIiasForecast[i].n12) : 0,
+          this.correspondencesIiasForecast[i].n13 !== null ? Number(this.correspondencesIiasForecast[i].n13) : 0,
+          this.correspondencesIiasForecast[i].n14 !== null ? Number(this.correspondencesIiasForecast[i].n14) : 0,
+          this.correspondencesIiasForecast[i].n15 !== null ? Number(this.correspondencesIiasForecast[i].n15) : 0,
+        )
+        this.dataForExcel.push(mass)
+      }
+      for (let x = 1; x < 16; x++) {
+        itemYearsSumm = 0
+        for (let i = 0; i < this.correspondencesIiasForecast.length; i++) {
+          itemYearsSumm += this.correspondencesIiasForecast[i][`n${x}`] !== null ? Number(this.correspondencesIiasForecast[i][`n${x}`]) : 0
+        }
+        yearSumm.push(itemYearsSumm)
+      }
+      let reportData = {
+        title: `oneTable`,
+        data: this.dataForExcel,
+        headers: headersTable,
+        yearSumm: yearSumm,
+      }
+      this.ete.exportExcelOne(reportData);
+    }
+  }
+
 
   // corresIiasForecast() {
   //   this.loadingOne = true;
