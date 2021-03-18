@@ -1,22 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {IShipmentTypNci} from "../../models/calculations.model";
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {ModalService} from "../../services/modal.service";
 import {ShipmentsService} from "../../services/shipments.service";
 import {ConfirmationService} from "primeng/api";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-shipment-type',
   templateUrl: './shipment-type.component.html',
   styleUrls: ['./shipment-type.component.scss']
 })
-export class ShipmentTypeComponent implements OnInit {
+export class ShipmentTypeComponent implements OnInit, OnDestroy {
   cols: any[];
   totalRecords: any;
   shipmentTypNci: IShipmentTypNci[]
   nameNewShipmentTypeNci: string = '';
   user: IAuthModel
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -30,30 +32,33 @@ export class ShipmentTypeComponent implements OnInit {
   ngOnInit(): void {
     this.getShipmentTypNci();
     this.cols = [
-      { field: 'name', header: 'Вид сообщения', width: 'auto', isStatic :true}
+      {field: 'name', header: 'Вид сообщения', width: 'auto', isStatic: true}
     ]
+  }
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   createShipmentTypNci() {
-    if(this.nameNewShipmentTypeNci !== ''){
-      this.shipmentsService.postDictionaryShipmenttype(this.nameNewShipmentTypeNci).subscribe(
-        res => console.log(),
+    if (this.nameNewShipmentTypeNci !== '') {
+      this.subscriptions.add(this.shipmentsService.postDictionaryShipmenttype(this.nameNewShipmentTypeNci).subscribe(
+        () => console.log(),
         error => this.modalService.open(error.error.message),
         () => {
           this.nameNewShipmentTypeNci = '',
             this.getShipmentTypNci()
         }
-      )
-    }else{
+      ))
+    } else {
       this.modalService.open('Укажите вид сообщения!')
     }
   }
 
   private getShipmentTypNci() {
-    this.shipmentsService.getDictionaryShipmenttype().subscribe(
-      res =>  this.shipmentTypNci =res,
+    this.subscriptions.add(this.shipmentsService.getDictionaryShipmenttype().subscribe(
+      res => this.shipmentTypNci = res,
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
 
   onRowEditInit() {
@@ -65,10 +70,10 @@ export class ShipmentTypeComponent implements OnInit {
       id: rowData.id,
       name: rowData.name
     }
-  this.shipmentsService.putDictionaryShipmenttype(dictionaryShipmenttype).subscribe(
-    res => console.log(),
-    error => this.modalService.open(error.error.message),
-  )
+    this.subscriptions.add(this.shipmentsService.putDictionaryShipmenttype(dictionaryShipmenttype).subscribe(
+      () => console.log(),
+      error => this.modalService.open(error.error.message),
+    ))
   }
 
   onRowEditCancel() {
@@ -81,11 +86,11 @@ export class ShipmentTypeComponent implements OnInit {
       header: 'Удаление вида сообщения',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.shipmentsService.deleteDictionaryShipmenttype(id).subscribe(
-          res => console.log(),
+        this.subscriptions.add(this.shipmentsService.deleteDictionaryShipmenttype(id).subscribe(
+          () => console.log(),
           error => this.modalService.open(error.error.message),
           () => this.getShipmentTypNci()
-        )
+        ))
       }
     });
   }

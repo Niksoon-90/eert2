@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ISession} from "../../models/shipmenst.model";
 import {ShipmentsService} from "../../services/shipments.service";
 import {ForecastingModelService} from "../../services/forecasting-model.service";
@@ -12,6 +12,7 @@ import {IAuthModel} from "../../models/auth.model";
 import {map} from "rxjs/operators";
 import {IStepInfoModel} from "../../models/stepInfo.model";
 import {StepInfoService} from "../../services/step-info.service";
+import {Subscription} from "rxjs";
 
 
 @Component({
@@ -36,6 +37,7 @@ export class ImportStepsOneComponent implements OnInit {
   ore: MonoCargoSystemsModel[];
   metallurgy: MonoCargoSystemsModel[];
   user: IAuthModel
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -47,7 +49,7 @@ export class ImportStepsOneComponent implements OnInit {
     private stepInfoService: StepInfoService
   ) {
     this.user = this.authenticationService.userValue;
-    if( this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null){
+    if (this.forecastModelService.ticketInformation.stepOne.calcYearsNumber !== null) {
       this.horizonforecast = [];
       for (let i = 5; i <= 15; i++) {
         this.horizonforecast.push({name: i});
@@ -55,7 +57,7 @@ export class ImportStepsOneComponent implements OnInit {
     }
   }
 
-  ngOnInit(): void  {
+  ngOnInit(): void {
     this.getInitialDate();
     this.getCorrespondenceSession();
     this.getCargoSessionSessionSender();
@@ -65,124 +67,115 @@ export class ImportStepsOneComponent implements OnInit {
     this.getMetallurgy();
 
     this.stepOne = this.forecastModelService.ticketInformation.stepOne;
-    if(this.stepOne.scenarioMacro === null){this.stepOne.scenarioMacro = this.scenarioMacro[1]}
-    if(this.stepOne.calcYearsNumber === 0){this.stepOne.calcYearsNumber = this.horizonforecast[0]}
+    if (this.stepOne.scenarioMacro === null) {
+      this.stepOne.scenarioMacro = this.scenarioMacro[1]
+    }
+    if (this.stepOne.calcYearsNumber === 0) {
+      this.stepOne.calcYearsNumber = this.horizonforecast[0]
+    }
   }
 
-  getInitialDate(){
-    if(this.user.authorities.includes('P_P_p5') === true ){
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
 
-      this.shipmentsService.getHistoricalSession()
+  getInitialDate() {
+    if (this.user.authorities.includes('P_P_p5') === true) {
+      this.subscriptions.add(this.shipmentsService.getHistoricalSession()
         .pipe(
           map((data: ISession[]) => data.filter(p => p.fileType === "SHIPMENTS"))
         )
         .subscribe(
           res => this.initialDate = res,
           error => this.modalService.open(error.error.message),
-        () => console.log('complede')
-      );
-    }else{
-      this.shipmentsService.getShipSession()
+        ))
+    } else {
+      this.subscriptions.add(this.shipmentsService.getShipSession()
         .pipe(
-          map( (data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
+          map((data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
         )
         .subscribe(
-        res => this.initialDate = res,
-        error => this.modalService.open(error.error.message),
-        () => console.log('complede')
-      );
+          res => this.initialDate = res,
+          error => this.modalService.open(error.error.message),
+        ))
     }
   }
+
   getCorrespondenceSession() {
     if (this.user.authorities.includes('P_P_p5') === true) {
-      this.shipmentsService.getCorrespondenceSession().subscribe(
-        res => {
-          this.correspondenceSession = res;
-          console.log(res)
-        },
+      this.subscriptions.add(this.shipmentsService.getCorrespondenceSession().subscribe(
+        res => this.correspondenceSession = res,
         error => this.modalService.open(error.error.message),
-        () => console.log()
-      )
+      ))
     } else {
-      this.shipmentsService.getCorrespondenceSession()
+      this.subscriptions.add(this.shipmentsService.getCorrespondenceSession()
         .pipe(
           map((data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
         )
         .subscribe(
-          res => {
-            this.correspondenceSession = res;
-            console.log(res)
-          },
+          res => this.correspondenceSession = res,
           error => this.modalService.open(error.error.message),
           () => console.log()
-        )
+        ))
     }
   }
+
   getCargoSessionSessionSender() {
     if (this.user.authorities.includes('P_P_p5') === true) {
-      this.shipmentsService.getClaimSession('SENDER_CLAIMS').subscribe(
-        res => {
-          this.cargoSessionSender = res;
-          console.log('res', res)
-        },
+      this.subscriptions.add(this.shipmentsService.getClaimSession('SENDER_CLAIMS').subscribe(
+        res => this.cargoSessionSender = res,
         error => this.modalService.open(error.error.message),
-        () => console.log()
-      )
+      ))
     } else {
-      this.shipmentsService.getClaimSession('SENDER_CLAIMS')
+      this.subscriptions.add(this.shipmentsService.getClaimSession('SENDER_CLAIMS')
         .pipe(
           map((data: ISession[]) => data.filter(p => p.userLogin === this.user.user))
         )
         .subscribe(
-          res => {
-            this.cargoSessionSender = res;
-            console.log('res', res)
-          },
+          res => this.cargoSessionSender = res,
           error => this.modalService.open(error.error.message),
-          () => console.log()
-        )
+        ))
     }
   }
+
   getCargoSessionSessionReceiver() {
-    this.shipmentsService.getClaimSession('RECEIVER_CLAIMS').subscribe(
-      res => {this.cargoSessionReceiver = res; console.log('res', res)},
+    this.subscriptions.add(this.shipmentsService.getClaimSession('RECEIVER_CLAIMS').subscribe(
+      res => this.cargoSessionReceiver = res,
       error => this.modalService.open(error.error.message),
-      () =>  console.log()
-    )
+    ))
   }
-  getOil(){
-    this.calculationsService.getOil().subscribe(
-      res => {this.oilCargo = res; console.log('res', res)},
+
+  getOil() {
+    this.subscriptions.add(this.calculationsService.getOil().subscribe(
+      res => this.oilCargo = res,
       error => this.modalService.open(error.error.message),
-      () =>  console.log()
-    )
+    ))
   }
-  getOre(){
-    this.calculationsService.getOre().subscribe(
-      res => {this.ore = res; console.log('res', res)},
+
+  getOre() {
+    this.subscriptions.add(this.calculationsService.getOre().subscribe(
+      res => this.ore = res,
       error => this.modalService.open(error.error.message),
-      () =>  console.log()
-    )
+    ))
   }
-  getMetallurgy(){
-    this.calculationsService.getMetallurgy().subscribe(
-      res => {this.metallurgy = res; console.log('res', res)},
+
+  getMetallurgy() {
+    this.subscriptions.add(this.calculationsService.getMetallurgy().subscribe(
+      res => this.metallurgy = res,
       error => this.modalService.open(error.error.message),
-      () =>  console.log()
-)
-}
-  postCreateEmptySession(){
-    this.calculationsService.postCreateEmptySession(this.stepOne.nameNewShip, this.user.fio, this.user.user_name).subscribe(
+    ))
+  }
+
+  postCreateEmptySession() {
+    this.subscriptions.add(this.calculationsService.postCreateEmptySession(this.stepOne.nameNewShip, this.user.fio, this.user.user_name).subscribe(
       res => {
-          this.forecastModelService.ticketInformation.stepThree.sessionId = Number(res)
-        console.log(res)
+        this.forecastModelService.ticketInformation.stepThree.sessionId = Number(res)
       },
       error => this.modalService.open(error.error.message),
       () => {
-        console.log('this.stepOne.calcYearsNumber', this.stepOne.calcYearsNumber)
         this.router.navigate(['steps/forecast']);
-        this.forecastModelService.ticketInformation.stepOne.Session =  null
-        this.forecastModelService.ticketInformation.stepOne.nameNewShip =  this.stepOne.nameNewShip;
+        this.forecastModelService.ticketInformation.stepOne.Session = null
+        this.forecastModelService.ticketInformation.stepOne.nameNewShip = this.stepOne.nameNewShip;
         this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
         this.forecastModelService.ticketInformation.stepOne.correspondenceSession = this.stepOne.correspondenceSession;
         this.forecastModelService.ticketInformation.stepOne.cargoSessionSender = this.stepOne.cargoSessionSender;
@@ -193,13 +186,13 @@ export class ImportStepsOneComponent implements OnInit {
         this.forecastModelService.ticketInformation.stepOne.oldSessionId = null;
         this.forecastModelService.ticketInformation.stepOne.newSessionId = null;
       }
-    )
+    ))
   }
 
   nextPage() {
     this.stepsInfo();
-    if(this.stepOne.Session !== null){
-      if(this.stepOne.calcYearsNumber !== null){
+    if (this.stepOne.Session !== null) {
+      if (this.stepOne.calcYearsNumber !== null) {
         this.forecastModelService.ticketInformation.stepOne.Session = this.stepOne.Session;
         this.forecastModelService.ticketInformation.stepOne.nameNewShip = this.stepOne.nameNewShip;
         this.forecastModelService.ticketInformation.stepOne.calcYearsNumber = this.stepOne.calcYearsNumber;
@@ -213,19 +206,20 @@ export class ImportStepsOneComponent implements OnInit {
         this.forecastModelService.ticketInformation.stepOne.oldSessionId = null;
         this.forecastModelService.ticketInformation.stepOne.newSessionId = null;
         this.router.navigate(['steps/mathForecast']);
-      }else{
+      } else {
         this.modalService.open('Укажите горизонт прогноза!')
       }
-    }else{
-      if(this.stepOne.metallurgy === null  && this.stepOne.ore === null && this.stepOne.oilCargo === null){
+    } else {
+      if (this.stepOne.metallurgy === null && this.stepOne.ore === null && this.stepOne.oilCargo === null) {
         this.modalService.open('Укажите исходные данные или перспективные корреспонденции!')
-      }else{
+      } else {
         this.postCreateEmptySession();
       }
 
     }
   }
-  stepsInfo(){
+
+  stepsInfo() {
     const stepInfo: IStepInfoModel = {
       calculationName: this.stepOne.nameNewShip === '' ? 'не выбран' : this.stepOne.nameNewShip,
       sessionName: this.stepOne.Session === null ? 'не выбран' : this.stepOne.Session.name,
@@ -240,5 +234,4 @@ export class ImportStepsOneComponent implements OnInit {
     }
     this.stepInfoService.setValue(stepInfo);
   }
-
 }

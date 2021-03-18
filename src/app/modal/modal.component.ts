@@ -26,9 +26,4 @@ export class ModalComponent implements OnInit, DoCheck {
   close() {
     this.modalService.close();
   }
-
-  closeConfirm() {
-    this.modalService.close();
-    return false
-  }
 }

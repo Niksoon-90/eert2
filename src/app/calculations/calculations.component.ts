@@ -10,7 +10,9 @@ import {ForecastingModelService} from "../services/forecasting-model.service";
   styleUrls: ['./calculations.component.scss']
 })
 export class CalculationsComponent implements OnInit {
+
   user: IAuthModel
+
   constructor(
     public authenticationService: AuthenticationService,
     public forecastModelService: ForecastingModelService,
@@ -19,9 +21,7 @@ export class CalculationsComponent implements OnInit {
     this.user = this.authenticationService.userValue;
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() { }
 
   new() {
     const ticketInformation = {

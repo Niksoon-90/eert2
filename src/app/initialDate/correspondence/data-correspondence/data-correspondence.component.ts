@@ -1,18 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ModalService} from "../../../services/modal.service";
-import {ISession, IShipment, IShipmentPagination} from "../../../models/shipmenst.model";
+import {ISession, IShipmentPagination} from "../../../models/shipmenst.model";
 import {IAuthModel} from "../../../models/auth.model";
 import {AuthenticationService} from "../../../services/authentication.service";
 import {map} from "rxjs/operators";
 import {ConfirmationService} from "primeng/api";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-data-correspondence',
   templateUrl: './data-correspondence.component.html',
   styleUrls: ['./data-correspondence.component.scss']
 })
-export class DataCorrespondenceComponent implements OnInit {
+export class DataCorrespondenceComponent implements OnInit, OnDestroy {
   correspondenceSession: ISession[];
   first = 0;
   rows = 25;
@@ -22,6 +23,7 @@ export class DataCorrespondenceComponent implements OnInit {
   sessionId: number = 0
   mathematicalForecastTable: IShipmentPagination;
   dialogVisible: boolean;
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -33,22 +35,19 @@ export class DataCorrespondenceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  this.getCorrespondenceSession()
+    this.getCorrespondenceSession()
   }
-  next() {
-    this.first = this.first + this.rows;
-  }
-
-  prev() {
-    this.first = this.first - this.rows;
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   reset() {
     this.first = 0;
     this.getCorrespondenceSession();
   }
+
   isLastPage(): boolean {
-    return this.customers ? this.first === (this.customers.length - this.rows): true;
+    return this.customers ? this.first === (this.customers.length - this.rows) : true;
   }
 
   isFirstPage(): boolean {
@@ -57,41 +56,41 @@ export class DataCorrespondenceComponent implements OnInit {
 
   getCorrespondenceSession() {
     this.loading = true;
-    if(this.user.authorities.includes('P_P_p5') === true) {
-      this.shipmentsService.getCorrespondenceSession().subscribe(
+    if (this.user.authorities.includes('P_P_p5') === true) {
+      this.subscriptions.add(this.shipmentsService.getCorrespondenceSession().subscribe(
         res => {
           this.correspondenceSession = res;
           console.log(res)
         },
         error => this.modalService.open(error.error.message),
         () => this.loading = false
-      )
-    }else{
-      this.shipmentsService.getCorrespondenceSession()
+      ))
+    } else {
+      this.subscriptions.add(this.shipmentsService.getCorrespondenceSession()
         .pipe(
-          map( (data: ISession[]) => {
-            if(data.length !== 0){
-              data =  data.filter(p => p.userLogin === this.user.user)
+          map((data: ISession[]) => {
+            if (data.length !== 0) {
+              data = data.filter(p => p.userLogin === this.user.user)
             }
             return data
           })
         )
         .subscribe(
-        res => {
-          this.correspondenceSession = res;
-          console.log(this.user.user)
-          console.log(res)
-        },
-        error => this.modalService.open(error.error.message),
-        () => this.loading = false
-      )
+          res => {
+            this.correspondenceSession = res;
+            console.log(this.user.user)
+            console.log(res)
+          },
+          error => this.modalService.open(error.error.message),
+          () => this.loading = false
+        ))
     }
   }
 
   openShipItemSession(id: any) {
     this.sessionId = id
     this.loading = true
-    this.shipmentsService.getShipmetsPaginations(id, 0).subscribe(
+    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(id, 0).subscribe(
       res => {
         this.mathematicalForecastTable = res
         this.showDialog();
@@ -100,13 +99,14 @@ export class DataCorrespondenceComponent implements OnInit {
         this.modalService.open(error.error.message);
       },
       () => console.log('sdsds')
-    )
+    ))
   }
 
   showDialog() {
-    this.dialogVisible === true? '' : this.dialogVisible = true;
+    this.dialogVisible === true ? '' : this.dialogVisible = true;
     this.loading = false;
   }
+
   loadingChange(event) {
     this.loading = event;
   }
@@ -123,16 +123,22 @@ export class DataCorrespondenceComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.loading = true
-        this.shipmentsService.deleteShipSession(id).subscribe(
-          () =>  this.getCorrespondenceSession(),
+        this.subscriptions.add(this.shipmentsService.deleteShipSession(id).subscribe(
+          () => this.getCorrespondenceSession(),
           error => {
             this.modalService.open(error.error.message);
             this.loading = false;
           },
           () => this.loading = false
-        )
+        ))
       }
     });
   }
 
+  prev() {
+    this.first = this.first - this.rows;
+  }
+  next() {
+    this.first = this.first + this.rows;
+  }
 }

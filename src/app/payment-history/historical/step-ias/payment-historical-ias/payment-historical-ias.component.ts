@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {IAuthModel} from "../../../../models/auth.model";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {
@@ -23,7 +23,7 @@ import {ExportExcelService} from "../../../../services/export-excel.service";
   templateUrl: './payment-historical-ias.component.html',
   styleUrls: ['./payment-historical-ias.component.scss']
 })
-export class PaymentHistoricalIasComponent implements OnInit {
+export class PaymentHistoricalIasComponent implements OnInit, OnDestroy {
 
   @Input() primeryBolChange
 
@@ -59,6 +59,7 @@ export class PaymentHistoricalIasComponent implements OnInit {
   downloadIasLoadingCorrespondences: boolean = false;
   footersumYearsTwoTable = []
   dataForExcel = [];
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     private router: Router,
@@ -77,7 +78,6 @@ export class PaymentHistoricalIasComponent implements OnInit {
     this.user = this.authenticationService.userValue;
   }
 
-
   ngOnInit(): void {
     this.createForm()
     this.forecastListIas();
@@ -91,9 +91,23 @@ export class PaymentHistoricalIasComponent implements OnInit {
       if (this.headerYears.length > 15) {
         this.headerYears = this.headerYears.slice(0, 15);
       }
-
     } else {
-      this.headerYears = ['Прогнозный год - 1', 'Прогнозный год - 2', 'Прогнозный год - 3', 'Прогнозный год - 4', 'Прогнозный год - 5', 'Прогнозный год - 6', 'Прогнозный год - 7', 'Прогнозный год - 8', 'Прогнозный год - 9', 'Прогнозный год - 10', 'Прогнозный год - 11', 'Прогнозный год - 12', 'Прогнозный год - 13', 'Прогнозный год - 14', 'Прогнозный год - 15']
+      this.headerYears = [
+        'Прогнозный год - 1',
+        'Прогнозный год - 2',
+        'Прогнозный год - 3',
+        'Прогнозный год - 4',
+        'Прогнозный год - 5',
+        'Прогнозный год - 6',
+        'Прогнозный год - 7',
+        'Прогнозный год - 8',
+        'Прогнозный год - 9',
+        'Прогнозный год - 10',
+        'Прогнозный год - 11',
+        'Прогнозный год - 12',
+        'Прогнозный год - 13',
+        'Прогнозный год - 14',
+        'Прогнозный год - 15']
     }
     this.cols = [
       {field: 'cargo_group', header: 'Группа груза', width: '100px', keyS: false},
@@ -102,28 +116,29 @@ export class PaymentHistoricalIasComponent implements OnInit {
       {field: 'to_station', header: 'Станция назначения РФ', width: '100px', keyS: false},
       {field: 'to_station_code', header: 'Код станции назначения РФ', width: '100px', keyS: false},
     ];
-
-
     for (let i = 0; i < this.headerYears.length; i++) {
       this.cols.push({field: 'n' + (i + 1), header: this.headerYears[i], width: '100px', keyS: false})
     }
-
     this.selectedPrimery = this.primeryBolChange;
-
     this.columnS = [
-      { field: 'orderNum', header: 'Порядковый номер', width: '100px', keyS: false},
-      { field: 'len', header: 'Длина', width: '100px', keyS: false},
-      { field: 'stationName', header: 'Станция', width: '100px', keyS: false},
-      { field: 'stationCode', header: 'Код станции', width: '100px', keyS: false},
-      { field: 'stationNameGS', header: 'Станция (ГС)', width: '100px', keyS: false},
-      { field: 'dorName', header: 'Дорога', width: '100px', keyS: false},
+      {field: 'orderNum', header: 'Порядковый номер', width: '100px', keyS: false},
+      {field: 'len', header: 'Длина', width: '100px', keyS: false},
+      {field: 'stationName', header: 'Станция', width: '100px', keyS: false},
+      {field: 'stationCode', header: 'Код станции', width: '100px', keyS: false},
+      {field: 'stationNameGS', header: 'Станция (ГС)', width: '100px', keyS: false},
+      {field: 'dorName', header: 'Дорога', width: '100px', keyS: false},
     ]
   }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
   exportToExcel(id: number) {
     let resultIas = []
     this.dataForExcel = []
     let mass = []
-    this.calculationsService.getPathRequest(this.form.controls.forecastCorrespondence.value.var_id, id).subscribe(
+    this.subscriptions.add(this.calculationsService.getPathRequest(this.form.controls.forecastCorrespondence.value.var_id, id).subscribe(
       res => {
         res.length !== 0 ? resultIas = res : resultIas = []
       },
@@ -140,7 +155,7 @@ export class PaymentHistoricalIasComponent implements OnInit {
           headers: ['Порядковый номер', 'Длинна', 'Станция', 'Код станции', 'Станция (ГС)', 'Дорога']
         }
         this.ete.exportExcel(reportData);
-      })
+      }))
   }
 
   exportToExcelOne() {
@@ -199,81 +214,46 @@ export class PaymentHistoricalIasComponent implements OnInit {
   }
 
 
-  // corresIiasForecast() {
-  //   this.loadingOne = true;
-  //   this.loadingTwo = true;
-  //   this.loading = false;
-  //   this.shipmentsService.putIasSaveId(
-  //     this.sessionId,
-  //     0,
-  //     this.form.controls.forecastCorrespondence.value.var_id,
-  //     this.form.controls.smallCorrespondence.value !== '' ? this.form.controls.smallCorrespondence.value.var_id : 0,
-  //   ).subscribe(
-  //     res => console.log(res),
-  //     error => this.modalService.open(error.error.message)
-  //   )
-  //   this.calculationsService.getIasForecastId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
-  //     res => {
-  //       this.correspondencesIiasForecast = res
-  //     },
-  //     error => this.modalService.open(error.error.message),
-  //     () => this.loadingOne = false
-  //   )
-  //   this.calculationsService.getForcastIasId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
-  //     res => {
-  //       this.forecastIASModelId = res
-  //     },
-  //     error => this.modalService.open(error.error.message),
-  //     () => {
-  //       if (this.forecastIASModelId.length !== 0) {
-  //         this.headerYearsTable(this.forecastIASModelId)
-  //       } else {
-  //         this.resultTwoTable = []
-  //         this.loadingTwo = false
-  //       }
-  //     }
-  //   )
-  // }
   corresIiasForecast() {
     this.loadingOne = true;
     this.loadingTwo = true;
     this.loading = false;
     if (this.selectedPrimery === true) {
-      this.shipmentsService.putIasSaveId(
+      this.subscriptions.add(this.shipmentsService.putIasSaveId(
         this.sessionId,
         this.forecastModelService.getTicketInformation().history.allCorrespondensRouteId === 0 || this.forecastModelService.getTicketInformation().history.allCorrespondensRouteId === null ? 0 : this.forecastModelService.getTicketInformation().history.allCorrespondensRouteId,
         this.form.controls.forecastCorrespondence.value.var_id,
         this.form.controls.smallCorrespondence.value !== '' ? this.form.controls.smallCorrespondence.value.var_id : 0,
       ).subscribe(
-        res => console.log(res),
+        () => console.log(),
         error => this.modalService.open(error.error.message),
         () => {
           this.forecastModelService.ticketInformation.history.firstRouteId = this.form.controls.forecastCorrespondence.value.var_id
           this.forecastModelService.ticketInformation.history.secondRouteId = this.form.controls.smallCorrespondence.value !== '' ? this.form.controls.smallCorrespondence.value.var_id : 0
         }
-      )
+      ))
     } else if (this.selectedPrimery === false) {
-      this.shipmentsService.putIasSaveId(
+      this.subscriptions.add(this.shipmentsService.putIasSaveId(
         this.sessionId,
         this.form.controls.forecastCorrespondence.value !== '' ? this.form.controls.forecastCorrespondence.value.var_id : 0,
         this.forecastModelService.getTicketInformation().history.firstRouteId === 0 || this.forecastModelService.getTicketInformation().history.firstRouteId === null ? 0 : this.forecastModelService.getTicketInformation().history.firstRouteId,
         this.forecastModelService.getTicketInformation().history.secondRouteId === 0 || this.forecastModelService.getTicketInformation().history.secondRouteId === null ? 0 : this.forecastModelService.getTicketInformation().history.secondRouteId
       ).subscribe(
-        res => console.log(res),
+        () => console.log(),
         error => this.modalService.open(error.error.message),
         () => {
           this.forecastModelService.ticketInformation.history.allCorrespondensRouteId = this.form.controls.forecastCorrespondence.value !== '' ? this.form.controls.forecastCorrespondence.value.var_id : 0
         }
-      )
+      ))
     }
-    this.calculationsService.getIasForecastId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
+    this.subscriptions.add(this.calculationsService.getIasForecastId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
       res => {
         this.correspondencesIiasForecast = res
       },
       error => this.modalService.open(error.error.message),
       () => this.loadingOne = false
-    )
-    this.calculationsService.getForcastIasId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
+    ))
+    this.subscriptions.add(this.calculationsService.getForcastIasId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
       res => {
         this.forecastIASModelId = res
       },
@@ -286,20 +266,18 @@ export class PaymentHistoricalIasComponent implements OnInit {
           this.loadingTwo = false
         }
       }
-    )
+    ))
   }
 
   correspondenceIAS(id: number) {
     this.loadingOne = true;
     this.loadingTwo = true;
     this.loading = false;
-    this.calculationsService.getIasForecastId(id).subscribe(
-      res => {
-        this.correspondencesIiasForecast = res
-      },
+    this.subscriptions.add(this.calculationsService.getIasForecastId(id).subscribe(
+      res => this.correspondencesIiasForecast = res,
       error => this.modalService.open(error.error.message),
       () => this.loadingOne = false
-    )
+    ))
     this.calculationsService.getForcastIasId(id).subscribe(
       res => {
         this.forecastIASModelId = res
@@ -371,8 +349,7 @@ export class PaymentHistoricalIasComponent implements OnInit {
           }
         }
         resultse.push(fin3)
-      }
-      else if (i !== 0 && oldMass.includes(forecastIASModelId[i])) {
+      } else if (i !== 0 && oldMass.includes(forecastIASModelId[i])) {
         continue
       } else {
         fin4 = []
@@ -446,8 +423,6 @@ export class PaymentHistoricalIasComponent implements OnInit {
         }
       }
     }
-    console.log(this.yearsHohoho)
-    console.log(resultse)
     for (let item of resultse) {
       this.pathRequestItemFin = {
         dor_name: item[0].dor_name,
@@ -488,14 +463,14 @@ export class PaymentHistoricalIasComponent implements OnInit {
     this.footerSumTwoTable(this.resultTwoTable)
   }
 
-  footerSumTwoTable(resultTwoTable: any[]){
+  footerSumTwoTable(resultTwoTable: any[]) {
     this.footersumYearsTwoTable = []
     let resultNtuda = []
     let resultNobratno = []
-    for (let i = 0; i < resultTwoTable[0].ntuda.length; i++){
+    for (let i = 0; i < resultTwoTable[0].ntuda.length; i++) {
       let ntuda = 0
       let nobratno = 0
-      for (let x = 0; x < resultTwoTable.length; x++){
+      for (let x = 0; x < resultTwoTable.length; x++) {
         ntuda += resultTwoTable[x].ntuda[i].ntuda
         nobratno += resultTwoTable[x].nobratno[i].nobratno
       }
@@ -507,9 +482,8 @@ export class PaymentHistoricalIasComponent implements OnInit {
   }
 
 
-
   forecastListIas() {
-    this.calculationsService.getForcastIas().subscribe(
+    this.subscriptions.add(this.calculationsService.getForcastIas().subscribe(
       res => {
         this.forecastCorrespondence = res;
         this.smallCorrespondence = res;
@@ -537,7 +511,7 @@ export class PaymentHistoricalIasComponent implements OnInit {
         }
 
       }
-    )
+    ))
   }
 
 
@@ -549,20 +523,15 @@ export class PaymentHistoricalIasComponent implements OnInit {
 
 
   searchInIAS(rowData) {
-    console.log('iasForecastId', this.form.controls.forecastCorrespondence.value.var_id)
-    console.log('iasCorrespondenceId', rowData.corr_id)
     this.loadingOne = true;
-    this.calculationsService.getPathRequest(this.form.controls.forecastCorrespondence.value.var_id, rowData.corr_id).subscribe(
-      res => {
-        this.pathRequest = res,
-          console.log('Ias', res)
-      },
+    this.subscriptions.add(this.calculationsService.getPathRequest(this.form.controls.forecastCorrespondence.value.var_id, rowData.corr_id).subscribe(
+      res => this.pathRequest = res,
       error => this.modalService.open(error.error.message),
       () => {
         this.loadingOne = false;
         this.productDialog = true;
       }
-    )
+    ))
   }
 
   closeModalTable() {
@@ -572,9 +541,8 @@ export class PaymentHistoricalIasComponent implements OnInit {
   downloadIas() {
     if (this.form.controls.forecastCorrespondence.valid) {
       this.downloadIasLoading = true;
-      this.uploadFileService.getDownload(this.form.controls.forecastCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
+      this.subscriptions.add(this.uploadFileService.getDownload(this.form.controls.forecastCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
         (response: HttpResponse<Blob>) => {
-          console.log(response)
           let filename: string = 'ias_routes.xlsx'
           let binaryData = [];
           binaryData.push(response.body);
@@ -587,24 +555,20 @@ export class PaymentHistoricalIasComponent implements OnInit {
         async (error) => {
           const message = JSON.parse(await error.error.text()).message;
           this.modalService.open(message)
-            this.downloadIasLoading = false
+          this.downloadIasLoading = false
         },
         () => this.downloadIasLoading = false
-      )
+      ))
     } else {
       this.modalService.open('Укажите Маршрут')
     }
   }
 
   downTotalloadIas() {
-    console.log('Id прогноза из ИАС Маршруты (основные): ', this.form.controls.forecastCorrespondence.value.var_id)
-    console.log('Id прогноза из ИАС Маршруты (мелкие): ', this.form.controls.smallCorrespondence.value.var_id)
-    console.log('Id сессии загрузки исторических данных: ', this.sessionId)
     if (this.form.valid) {
       this.downloadTotalIasLoading = true;
-      this.uploadFileService.getDownloadTotal(this.sessionId, this.form.controls.forecastCorrespondence.value.var_id, this.form.controls.smallCorrespondence.value.var_id).subscribe(
+      this.subscriptions.add(this.uploadFileService.getDownloadTotal(this.sessionId, this.form.controls.forecastCorrespondence.value.var_id, this.form.controls.smallCorrespondence.value.var_id).subscribe(
         (response: HttpResponse<Blob>) => {
-          console.log(response)
           let filename: string = 'total_ias_routes.xlsx'
           let binaryData = [];
           binaryData.push(response.body);
@@ -617,10 +581,10 @@ export class PaymentHistoricalIasComponent implements OnInit {
         async (error) => {
           const message = JSON.parse(await error.error.text()).message;
           this.modalService.open(message)
-            this.downloadTotalIasLoading = false
+          this.downloadTotalIasLoading = false
         },
         () => this.downloadTotalIasLoading = false
-      )
+      ))
     } else {
       this.modalService.open('Заполните все поля!')
     }
@@ -628,9 +592,8 @@ export class PaymentHistoricalIasComponent implements OnInit {
 
   downTotalSmallloadIas() {
     this.downloadTotalSmallIasLoading = true;
-    this.uploadFileService.getDownload(this.form.controls.smallCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
+    this.subscriptions.add(this.uploadFileService.getDownload(this.form.controls.smallCorrespondence.value.var_id, 'IAS_ROUTES').subscribe(
       (response: HttpResponse<Blob>) => {
-        console.log(response)
         let filename: string = 'smalll_ias_routes.xlsx'
         let binaryData = [];
         binaryData.push(response.body);
@@ -643,10 +606,10 @@ export class PaymentHistoricalIasComponent implements OnInit {
       async (error) => {
         const message = JSON.parse(await error.error.text()).message;
         this.modalService.open(message)
-          this.downloadTotalSmallIasLoading = false
+        this.downloadTotalSmallIasLoading = false
       },
       () => this.downloadTotalSmallIasLoading = false
-    )
+    ))
   }
 
   createForm() {
@@ -661,9 +624,8 @@ export class PaymentHistoricalIasComponent implements OnInit {
 
   downloadIasCorrespondences() {
     this.downloadIasLoadingCorrespondences = true;
-    this.uploadFileService.getDownloadIasCalc(this.sessionId, this.form.controls.forecastCorrespondence.value.var_id, 'IAS_CORRESPONDENCES').subscribe(
+    this.subscriptions.add(this.uploadFileService.getDownloadIasCalc(this.sessionId, this.form.controls.forecastCorrespondence.value.var_id, 'IAS_CORRESPONDENCES').subscribe(
       (response: HttpResponse<Blob>) => {
-        console.log(response)
         let filename: string = 'ias.xlsx'
         let binaryData = [];
         binaryData.push(response.body);
@@ -676,14 +638,13 @@ export class PaymentHistoricalIasComponent implements OnInit {
       async (error) => {
         const message = JSON.parse(await error.error.text()).message;
         this.modalService.open(message)
-          this.downloadIasLoadingCorrespondences = false
+        this.downloadIasLoadingCorrespondences = false
       },
       () => this.downloadIasLoadingCorrespondences = false
-    )
+    ))
   }
 
   loadCustomers(event: any) {
-    //  this.resultTwoTable = event.filteredValue
     this.footerSumTwoTable(event.filteredValue)
   }
 }

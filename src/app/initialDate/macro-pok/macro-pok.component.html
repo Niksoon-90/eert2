@@ -11,66 +11,84 @@
   <ng-template pTemplate="content">
     <form [formGroup]="form" (ngSubmit)="saveNewMacroPok(form.value)" id="create-cursor-form">
       <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12 form-group">
-            <label>Группа груза:</label>
-            <p-dropdown optionLabel="name" formControlName="cargoGroup" [options]="cargoGroups"  placeholder="Выберите один из вариантов:" [ngClass]="{'p-invalid': (form.controls['cargoGroup'].invalid && form.controls['cargoGroup'].touched)}"></p-dropdown>
-            <small *ngIf="(form.controls['cargoGroup'].invalid && form.controls['cargoGroup'].touched)" class="p-error">Укажите группу груза</small>
-          </div>
+        <div class="p-field p-col-12 form-group">
+          <label>Группа груза:</label>
+          <p-dropdown optionLabel="name" formControlName="cargoGroup" [options]="cargoGroups"
+                      placeholder="Выберите один из вариантов:"
+                      [ngClass]="{'p-invalid': (form.controls['cargoGroup'].invalid && form.controls['cargoGroup'].touched)}"></p-dropdown>
+          <small *ngIf="(form.controls['cargoGroup'].invalid && form.controls['cargoGroup'].touched)" class="p-error">Укажите
+            группу груза</small>
         </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12 form-group">
-            <label>Вид сообщения:</label>
-            <p-dropdown optionLabel="name" formControlName="shipmentType" [options]="shipmentTypes"  placeholder="Выберите один из вариантов:" [ngClass]="{'p-invalid': (form.controls['shipmentType'].invalid && form.controls['shipmentType'].touched)}"></p-dropdown>
-            <small *ngIf="(form.controls['shipmentType'].invalid && form.controls['shipmentType'].touched)" class="p-error">Укажите вид сообщения</small>
-          </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12 form-group">
+          <label>Вид сообщения:</label>
+          <p-dropdown optionLabel="name" formControlName="shipmentType" [options]="shipmentTypes"
+                      placeholder="Выберите один из вариантов:"
+                      [ngClass]="{'p-invalid': (form.controls['shipmentType'].invalid && form.controls['shipmentType'].touched)}"></p-dropdown>
+          <small *ngIf="(form.controls['shipmentType'].invalid && form.controls['shipmentType'].touched)"
+                 class="p-error">Укажите вид сообщения</small>
         </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12 form-group">
-            <label>Год:</label>
-            <p-dropdown  optionLabel="name" formControlName="year" [options]="years" placeholder="Укажите год: " [ngClass]="{'p-invalid': (form.controls['year'].invalid && form.controls['year'].touched)}"></p-dropdown>
-            <small *ngIf="(form.controls['year'].invalid && form.controls['year'].touched)" class="p-error">Укажите год</small>
-          </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12 form-group">
+          <label>Год:</label>
+          <p-dropdown optionLabel="name" formControlName="year" [options]="years" placeholder="Укажите год: "
+                      [ngClass]="{'p-invalid': (form.controls['year'].invalid && form.controls['year'].touched)}"></p-dropdown>
+          <small *ngIf="(form.controls['year'].invalid && form.controls['year'].touched)" class="p-error">Укажите
+            год</small>
         </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12 form-group">
-            <label for="firstname">Показатель:</label>
-            <input formControlName="macroIndex" id="firstname" type="text" required pInputText [ngClass]="{'p-invalid': (form.controls['macroIndex'].invalid && form.controls['macroIndex'].touched)}">
-            <small *ngIf="(form.controls['macroIndex'].invalid && form.controls['macroIndex'].touched)" class="p-error">Укажите показатель</small>
-          </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12 form-group">
+          <label for="firstname">Показатель:</label>
+          <input formControlName="macroIndex" id="firstname" type="text" required pInputText
+                 [ngClass]="{'p-invalid': (form.controls['macroIndex'].invalid && form.controls['macroIndex'].touched)}">
+          <small *ngIf="(form.controls['macroIndex'].invalid && form.controls['macroIndex'].touched)" class="p-error">Укажите
+            показатель</small>
         </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12 form-group">
-            <label for="pissyValueMacros">Консервативное значение:</label>
-            <input formControlName="pissyValueMacro" id="pissyValueMacros" type="text" required pInputText  [ngClass]="{'p-invalid': (form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)}">
-            <small *ngIf="(form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)" class="p-error">Укажите пессимистичное значение</small>
-          </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12 form-group">
+          <label for="pissyValueMacros">Консервативное значение:</label>
+          <input formControlName="pissyValueMacro" id="pissyValueMacros" type="text" required pInputText
+                 [ngClass]="{'p-invalid': (form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)}">
+          <small *ngIf="(form.controls['pissyValueMacro'].invalid && form.controls['pissyValueMacro'].touched)"
+                 class="p-error">Укажите пессимистичное значение</small>
         </div>
+      </div>
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12 form-group">
           <label for="basicValueMacros">Базовое значение:</label>
-          <input formControlName="basicValueMacro" id="basicValueMacros" type="text" required pInputText [ngClass]="{'p-invalid': (form.controls['basicValueMacro'].invalid && form.controls['basicValueMacro'].touched)}">
-          <small *ngIf="(form.controls['basicValueMacro'].invalid && form.controls['basicValueMacro'].touched)" class="p-error">Укажите базовое значение</small>
+          <input formControlName="basicValueMacro" id="basicValueMacros" type="text" required pInputText
+                 [ngClass]="{'p-invalid': (form.controls['basicValueMacro'].invalid && form.controls['basicValueMacro'].touched)}">
+          <small *ngIf="(form.controls['basicValueMacro'].invalid && form.controls['basicValueMacro'].touched)"
+                 class="p-error">Укажите базовое значение</small>
         </div>
       </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12 form-group">
-            <label for="optimisticValueMacros">Оптимистичное значение:</label>
-            <input formControlName="optimisticValueMacro" id="optimisticValueMacros" type="text" required pInputText  [ngClass]="{'p-invalid': (form.controls['optimisticValueMacro'].invalid && form.controls['optimisticValueMacro'].touched)}">
-            <small *ngIf="(form.controls['optimisticValueMacro'].invalid && form.controls['optimisticValueMacro'].touched)" class="p-error">Укажите оптимистичное значение</small>
-          </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12 form-group">
+          <label for="optimisticValueMacros">Оптимистичное значение:</label>
+          <input formControlName="optimisticValueMacro" id="optimisticValueMacros" type="text" required pInputText
+                 [ngClass]="{'p-invalid': (form.controls['optimisticValueMacro'].invalid && form.controls['optimisticValueMacro'].touched)}">
+          <small
+            *ngIf="(form.controls['optimisticValueMacro'].invalid && form.controls['optimisticValueMacro'].touched)"
+            class="p-error">Укажите оптимистичное значение</small>
         </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12 form-group">
-            <button pButton pRipple type="submit" label="Сохранить" class="p-button-success" ></button>
-          </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12 form-group">
+          <button pButton pRipple type="submit" label="Сохранить" class="p-button-success"></button>
         </div>
+      </div>
     </form>
   </ng-template>
 </p-overlayPanel>
 <ng-template #makroLoader>
   <div class="p-d-flex p-jc-center" style="height: 80vh">
     <div class="p-grid p-ai-center vertical-container ">
-      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+                         fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
     </div>
   </div>
 </ng-template>
@@ -85,7 +103,7 @@
              [rowsPerPageOptions]="[50,100,150]"
              [showCurrentPageReport]="true"
              currentPageReportTemplate="Отображено с {first} по {last} запись. Всего: {totalRecords}">
-    >
+      >
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
           <col style="width: 100px">
@@ -103,27 +121,51 @@
       </ng-template>
       <ng-template pTemplate="header">
         <tr>
-          <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="cargoGroup">Номенклатура грузов<p-sortIcon field="cargoGroup"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="shipmentType">Тип<p-sortIcon field="shipmentType"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="macroIndex">Макро<p-sortIcon field="macroIndex"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="year">Год<p-sortIcon field="year"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="valueLow">Консервативное значение<p-sortIcon field="id"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="valueMedium">Базовое значение<p-sortIcon field="id"></p-sortIcon></th>
-          <th pResizableColumn pSortableColumn="valueHigh">Оптимистичное значение<p-sortIcon field="id"></p-sortIcon></th>
+          <th pResizableColumn pSortableColumn="id">id
+            <p-sortIcon field="id"></p-sortIcon>
+          </th>
+          <th pResizableColumn pSortableColumn="cargoGroup">Номенклатура грузов
+            <p-sortIcon field="cargoGroup"></p-sortIcon>
+          </th>
+          <th pResizableColumn pSortableColumn="shipmentType">Тип
+            <p-sortIcon field="shipmentType"></p-sortIcon>
+          </th>
+          <th pResizableColumn pSortableColumn="macroIndex">Макро
+            <p-sortIcon field="macroIndex"></p-sortIcon>
+          </th>
+          <th pResizableColumn pSortableColumn="year">Год
+            <p-sortIcon field="year"></p-sortIcon>
+          </th>
+          <th pResizableColumn pSortableColumn="valueLow">Консервативное значение
+            <p-sortIcon field="id"></p-sortIcon>
+          </th>
+          <th pResizableColumn pSortableColumn="valueMedium">Базовое значение
+            <p-sortIcon field="id"></p-sortIcon>
+          </th>
+          <th pResizableColumn pSortableColumn="valueHigh">Оптимистичное значение
+            <p-sortIcon field="id"></p-sortIcon>
+          </th>
           <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
             <th></th>
           </ng-container>
         </tr>
         <tr>
-          <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'id', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
-          <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'cargoGroup', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
-          <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'shipmentType', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
-          <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'macroIndex', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
-          <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'year', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
-          <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'valueLow', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
-          <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'valueMedium', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
-          <th ><input pInputText type="text" (input)="dt.filter($event.target.value, 'valueHigh', 'contains')" placeholder="Фильтр" class="p-column-filter"></th>
+          <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'id', 'contains')"
+                     placeholder="Фильтр" class="p-column-filter"></th>
+          <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'cargoGroup', 'contains')"
+                     placeholder="Фильтр" class="p-column-filter"></th>
+          <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'shipmentType', 'contains')"
+                     placeholder="Фильтр" class="p-column-filter"></th>
+          <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'macroIndex', 'contains')"
+                     placeholder="Фильтр" class="p-column-filter"></th>
+          <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'year', 'contains')"
+                     placeholder="Фильтр" class="p-column-filter"></th>
+          <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'valueLow', 'contains')"
+                     placeholder="Фильтр" class="p-column-filter"></th>
+          <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'valueMedium', 'contains')"
+                     placeholder="Фильтр" class="p-column-filter"></th>
+          <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'valueHigh', 'contains')"
+                     placeholder="Фильтр" class="p-column-filter"></th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-item let-editing="editing" let-ri="rowIndex">
@@ -165,10 +207,16 @@
           </td>
           <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
             <td style="text-align:center">
-              <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
-              <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(item)" class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
-              <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(item, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
-              <button  pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" (click)="mackPokDel(item.id)" class="p-button-rounded p-button-text p-button-danger"></button>
+              <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                      (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                      (click)="onRowEditSave(item)"
+                      class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+              <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                      (click)="onRowEditCancel(item, ri)"
+                      class="p-button-rounded p-button-text p-button-danger"></button>
+              <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" (click)="mackPokDel(item.id)"
+                      class="p-button-rounded p-button-text p-button-danger"></button>
             </td>
           </ng-container>
         </tr>
@@ -176,10 +224,12 @@
     </p-table>
   </div>
 </ng-container>
-<p-confirmDialog #cd icon="pi pi-exclamation-triangle"  [style]="{width: 'auto'}" [baseZIndex]="10000">
+<p-confirmDialog #cd icon="pi pi-exclamation-triangle" [style]="{width: 'auto'}" [baseZIndex]="10000">
   <p-footer>
-    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()" class="p-button-danger"></button>
-    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"  class="p-button-secondary"></button>
+    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()"
+            class="p-button-danger"></button>
+    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"
+            class="p-button-secondary"></button>
   </p-footer>
 </p-confirmDialog>
 

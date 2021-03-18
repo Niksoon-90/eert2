@@ -1,22 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { ISubjectNci} from "../../models/calculations.model";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ISubjectNci} from "../../models/calculations.model";
 import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {ModalService} from "../../services/modal.service";
 import {ShipmentsService} from "../../services/shipments.service";
 import {ConfirmationService} from "primeng/api";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-subject',
   templateUrl: './subject.component.html',
   styleUrls: ['./subject.component.scss']
 })
-export class SubjectComponent implements OnInit {
+export class SubjectComponent implements OnInit, OnDestroy {
   cols: any[];
   totalRecords: any;
   subjectNci: ISubjectNci[]
   nameNewSubjectNci: string = '';
   user: IAuthModel
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -26,18 +28,22 @@ export class SubjectComponent implements OnInit {
   ) {
     this.user = this.authenticationService.userValue;
   }
+
   ngOnInit(): void {
     this.getSubjectNci();
     this.cols = [
-      { field: 'name', header: 'Субъект РФ', width: 'auto', isStatic :true}
+      {field: 'name', header: 'Субъект РФ', width: 'auto', isStatic: true}
     ]
+  }
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   getSubjectNci() {
-    this.shipmentsService.getSubject().subscribe(
+    this.subscriptions.add(this.shipmentsService.getSubject().subscribe(
       res => this.subjectNci = res,
       error => this.modalService.open(error.error.message)
-    )
+    ))
   }
 
   onRowEditInit() {
@@ -50,15 +56,13 @@ export class SubjectComponent implements OnInit {
       header: 'Удаление субъекта',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.shipmentsService.deleteSubject(id).subscribe(
-          res => console.log(),
+        this.subscriptions.add(this.shipmentsService.deleteSubject(id).subscribe(
+          () => console.log(),
           error => this.modalService.open(error.error.message),
-          () =>  this.getSubjectNci()
-        )
+          () => this.getSubjectNci()
+        ))
       }
     });
-
-
   }
 
   onRowEditSave(rowData) {
@@ -66,11 +70,11 @@ export class SubjectComponent implements OnInit {
       id: rowData.id,
       name: rowData.name
     }
-    this.shipmentsService.putSubject(subjectNci).subscribe(
-      res => console.log(),
+    this.subscriptions.add(this.shipmentsService.putSubject(subjectNci).subscribe(
+      () => console.log(),
       error => this.modalService.open(error.error.message),
       () => this.getSubjectNci()
-    )
+    ))
   }
 
   onRowEditCancel() {
@@ -79,21 +83,20 @@ export class SubjectComponent implements OnInit {
 
   createsubjectNci() {
     console.log(this.nameNewSubjectNci)
-    if(this.nameNewSubjectNci !== ''){
+    if (this.nameNewSubjectNci !== '') {
       const item: ISubjectNci = {
         id: null,
         name: this.nameNewSubjectNci
       }
-      this.shipmentsService.postCreateSubject(item).subscribe(
-        res => console.log(),
+      this.subscriptions.add(this.shipmentsService.postCreateSubject(item).subscribe(
+        () => console.log(),
         error => this.modalService.open(error.error.message),
         () => {
           this.nameNewSubjectNci = '',
             this.getSubjectNci()
         }
-      )
-
-    }else{
+      ))
+    } else {
       this.modalService.open('Укажите наименование Субъекта!')
     }
   }

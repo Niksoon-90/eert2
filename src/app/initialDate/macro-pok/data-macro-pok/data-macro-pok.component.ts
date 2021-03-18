@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MenuItem} from "primeng/api";
 import {IAuthModel} from "../../../models/auth.model";
 import {AuthenticationService} from "../../../services/authentication.service";
@@ -20,7 +20,9 @@ export class DataMacroPokComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.makroPokMenu = [{ label: 'Просмотреть данные', routerLink: ['data'] }];
-    if(this.user.authorities.includes('P_P_p1') === true){this.makroPokMenu.unshift({ label: 'Загрузить данные', routerLink: ['macroUpload'] })}
+    this.makroPokMenu = [{label: 'Просмотреть данные', routerLink: ['data']}];
+    if (this.user.authorities.includes('P_P_p1') === true) {
+      this.makroPokMenu.unshift({label: 'Загрузить данные', routerLink: ['macroUpload']})
+    }
   }
 }

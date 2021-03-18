@@ -80,8 +80,8 @@
         </ng-container>
 
         <ng-template #sessionIdnull>
-<!--          <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success"-->
-<!--                  (click)="corresponTiers();"></button>-->
+          <!--          <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success"-->
+          <!--                  (click)="corresponTiers();"></button>-->
         </ng-template>
         <ng-container *ngIf="this.calculated === true">
           <ng-container *ngIf="this.loading === true; else LoaderMathematical">
@@ -138,9 +138,11 @@
     </ng-template>
   </p-card>
 </div>
-<p-confirmDialog #cd icon="pi pi-exclamation-triangle"  [style]="{width: 'auto'}" [baseZIndex]="10000">
+<p-confirmDialog #cd icon="pi pi-exclamation-triangle" [style]="{width: 'auto'}" [baseZIndex]="10000">
   <p-footer>
-    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()" class="p-button-danger"></button>
-    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"  class="p-button-secondary"></button>
+    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()"
+            class="p-button-danger"></button>
+    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"
+            class="p-button-secondary"></button>
   </p-footer>
 </p-confirmDialog>

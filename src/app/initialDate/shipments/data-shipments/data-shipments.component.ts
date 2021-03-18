@@ -42,10 +42,10 @@ export class DataShipmentsComponent implements OnInit, OnDestroy {
     this.user = this.authenticationService.userValue;
   }
 
-
   ngOnInit(): void {
     this.getShipmentsSession();
   }
+
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
@@ -210,10 +210,12 @@ export class DataShipmentsComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(id).subscribe(
       () => console.log(),
       error => this.modalService.open(error.error.message),
-    ))
-    this.subscriptions.add(this.calculationsService.postHierarchicalShipment(id).subscribe(
-      () => console.log(),
-      error => this.modalService.open(error.error.message)
+      () => {
+        this.subscriptions.add(this.calculationsService.postHierarchicalShipment(id).subscribe(
+          () => console.log(),
+          error => this.modalService.open(error.error.message)
+        ))
+      }
     ))
   }
 }

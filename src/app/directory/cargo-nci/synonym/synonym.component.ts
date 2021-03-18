@@ -5,6 +5,7 @@ import {ISynonym} from "../../../models/shipmenst.model";
 import {IAuthModel} from "../../../models/auth.model";
 import {AuthenticationService} from "../../../services/authentication.service";
 import {ConfirmationService} from "primeng/api";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-synonym',
@@ -12,13 +13,14 @@ import {ConfirmationService} from "primeng/api";
   styleUrls: ['./synonym.component.scss']
 })
 export class SynonymComponent implements OnInit, OnChanges {
-  @Input() cargoOwnerId
 
+  @Input() cargoOwnerId
 
   synonym: ISynonym[]
   user: IAuthModel
   nameNewSysonym: string;
   cols: any;
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -38,45 +40,48 @@ export class SynonymComponent implements OnInit, OnChanges {
     ]
     this.getSynonymAll(this.cargoOwnerId);
   }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
   getSynonymAll(cargoOwnerId: number){
-    this.shipmentsService.getSynonym(cargoOwnerId)
+    this.subscriptions.add(this.shipmentsService.getSynonym(cargoOwnerId)
       .subscribe(
-      res => {
-        this.synonym = res,
-          console.log(res)
-      },
+      res => this.synonym = res,
       error => this.modalService.open(error.error.message),
         () => {
           if (this.synonym === null) {
             this.synonym = []
           }
         }
-    )
+    ))
   }
+
   deleteSynonymItem(cargoOwnerSynonymId: number, name: string){
     this.confirmationService.confirm({
       message: `Вы уверенны, что хотите удалить синоним: ${name}?`,
       header: 'Удаление синонима',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.shipmentsService.deletetSynonym(cargoOwnerSynonymId).subscribe(
-          res => console.log(),
+        this.subscriptions.add(this.shipmentsService.deletetSynonym(cargoOwnerSynonymId).subscribe(
+          () => console.log(),
           error => this.modalService.open(error.error.message),
           () => this.getSynonymAll(this.cargoOwnerId)
-        )
+        ))
       }
     });
 
   }
 
   createSysonym() {
-    this.shipmentsService.postSynonym(this.cargoOwnerId, this.nameNewSysonym).subscribe(
-      res => console.log(),
+    this.subscriptions.add(this.shipmentsService.postSynonym(this.cargoOwnerId, this.nameNewSysonym).subscribe(
+      () => console.log(),
       error => this.modalService.open(error.error.message),
       () => {
-        this.nameNewSysonym = '',
-          this.getSynonymAll(this.cargoOwnerId)
+        this.nameNewSysonym = ''
+        this.getSynonymAll(this.cargoOwnerId)
       }
-    )
+    ))
   }
 }

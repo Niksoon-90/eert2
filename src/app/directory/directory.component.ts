@@ -7,11 +7,11 @@ import {ICargoOwnerInfluenceFactor, IInfluenceNci} from "../models/calculations.
   styleUrls: ['./directory.component.scss']
 })
 export class DirectoryComponent implements OnInit {
+  
   checked: boolean;
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
 }

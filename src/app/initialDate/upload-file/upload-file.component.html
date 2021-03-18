@@ -1,6 +1,5 @@
 <div class="p-d-flex p-jc-center">
   <div style="width: 570px">
-
     <form [formGroup]="uploadFiles" (ngSubmit)="onUpload()">
       <div class=" p-d-flex p-jc-center">
         <h3>ИАС «Грузопотоки»</h3>
@@ -38,13 +37,6 @@
           </div>
         </div>
       </ng-container>
-      <!--      <ng-container *ngIf="this.initialDateType === 'macroUpload'">-->
-      <!--        <div class="p-fluid p-grid">-->
-      <!--          <div class=" p-col-12">-->
-      <!--            <p-dropdown formControlName="macroScenario" optionLabel="name" [options]="macroScenarioType" placeholder="Выберете один из вариантов:"></p-dropdown>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--      </ng-container>-->
       <ng-container *ngIf="dimensionDelete()">
         <div class="p-fluid p-grid">
           <div class="p-col-12">
@@ -63,13 +55,15 @@
 </div>
 
 <p-dialog header="Успех!" [(visible)]="displayModal" [style]="{width: '30vw'}" [baseZIndex]="10000">
-  <ng-container *ngIf="this.initialDateType === 'shipmentsUpload' || this.initialDateType === 'cargoUpload'; else messageDialog">
+  <ng-container
+    *ngIf="this.initialDateType === 'shipmentsUpload' || this.initialDateType === 'cargoUpload'; else messageDialog">
     <p>{{this.messageDialogStats}}</p>
     <ul *ngFor="let item of this.test">
       <li>{{item}}</li>
     </ul>
     <div class="p-d-flex p-jc-center">
-    <button pButton pRipple type="button" label="Скачать" icon="pi pi-download" class="p-button-rounded p-button-success"
+      <button pButton pRipple type="button" label="Скачать" icon="pi pi-download"
+              class="p-button-rounded p-button-success"
               (click)="downloadAbsentcargo()"></button>
     </div>
   </ng-container>

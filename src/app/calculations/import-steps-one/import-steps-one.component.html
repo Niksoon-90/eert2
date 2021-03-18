@@ -10,64 +10,73 @@
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
          <span class="p-float-label" style="padding-right: 10px;">
-            <input id="name"  type="text"pInputText [(ngModel)]="stepOne.nameNewShip" >
+            <input id="name" type="text" pInputText [(ngModel)]="stepOne.nameNewShip">
             <label for="name">Наименование расчета</label>
           </span>
         </div>
       </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12">
-            <label>Исходные данные:</label>
-            <p-dropdown optionLabel="name" [options]="initialDate" [(ngModel)]="stepOne.Session" [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
-          </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Исходные данные:</label>
+          <p-dropdown optionLabel="name" [options]="initialDate" [(ngModel)]="stepOne.Session" [showClear]="true"
+                      placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
+      </div>
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
           <label>Сценарий развития экономики:</label>
-          <p-dropdown optionLabel="name" [options]="scenarioMacro" [(ngModel)]="stepOne.scenarioMacro"[showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
+          <p-dropdown optionLabel="name" [options]="scenarioMacro" [(ngModel)]="stepOne.scenarioMacro"
+                      [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
       </div>
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
           <label>Горизонт прогноза (лет):</label>
-          <p-dropdown optionLabel="name" [options]="horizonforecast" [(ngModel)]="stepOne.calcYearsNumber" [showClear]="true"  placeholder="Выберите один из вариантов:"></p-dropdown>
+          <p-dropdown optionLabel="name" [options]="horizonforecast" [(ngModel)]="stepOne.calcYearsNumber"
+                      [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
       </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12">
-            <label>Файл с заявками грузоотправителей:</label>
-            <p-dropdown optionLabel="name" [options]="cargoSessionSender" [(ngModel)]="stepOne.cargoSessionSender"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
-          </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Файл с заявками грузоотправителей:</label>
+          <p-dropdown optionLabel="name" [options]="cargoSessionSender" [(ngModel)]="stepOne.cargoSessionSender"
+                      [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
-        <div class="p-fluid p-formgrid p-grid">
-          <div class="p-field p-col-12">
-            <label>Файл с заявками грузополучателей:</label>
-            <p-dropdown optionLabel="name" [options]="cargoSessionReceiver" [(ngModel)]="stepOne.cargoSessionReceiver"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
-          </div>
+      </div>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col-12">
+          <label>Файл с заявками грузополучателей:</label>
+          <p-dropdown optionLabel="name" [options]="cargoSessionReceiver" [(ngModel)]="stepOne.cargoSessionReceiver"
+                      [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
+      </div>
       <div class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-12">
           <label>Файл с перспективными корреспонденциями:</label>
-          <p-dropdown optionLabel="name" [options]="correspondenceSession" [(ngModel)]="stepOne.correspondenceSession"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
+          <p-dropdown optionLabel="name" [options]="correspondenceSession" [(ngModel)]="stepOne.correspondenceSession"
+                      [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
         </div>
       </div>
       <ng-container *ngIf="this.user.authorities.includes('P_P_p2') === true">
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12">
             <label>Перспективные корреспонденции система "Нефтегрузы":</label>
-            <p-dropdown optionLabel="title" [options]="oilCargo" [(ngModel)]="stepOne.oilCargo"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
+            <p-dropdown optionLabel="title" [options]="oilCargo" [(ngModel)]="stepOne.oilCargo" [showClear]="true"
+                        placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12">
             <label>Перспективные корреспонденции система "Руда":</label>
-            <p-dropdown optionLabel="title" [options]="ore" [(ngModel)]="stepOne.ore"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
+            <p-dropdown optionLabel="title" [options]="ore" [(ngModel)]="stepOne.ore" [showClear]="true"
+                        placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
         <div class="p-fluid p-formgrid p-grid">
           <div class="p-field p-col-12">
             <label>Перспективные корреспонденции система "Металлургия":</label>
-            <p-dropdown optionLabel="title" [options]="metallurgy" [(ngModel)]="stepOne.metallurgy"  [showClear]="true" placeholder="Выберите один из вариантов:"></p-dropdown>
+            <p-dropdown optionLabel="title" [options]="metallurgy" [(ngModel)]="stepOne.metallurgy" [showClear]="true"
+                        placeholder="Выберите один из вариантов:"></p-dropdown>
           </div>
         </div>
       </ng-container>

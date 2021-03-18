@@ -1,6 +1,6 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import { Subscription} from "rxjs";
+import {Subscription} from "rxjs";
 import {IAuthModel} from "../../../models/auth.model";
 import {CalculationsService} from "../../../services/calculations.service";
 import {ModalService} from "../../../services/modal.service";
@@ -13,14 +13,13 @@ import {Table} from "primeng/table";
 import {ForecastingModelService} from "../../../services/forecasting-model.service";
 
 
-
-
 @Component({
   selector: 'app-step',
   templateUrl: './step.component.html',
   styleUrls: ['./step.component.scss']
 })
-export class StepComponent implements OnInit {
+export class StepComponent implements OnInit, OnDestroy {
+
   @ViewChild('dt') table: Table;
 
   mathematicalForecastTable: IShipment[]
@@ -45,7 +44,7 @@ export class StepComponent implements OnInit {
   private subscription: Subscription
   nameSession: string
   mathematicalForecastTableShipmentYearCalculated = []
-
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     private router: Router,
@@ -68,13 +67,15 @@ export class StepComponent implements OnInit {
     this.allShipItemSession();
   }
 
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
 
   allShipItemSession() {
     this.loader = true
-    this.shipmentsService.getShipmetsPaginations(this.sessionId)
+    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId)
       .subscribe(
         res => {
-          console.log(res)
           res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
           res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
         },
@@ -86,12 +87,12 @@ export class StepComponent implements OnInit {
           this.createColumnTable()
           this.loader = false
         }
-      )
+      ))
   }
 
   createColumnTable() {
     this.mathematicalForecastTable.length === 0 ? this.columsYears = 0 : this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
-    this.mathematicalForecastTable.length !== 0 ? this.mathematicalForecastTable[0].shipmentYearValuePairs.forEach(elements => (elements.calculated === true ? this.mathematicalForecastTableShipmentYearCalculated.push(elements.year) : '') ) : this.mathematicalForecastTableShipmentYearCalculated = null
+    this.mathematicalForecastTable.length !== 0 ? this.mathematicalForecastTable[0].shipmentYearValuePairs.forEach(elements => (elements.calculated === true ? this.mathematicalForecastTableShipmentYearCalculated.push(elements.year) : '')) : this.mathematicalForecastTableShipmentYearCalculated = null
     this.mathematicalForecastTableShipmentYearCalculated.length !== 0 ? this.forecastingModelService.setTicketInformationMathematicalForecastTable(this.mathematicalForecastTableShipmentYearCalculated) : this.forecastingModelService.setTicketInformationMathematicalForecastTable(null)
 
     this.cols = [
@@ -122,13 +123,12 @@ export class StepComponent implements OnInit {
   }
 
   summFooter(sessionId: number) {
-    this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
+    this.subscriptions.add(this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
       res => {
-        console.log(res)
         this.massSummYear = res
       },
       error => this.modalService.open(error.error.message)
-    )
+    ))
   }
 
   primeryBolChange(value: any, field: any, equals: string) {
@@ -153,16 +153,16 @@ export class StepComponent implements OnInit {
 
 
   onRowEditInit(item: any) {
-    console.log('item', item)
+
   }
 
   onRowEditSave(item: any) {
     delete item.session
-    this.shipmentsService.putShipments(item).subscribe(
-      res => (console.log('god')),
+    this.subscriptions.add(this.shipmentsService.putShipments(item).subscribe(
+      () => console.log('god'),
       error => this.modalService.open(error.error.message),
       () => this.summFooter(this.sessionId)
-    )
+    ))
   }
 
   onRowEditCancel() {
@@ -171,7 +171,7 @@ export class StepComponent implements OnInit {
 
   downloadShip() {
     this.downloadShipLoading = true;
-    this.uploadFileService.getDownload(this.sessionId, 'SHIPMENTS').subscribe(
+    this.subscriptions.add(this.uploadFileService.getDownload(this.sessionId, 'SHIPMENTS').subscribe(
       (response: HttpResponse<Blob>) => {
         console.log(response)
         let filename: string = 'shipments.xlsx'
@@ -186,15 +186,15 @@ export class StepComponent implements OnInit {
       async (error) => {
         const message = JSON.parse(await error.error.text()).message;
         this.modalService.open(message)
-          this.downloadShipLoading = false
+        this.downloadShipLoading = false
       },
       () => this.downloadShipLoading = false
-    )
+    ))
   }
 
   downloadRoad() {
     this.downloadRoadLoading = true;
-    this.uploadFileService.getDownload(this.sessionId, 'ROAD_TO_ROAD').subscribe(
+    this.subscriptions.add(this.uploadFileService.getDownload(this.sessionId, 'ROAD_TO_ROAD').subscribe(
       (response: HttpResponse<Blob>) => {
         console.log(response)
         let filename: string = 'road_to_road.xlsx'
@@ -209,10 +209,10 @@ export class StepComponent implements OnInit {
       async (error) => {
         const message = JSON.parse(await error.error.text()).message;
         this.modalService.open(message)
-          this.downloadRoadLoading = false
+        this.downloadRoadLoading = false
       },
       () => this.downloadRoadLoading = false
-    )
+    ))
   }
 
 
@@ -288,14 +288,12 @@ export class StepComponent implements OnInit {
     if (Object.keys(event.filters).length !== 0) {
       for (let i = 0; i < Object.keys(event.filters).length; i++) {
         this.filterFieldHeaders(Object.keys(event.filters)[i], Object.values(event.filters[Object.keys(event.filters)[i]])[0].toString());
-        console.log(this.filters)
         resultFilterUrl.push(this.filters)
       }
     }
     event.sortField === 'primary' ? sortField = 'isPrimary' : sortField = event.sortField
     event.sortOrder === 1 ? sortOrder = 'asc' : sortOrder = 'desc'
 
-    console.log('сортировка по полю: ', event.sortField)
     this.filterTableEvant = {
       sessionId: this.sessionId,
       currentPage: currentPage,
@@ -304,7 +302,7 @@ export class StepComponent implements OnInit {
       sortOrder: sortOrder,
       resultFilterUrl: resultFilterUrl.join('')
     }
-    this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
+    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
       .subscribe(
         res => {
           console.log(res)
@@ -320,7 +318,7 @@ export class StepComponent implements OnInit {
           this.summFooter(this.sessionId)
           this.loadingTable = false
         }
-      )
+      ))
   }
 
 
@@ -330,18 +328,16 @@ export class StepComponent implements OnInit {
 
   nextPage() {
     if (this.selectedPrimery !== null) {
-      this.shipmentsService.putTransformFile(this.sessionId, true).subscribe(
-        res => console.log(),
+      this.subscriptions.add(this.shipmentsService.putTransformFile(this.sessionId, true).subscribe(
+        () => console.log(),
         error => {
-          this.modalService.open(error.error.message),
-            this.loading = true
+          this.modalService.open(error.error.message)
+          this.loading = true
         },
         () => {
           this.router.navigate(['payments/ias/', this.sessionId, this.nameSession]);
         }
-      )
-
+      ))
     }
   }
-
 }

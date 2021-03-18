@@ -1,10 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {IMongoObject, MonoCargoSystemsModel} from "../../../models/mono-cargo-systems.model";
 import {CalculationsService} from "../../../services/calculations.service";
 import {ModalService} from "../../../services/modal.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {MessageService} from "primeng/api";
 import {ForecastingModelService} from "../../../services/forecasting-model.service";
+import {Subscription} from "rxjs";
 
 
 @Component({
@@ -12,7 +13,7 @@ import {ForecastingModelService} from "../../../services/forecasting-model.servi
   templateUrl: './mono-cargo.component.html',
   styleUrls: ['./mono-cargo.component.scss']
 })
-export class MonoCargoComponent implements OnInit {
+export class MonoCargoComponent implements OnInit, OnDestroy {
 
   @Input() sessionId
 
@@ -23,6 +24,7 @@ export class MonoCargoComponent implements OnInit {
   formOil: FormGroup
   formOre: FormGroup
   formMetallurgy: FormGroup
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     private calculationsService: CalculationsService,
@@ -43,6 +45,10 @@ export class MonoCargoComponent implements OnInit {
     if(this.forecastModelService.getTicketInformation().stepOne.metallurgy !== null) {
       this.getMetallurgy();
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   createForm() {
@@ -71,48 +77,38 @@ export class MonoCargoComponent implements OnInit {
 
 
   getOil() {
-    this.calculationsService.getOil().subscribe(
-      res => {
-        this.oil = res;
-        console.log('res', res)
-      },
+    this.subscriptions.add(this.calculationsService.getOil().subscribe(
+      res => this.oil = res,
       error => this.modalService.open(error.message),
       () => {
         this.forecastModelService.getTicketInformation().stepOne.oilCargo !== null ? this.formOil.controls.parentCalculationOil.setValue(this.forecastModelService.getTicketInformation().stepOne.oilCargo) : this.formOil.controls.parentCalculationOil.setValue('')
       }
-    )
+    ))
   }
 
   getOre() {
-    this.calculationsService.getOre().subscribe(
-      res => {
-        this.ore = res;
-        console.log('res', res)
-      },
+    this.subscriptions.add(this.calculationsService.getOre().subscribe(
+      res => this.ore = res,
       error => this.modalService.open(error.message),
       () => {
         this.forecastModelService.getTicketInformation().stepOne.ore !== null ? this.formOre.controls.parentCalculationOre.setValue(this.forecastModelService.getTicketInformation().stepOne.ore) : this.formOil.controls.parentCalculationOre.setValue('')
       }
-    )
+    ))
   }
 
   getMetallurgy() {
-    this.calculationsService.getMetallurgy().subscribe(
-      res => {
-        this.metallurgy = res;
-        console.log('res', res)
-      },
+    this.subscriptions.add(this.calculationsService.getMetallurgy().subscribe(
+      res => this.metallurgy = res,
       error => this.modalService.open(error.message),
       () => {
         this.forecastModelService.getTicketInformation().stepOne.metallurgy !== null ? this.formMetallurgy.controls.parentCalculationMetallurgy.setValue(this.forecastModelService.getTicketInformation().stepOne.metallurgy) : this.formOil.controls.parentCalculationMetallurgy.setValue('')
       }
-    )
+    ))
   }
 
   monoCargiOutput(type: string) {
-    //  this.modalService.open('Ошибка при обращении к системе "ИАС Моногрузы".')
+
     if (type === 'oil') {
-      console.log(this.formOil.controls.parentCalculationOil)
       this.mongoObjectIn = {
         description: this.formOil.controls.descriptionOil.value,
         name: this.formOil.controls.nameOil.value,
@@ -127,7 +123,6 @@ export class MonoCargoComponent implements OnInit {
         sessionId: this.sessionId
       }
     } else if (type === 'metal') {
-      console.log(this.formMetallurgy.controls.parentCalculationMetallurgy.value)
       this.mongoObjectIn = {
         description: this.formMetallurgy.controls.descriptionMetallurgy.value,
         name: this.formMetallurgy.controls.nameMetallurgy.value,
@@ -136,11 +131,11 @@ export class MonoCargoComponent implements OnInit {
       }
     }
 
-    this.calculationsService.postExternalForecast(this.mongoObjectIn, type).subscribe(
-      res => console.log(),
+    this.subscriptions.add(this.calculationsService.postExternalForecast(this.mongoObjectIn, type).subscribe(
+      () => console.log(),
       error => this.modalService.open(error.error.message),
       () => this.test()
-    )
+    ))
   }
 
   test() {

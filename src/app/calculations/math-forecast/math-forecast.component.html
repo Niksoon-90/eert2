@@ -2,13 +2,11 @@
   <p-card>
     <ng-template pTemplate="title">
       Математический прогноз с учетом макропоказателей
-      <!--      <h5 [style]="{'margin': '0px'}">*Для учета макропоказателя кликните мышкой на строчку в таблице*-->
       <ng-container *ngIf="this.lastGroupVolumesByYearsTotal">
         <ng-container *ngIf="this.lastGroupVolumesByYearsTotal.length < 5">
           <p>для получения метрик множественной регрессии глубина исторических данных должна быть >= 5 лет</p>
         </ng-container>
       </ng-container>
-      <!--      </h5>-->
     </ng-template>
 
     <ng-template pTemplate="body">

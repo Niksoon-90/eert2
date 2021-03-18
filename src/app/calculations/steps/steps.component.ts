@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MenuItem} from "primeng/api";
 import {StepInfoService} from "../../services/step-info.service";
 import {IStepInfoModel} from "../../models/stepInfo.model";
@@ -19,9 +19,9 @@ export class StepsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.stepInfoService.getValue().subscribe (
+    this.stepInfoService.getValue().subscribe(
       res => {
-          this.stepInfos = res
+        this.stepInfos = res
       })
     this.forecastingModel = [
       {label: 'Шаг 1', routerLink: 'import'},

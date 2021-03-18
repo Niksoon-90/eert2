@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ModalService} from "../../../services/modal.service";
 import {ShipmentsService} from "../../../services/shipments.service";
 import {IShipment} from "../../../models/shipmenst.model";
@@ -10,14 +10,13 @@ import {LazyLoadEvent} from "primeng/api";
   templateUrl: './history-shipment.component.html',
   styleUrls: ['./history-shipment.component.scss']
 })
-export class HistoryShipmentComponent implements OnInit {
+export class HistoryShipmentComponent implements OnInit, OnDestroy {
 
   @Input() sessionId
 
   mathematicalForecastTable: IShipment[];
   primeryBol = [{label: 'Все', value: ''}, {label: 'Да', value: true}, {label: 'Нет', value: false}]
   massSummYear: {} = {}
-  primary2 = [{label: 'Да', value: true}, {label: 'Нет', value: false}]
   typeCalculation= [
     {label: 'Все', value: ''},
     {label: 'по методу наименьших квадратов', value: 'LESS_SQUARE'},
@@ -37,7 +36,7 @@ export class HistoryShipmentComponent implements OnInit {
   first: number = 0;
   sub: Subscription
   filterTableEvant: any
-
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     private modalService: ModalService,
@@ -47,6 +46,10 @@ export class HistoryShipmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.openShipItemSession()
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   createColumnTable() {
@@ -80,19 +83,15 @@ export class HistoryShipmentComponent implements OnInit {
   }
 
   openShipItemSession() {
-    this.sub = this.shipmentsService.getShipmetsPaginations(this.sessionId, 0).subscribe(
-      res => {
-        console.log(res)
-
-        this.mathematicalForecastTable = res.content
-      },
+    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, 0).subscribe(
+      res => this.mathematicalForecastTable = res.content,
       error => {
         this.modalService.open(error.error.message);
       },
       () => {
         this.createColumnTable()
       }
-    )
+    ))
   }
 
   filterFieldHeaders(name: string, value: string) {
@@ -170,14 +169,12 @@ export class HistoryShipmentComponent implements OnInit {
     if (Object.keys(event.filters).length !== 0) {
       for (let i = 0; i < Object.keys(event.filters).length; i++) {
         this.filterFieldHeaders(Object.keys(event.filters)[i], Object.values(event.filters[Object.keys(event.filters)[i]])[0].toString());
-        console.log(this.filters)
         resultFilterUrl.push(this.filters)
       }
     }
     event.sortField === 'primary' ? sortField = 'isPrimary' : sortField = event.sortField
     event.sortOrder === 1 ? sortOrder = 'asc' : sortOrder = 'desc'
 
-    console.log('сортировка по полю: ', event.sortField)
     this.filterTableEvant = {
       sessionId: this.sessionId,
       currentPage: currentPage,
@@ -186,10 +183,9 @@ export class HistoryShipmentComponent implements OnInit {
       sortOrder: sortOrder,
       resultFilterUrl: resultFilterUrl.join('')
     }
-    this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
+    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
       .subscribe(
         res => {
-          console.log(res)
           res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
           res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
         },
@@ -201,18 +197,9 @@ export class HistoryShipmentComponent implements OnInit {
           this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
           this.summFooter(this.sessionId)
         }
-      )
+      ))
   }
 
-  editColumn(row: any, col: any, $event: any) {
-    if (col['keyS'] === true) {
-      const mass = col['field'].toString().split('.');
-      row.shipmentYearValuePairs[mass[1]].value = Number($event);
-    } else {
-      const item = col['field'];
-      row[item] = $event
-    }
-  }
 
   colorYears(rowData, col: any) {
     const mass = col['field'].toString().split('.');
@@ -220,13 +207,10 @@ export class HistoryShipmentComponent implements OnInit {
   }
 
   summFooter(sessionId: number) {
-    this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
-      res => {
-        console.log(res)
-        this.massSummYear = res
-      },
+    this.subscriptions.add(this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
+      res => this.massSummYear = res,
       error => this.modalService.open(error.error.message)
-    )
+    ))
   }
 
   sdsd(name: string) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ShipmentsService} from "../../services/shipments.service";
 import {IMacroPokModel} from "../../models/macroPok.model";
 import {ConfirmationService, MessageService} from "primeng/api";
@@ -7,6 +7,7 @@ import {ModalService} from "../../services/modal.service";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
 import {ICargoGroupNci, IShipmentTypNci} from "../../models/calculations.model";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-macro-pok',
@@ -14,11 +15,16 @@ import {ICargoGroupNci, IShipmentTypNci} from "../../models/calculations.model";
   styleUrls: ['./macro-pok.component.scss'],
   providers: [MessageService]
 })
-export class MacroPokComponent implements OnInit {
+export class MacroPokComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   user: IAuthModel
   cargoGroups: ICargoGroupNci[]
   shipmentTypes: IShipmentTypNci[]
+  subscriptions: Subscription = new Subscription();
+  macroPokList: IMacroPokModel[];
+  form: FormGroup
+  years = [];
+
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService:ModalService,
@@ -27,11 +33,6 @@ export class MacroPokComponent implements OnInit {
   ) {
     this.user = this.authenticationService.userValue;
   }
-
-  macroPokList: IMacroPokModel[];
-  form: FormGroup
-  years = [];
-
 
   ngOnInit(): void {
     this.getMacroPok()
@@ -43,17 +44,22 @@ export class MacroPokComponent implements OnInit {
       this.years.push({name: `20`+i});
     }
   }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
   getCargoGroupNci() {
-    this.shipmentsService.getDictionaryCargo().subscribe(
+    this.subscriptions.add(this.shipmentsService.getDictionaryCargo().subscribe(
       res =>  this.cargoGroups =res,
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
   getShipmentTypNci() {
-    this.shipmentsService.getDictionaryShipmenttype().subscribe(
+    this.subscriptions.add(this.shipmentsService.getDictionaryShipmenttype().subscribe(
       res =>  this.shipmentTypes =res,
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
   createForm(){
     this.form = new FormGroup({
@@ -80,14 +86,14 @@ export class MacroPokComponent implements OnInit {
 
   getMacroPok(){
     this.loading = true;
-    this.shipmentsService.getMacroPok().subscribe(
+    this.subscriptions.add(this.shipmentsService.getMacroPok().subscribe(
       res => {
         this.macroPokList = res,
           this.macroPokList = this.macroPokList.sort((a, b) => a.id < b.id ? 1 : -1)
       },
       error => this.modalService.open(error.error.message),
       () => this.loading = false
-    )
+    ))
   }
 
   saveNewMacroPok(value) {
@@ -100,26 +106,24 @@ export class MacroPokComponent implements OnInit {
        valueMedium: value.basicValueMacro,
        year: value.year['name']
      }
-     console.log(macroPok)
-     this.shipmentsService.postMacroPok(macroPok).subscribe(
+    this.subscriptions.add(this.shipmentsService.postMacroPok(macroPok).subscribe(
        res => {
          this.getMacroPok();
          this.resetForm();
        }
-     )
+     ))
   }
 
   onRowEditInit(macroPok: any) {
-    console.log(macroPok)
   }
 
   onRowEditSave(macroPok: any) {
     console.log(JSON.stringify(macroPok))
-    this.shipmentsService.putMacroPok(macroPok).subscribe(
+    this.subscriptions.add(this.shipmentsService.putMacroPok(macroPok).subscribe(
       res => console.log(),
       error => this.modalService.open(error.error.message),
       () => this.getMacroPok()
-    )
+    ))
   }
 
   onRowEditCancel(macroPok: any, ri) {
@@ -132,15 +136,15 @@ export class MacroPokComponent implements OnInit {
       header: 'Удаление макроэкономического показателя',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.shipmentsService.deleteMackPok(id).subscribe(
+        this.subscriptions.add(this.shipmentsService.deleteMackPok(id).subscribe(
           res => {
             this.getMacroPok();
             this.resetForm();
           },
           error => this.modalService.open(error.error.message),
           () => console.log('HTTP request completed.')
-        )
+        ))
       }
-    });
+    })
   }
 }

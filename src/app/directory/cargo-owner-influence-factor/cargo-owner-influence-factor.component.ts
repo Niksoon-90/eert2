@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {CalculationsService} from "../../services/calculations.service";
 import {ModalService} from "../../services/modal.service";
 import {ICargoNci, ICargoOwnerInfluenceFactor, IInfluenceNci} from "../../models/calculations.model";
@@ -8,6 +8,7 @@ import {IAuthModel} from "../../models/auth.model";
 import {MathForecastCalcService} from "../../services/math-forecast-calc.service";
 import {ConfirmationService} from "primeng/api";
 import {Table} from "primeng/table";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-cargo-owner-influence-factor',
@@ -15,9 +16,10 @@ import {Table} from "primeng/table";
   styleUrls: ['./cargo-owner-influence-factor.component.scss']
 })
 export class CargoOwnerInfluenceFactorComponent implements OnInit {
-  @ViewChild(Table)
-  dt: Table
 
+  @ViewChild(Table)
+
+  dt: Table
   cargoOwnerInfluenceFactor: ICargoOwnerInfluenceFactor[];
   cols: any[];
   form: FormGroup;
@@ -25,6 +27,7 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
   influenceNci: IInfluenceNci[];
   user: IAuthModel
   loading: boolean = false
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     private calculationsService: CalculationsService,
@@ -37,13 +40,13 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.mathForecastCalcService.getValue()
+    this.subscriptions.add(this.mathForecastCalcService.getValue()
       .subscribe (
         res => {
         if(res.length !== 0){
           this.cargoOwnerInfluenceFactor = res
       }
-    })
+    }))
     this.getCargoNci();
     this.createForm();
     this.getInfluenceNci();
@@ -54,6 +57,11 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
       { field: 'koef', header: 'Коэффициент', width: '150px'}
     ]
   }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
   createForm() {
     this.form = new FormGroup({
       cargoOwnerId: new FormControl('', [Validators.required]),
@@ -62,25 +70,24 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
     })
   }
   getCargoNci(){
-    this.calculationsService.getAllCargoNci().subscribe(
+    this.subscriptions.add(this.calculationsService.getAllCargoNci().subscribe(
       res => this.cargoNci = res,
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
   getInfluenceNci(){
-    this.calculationsService.getInfluenceNci().subscribe(
+    this.subscriptions.add(this.calculationsService.getInfluenceNci().subscribe(
       res => {this.influenceNci = res;},
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
   getAllCargoOwnerInfluenceFactor(){
     this.loading = true;
-    this.calculationsService.getAllCargoOwnerInfluenceFactor().subscribe(
-      res => {
-        this.mathForecastCalcService.setValue(res); console.log(res)},
+    this.subscriptions.add(this.calculationsService.getAllCargoOwnerInfluenceFactor().subscribe(
+      res => this.mathForecastCalcService.setValue(res),
       error => this.modalService.open(error.error.message),
       () => this.loading = false
-    )
+    ))
   }
 
   deleteCargoOwnerInfluenceFactor(id: number, name: string) {
@@ -89,33 +96,29 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
       header: 'Удаление фактора',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        //изменение удаление
-        this.calculationsService.deleteCargoOwnerInfluenceFactorId(id).subscribe(
-          () => {
-            this.cargoOwnerInfluenceFactor = this.cargoOwnerInfluenceFactor.filter(cargoOwnerInfluenceFactor => cargoOwnerInfluenceFactor.id !== id)
-          },
+
+        this.subscriptions.add(this.calculationsService.deleteCargoOwnerInfluenceFactorId(id).subscribe(
+          () => this.cargoOwnerInfluenceFactor = this.cargoOwnerInfluenceFactor.filter(cargoOwnerInfluenceFactor => cargoOwnerInfluenceFactor.id !== id),
           error => this.modalService.open(error.error.message)
-        )
+        ))
       }
     });
   }
 
   onRowEditSave(rowData) {
-    console.log(rowData)
     const cargoOwnerInfluenceFactor: ICargoOwnerInfluenceFactor = {
       id: rowData.id,
       cargoOwnerId: rowData.cargoOwnerId,
       influenceFactorId: rowData.influenceFactorId,
       koef: rowData.koef
     }
-    console.log('cargoOwnerInfluenceFactor', cargoOwnerInfluenceFactor)
-    this.calculationsService.putCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
-      res => console.log(),
+    this.subscriptions.add(this.calculationsService.putCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
+      () => console.log(),
       error => {
         this.modalService.open(error.error.message),
           this.dt.isRowEditing(rowData)
       },
-    )
+    ))
   }
 
   createcargoOwnerInfluenceFactor() {
@@ -124,24 +127,21 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
       influenceFactorId: this.form.controls.influenceFactorId.value.id,
       koef: this.form.controls.koef.value
     }
-    console.log('cargoOwnerInfluenceFactor', cargoOwnerInfluenceFactor)
-    this.calculationsService.postCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
-      // изменение создание
-      res =>  console.log(),
+
+    this.subscriptions.add(this.calculationsService.postCargoOwnerInfluenceFactor(cargoOwnerInfluenceFactor).subscribe(
+      () =>  console.log(),
       error => this.modalService.open(error.error.message),
-      () => {
-        this.factor(cargoOwnerInfluenceFactor.cargoOwnerId)
-      }
-    )
+      () => this.factor(cargoOwnerInfluenceFactor.cargoOwnerId)
+    ))
   }
   factor(id: number) {
     this.loading = true
-    this.calculationsService.getAllFactorCargoId(id)
+    this.subscriptions.add(this.calculationsService.getAllFactorCargoId(id)
       .subscribe(
         res => this.cargoOwnerInfluenceFactor = res,
         error => this.modalService.open(error.error.message),
         () =>  this.loading = false
-      )
+      ))
   }
 
   downAll() {

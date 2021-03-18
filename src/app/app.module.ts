@@ -35,7 +35,6 @@ import {OverlayPanelModule} from 'primeng/overlaypanel';
 import {CalendarModule} from 'primeng/calendar';
 import {RadioButtonModule} from "primeng/radiobutton";
 import { DataExportComponent } from './calculations/data-export/data-export.component';
-import { SummVolumesComponent } from './calculations/summ-volumes/summ-volumes.component';
 import { MathematicalForecastTableComponent } from './calculations/forecast-correspondence/mathematical-forecast-table/mathematical-forecast-table.component';
 import {SidebarModule} from 'primeng/sidebar';
 import { ModalComponent } from './modal/modal.component';
@@ -47,7 +46,6 @@ import {FieldPipe} from "./field.pipe";
 import {MultiSelectModule} from "primeng/multiselect";
 import { TableModule } from 'primeng/table';
 import {InputSwitchModule} from "primeng/inputswitch";
-import { ListShipmentDataComponent } from './initialDate/list-shipment-data/list-shipment-data.component';
 import { CargoNciComponent } from './directory/cargo-nci/cargo-nci.component';
 import { DirectoryComponent } from './directory/directory.component';
 import { InfluenceFactorComponent } from './directory/influence-factor/influence-factor.component';
@@ -107,7 +105,6 @@ const itemRoutesSteps: Routes = [
   {path: 'mathForecast', component: MathForecastComponent},
   {path: 'forecast', component: ForecastCorrespondenceComponent},
   {path: 'payment', component: PaymentComponent},
-  {path: 'summVolumes', component: SummVolumesComponent},
   {path: 'export', component: DataExportComponent},
 ]
 
@@ -146,14 +143,12 @@ registerLocaleData(localeRu, 'ru');
     ForecastCorrespondenceComponent,
     PaymentComponent,
     DataExportComponent,
-    SummVolumesComponent,
     MathematicalForecastTableComponent,
     ModalComponent,
     DataCorrespondenceComponent,
     DataCargoComponent,
     StepsComponent,
     FieldPipe,
-    ListShipmentDataComponent,
     CargoNciComponent,
     DirectoryComponent,
     InfluenceFactorComponent,

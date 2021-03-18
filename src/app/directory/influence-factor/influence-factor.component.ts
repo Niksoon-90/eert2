@@ -1,24 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {IInfluenceNci} from "../../models/calculations.model";
 import {ModalService} from "../../services/modal.service";
 import {CalculationsService} from "../../services/calculations.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
-import {MathForecastCalcService} from "../../services/math-forecast-calc.service";
 import {ConfirmationService} from "primeng/api";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-influence-factor',
   templateUrl: './influence-factor.component.html',
   styleUrls: ['./influence-factor.component.scss']
 })
-export class InfluenceFactorComponent implements OnInit {
+export class InfluenceFactorComponent implements OnInit, OnDestroy {
   cols: any[];
   totalRecords: any;
   influenceNci: IInfluenceNci[];
   form: FormGroup;
   user: IAuthModel;
+  subscriptions: Subscription = new Subscription();
+
   constructor(
     private modalService: ModalService,
     private calculationsService: CalculationsService,
@@ -37,6 +39,11 @@ export class InfluenceFactorComponent implements OnInit {
       { field: 'weight', header: 'Коэффициент ', width: '150px', }
     ]
   }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
   createForm(){
     this.form = new FormGroup({
       name: new FormControl('', [Validators.required]),
@@ -45,10 +52,10 @@ export class InfluenceFactorComponent implements OnInit {
   }
 
   getInfluenceNci(){
-    this.calculationsService.getInfluenceNci().subscribe(
+    this.subscriptions.add(this.calculationsService.getInfluenceNci().subscribe(
       res => this.influenceNci = res,
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
 
   creategetInfluenceNci() {
@@ -56,11 +63,11 @@ export class InfluenceFactorComponent implements OnInit {
       name: this.form.controls.name.value,
       weight: Number(this.form.controls.weight.value)
     }
-    this.calculationsService.postInfluenceNci(createInfluence).subscribe(
-      res => console.log(),
+    this.subscriptions.add(this.calculationsService.postInfluenceNci(createInfluence).subscribe(
+      () => console.log(),
       error => this.modalService.open(error.error.message),
       () => this.getInfluenceNci()
-    )
+    ))
   }
 
   deleteInfluenceNci(id: number, name: string) {
@@ -69,11 +76,11 @@ export class InfluenceFactorComponent implements OnInit {
       header: 'Удаление фактора',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.calculationsService.deleteInfluenceNci(id).subscribe(
-          res => console.log(),
+        this.subscriptions.add(this.calculationsService.deleteInfluenceNci(id).subscribe(
+          () => console.log(),
           error => this.modalService.open(error.error.message),
           () => this.getInfluenceNci()
-        )
+        ))
       }
     });
   }
@@ -91,11 +98,9 @@ export class InfluenceFactorComponent implements OnInit {
       name: rowData.name,
       weight: rowData.weight
     }
-    this.calculationsService.putInfluenceNci(influenceItemNci).subscribe(
-      res => console.log(),
+    this.subscriptions.add(this.calculationsService.putInfluenceNci(influenceItemNci).subscribe(
+      () => console.log(),
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
-
-
 }

@@ -8,54 +8,67 @@
           [baseZIndex]="2"
           [draggable]="false"
           [resizable]="false">
-    <form [formGroup]="dynamicForm" (ngSubmit)="createNewRowShip();">
-      <div class="p-grid p-fluid">
-        <div class="p-col-12 p-md-4">
-          <p-dropdown  [options]="cargoGroupNci" optionLabel="name"  [showClear]="true" formControlName="cargoGroup"   placeholder="Группа груза:"></p-dropdown>
-        </div>
-        <div class="p-col-12 p-md-4">
+  <form [formGroup]="dynamicForm" (ngSubmit)="createNewRowShip();">
+    <div class="p-grid p-fluid">
+      <div class="p-col-12 p-md-4">
+        <p-dropdown [options]="cargoGroupNci" optionLabel="name" [showClear]="true" formControlName="cargoGroup"
+                    placeholder="Группа груза:"></p-dropdown>
+      </div>
+      <div class="p-col-12 p-md-4">
         <span class="p-float-label" style="padding-right: 10px;">
-              <input id="cargoSubGroup" formControlName="cargoSubGroup" type="text" pInputText >
+              <input id="cargoSubGroup" formControlName="cargoSubGroup" type="text" pInputText>
               <label for="cargoSubGroup">Подгруппа груза</label>
           </span>
-        </div>
-        <div class="p-col-12 p-md-4">
-          <p-dropdown  [options]="shipmentTypNci" appendTo="body" optionLabel="name"  [showClear]="true" formControlName="shipmentType"   placeholder="Вид перевозки:"></p-dropdown>
-        </div>
-        <div class="p-col-12 p-md-4">
-          <p-dropdown [options]="primary" appendTo="body" placeholder="Выберете вариант" formControlName="primary"  optionLabel="label"></p-dropdown>
-        </div>
-        <div class="p-col-12 p-md-4">
-          <p-dropdown  [options]="dorogyNci" appendTo="body" optionLabel="name"  [showClear]="true" formControlName="fromRoad"  placeholder="Дорога отправления:" (onChange)="fromRoad()"></p-dropdown>
-        </div>
-        <div class="p-col-12 p-md-4">
-          <p-dropdown  [options]="fromstationNci"  appendTo="body" optionLabel="name" formControlName="fromStation"   placeholder="Станция отправления РФ:" [disabled]="this.dynamicForm.controls.fromRoad.invalid"></p-dropdown>
-        </div>
-        <div class="p-col-12 p-md-4">
-          <p-dropdown  [options]="cargoNci" appendTo="body" optionLabel="name"  [showClear]="true" formControlName="senderName"  placeholder="Грузоотправитель:"></p-dropdown>
-        </div>
-        <div class="p-col-12 p-md-4">
-          <p-dropdown  [options]="dorogyNci" appendTo="body" optionLabel="name"  [showClear]="true" formControlName="toRoad"   placeholder="Дорога назначения:" (onChange)="toRoad()"></p-dropdown>
-        </div>
-        <div class="p-col-12 p-md-4">
-          <p-dropdown  [options]="tostationNci" appendTo="body" optionLabel="name"  [showClear]="true" formControlName="toStation"   placeholder="Станция назначения РФ:"  [disabled]="this.dynamicForm.controls.toRoad.invalid"></p-dropdown>
-        </div>
-        <div class="p-col-12 p-md-4">
-          <p-dropdown  [options]="cargoNci" appendTo="body" optionLabel="name"  [showClear]="true" formControlName="receiverName"   placeholder="Грузополучатель:"></p-dropdown>
-        </div>
-        <ng-container *ngFor="let shipmentYearValuePair of t.controls; let i = index" class="list-group list-group-flush">
-          <div class="p-col-12 p-md-4">
-            <form [formGroup]="shipmentYearValuePair" >
-              <span class="p-float-label" style="padding-right: 10px;">
-                <input id="{{'value'+i}}" formControlName="value" type="number" pInputText >
-                <label for="{{'value'+i}}">{{this.mathematicalForecastContent[0].shipmentYearValuePairs[i].year}}</label>
-              </span>
-            </form>
-          </div>
-        </ng-container>
-        <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary " [disabled]="this.dynamicForm.invalid"></button>
       </div>
-    </form>
+      <div class="p-col-12 p-md-4">
+        <p-dropdown [options]="shipmentTypNci" appendTo="body" optionLabel="name" [showClear]="true"
+                    formControlName="shipmentType" placeholder="Вид перевозки:"></p-dropdown>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <p-dropdown [options]="primary" appendTo="body" placeholder="Выберете вариант" formControlName="primary"
+                    optionLabel="label"></p-dropdown>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <p-dropdown [options]="dorogyNci" appendTo="body" optionLabel="name" [showClear]="true"
+                    formControlName="fromRoad" placeholder="Дорога отправления:" (onChange)="fromRoad()"></p-dropdown>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <p-dropdown [options]="fromstationNci" appendTo="body" optionLabel="name" formControlName="fromStation"
+                    placeholder="Станция отправления РФ:"
+                    [disabled]="this.dynamicForm.controls.fromRoad.invalid"></p-dropdown>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <p-dropdown [options]="cargoNci" appendTo="body" optionLabel="name" [showClear]="true"
+                    formControlName="senderName" placeholder="Грузоотправитель:"></p-dropdown>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <p-dropdown [options]="dorogyNci" appendTo="body" optionLabel="name" [showClear]="true" formControlName="toRoad"
+                    placeholder="Дорога назначения:" (onChange)="toRoad()"></p-dropdown>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <p-dropdown [options]="tostationNci" appendTo="body" optionLabel="name" [showClear]="true"
+                    formControlName="toStation" placeholder="Станция назначения РФ:"
+                    [disabled]="this.dynamicForm.controls.toRoad.invalid"></p-dropdown>
+      </div>
+      <div class="p-col-12 p-md-4">
+        <p-dropdown [options]="cargoNci" appendTo="body" optionLabel="name" [showClear]="true"
+                    formControlName="receiverName" placeholder="Грузополучатель:"></p-dropdown>
+      </div>
+      <ng-container *ngFor="let shipmentYearValuePair of t.controls; let i = index" class="list-group list-group-flush">
+        <div class="p-col-12 p-md-4">
+          <form [formGroup]="shipmentYearValuePair">
+              <span class="p-float-label" style="padding-right: 10px;">
+                <input id="{{'value'+i}}" formControlName="value" type="number" pInputText>
+                <label
+                  for="{{'value'+i}}">{{this.mathematicalForecastContent[0].shipmentYearValuePairs[i].year}}</label>
+              </span>
+          </form>
+        </div>
+      </ng-container>
+      <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary "
+              [disabled]="this.dynamicForm.invalid"></button>
+    </div>
+  </form>
   <ng-template pTemplate="footer">
     <p-button icon="pi pi-check" (click)="closeCreateRowDialog()" label="Закрыть" styleClass="p-button-text"></p-button>
   </ng-template>

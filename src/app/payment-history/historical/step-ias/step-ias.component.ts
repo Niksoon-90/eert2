@@ -27,9 +27,7 @@ export class StepIasComponent implements OnInit {
 
 
   ngOnInit(): void {
-
   }
-
 
   prevPage() {
     this.router.navigate(['payments/match/', this.sessionId, this.nameSession]);

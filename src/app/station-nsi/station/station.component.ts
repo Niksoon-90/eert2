@@ -23,9 +23,8 @@ export class StationComponent implements OnInit, OnDestroy {
   uploadFileNsi: string
   displayPosition: boolean;
   position: string;
+  subscriptions: Subscription = new Subscription();
 
-  delStationSub: Subscription
-  stationAllSub: Subscription
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -50,12 +49,7 @@ export class StationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.stationAllSub) {
-      this.stationAllSub.unsubscribe()
-    }
-    if (this.delStationSub) {
-      this.delStationSub.unsubscribe()
-    }
+    this.subscriptions.unsubscribe();
   }
 
   createForm() {
@@ -68,18 +62,18 @@ export class StationComponent implements OnInit, OnDestroy {
   }
 
   getSubjectNci() {
-    this.shipmentsService.getSubject()
+    this.subscriptions.add(this.shipmentsService.getSubject()
       .subscribe(
         res => this.subjectNci = res.sort((a, b) => a.name > b.name ? 1 : -1),
         error => this.modalService.open(error.error.message)
-      )
+      ))
   }
 
   getDorogyNci() {
-    this.shipmentsService.getDictionaryDictionaryRailway().subscribe(
+    this.subscriptions.add(this.shipmentsService.getDictionaryDictionaryRailway().subscribe(
       res => this.dorogyNci = res.sort((a, b) => a.name > b.name ? 1 : -1),
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
 
 
@@ -100,10 +94,10 @@ export class StationComponent implements OnInit, OnDestroy {
       transmissionPoint: rowData.transmissionPoint,
       type: rowData.type
     }
-    this.shipmentsService.putDictionaryStation(station).subscribe(
+    this.subscriptions.add(this.shipmentsService.putDictionaryStation(station).subscribe(
       res => console.log(),
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
 
   onRowEditCancel() {
@@ -116,12 +110,12 @@ export class StationComponent implements OnInit, OnDestroy {
       header: 'Удаление станции',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.delStationSub = this.shipmentsService.deleteDictionaryStation(id).subscribe(
+        this.subscriptions.add(this.shipmentsService.deleteDictionaryStation(id).subscribe(
           () => {
             this.stationNci = this.stationNci.filter(station => station.code !== id)
           },
           error => this.modalService.open(error.error.message)
-        )
+        ))
       }
     });
   }
@@ -138,21 +132,21 @@ export class StationComponent implements OnInit, OnDestroy {
       transmissionPoint: null,
       type: null
     }
-    this.shipmentsService.postDictionaryDictionaryStation(station).subscribe(
-      res => console.log(),
+    this.subscriptions.add(this.shipmentsService.postDictionaryDictionaryStation(station).subscribe(
+      () => console.log(),
       error => this.modalService.open(error.error.message),
       () => {
         this.form.reset(),
           this.getStationNci()
       }
-    )
+    ))
   }
 
   getStationNci() {
-    this.stationAllSub = this.shipmentsService.getDictionaryDictionaryStation().subscribe(
+    this.subscriptions.add(this.shipmentsService.getDictionaryDictionaryStation().subscribe(
       res => this.stationNci = res,
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
 
   updateStationNci(event: string) {

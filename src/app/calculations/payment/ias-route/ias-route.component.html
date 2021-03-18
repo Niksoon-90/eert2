@@ -1,6 +1,10 @@
 <div class="stepsdemo-content">
+  <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать2"
+          class="p-button-success p-mr-2 p-button p-component" (click)="exportToExcelTwo()"
+          style="margin-right: 0.5em;" ></button><button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать2"
+          class="p-button-success p-mr-2 p-button p-component" (click)="testex()"
+          style="margin-right: 0.5em;" ></button>
   <p-card>
-
     <ng-template pTemplate="content">
       <ng-container *ngIf="this.user.authorities.includes('P_P_p10') === true">
         <div>
@@ -78,12 +82,13 @@
               <ng-template pTemplate="caption">
                 <div class="p-grid p-ai-center vertical-container">
                   <ng-container *ngIf="this.downloadIasLoadingCorrespondences === false; else DownloadLoading">
+<!--                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать"-->
+<!--                            class="p-button-success p-mr-2 p-button p-component" (click)="downloadIasCorrespondences()"-->
+<!--                            style="margin-right: 0.5em;"></button>-->
                     <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать"
-                            class="p-button-success p-mr-2 p-button p-component" (click)="downloadIasCorrespondences()"
-                            style="margin-right: 0.5em;"></button>
-                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать2"
                             class="p-button-success p-mr-2 p-button p-component" (click)="exportToExcelOne()"
                             style="margin-right: 0.5em;" ></button>
+
 
                   </ng-container>
                   <ng-template #DownloadLoading>

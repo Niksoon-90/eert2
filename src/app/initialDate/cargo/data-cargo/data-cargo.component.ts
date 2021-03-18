@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ISession, IShipmentPagination} from "../../../models/shipmenst.model";
 import {ShipmentsService} from "../../../services/shipments.service";
 import {ModalService} from "../../../services/modal.service";
@@ -7,6 +7,7 @@ import {AuthenticationService} from "../../../services/authentication.service";
 import {map} from "rxjs/operators";
 import {ConfirmationService} from "primeng/api";
 import {HttpResponse} from "@angular/common/http";
+import {Subscription} from "rxjs";
 
 
 @Component({
@@ -14,7 +15,7 @@ import {HttpResponse} from "@angular/common/http";
   templateUrl: './data-cargo.component.html',
   styleUrls: ['./data-cargo.component.scss']
 })
-export class DataCargoComponent implements OnInit {
+export class DataCargoComponent implements OnInit, OnDestroy {
   cargoSession: ISession[];
   first = 0;
   rows = 25;
@@ -26,15 +27,13 @@ export class DataCargoComponent implements OnInit {
   user: IAuthModel
   sessionId: number = 0
   doenloadItemId: number [] = []
-
+  subscriptions: Subscription = new Subscription();
 
   constructor(
-
     private shipmentsService: ShipmentsService,
     private modalService: ModalService,
     private authenticationService: AuthenticationService,
     private confirmationService: ConfirmationService,
-
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -43,6 +42,9 @@ export class DataCargoComponent implements OnInit {
     this.chekedCargoType()
   }
 
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
 
   next() {
     this.first = this.first + this.rows;
@@ -53,20 +55,18 @@ export class DataCargoComponent implements OnInit {
     this.chekedCargoType();
   }
 
-
   getCargoSessionSession(type: string) {
     this.loading = true;
     if (this.user.authorities.includes('P_P_p5') === true) {
-      this.shipmentsService.getClaimSession(type).subscribe(
+      this.subscriptions.add(this.shipmentsService.getClaimSession(type).subscribe(
         res => {
           this.cargoSession = res;
-          console.log('res', res)
         },
         error => this.modalService.open(error.error.message),
         () => this.loading = false
-      )
+      ))
     } else {
-      this.shipmentsService.getClaimSession(type)
+      this.subscriptions.add(this.shipmentsService.getClaimSession(type)
         .pipe(
           map((data: ISession[]) => {
             if (data.length !== 0) {
@@ -78,11 +78,10 @@ export class DataCargoComponent implements OnInit {
         .subscribe(
           res => {
             this.cargoSession = res;
-            console.log('res', res)
           },
           error => this.modalService.open(error.error.message),
           () => this.loading = false
-        )
+        ))
     }
   }
 
@@ -98,16 +97,13 @@ export class DataCargoComponent implements OnInit {
 
   openShipItemSession(id: any) {
     this.sessionId = id
-    this.shipmentsService.getShipmetsPaginations(id, 0).subscribe(
+    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(id, 0).subscribe(
       res => {
         this.mathematicalForecastTable = res
         this.showDialog();
       },
-      error => {
-        this.modalService.open(error.error.message);
-      },
-      () => console.log('sdsds')
-    )
+      error => this.modalService.open(error.error.message)
+    ))
   }
 
   showDialog() {
@@ -133,20 +129,21 @@ export class DataCargoComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.loading = true
-        this.shipmentsService.deleteShipSession(id).subscribe(
+        this.subscriptions.add(this.shipmentsService.deleteShipSession(id).subscribe(
           () => this.chekedCargoType(),
           error => {
             this.modalService.open(error.error.message);
             this.loading = false;
           },
           () => this.loading = false
-        )
+        ))
       }
     });
   }
+
   downloadAbsentcargo(id: number) {
     this.doenloadItemId.push(id)
-    this.shipmentsService.getDownloadAbsentcargo(id).subscribe(
+    this.subscriptions.add(this.shipmentsService.getDownloadAbsentcargo(id).subscribe(
       (response: HttpResponse<Blob>) => {
         console.log(response)
         let filename: string = 'absentcargo.xlsx'
@@ -161,9 +158,9 @@ export class DataCargoComponent implements OnInit {
       async (error) => {
         const message = JSON.parse(await error.error.text()).message;
         this.modalService.open(message)
-        this.doenloadItemId =  this.doenloadItemId.filter(item => item !== id)
+        this.doenloadItemId = this.doenloadItemId.filter(item => item !== id)
       },
-      () =>  this.doenloadItemId =  this.doenloadItemId.filter(item => item !== id)
-    )
+      () => this.doenloadItemId = this.doenloadItemId.filter(item => item !== id)
+    ))
   }
 }

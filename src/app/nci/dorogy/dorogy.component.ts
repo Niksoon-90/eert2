@@ -6,6 +6,7 @@ import {AuthenticationService} from "../../services/authentication.service";
 import {ShipmentsService} from "../../services/shipments.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ConfirmationService} from "primeng/api";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-dorogy',
@@ -19,6 +20,7 @@ export class DorogyComponent implements OnInit {
   dorogyNci: IDorogyNci[]
   user: IAuthModel
   form: FormGroup
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     public authenticationService: AuthenticationService,
@@ -39,6 +41,10 @@ export class DorogyComponent implements OnInit {
     ]
   }
 
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
   createForm() {
     this.form = new FormGroup({
       name: new FormControl('', [Validators.required]),
@@ -54,13 +60,13 @@ export class DorogyComponent implements OnInit {
         code: this.form.controls.code.value,
         shortname: this.form.controls.shortname.value
       }
-      this.shipmentsService.postDictionaryRailway(neDor).subscribe(
-        res => console.log(),
+      this.subscriptions.add(this.shipmentsService.postDictionaryRailway(neDor).subscribe(
+        () => console.log(),
         error => this.modalService.open(error.error.message),
         () => {
             this.getDorogyNci()
         }
-      )
+      ))
     }else{
       this.modalService.open('Не все поля заполнены!')
     }
@@ -76,17 +82,17 @@ export class DorogyComponent implements OnInit {
       code: rowData.code,
       shortname: rowData.shortname
     }
-    this.shipmentsService.putDictionaryRailway(dorogyNci).subscribe(
-      res => console.log(),
+    this.subscriptions.add(this.shipmentsService.putDictionaryRailway(dorogyNci).subscribe(
+      () => console.log(),
       error => this.modalService.open(error.error.message),
       () => this.getDorogyNci()
-    )
+    ))
   }
   getDorogyNci() {
-    this.shipmentsService.getDictionaryDictionaryRailway().subscribe(
+    this.subscriptions.add(this.shipmentsService.getDictionaryDictionaryRailway().subscribe(
       res =>  this.dorogyNci =res,
       error => this.modalService.open(error.error.message),
-    )
+    ))
   }
 
   onRowEditCancel() {
@@ -99,11 +105,11 @@ export class DorogyComponent implements OnInit {
       header: 'Удаление дороги',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.shipmentsService.deleteDictionaryRailway(id).subscribe(
-          res => console.log(),
+        this.subscriptions.add(this.shipmentsService.deleteDictionaryRailway(id).subscribe(
+          () => console.log(),
           error => this.modalService.open(error.error.message),
           () => this.getDorogyNci()
-        )
+        ))
       }
     });
   }

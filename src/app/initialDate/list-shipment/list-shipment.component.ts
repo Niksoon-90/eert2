@@ -5,10 +5,9 @@ import {ShipmentsService} from "../../services/shipments.service";
 import {IShipment} from "../../models/shipmenst.model";
 import {IAuthModel} from "../../models/auth.model";
 import {ConfirmationService, LazyLoadEvent} from "primeng/api";
-import {Subscription} from "rxjs";
-import {ICargoNci} from "../../models/calculations.model";
 import {CalculationsService} from "../../services/calculations.service";
 import {IShipmentInfo, TestService} from "../../services/test.service";
+import {Subscription} from "rxjs";
 
 
 @Component({
@@ -16,7 +15,7 @@ import {IShipmentInfo, TestService} from "../../services/test.service";
   templateUrl: './list-shipment.component.html',
   styleUrls: ['./list-shipment.component.scss'],
 })
-export class ListShipmentComponent implements OnInit, OnChanges {
+export class ListShipmentComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() mathematicalForecastTable;
 
@@ -45,6 +44,7 @@ export class ListShipmentComponent implements OnInit, OnChanges {
   filters: string = ''
   selectedPrimery: any;
   filterTableEvant: any
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     private modalService: ModalService,
@@ -59,13 +59,17 @@ export class ListShipmentComponent implements OnInit, OnChanges {
 
 
   ngOnChanges() {
-    this.testService.getValueShipmentInfo().subscribe(res => this.shipmenNewtInfo = res)
+    this.subscriptions.add(this.testService.getValueShipmentInfo().subscribe(res => this.shipmenNewtInfo = res))
   }
 
   ngOnInit(): void {
     this.mathematicalForecastContent = this.mathematicalForecastTable.content;
     this.totalRecords = this.mathematicalForecastTable.totalElements
     this.createColumnTable();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   createColumnTable() {
@@ -159,7 +163,7 @@ export class ListShipmentComponent implements OnInit, OnChanges {
   }
 
   parseFiltersYears(name: string, value: string) {
-    if(value.match(/^[><=]/)){
+    if (value.match(/^[><=]/)) {
       return value[0] === '=' ? this.filters = ',' + name + ':' + value.trim().slice(1) : this.filters = ',' + name + value
     }
     if (value.search('-') !== -1) {
@@ -181,14 +185,11 @@ export class ListShipmentComponent implements OnInit, OnChanges {
     if (Object.keys(event.filters).length !== 0) {
       for (let i = 0; i < Object.keys(event.filters).length; i++) {
         this.filterFieldHeaders(Object.keys(event.filters)[i], Object.values(event.filters[Object.keys(event.filters)[i]])[0].toString());
-        console.log(this.filters)
         resultFilterUrl.push(this.filters)
       }
     }
     event.sortField === 'primary' ? sortField = 'isPrimary' : sortField = event.sortField
     event.sortOrder === 1 ? sortOrder = 'asc' : sortOrder = 'desc'
-
-    console.log('сортировка по полю: ', event.sortField)
     this.filterTableEvant = {
       sessionId: this.sessionId,
       currentPage: currentPage,
@@ -197,10 +198,9 @@ export class ListShipmentComponent implements OnInit, OnChanges {
       sortOrder: sortOrder,
       resultFilterUrl: resultFilterUrl.join('')
     }
-    this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
+    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
       .subscribe(
         res => {
-          console.log(res)
           res === null ? this.mathematicalForecastContent = [] : this.mathematicalForecastContent = res.content
           res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
         },
@@ -212,11 +212,12 @@ export class ListShipmentComponent implements OnInit, OnChanges {
           this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
           this.summFooter(this.sessionId)
         }
-      )
+      ))
   }
+
   shipmentPagination() {
     this.loadingTable = true
-    this.shipmentsService.getShipmetsPaginations(this.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl)
+    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl)
       .subscribe(
         res => {
           res === null ? this.mathematicalForecastContent = [] : this.mathematicalForecastContent = res.content
@@ -230,7 +231,7 @@ export class ListShipmentComponent implements OnInit, OnChanges {
           this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
           this.summFooter(this.sessionId)
         }
-      )
+      ))
   }
 
   colorYears(rowData, col: any) {
@@ -253,11 +254,11 @@ export class ListShipmentComponent implements OnInit, OnChanges {
   }
 
   onRowEditSave(rowData) {
-    this.shipmentsService.putShipments(rowData).subscribe(
-      res => (console.log('Сохранение успешно')),
+    this.subscriptions.add(this.shipmentsService.putShipments(rowData).subscribe(
+      () => console.log('Сохранение успешно'),
       error => this.modalService.open(error.error.message),
       () => this.summFooter(this.sessionId)
-    )
+    ))
   }
 
   onRowEditCancel() {
@@ -270,8 +271,7 @@ export class ListShipmentComponent implements OnInit, OnChanges {
 
   updateListShipmentTable(event: boolean) {
     if (event === true) {
-      console.log('this.shipmenNewtInfo', this.shipmenNewtInfo)
-      this.shipmentsService.getShipmetsPaginations(this.filterTableEvant.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl)
+      this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.filterTableEvant.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl)
         .subscribe(
           res => {
             console.log(res)
@@ -286,18 +286,18 @@ export class ListShipmentComponent implements OnInit, OnChanges {
             this.loadingTable = false,
               this.summFooter(this.filterTableEvant.sessionId)
           }
-        )
+        ))
     }
   }
 
   summFooter(sessionId: number) {
-    this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
+    this.subscriptions.add(this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
       res => {
         console.log(res)
         this.massSummYear = res
       },
       error => this.modalService.open(error.error.message)
-    )
+    ))
   }
 
   deleteShipments(id: number) {
@@ -306,11 +306,11 @@ export class ListShipmentComponent implements OnInit, OnChanges {
       header: 'Удаление!',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.shipmentsService.deleteShipment(id).subscribe(
+        this.subscriptions.add(this.shipmentsService.deleteShipment(id).subscribe(
           () => console.log(),
           error => this.modalService.open(error.message),
           () => this.shipmentPagination()
-        )
+        ))
       }
     });
   }

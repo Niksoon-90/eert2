@@ -1,4 +1,4 @@
-import {Component, OnChanges, OnInit} from '@angular/core';
+import {Component, OnChanges, OnDestroy, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {ForecastingModelService} from "../../services/forecasting-model.service";
 import {CalculationsService} from "../../services/calculations.service";
@@ -9,6 +9,7 @@ import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IMacroPokModel, IMultipleMakpok} from "../../models/macroPok.model";
 import {HttpResponse} from "@angular/common/http";
+import {Subscription} from "rxjs";
 
 
 @Component({
@@ -16,7 +17,7 @@ import {HttpResponse} from "@angular/common/http";
   templateUrl: './math-forecast.component.html',
   styleUrls: ['./math-forecast.component.scss']
 })
-export class MathForecastComponent implements OnInit, OnChanges {
+export class MathForecastComponent implements OnInit, OnChanges, OnDestroy {
   mathematicalForecastTable: ICalculatingPredictiveRegression[];
   lastCalculatedVolumesTotal: number[];
   lastGroupVolumesByYearsTotal: number[];
@@ -31,6 +32,8 @@ export class MathForecastComponent implements OnInit, OnChanges {
   macroIndexesIds: number[]
   filterSelectedMacroType: boolean = false
   loadingTableMacroPokList: boolean = false
+  subscriptions: Subscription = new Subscription();
+
   constructor(
     private router: Router,
     public forecastModelService: ForecastingModelService,
@@ -50,9 +53,13 @@ export class MathForecastComponent implements OnInit, OnChanges {
     this.getMacroPokList();
   }
 
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
   getMacroPokList() {
     this.loadingTableMacroPokList = true
-    this.calculationsService.getMacroPokList(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
+    this.subscriptions.add(this.calculationsService.getMacroPokList(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'])
       .subscribe(
         res => {
           res.length === 0 ? this.macroPokList = [] : this.macroPokList = res
@@ -62,12 +69,11 @@ export class MathForecastComponent implements OnInit, OnChanges {
           this.loadingTableMacroPokList = false
         },
         () => this.loadingTableMacroPokList = false
-      )
+      ))
   }
 
   createTable(macPokId) {
-    console.log('macPokId2', macPokId)
-    this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'], this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'], macPokId)
+    this.subscriptions.add(this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'], this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'], macPokId)
       .pipe(
         map(data => {
           const transformedData = Object.keys(data).map(key => Object.assign(data[key], {id: Math.random() * 1000000}));
@@ -75,28 +81,22 @@ export class MathForecastComponent implements OnInit, OnChanges {
         })
       )
       .subscribe(
-        res => {
-          console.log('res', res);
-          res.length === 0 ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res
-        },
+        res =>  res.length === 0 ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res,
         error => this.modalService.open(error.error.message),
         () => {
           this.calculateLastTotal()
           this.regressionMultiMetrics()
         }
-      )
-
+      ))
   }
 
   regressionMultiMetrics() {
-    this.calculationsService.getRegressionMetrics(this.forecastModelService.getTicketInformation().stepOne.Session['id'])
+    this.subscriptions.add(this.calculationsService.getRegressionMetrics(this.forecastModelService.getTicketInformation().stepOne.Session['id'])
       .subscribe(
-        res => {
-          this.macroPokListReg = res
-        },
+        res => this.macroPokListReg = res,
         error => this.modalService.open(error.error.message),
         () => this.tbViewRegressionMultiMetrics = false
-      )
+      ))
   }
 
 
@@ -122,16 +122,16 @@ export class MathForecastComponent implements OnInit, OnChanges {
   }
 
   onRowEditInit(item) {
-    console.log(item)
+
   }
 
   onRowEditSave(item) {
     for (let i of item.forecastValues) {
-      this.calculationsService.putUpdateMacroForecast(i.id, i.value).subscribe(
-        res => console.log(),
+      this.subscriptions.add(this.calculationsService.putUpdateMacroForecast(i.id, i.value).subscribe(
+        () => console.log(),
         error => this.modalService.open(error.error.message),
         () => this.calculateLastTotal()
-      )
+      ))
     }
   }
 
@@ -159,15 +159,13 @@ export class MathForecastComponent implements OnInit, OnChanges {
     if (this.checkedAutoRegression === false && this.selectedMacro.length === 0) {
       this.modalService.open('Выберите  показатель или разрешите авторегрессию!')
     } else {
-      console.log('macPokId', macPokId)
       this.createTable(macPokId);
-
     }
   }
 
 
   multipleDownload() {
-    this.calculationsService.getDownloadMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id']).subscribe(
+    this.subscriptions.add(this.calculationsService.getDownloadMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id']).subscribe(
       (response: HttpResponse<Blob>) => {
         let filename: string = 'multiple_regression_report.xlsx'
         let binaryData = [];
@@ -182,23 +180,21 @@ export class MathForecastComponent implements OnInit, OnChanges {
         const message = JSON.parse(await error.error.text()).message;
         this.modalService.open(message)
       }
-    )
+    ))
   }
 
   optionalCalculatedMakro() {
     this.loadingTableMacroPokList = true
     this.getMacroPokList()
-    this.calculationsService.getOptimalMacro(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'])
+    this.subscriptions.add(this.calculationsService.getOptimalMacro(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'])
       .subscribe(
-        res => {
-          this.macroIndexesIds = res.macroIndexesIds
-        },
+        res => this.macroIndexesIds = res.macroIndexesIds,
         error => {
           this.modalService.open(error.error.message)
             this.loadingTableMacroPokList = false
         },
         () => this.searchIdMacro()
-      )
+      ))
   }
 
   searchIdMacro() {

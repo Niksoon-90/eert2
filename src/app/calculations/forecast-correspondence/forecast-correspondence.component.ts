@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {ISelectMethodUsers} from "../../models/calculations.model";
 import {ForecastingModelService} from '../../services/forecasting-model.service';
@@ -8,13 +8,14 @@ import {ISession} from "../../models/shipmenst.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
 import {ShipmentsService} from "../../services/shipments.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-forecast-correspondence',
   templateUrl: './forecast-correspondence.component.html',
   styleUrls: ['./forecast-correspondence.component.scss']
 })
-export class ForecastCorrespondenceComponent implements OnInit {
+export class ForecastCorrespondenceComponent implements OnInit, OnDestroy {
 
   methodUsers: ISelectMethodUsers[];
   stepThree: any;
@@ -31,6 +32,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
   settlemenType: string = '';
   calculated: boolean = false
   loadingHistoryShipment: boolean = false;
+  subscriptions: Subscription = new Subscription();
 
   constructor(
     private router: Router,
@@ -84,25 +86,25 @@ export class ForecastCorrespondenceComponent implements OnInit {
     if (this.forecastModelService.getTicketInformation().stepOne.Session !== null) {
       this.sessionId = this.forecastModelService.getTicketInformation().stepOne.Session['id']
       this.additionalInfo(this.forecastModelService.ticketInformation.stepOne.Session['historicalYears']);
-      //TODO правки
       this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
     } else {
-      //TODO правки
       this.stepOnecalcYearsNumber = 0
       this.sessionId = this.forecastModelService.ticketInformation.stepThree.sessionId;
       this.calculated = true;
       this.loading = true
       this.corresponTiers()
     }
-    //TODO правки
-   // this.stepOnecalcYearsNumber = this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']
+
     this.stepThree = this.forecastModelService.ticketInformation.stepThree;
     this.stepThree.forecastingStrategySustainable = this.methodUsers[0]
     this.stepThree.forecastingStrategySmall = this.methodUsers[1]
 
   }
 
-  //TODO FAIL!
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
   additionalInfo(items) {
     const res = items.split(',')
     for (let item of res) {
@@ -126,11 +128,10 @@ export class ForecastCorrespondenceComponent implements OnInit {
   calculateForecastingStrategyAll() {
     if(this.checkStrategyType() === true){
       this.loadingHistoryShipment = true
-      //this.disableCorrelation = false
       this.calculated === true
       this.loading = false;
       this.settlemenType = 'payment'
-      this.calculationsService.getGeneralmethod2(this.sessionId,
+      this.subscriptions.add(this.calculationsService.getGeneralmethod2(this.sessionId,
         this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
         this.forecastModelService.getTicketInformation().stepOne.nameNewShip,
         this.stepThree.forecastingStrategySustainable.type,
@@ -142,7 +143,6 @@ export class ForecastCorrespondenceComponent implements OnInit {
       )
         .subscribe(
           res => {
-            console.log('tyt', res)
             this.mathematicalForecastTableSession = res
           },
           error => {
@@ -162,7 +162,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
             this.disableCorrelation = false
             this.forecastModelService.ticketInformation.stepThree.calculated = true
           }
-        )
+        ))
     }
   }
   clearForecastFiscalYear(){
@@ -171,22 +171,19 @@ export class ForecastCorrespondenceComponent implements OnInit {
   }
 
   correlation() {
-    console.log(this.sessionId)
     this.loading = false;
     this.settlemenType = 'correlation'
-    this.calculationsService.getCorrelation(this.sessionId)
+    this.subscriptions.add(this.calculationsService.getCorrelation(this.sessionId)
       .subscribe(
-        res => {
-          console.log(res)
-        },
+        () => console.log(),
         error => {
-          this.modalService.open(error.error.message),
-            this.loading = true
+          this.modalService.open(error.error.message)
+          this.loading = true
         },
         () => {
           this.loading = true
         }
-      )
+      ))
   }
 
 
@@ -200,12 +197,9 @@ export class ForecastCorrespondenceComponent implements OnInit {
     this.forecastModelService.getTicketInformation().stepOne.oilCargo === null ? oilCargo = null : oilCargo = this.forecastModelService.getTicketInformation().stepOne.oilCargo['id'];
     this.forecastModelService.getTicketInformation().stepOne.ore === null ? ore = null : ore = this.forecastModelService.getTicketInformation().stepOne.ore['id'];
     this.forecastModelService.getTicketInformation().stepOne.correspondenceSession === null ? correspondenceSession = null : correspondenceSession = this.forecastModelService.getTicketInformation().stepOne.correspondenceSession['id'];
-
-    this.calculationsService.getPerspective(this.sessionId, metallurgy, oilCargo, ore, correspondenceSession)
+    this.subscriptions.add(this.calculationsService.getPerspective(this.sessionId, metallurgy, oilCargo, ore, correspondenceSession)
       .subscribe(
-        res => {
-          console.log(res)
-        },
+        () => console.log(),
         error => {
           this.modalService.open(error.error.message),
             this.loading = true
@@ -214,7 +208,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
           this.loading = true;
           this.disableCorrelation = !this.disableCorrelation
         }
-      )
+      ))
   }
   transferToIAS(type: string){
     let idTransferToIAS = 0;
@@ -233,19 +227,17 @@ export class ForecastCorrespondenceComponent implements OnInit {
     }
 
 
-    this.calculationsService.postDownloadIASData(type,idTransferToIAS,  this.sessionId).subscribe(
-      res => {
-        console.log('из ИАС МоногрузЫ', res)
-      },
+    this.subscriptions.add(this.calculationsService.postDownloadIASData(type,idTransferToIAS,  this.sessionId).subscribe(
+      () => console.log(),
       error => {
-        this.modalService.open(error.error.message),
-          this.loading = true
+        this.modalService.open(error.error.message)
+        this.loading = true
       },
       () => {
         this.loading = true;
         this.disableCorrelation = false;
       }
-    )
+    ))
   }
   corresponTiers() {
     let typeCargo = ''
@@ -267,10 +259,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
       this.modalService.open('Вы забыли выбрать на первом шаге Файл с заявками грузоотправителей!')
     } else {
       this.loading = false;
-      this.calculationsService.getCargoOwnerSessionId(this.forecastModelService.ticketInformation.stepOne.cargoSessionSender['id'], this.sessionId).subscribe(
-        res => {
-          console.log(res)
-        },
+      this.subscriptions.add(this.calculationsService.getCargoOwnerSessionId(this.forecastModelService.ticketInformation.stepOne.cargoSessionSender['id'], this.sessionId).subscribe(
+        () => console.log(),
         error => {
           this.modalService.open(error.error.message),
             this.loading = true
@@ -278,7 +268,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
         () => {
           this.loading = true
         }
-      )
+      ))
     }
   }
 
@@ -287,10 +277,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
       this.modalService.open('Вы забыли выбрать на первом шаге Файл с заявками грузополучателей!')
     } else {
       this.loading = false;
-      this.calculationsService.getCargoOwnerSessionId(this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver['id'], this.sessionId).subscribe(
-        res => {
-          console.log(res)
-        },
+      this.subscriptions.add(this.calculationsService.getCargoOwnerSessionId(this.forecastModelService.ticketInformation.stepOne.cargoSessionReceiver['id'], this.sessionId).subscribe(
+        () => console.log(),
         error => {
           this.modalService.open(error.error.message),
             this.loading = true
@@ -298,13 +286,13 @@ export class ForecastCorrespondenceComponent implements OnInit {
         () => {
           this.loading = true
         }
-      )
+      ))
     }
   }
 
   nextPage() {
-    this.shipmentsService.putTransformFile(this.sessionId, true).subscribe(
-      res => console.log(),
+    this.subscriptions.add(this.shipmentsService.putTransformFile(this.sessionId, true).subscribe(
+      () => console.log(),
       error => {
         this.modalService.open(error.error.message),
           this.loading = true
@@ -313,7 +301,7 @@ export class ForecastCorrespondenceComponent implements OnInit {
         this.forecastModelService.ticketInformation.stepThree.forecastingStrategy = this.stepThree.forecastingStrategy;
         this.router.navigate(['steps/payment']);
       }
-    )
+    ))
   }
 
   prevPage() {
@@ -340,7 +328,8 @@ export class ForecastCorrespondenceComponent implements OnInit {
   toApplyOptimalShipment() {
     this.loadingHistoryShipment = true
     this.settlemenType = 'payment'
-    this.shipmentsService.getCopySissionShipments(this.user.fio, this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],  this.user.user,this.forecastModelService.getTicketInformation().stepOne.nameNewShip, this.sessionId ).subscribe(
+    this.subscriptions.add(this.shipmentsService.getCopySissionShipments(this.user.fio, this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],  this.user.user,this.forecastModelService.getTicketInformation().stepOne.nameNewShip, this.sessionId )
+      .subscribe(
       res => {
         this.sessionId = Number(res)
       }, error => {
@@ -357,8 +346,6 @@ export class ForecastCorrespondenceComponent implements OnInit {
         this.calculated = true
         this.loading = true
       }
-    )
+    ))
   }
-
-
 }
