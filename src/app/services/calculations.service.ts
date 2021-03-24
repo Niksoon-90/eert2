@@ -5,7 +5,7 @@ import {Observable} from "rxjs";
 import {
   ICalculatingPredictiveRegression,
   ICargoNci,
-  ICargoOwnerInfluenceFactor,
+  ICargoOwnerInfluenceFactor, IIasForecast,
   IInfluenceNci
 } from "../models/calculations.model";
 import {IMongoObject, MonoCargoSystemsModel} from "../models/mono-cargo-systems.model";
@@ -133,6 +133,15 @@ export class CalculationsService {
 
   getIasForecastId(id: number): Observable<ICorrespondencesIiasForecast[]> {
     return this.http.get<ICorrespondencesIiasForecast[]>(this.urlCalc + `api/external/routes/correspondences/${id}`)
+  }
+  getIasForecasCleartId(id: number): Observable<IIasForecast[]> {
+    return this.http.get<IIasForecast[]>(this.urlCalc + `api/external/routes/forecastClear/${id}`)
+  }
+  getIasForecasCleartIdCoeff(id: number) {
+    return this.http.get(this.urlCalc + `api/external/routes/coef?sessionId=${id}`)
+  }
+  getIasForecasCleartIdAnton(id: number) {
+    return this.http.get(this.urlCalc + `api/external/routes/forecastAggregate/${id}`)
   }
 
   getPathRequest(iasForecastId: number, iasCorrespondenceId: number): Observable<IPathRequest[]> {

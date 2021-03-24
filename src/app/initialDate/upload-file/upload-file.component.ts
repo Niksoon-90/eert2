@@ -162,6 +162,10 @@ export class UploadFileComponent implements OnInit, OnDestroy {
           this.clearForm();
           this.modalService.open(error.error.message)
         }, () => {
+          if (this.initialDateType === 'cargoUpload'){
+            this.clearForm();
+            this.showModalDialog();
+          }
           if (this.initialDateType === 'shipmentsUpload') {
             this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(this.fileId).subscribe(
               () => console.log(),

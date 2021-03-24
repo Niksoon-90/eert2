@@ -17,6 +17,7 @@ import {UploadFileService} from "../../../../services/upload-file.service";
 import {ShipmentsService} from "../../../../services/shipments.service";
 import {HttpResponse} from "@angular/common/http";
 import {ExportExcelService} from "../../../../services/export-excel.service";
+import {IIasForecast} from "../../../../models/calculations.model";
 
 @Component({
   selector: 'app-payment-historical-ias',
@@ -60,6 +61,9 @@ export class PaymentHistoricalIasComponent implements OnInit, OnDestroy {
   footersumYearsTwoTable = []
   dataForExcel = [];
   subscriptions: Subscription = new Subscription();
+  dataForExcelTwo: IIasForecast[]
+  dataForExcelTwoMain: IIasForecast[]
+  dataForExcelTwoSmall: IIasForecast[]
 
   constructor(
     private router: Router,
@@ -211,6 +215,116 @@ export class PaymentHistoricalIasComponent implements OnInit, OnDestroy {
       }
       this.ete.exportExcelOne(reportData);
     }
+  }
+
+  testex() {
+    let testdata
+    this.subscriptions.add(this.calculationsService.getIasForecasCleartIdAnton(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
+      res => testdata = res,
+      error => this.modalService.open(error.error.message),
+      () => this.ete.testex(testdata),
+    ))
+  }
+
+  exportToExcelTwo(id: number, name: string) {
+    this.subscriptions.add(this.calculationsService.getIasForecasCleartId(id).subscribe(
+      res => this.dataForExcelTwo = res,
+      error => this.modalService.open(error.error.message),
+      () => {
+        //Верхняя часть таблицы
+        let topHeaderInfo = `Поучастковая загрузка сети - ${name} - Расчет выполнен ${new Date()}`
+        let headersTable = ''
+        //Заголовки группы груза (нач участка, конец)
+        let headerRodGr = []
+        //Id для проверки на совпадение
+        let rodGrId = []
+        this.dataForExcelTwo.filter(el => el.rod_gr !== null && rodGrId.includes(el.rod_gr) === false ? (rodGrId.push(el.rod_gr), headerRodGr.push(el.rod_gr_name)) : null)
+
+        let reportData = {
+          title: `oneTable`,
+          data: this.dataForExcelTwo,
+          headers: headersTable,
+          topHeaderInfo: topHeaderInfo,
+          headerRodGr: headerRodGr
+        }
+        this.ete.exportExcelTwo(reportData);
+      }
+    ))
+  }
+
+  testttt() {
+    this.subscriptions.add(this.calculationsService.getIasForecasCleartId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
+      res => this.dataForExcelTwoMain = res,
+      error => this.modalService.open(error.error.message),
+      () => {
+        this.subscriptions.add(this.calculationsService.getIasForecasCleartId(this.form.controls.smallCorrespondence.value.var_id).subscribe(
+          res => this.dataForExcelTwoSmall = res,
+          error => this.modalService.open(error.error.message),
+          () => {
+            this.exportSmallMain(this.dataForExcelTwoMain, this.dataForExcelTwoSmall)
+          }
+          )
+        )
+      }
+      )
+    )
+  }
+
+  exportSmallMain(main: IIasForecast[], small: IIasForecast[]) {
+
+    let indexCoeff = {}
+    this.subscriptions.add(this.calculationsService.getIasForecasCleartIdCoeff(this.sessionId).subscribe(
+      res => indexCoeff = res,
+      error => this.modalService.open(error.error.message),
+      () =>{
+        let yearTrainRow = []
+        //добавление годов из массива
+        main.filter(el => yearTrainRow.includes(el.year) === false ? yearTrainRow.push(el.year) : null)
+        //получение коээфициента
+        for (let i = 0; i < small.length; i++) {
+          let newNt = 0
+          let newNo = 0
+
+          small[i].nt !== null ? newNt = small[i].nt : newNt = 0
+          small[i].no !== null ? newNo = small[i].no : newNo = 0
+
+          for (let x = 0; x < main.length; x++) {
+            let coeff = indexCoeff[`${main[x].year}`]
+
+            if (main[x].dor_kod === small[i].dor_kod && main[x].st1_u === small[i].st1_u && main[x].st2_u === small[i].st2_u && main[x].st1_p === small[i].st1_p && main[x].st2_p === small[i].st2_p) {
+              main[x].nt === null ? main[x].nt = newNt * coeff : main[x].nt += newNt * coeff;
+              main[x].no === null ? main[x].no = newNo * coeff : main[x].no += newNo * coeff;
+            } else {
+              //добавить если не нашел в массиве совпадение
+              if (x === main.length - 1) {
+                for (let z = 0; z < yearTrainRow.length; z++) {
+                  small[i].year = yearTrainRow[z]
+                  main.push(small[i])
+                }
+              }
+            }
+          }
+        }
+
+        //Верхняя часть таблицы
+        let topHeaderInfo = `Поучастковая загрузка сети - ${this.form.controls.forecastCorrespondence.value.descr} - Расчет выполнен ${new Date()}`
+        let headersTable = ''
+        //Заголовки группы груза (нач участка, конец)
+        let headerRodGr = []
+        //Id для проверки на совпадение
+        let rodGrId = []
+        main.filter(el => el.rod_gr !== null && rodGrId.includes(el.rod_gr) === false ? (rodGrId.push(el.rod_gr), headerRodGr.push(el.rod_gr_name)) : null)
+
+        let reportData = {
+          title: `oneTable`,
+          data: main,
+          headers: headersTable,
+          topHeaderInfo: topHeaderInfo,
+          headerRodGr: headerRodGr
+        }
+        this.ete.exportExcelTwo(reportData);
+      }
+    ))
   }
 
 

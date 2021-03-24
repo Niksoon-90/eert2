@@ -78,3 +78,25 @@ export interface IShipmentTypNci {
   id: number,
   name: string
 }
+
+export interface IIasForecast {
+  dor_kod: string;
+  dor_name: string;
+  len: number;
+  napr: number;
+  no: number;
+  nt: number;
+  num: number;
+  num_p: number;
+  rod_gr: number;
+  rod_gr_name: string;
+  st1_p: number;
+  st1_p_name: string;
+  st1_u: number;
+  st1_u_namev: string;
+  st2_p: number;
+  st2_p_name: string;
+  st2_u: number;
+  st2_u_namev: string;
+  year: number;
+}

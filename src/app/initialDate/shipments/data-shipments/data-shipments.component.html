@@ -61,9 +61,15 @@
           <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text" type="button"
                   icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom"
                   (click)="openShipItemSession(itemShipmentsSession.id)"></button>
+          <ng-container *ngIf="this.opimalItemId.includes(itemShipmentsSession.id) === false; else loader">
           <button pButton pRipple icon="pi pi-chart-line" class="p-button-rounded p-button-text" type="button"
                   pTooltip="Оптимальный" tooltipPosition="bottom"
                   (click)="opimal(itemShipmentsSession.id)"></button>
+          </ng-container>
+          <ng-template #loader>
+            <p-progressSpinner [style]="{width: '25px', height: '25px'}" styleClass="custom-spinner" strokeWidth="8"
+                               fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+          </ng-template>
           <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
             <button pButton pRipple class="p-button-rounded p-button-text p-button-danger"
                     type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom"
