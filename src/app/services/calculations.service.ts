@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {Observable} from "rxjs";
 import {
@@ -28,6 +28,7 @@ export class CalculationsService {
   }
 
   private urlCalc = environment.hostCalc;
+
 
 
   putUpdateMacroForecast(id: number, value: number) {
@@ -119,6 +120,9 @@ export class CalculationsService {
 
 
   //TODO 4
+  getDeleteForecast(id:number){
+    return this.http.get(this.urlCalc + `api/external/routes/delete?iasForecastId=${id}`)
+  }
   getOil(): Observable<MonoCargoSystemsModel[]> {
     return this.http.get<MonoCargoSystemsModel[]>(this.urlCalc + `api/external/oil`)
   }
@@ -137,6 +141,11 @@ export class CalculationsService {
   getIasForecasCleartId(id: number): Observable<IIasForecast[]> {
     return this.http.get<IIasForecast[]>(this.urlCalc + `api/external/routes/forecastClear/${id}`)
   }
+
+getIasForTest(id: number): Observable<IIasForecast[]> {
+  return this.http.get<IIasForecast[]>(this.urlCalc + `api/external/routes/forecastMainAndSmall/${id}`)
+}
+
   getIasForecasCleartIdCoeff(id: number) {
     return this.http.get(this.urlCalc + `api/external/routes/coef?sessionId=${id}`)
   }
@@ -220,8 +229,14 @@ export class CalculationsService {
     return this.http.get(this.urlCalc + `api/cargo/factor/?cargoOwnerId=${cargoOwnerId}&influenceFactorId=${influenceFactorId}`)
   }
 
-  getCargoOwnerInfluenceFactorId(cargoOwnerInfluenceFactorId: number) {
-    return this.http.get(this.urlCalc + `api/cargo/factor/${cargoOwnerInfluenceFactorId}`)
+  getCargoList(list: number[]) {
+    const header: HttpHeaders = new HttpHeaders()
+      .append('Content-Type', 'application/json; charset=UTF-8')
+    const httpOptions = {
+      headers: header,
+      body: list
+    };
+    return this.http.delete(this.urlCalc + `api/catalog/cargo/list`, httpOptions)
   }
 
   deleteCargoOwnerInfluenceFactorId(cargoOwnerInfluenceFactorId: number) {

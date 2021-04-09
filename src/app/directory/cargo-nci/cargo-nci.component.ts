@@ -5,7 +5,7 @@ import {ICargoNci, ICargoOwnerInfluenceFactor} from "../../models/calculations.m
 import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
 import {MathForecastCalcService} from "../../services/math-forecast-calc.service";
-import {ConfirmationService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {Subscription} from "rxjs";
 
 
@@ -31,6 +31,7 @@ export class CargoNciComponent implements OnInit, OnDestroy {
   uploadFileNsi: string
   influenceNci: ICargoOwnerInfluenceFactor[];
   subscriptions: Subscription = new Subscription();
+  selectedCargoNci: any;
 
   constructor(
     private modalService: ModalService,
@@ -38,6 +39,7 @@ export class CargoNciComponent implements OnInit, OnDestroy {
     public authenticationService: AuthenticationService,
     private mathForecastCalcService: MathForecastCalcService,
     private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -88,7 +90,7 @@ export class CargoNciComponent implements OnInit, OnDestroy {
         this.subscriptions.add(this.calculationsService.deleteCargoNci(id).subscribe(
           () => console.log(),
           error => this.modalService.open(error.error.message),
-          () =>   this.getCargoNci()
+          () =>   this.cargoNci = this.cargoNci.filter(cargoNci => cargoNci.id !== id)
         ))
       }
     });
@@ -144,5 +146,35 @@ export class CargoNciComponent implements OnInit, OnDestroy {
         error => this.modalService.open(error.error.message),
         () => this.mathForecastCalcService.setValue(this.influenceNci)
       ))
+  }
+
+  clearSelectedCargoNci() {
+    console.log( this.selectedCargoNci)
+    this.selectedCargoNci = []
+    console.log( this.selectedCargoNci)
+  }
+//TODO comm
+  deleteCargoNciList() {
+    this.confirmationService.confirm({
+      message: `Удалить ${this.selectedCargoNci.length} грузовладельц(ев)а?`,
+      header: 'Удаление грузовладельцев.',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        let massId = []
+        for(let item of this.selectedCargoNci){
+          massId.push(item.id)
+        }
+        this.subscriptions.add(this.calculationsService.getCargoList(massId).subscribe(
+          () => {
+            this.cargoNci = this.cargoNci.filter( ( el ) => !massId.includes( el.id ) );
+          },
+          error => this.modalService.open(error.error.message),
+          () => {
+            this.selectedCargoNci = []
+            this.messageService.add({severity:'success', summary: 'Успешно!', detail: 'Грузовладелец удален!', life: 6000});
+        }
+        ))
+      }
+    });
   }
 }

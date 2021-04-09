@@ -32,10 +32,7 @@ export class ShipmentsService {
   getDownloadAbsentcargo(id: number) {
     return this.http.get<Blob>(this.url + `api/file/download/absentcargo/${id}`, {
       responseType: 'blob' as 'json',
-      reportProgress: true,
       observe: "events",
-      // headers: new HttpHeaders()
-      //   .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     })
   }
 
@@ -109,6 +106,16 @@ export class ShipmentsService {
   deleteMackPok(id: number) {
     return this.http.delete(this.url + `api/macroPok/${id}`)
   }
+  deleteMackPokList(list: number[]) {
+      const header: HttpHeaders = new HttpHeaders()
+        .append('Content-Type', 'application/json; charset=UTF-8')
+      const httpOptions = {
+        headers: header,
+        body: list
+      };
+      return this.http.delete(this.url + `api/macroPok/list`, httpOptions)
+    }
+
 
   getClaimSession(type: string): Observable<ISession[]> {
     return this.http.get<ISession[]>(this.url + `api/file/list?fileType=${type}`)
@@ -251,7 +258,7 @@ export class ShipmentsService {
   }
 
   postSearchSynonym(name: string) {
-    return this.http.get(this.url + `/api/catalog/cargo/synonyms/${name}`)
+    return this.http.get(this.url + ` api/catalog/cargo/synonyms/${name}`)
   }
   //TODO
   deleteShipment(id: number){

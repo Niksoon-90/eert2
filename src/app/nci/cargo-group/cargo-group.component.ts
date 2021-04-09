@@ -90,7 +90,7 @@ export class CargoGroupComponent implements OnInit, OnDestroy {
         this.subscriptions.add(this.shipmentsService.deleteDictionaryCargo(id).subscribe(
           () => console.log(),
           error => this.modalService.open(error.error.message),
-          () => this.getCargoGroupNci()
+          () => this.cargoGroupNci = this.cargoGroupNci.filter(cargoGroupNci => cargoGroupNci.id !== id)
         ))
       }
     });

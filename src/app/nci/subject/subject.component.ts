@@ -59,7 +59,7 @@ export class SubjectComponent implements OnInit, OnDestroy {
         this.subscriptions.add(this.shipmentsService.deleteSubject(id).subscribe(
           () => console.log(),
           error => this.modalService.open(error.error.message),
-          () => this.getSubjectNci()
+          () => this.subjectNci = this.subjectNci.filter(subjectNci => subjectNci.id !== id)
         ))
       }
     });

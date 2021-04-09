@@ -61,6 +61,7 @@ export class IasRouteComponent implements OnInit, OnDestroy {
   dataForExcelTwo: IIasForecast[]
   dataForExcelTwoMain: IIasForecast[]
   dataForExcelTwoSmall: IIasForecast[]
+  indexCoeff: {}
 
   constructor(
     public ete: ExportExcelService,
@@ -80,15 +81,19 @@ export class IasRouteComponent implements OnInit, OnDestroy {
     if (this.forecastModelService.getTicketInformation().stepThree.mathematicalForecastTable !== null) {
       this.headerYears = this.forecastModelService.getTicketInformation().stepThree.mathematicalForecastTable
       if (this.headerYears.length !== 0) {
-        for (let i = 0; this.headerYears.length < 15; i++) {
+        for (let i = 0; this.headerYears.length < this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']; i++) {
           this.headerYears.push(Math.max(...this.headerYears) + 1)
         }
       }
-      if (this.headerYears.length > 15) {
-        this.headerYears = this.headerYears.slice(0, 15);
+      if (this.headerYears.length > this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']) {
+        this.headerYears = this.headerYears.slice(0, this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']);
       }
     } else {
-      this.headerYears = ['Прогнозный год - 1', 'Прогнозный год - 2', 'Прогнозный год - 3', 'Прогнозный год - 4', 'Прогнозный год - 5', 'Прогнозный год - 6', 'Прогнозный год - 7', 'Прогнозный год - 8', 'Прогнозный год - 9', 'Прогнозный год - 10', 'Прогнозный год - 11', 'Прогнозный год - 12', 'Прогнозный год - 13', 'Прогнозный год - 14', 'Прогнозный год - 15']
+      this.headerYears = []
+      for (let i = 0; i < this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']; i++){
+        this.headerYears.push(`Прогнозный год - ${i+1}`)
+      }
+     // this.headerYears = ['Прогнозный год - 1', 'Прогнозный год - 2', 'Прогнозный год - 3', 'Прогнозный год - 4', 'Прогнозный год - 5', 'Прогнозный год - 6', 'Прогнозный год - 7', 'Прогнозный год - 8', 'Прогнозный год - 9', 'Прогнозный год - 10', 'Прогнозный год - 11', 'Прогнозный год - 12', 'Прогнозный год - 13', 'Прогнозный год - 14', 'Прогнозный год - 15']
     }
     this.cols = [
       {field: 'cargo_group', header: 'Группа груза', width: '100px', keyS: false},
@@ -111,6 +116,12 @@ export class IasRouteComponent implements OnInit, OnDestroy {
       {field: 'stationNameGS', header: 'Станция (ГС)', width: '100px', keyS: false},
       {field: 'dorName', header: 'Дорога', width: '100px', keyS: false},
     ]
+    this.subscriptions.add(this.calculationsService.getIasForecasCleartIdCoeff(this.sessionId).subscribe(
+      res => this.indexCoeff = res,
+      error => {
+        this.modalService.open(error.error.message)
+        this.downloadTotalIasLoading = false
+      }))
   }
 
   ngOnDestroy() {
@@ -143,6 +154,7 @@ export class IasRouteComponent implements OnInit, OnDestroy {
   }
 
   exportToExcelOne() {
+    this.downloadIasLoadingCorrespondences = true
     let headersTable = []
     this.dataForExcel = []
     let yearSumm = []
@@ -153,6 +165,7 @@ export class IasRouteComponent implements OnInit, OnDestroy {
         headersTable.push(item.header)
       }
       headersTable.unshift('Порядковый номер')
+
       for (let i = 0; i < this.correspondencesIiasForecast.length; i++) {
         mass = []
         mass.push(
@@ -162,22 +175,12 @@ export class IasRouteComponent implements OnInit, OnDestroy {
           this.correspondencesIiasForecast[i].from_station_code,
           this.correspondencesIiasForecast[i].to_station,
           this.correspondencesIiasForecast[i].to_station_code,
-          this.correspondencesIiasForecast[i].n1 !== null ? Number(this.correspondencesIiasForecast[i].n1) : 0,
-          this.correspondencesIiasForecast[i].n2 !== null ? Number(this.correspondencesIiasForecast[i].n2) : 0,
-          this.correspondencesIiasForecast[i].n3 !== null ? Number(this.correspondencesIiasForecast[i].n3) : 0,
-          this.correspondencesIiasForecast[i].n4 !== null ? Number(this.correspondencesIiasForecast[i].n4) : 0,
-          this.correspondencesIiasForecast[i].n5 !== null ? Number(this.correspondencesIiasForecast[i].n5) : 0,
-          this.correspondencesIiasForecast[i].n6 !== null ? Number(this.correspondencesIiasForecast[i].n6) : 0,
-          this.correspondencesIiasForecast[i].n7 !== null ? Number(this.correspondencesIiasForecast[i].n7) : 0,
-          this.correspondencesIiasForecast[i].n8 !== null ? Number(this.correspondencesIiasForecast[i].n8) : 0,
-          this.correspondencesIiasForecast[i].n9 !== null ? Number(this.correspondencesIiasForecast[i].n9) : 0,
-          this.correspondencesIiasForecast[i].n10 !== null ? Number(this.correspondencesIiasForecast[i].n10) : 0,
-          this.correspondencesIiasForecast[i].n11 !== null ? Number(this.correspondencesIiasForecast[i].n11) : 0,
-          this.correspondencesIiasForecast[i].n12 !== null ? Number(this.correspondencesIiasForecast[i].n12) : 0,
-          this.correspondencesIiasForecast[i].n13 !== null ? Number(this.correspondencesIiasForecast[i].n13) : 0,
-          this.correspondencesIiasForecast[i].n14 !== null ? Number(this.correspondencesIiasForecast[i].n14) : 0,
-          this.correspondencesIiasForecast[i].n15 !== null ? Number(this.correspondencesIiasForecast[i].n15) : 0,
         )
+        for(let z = 0;  z < this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name']; z ++){
+          mass.push(
+            this.correspondencesIiasForecast[i][`n${z+1}`] !== null ? Number(this.correspondencesIiasForecast[i][`n${z+1}`]) : 0,
+          )
+        }
         this.dataForExcel.push(mass)
       }
       for (let x = 1; x < 16; x++) {
@@ -193,7 +196,7 @@ export class IasRouteComponent implements OnInit, OnDestroy {
         headers: headersTable,
         yearSumm: yearSumm,
       }
-      this.ete.exportExcelOne(reportData);
+      this.downloadIasLoadingCorrespondences = this.ete.exportExcelOne(reportData);
     }
   }
 
@@ -206,10 +209,22 @@ export class IasRouteComponent implements OnInit, OnDestroy {
     ))
   }
 
-  exportToExcelTwo(id: number, name: string) {
+  exportToExcelTwo(id: number, name: string, type: string) {
+    if(type === 'downloadIasLoading'){
+      this.downloadIasLoading = true
+    } else if(type === 'downloadTotalSmallIasLoading'){
+      this.downloadTotalSmallIasLoading = true
+    }
     this.subscriptions.add(this.calculationsService.getIasForecasCleartId(id).subscribe(
       res => this.dataForExcelTwo = res,
-      error => this.modalService.open(error.error.message),
+      error => {
+        if(type === 'downloadIasLoading'){
+          this.downloadIasLoading = false
+        } else if(type === 'downloadTotalSmallIasLoading'){
+          this.downloadTotalSmallIasLoading = false
+        }
+        this.modalService.open(error.error.message)
+      },
       () => {
         //Верхняя часть таблицы
         let topHeaderInfo = `Поучастковая загрузка сети - ${name} - Расчет выполнен ${new Date()}`
@@ -227,19 +242,63 @@ export class IasRouteComponent implements OnInit, OnDestroy {
           topHeaderInfo: topHeaderInfo,
           headerRodGr: headerRodGr
         }
-        this.ete.exportExcelTwo(reportData);
+        if(type === 'downloadIasLoading'){
+          rodGrId.length !== 0 ? this.downloadIasLoading = this.ete.exportExcelTwo(reportData): (this.downloadIasLoading = false, this.modalService.open('Проверьте выполнен ли расчет в поездоучастков на стороне ИАС Маршрут'))
+        } else if(type === 'downloadTotalSmallIasLoading'){
+          rodGrId.length !== 0 ? this.downloadTotalSmallIasLoading = this.ete.exportExcelTwo(reportData): (this.downloadTotalSmallIasLoading = false, this.modalService.open('Проверьте выполнен ли расчет в поездоучастков на стороне ИАС Маршрут'))
+        }
       }
     ))
   }
 
-  testttt() {
+  mainSmall() {
+    this.downloadTotalIasLoading = true
+    this.subscriptions.add(this.calculationsService.getIasForTest(this.sessionId).subscribe(
+      res => {
+        this.dataForExcelTwoMain = res
+      },
+      error => {
+        this.modalService.open(error.error.message)
+        this.downloadTotalIasLoading = false
+      },
+      () => {
+        //Верхняя часть таблицы
+        let topHeaderInfo = `Поучастковая загрузка сети - ${this.form.controls.forecastCorrespondence.value.descr} - Расчет выполнен ${new Date()}`
+        let headersTable = ''
+        //Заголовки группы груза (нач участка, конец)
+        let headerRodGr = []
+        //Id для проверки на совпадение
+        let rodGrId = []
+        this.dataForExcelTwoMain.filter(el => el.rod_gr !== null && rodGrId.includes(el.rod_gr) === false ? (rodGrId.push(el.rod_gr), headerRodGr.push(el.rod_gr_name)) : null)
+
+
+        let reportData = {
+          title: `oneTable`,
+          data: this.dataForExcelTwoMain,
+          headers: headersTable,
+          topHeaderInfo: topHeaderInfo,
+          headerRodGr: headerRodGr
+        }
+        rodGrId.length !== 0 ? this.downloadTotalIasLoading = this.ete.exportExcelTwo(reportData) : (this.downloadTotalIasLoading = false, this.modalService.open('Проверьте выполнен ли расчет в поездоучастков на стороне ИАС Маршрут'))
+      }
+    ))
+  }
+
+  testttt2() {
+    this.downloadTotalIasLoading = true
     this.subscriptions.add(this.calculationsService.getIasForecasCleartId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
       res => this.dataForExcelTwoMain = res,
-      error => this.modalService.open(error.error.message),
+      error => {
+        this.modalService.open(error.error.message)
+        this.downloadTotalIasLoading = false
+      },
       () => {
         this.subscriptions.add(this.calculationsService.getIasForecasCleartId(this.form.controls.smallCorrespondence.value.var_id).subscribe(
           res => this.dataForExcelTwoSmall = res,
-          error => this.modalService.open(error.error.message),
+          error => {
+            this.modalService.open(error.error.message)
+            this.downloadTotalIasLoading = false
+          },
           () => {
             this.exportSmallMain(this.dataForExcelTwoMain, this.dataForExcelTwoSmall)
           }
@@ -255,7 +314,10 @@ export class IasRouteComponent implements OnInit, OnDestroy {
     let indexCoeff = {}
     this.subscriptions.add(this.calculationsService.getIasForecasCleartIdCoeff(this.sessionId).subscribe(
       res => indexCoeff = res,
-      error => this.modalService.open(error.error.message),
+      error => {
+        this.modalService.open(error.error.message)
+        this.downloadTotalIasLoading = false
+      },
       () =>{
         let yearTrainRow = []
         //добавление годов из массива
@@ -268,19 +330,38 @@ export class IasRouteComponent implements OnInit, OnDestroy {
           small[i].nt !== null ? newNt = small[i].nt : newNt = 0
           small[i].no !== null ? newNo = small[i].no : newNo = 0
 
+          let prop = 0
           for (let x = 0; x < main.length; x++) {
             let coeff = indexCoeff[`${main[x].year}`]
-
             if (main[x].dor_kod === small[i].dor_kod && main[x].st1_u === small[i].st1_u && main[x].st2_u === small[i].st2_u && main[x].st1_p === small[i].st1_p && main[x].st2_p === small[i].st2_p) {
               main[x].nt === null ? main[x].nt = newNt * coeff : main[x].nt += newNt * coeff;
               main[x].no === null ? main[x].no = newNo * coeff : main[x].no += newNo * coeff;
-            } else {
+              prop += 1
+            } else if(x === main.length - 1 && prop !== yearTrainRow.length){
               //добавить если не нашел в массиве совпадение
-              if (x === main.length - 1) {
-                for (let z = 0; z < yearTrainRow.length; z++) {
-                  small[i].year = yearTrainRow[z]
-                  main.push(small[i])
+              for (let z = 0; z < yearTrainRow.length; z++) {
+                let item: IIasForecast = {
+                  dor_kod: small[i].dor_kod,
+                  dor_name: small[i].dor_name,
+                  len: small[i].len,
+                  napr: small[i].napr,
+                  no: small[i].no *  indexCoeff[`${yearTrainRow[z]}`],
+                  nt: small[i].nt *  indexCoeff[`${yearTrainRow[z]}`],
+                  num: small[i].num,
+                  num_p: small[i].num_p,
+                  rod_gr: small[i].rod_gr,
+                  rod_gr_name: small[i].rod_gr_name,
+                  st1_p: small[i].st1_p,
+                  st1_p_name: small[i].st1_p_name,
+                  st1_u: small[i].st1_u,
+                  st1_u_namev: small[i].st1_u_namev,
+                  st2_p: small[i].st2_p,
+                  st2_p_name: small[i].st2_p_name,
+                  st2_u: small[i].st2_u,
+                  st2_u_namev: small[i].st2_u_namev,
+                  year: yearTrainRow[z],
                 }
+                main.push(item)
               }
             }
           }
@@ -295,6 +376,14 @@ export class IasRouteComponent implements OnInit, OnDestroy {
         let rodGrId = []
         main.filter(el => el.rod_gr !== null && rodGrId.includes(el.rod_gr) === false ? (rodGrId.push(el.rod_gr), headerRodGr.push(el.rod_gr_name)) : null)
 
+        const fieldSorter = (fields) => (a, b) => fields.map(o => {
+          let dir = 1;
+          if (o[0] === '-') { dir = -1; o=o.substring(1); }
+          return a[o] > b[o] ? dir : a[o] < b[o] ? -(dir) : 0;
+        }).reduce((p, n) => p ? p : n, 0);
+
+        main.sort(fieldSorter(['dor_kod', 'num', 'num_p', 'st1_p_name', 'st2_p_name', 'year']));
+
         let reportData = {
           title: `oneTable`,
           data: main,
@@ -302,7 +391,7 @@ export class IasRouteComponent implements OnInit, OnDestroy {
           topHeaderInfo: topHeaderInfo,
           headerRodGr: headerRodGr
         }
-        this.ete.exportExcelTwo(reportData);
+        rodGrId.length !== 0 ? this.downloadTotalIasLoading = this.ete.exportExcelTwo(reportData): (this.downloadTotalIasLoading = false, this.modalService.open('Проверьте выполнен ли расчет в поездоучастков на стороне ИАС Маршрут'))
       }
     ))
   }
@@ -689,5 +778,26 @@ export class IasRouteComponent implements OnInit, OnDestroy {
 
   loadCustomers(event: any) {
     this.footerSumTwoTable(event.filteredValue)
+  }
+
+  deleteForecast() {
+    if(this.selectedPrimery !== true){
+      this.calculationsService.getDeleteForecast(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
+        () => console.log(),
+        error => this.modalService.open(error.error.message),
+        () => this.modalService.open('Буфер очищен')
+      )
+    }else{
+      this.calculationsService.getDeleteForecast(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
+        () => console.log(),
+        error => this.modalService.open(error.error.message),
+        () => this.modalService.open('Буфер очищен')
+      )
+      this.calculationsService.getDeleteForecast(this.form.controls.smallCorrespondence.value.var_id).subscribe(
+        () => console.log(),
+        error => this.modalService.open(error.error.message),
+        () => this.modalService.open('Буфер очищен')
+      )
+    }
   }
 }

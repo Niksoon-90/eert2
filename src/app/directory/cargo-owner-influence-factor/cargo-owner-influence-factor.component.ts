@@ -96,7 +96,6 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
       header: 'Удаление фактора',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-
         this.subscriptions.add(this.calculationsService.deleteCargoOwnerInfluenceFactorId(id).subscribe(
           () => this.cargoOwnerInfluenceFactor = this.cargoOwnerInfluenceFactor.filter(cargoOwnerInfluenceFactor => cargoOwnerInfluenceFactor.id !== id),
           error => this.modalService.open(error.error.message)

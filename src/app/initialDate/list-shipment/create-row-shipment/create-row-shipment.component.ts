@@ -43,6 +43,9 @@ export class CreateRowShipmentComponent implements OnInit, OnDestroy {
   tostationNci: IStationNci[];
   primary = [{label: 'Да', dt: true}, {label: 'Нет', dt: false}]
   subscriptions: Subscription = new Subscription();
+  optimalProgressBar: boolean = true
+  infoBarProgress: any[] = []
+  loadingNci = 0
 
   constructor(
     private formBuilder: FormBuilder,
@@ -71,12 +74,12 @@ export class CreateRowShipmentComponent implements OnInit, OnDestroy {
   get t() {
     return this.f.shipmentYearValuePairs as FormArray;
   }
-
+//TODO Validators (min 0)
   onChangeTickets() {
     if (this.t.length < this.mathematicalForecastContent[0].shipmentYearValuePairs.length) {
       for (let i = this.t.length; i < this.mathematicalForecastContent[0].shipmentYearValuePairs.length; i++) {
         this.t.push(this.formBuilder.group({
-          value: ['', Validators.required],
+          value: ['', [Validators.required, Validators.min(0)]],
           year: this.mathematicalForecastContent[0].shipmentYearValuePairs[i].year,
           calculated: this.mathematicalForecastContent[0].shipmentYearValuePairs[i].calculated
         }));
@@ -107,11 +110,21 @@ export class CreateRowShipmentComponent implements OnInit, OnDestroy {
     this.getCargoNci();
     this.getStationNci();
   }
+  loadingData(){
+    this.loadingNci += 1
+    if(this.loadingNci === 5){
+      this.optimalProgressBar = false
+    }
+  }
 
   getDictionaryCargo() {
     this.subscriptions.add(this.shipmentsService.getDictionaryCargo().subscribe(
       res => this.cargoGroupNci = res,
       error => this.modalService.open(error.error.message),
+      () => {
+        this.infoBarProgress.push(`Группы грузов загружены`)
+        this.loadingData()
+      },
     ))
   }
 
@@ -119,27 +132,43 @@ export class CreateRowShipmentComponent implements OnInit, OnDestroy {
     this.subscriptions.add(this.shipmentsService.getDictionaryShipmenttype().subscribe(
       res => this.shipmentTypNci = res,
       error => this.modalService.open(error.error.message),
+      () => {
+        this.infoBarProgress.push('Виды перевозок загружены')
+        this.loadingData()
+      },
     ))
   }
 
   getDorogyNci() {
     this.subscriptions.add(this.shipmentsService.getDictionaryDictionaryRailway().subscribe(
-      res => this.dorogyNci = res,
+      res => this.dorogyNci = res.sort((a, b) => a.code > b.code ? 1 : -1),
       error => this.modalService.open(error.error.message),
+      () => {
+        this.infoBarProgress.push('Дороги загружены')
+        this.loadingData()
+      },
     ))
   }
 
   getCargoNci() {
     this.subscriptions.add(this.calculationsService.getAllCargoNci().subscribe(
-      res => this.cargoNci = res,
+      res => this.cargoNci = res.sort((a, b) => a.name > b.name ? 1 : -1),
       error => this.modalService.open(error.error.message),
+      () => {
+        this.infoBarProgress.push('Грузовладельцы загружены')
+        this.loadingData()
+      },
     ))
   }
-
+//TODO sort station
   getStationNci() {
     this.subscriptions.add(this.shipmentsService.getDictionaryDictionaryStation().subscribe(
-      res => this.stationNci = res,
+      res => this.stationNci = res.sort((a, b) => a.name > b.name ? 1 : -1),
       error => this.modalService.open(error.error.message),
+      () => {
+        this.infoBarProgress.push('Станции загружены')
+        this.loadingData()
+      },
     ))
   }
 

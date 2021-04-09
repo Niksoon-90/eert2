@@ -39,8 +39,8 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   fileId: number = 0;
   test: any[] = []
   subscriptions: Subscription = new Subscription();
-
-
+  optimalProgressBar: boolean = false
+  textOptimal: string
   dimensionItems = [
     {value: 1, label: 'млн. тонн', type: 'MILLION_TONS'},
     {value: 2, label: 'тыс. тонн', type: 'THOUSAND_TONS'},
@@ -167,25 +167,25 @@ export class UploadFileComponent implements OnInit, OnDestroy {
             this.showModalDialog();
           }
           if (this.initialDateType === 'shipmentsUpload') {
-            this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(this.fileId).subscribe(
-              () => console.log(),
-              error => this.modalService.open(error.error.message),
-              () => {
-                this.subscriptions.add(this.calculationsService.postHierarchicalShipment(this.fileId).subscribe(
-                  () => console.log(),
-                  error => {
-                    this.modalService.open(error.error.message)
-                  },
-                  () => {
-                    this.clearForm();
-                    this.showModalDialog();
-                  },
-                ))
-              }
-            ))
+            this.clearForm();
+            this.showModalDialog();
+            // this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(this.fileId).subscribe(
+            //   () => console.log(),
+            //   error => this.modalService.open(error.error.message),
+            //   () => {
+            //     this.subscriptions.add(this.calculationsService.postHierarchicalShipment(this.fileId).subscribe(
+            //       () => console.log(),
+            //       error => {
+            //         this.modalService.open(error.error.message)
+            //       },
+            //       () => {
+            //         this.clearForm();
+            //         this.showModalDialog();
+            //       },
+            //     ))
+            //   }
+            // ))
           }
-          // this.clearForm();
-          // this.showModalDialog();
         }));
   }
 
@@ -253,23 +253,86 @@ export class UploadFileComponent implements OnInit, OnDestroy {
 
   downloadAbsentcargo() {
     if (this.fileId !== 0) {
+      // this.subscriptions.add(this.shipmentsService.getDownloadAbsentcargo(this.fileId).subscribe(
+      //   (response: HttpResponse<Blob>) => {
+      //     let filename: string = 'absentcargo.xlsx'
+      //     let binaryData = [];
+      //     binaryData.push(response.body);
+      //     let downloadLink = document.createElement('a');
+      //     downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
+      //     downloadLink.setAttribute('download', filename);
+      //     document.body.appendChild(downloadLink);
+      //     downloadLink.click();
+      //   },
+      //   async (error) => {
+      //     const message = JSON.parse(await error.error.text()).message;
+      //     this.modalService.open(message)
+      //   }
+      // ))
+
       this.subscriptions.add(this.shipmentsService.getDownloadAbsentcargo(this.fileId).subscribe(
-        (response: HttpResponse<Blob>) => {
-          console.log(response)
-          let filename: string = 'absentcargo.xlsx'
-          let binaryData = [];
-          binaryData.push(response.body);
-          let downloadLink = document.createElement('a');
-          downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
-          downloadLink.setAttribute('download', filename);
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
+        result => {
+          switch (result.type) {
+            case HttpEventType.Sent:
+              console.log('Request sent!');
+              break;
+            case HttpEventType.ResponseHeader:
+              console.log('Response header received!');
+              break;
+            case HttpEventType.DownloadProgress:
+              const kbLoaded = Math.round(  result.total / result.loaded * 100);
+              console.log('result', result);
+              console.log('result.total', result.total);
+              console.log('result.loaded', result.loaded);
+              console.log(`Download in progress! ${kbLoaded}Kb loaded`);
+              break;
+            case HttpEventType.UploadProgress:
+              const kbUploaded = Math.round(result.loaded / 1024);
+              console.log(`Upload in progress! ${kbUploaded}Kb loaded`);
+              break;
+            case HttpEventType.Response:
+              let filename: string = 'absentcargo.xlsx'
+              let binaryData = [];
+              binaryData.push(result.body);
+              let downloadLink = document.createElement('a');
+              downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
+              downloadLink.setAttribute('download', filename);
+              document.body.appendChild(downloadLink);
+              downloadLink.click();
+              return [];
+          }
         },
         async (error) => {
           const message = JSON.parse(await error.error.text()).message;
           this.modalService.open(message)
-        }
+        },
       ))
     }
+  }
+
+  Optional() {
+    this.textOptimal = 'Поиск наиболее оптимальных прогнозов для корреспонденций..'
+    this.optimalProgressBar = true;
+    this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(this.fileId).subscribe(
+      () => console.log(),
+      error => this.modalService.open(error.error.message),
+      () => {
+        this.test.push(`Подобраны наиболее оптимальные прогнозы для корреспонденций`)
+        this.textOptimal = 'Иерархический прогноз..'
+        this.subscriptions.add(this.calculationsService.postHierarchicalShipment(this.fileId).subscribe(
+          () => console.log(),
+          error => {
+            this.modalService.open(error.error.message)
+            this.optimalProgressBar = false
+          },
+          () => {
+            this.test.push(`Применен иерархический прогноз`)
+            this.optimalProgressBar = false
+            this.clearForm();
+            this.showModalDialog();
+          },
+        ))
+      }
+    ))
   }
 }

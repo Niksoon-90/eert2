@@ -26,26 +26,26 @@ export class AuthenticationService {
   private hostAuth = environment.hostAuth;
 
    getMe(): Observable<IAuthModel>{
-    // const users: IAuthModel  = {
-    //    fio: "Степанюк Гаврилий Метрофанович",
-    //    iss: "http://192.168.11.180:8081/oauth/token",
-    //    jti: "b4f70e69-bb25-4092-82c9-dc61838e1e82",
-    //    nonce: "byF2PshJ7Kax4Cp7ccrUAJE-x7jyN1O3yqS1nwEDJCU",
-    //    org: "ИЭРТ",
-    //    authorities: ['P_P_p1', 'P_P_p2', 'P_P_p3',  'P_P_p4', 'P_P_p5',  'P_P_p6', 'P_P_p7', 'P_P_p8', 'P_P_p10' ],
-    //    sub: "test@test.com",
-    //    user: "test@test.com",
-    //    user_name: "test@test.com"
-    //  }
-    // localStorage.setItem('user', JSON.stringify(users));
-    //  return
-    localStorage.removeItem("user");
-    return this.http.get<IAuthModel>(this.hostAuth + `me`)
-      .pipe(map(user => {
-      localStorage.setItem('user', JSON.stringify(user));
-      this.userSubject.next(user);
-      return user;
-   }));
+    const users: IAuthModel  = {
+       fio: "Степанюк Гаврилий Метрофанович",
+       iss: "http://192.168.11.180:8081/oauth/token",
+       jti: "b4f70e69-bb25-4092-82c9-dc61838e1e82",
+       nonce: "byF2PshJ7Kax4Cp7ccrUAJE-x7jyN1O3yqS1nwEDJCU",
+       org: "ИЭРТ",
+       authorities: ['P_P_p1', 'P_P_p2', 'P_P_p3',  'P_P_p4', 'P_P_p5',  'P_P_p6', 'P_P_p7', 'P_P_p8', 'P_P_p10' ],
+       sub: "test@test.com",
+       user: "test@test.com",
+       user_name: "test@test.com"
+     }
+    localStorage.setItem('user', JSON.stringify(users));
+     return
+   //  localStorage.removeItem("user");
+   //  return this.http.get<IAuthModel>(this.hostAuth + `me`)
+   //    .pipe(map(user => {
+   //    localStorage.setItem('user', JSON.stringify(user));
+   //    this.userSubject.next(user);
+   //    return user;
+   // }));
   }
   logout() {
     // remove user from local storage to log user out

@@ -195,7 +195,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
     this.mathematicalForecastTable.length === 0 ? this.columsYears = 0 : this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
     this.onChangeTickets()
     this.cols = [
-      {field: 'forecastType', header: 'Предлагаемая стратегия прогнозирования', width: '100px', keyS: false},
+      {field: 'forecastType', header: 'Текущий метод', width: '100px', keyS: false},
       {field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
       {field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false},
       {field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false},
@@ -226,6 +226,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
     const mass = col['field'].toString().split('.');
     return rowData.shipmentYearValuePairs[mass[1]].calculated === true ? true : false
   }
+
 
   editColumn(row: any, col: any, $event: any) {
     if (col['keyS'] === true) {
@@ -393,11 +394,12 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
       ))
   }
 
+
   particalListFilter() {
     if (this.forecastingStrategyFilter.type === 'FISCAL_YEAR' && (this.forecastFiscalYear === null || this.forecastFiscalYear === undefined)) {
       this.modalService.open('Стратегия прогнозирования корреспонденций. Укажите год!');
     } else {
-      this.loadingMathematicalForecastTable = false
+      //this.loadingMathematicalForecastTable = false
       this.subscriptions.add(this.calculationsService.getPartialListFilter(
         this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
         this.forecastingStrategyFilter.type,
@@ -413,10 +415,10 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
           res => console.log(res),
           error => {
             this.modalService.open(error.error.message)
-            this.loadingMathematicalForecastTable = true
+            //this.loadingMathematicalForecastTable = true
           },
           () => {
-            this.loadingMathematicalForecastTable = true
+            //this.loadingMathematicalForecastTable = true
             this.shipmentPagination()
           }
         ))
@@ -444,24 +446,9 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  shipmentPagination() {
-    this.loadingTable = true
-    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl)
-      .subscribe(
-        res => {
-          res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
-          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
-        },
-        error => {
-          this.modalService.open(error.error.message)
-          this.loadingTable = false
-        },
-        () => {
-          this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
-          this.summFooter(this.sessionId)
-        }
-      ))
-  }
+
+
+
 
   summFooter(sessionId: number) {
     this.subscriptions.add(this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
@@ -552,6 +539,33 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
     ))
   }
 
+  shipmentPagination() {
+    this.loadingTable = true
+    this.mathematicalForecastTable = []
+    console.log(this.filterTableEvant)
+    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(
+      this.sessionId,
+      this.filterTableEvant.currentPage,
+      this.filterTableEvant.rows,
+      this.filterTableEvant.sortField,
+      this.filterTableEvant.sortOrder,
+      this.filterTableEvant.resultFilterUrl)
+      .subscribe(
+        res => {
+          res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
+          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
+        },
+        error => {
+          this.modalService.open(error.error.message)
+          this.loadingTable = false
+        },
+        () => {
+          this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
+          this.summFooter(this.sessionId)
+        }
+      ))
+  }
+
   deleteShipments(id: number) {
     this.confirmationService.confirm({
       message: `Вы уверенны, что хотите удалить корреспонденцию?`,
@@ -576,7 +590,6 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
     this.dropdownPrimary.clear(null);
     this.dropdownForecastType.clear(null);
     this.table.reset();
-
   }
 }
 

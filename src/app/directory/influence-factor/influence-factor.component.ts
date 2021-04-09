@@ -79,7 +79,7 @@ export class InfluenceFactorComponent implements OnInit, OnDestroy {
         this.subscriptions.add(this.calculationsService.deleteInfluenceNci(id).subscribe(
           () => console.log(),
           error => this.modalService.open(error.error.message),
-          () => this.getInfluenceNci()
+          () => this.influenceNci = this.influenceNci.filter(influenceNci => influenceNci.id !== id),
         ))
       }
     });

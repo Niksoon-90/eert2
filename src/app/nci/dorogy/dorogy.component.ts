@@ -108,7 +108,7 @@ export class DorogyComponent implements OnInit {
         this.subscriptions.add(this.shipmentsService.deleteDictionaryRailway(id).subscribe(
           () => console.log(),
           error => this.modalService.open(error.error.message),
-          () => this.getDorogyNci()
+          () => this.dorogyNci = this.dorogyNci.filter(dorogyNci => dorogyNci.id !== id)
         ))
       }
     });

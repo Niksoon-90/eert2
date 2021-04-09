@@ -89,7 +89,7 @@ export class ShipmentTypeComponent implements OnInit, OnDestroy {
         this.subscriptions.add(this.shipmentsService.deleteDictionaryShipmenttype(id).subscribe(
           () => console.log(),
           error => this.modalService.open(error.error.message),
-          () => this.getShipmentTypNci()
+          () => this.shipmentTypNci = this.shipmentTypNci.filter(shipmentTypNci => shipmentTypNci.id !== id)
         ))
       }
     });

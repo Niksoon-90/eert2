@@ -73,6 +73,7 @@ export class MathForecastComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   createTable(macPokId) {
+    console.log(macPokId)
     this.subscriptions.add(this.calculationsService.getCalculationMultiple(this.forecastModelService.getTicketInformation().stepOne.Session['id'], this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'], this.forecastModelService.getTicketInformation().stepOne.scenarioMacro['type'], macPokId)
       .pipe(
         map(data => {
@@ -148,11 +149,16 @@ export class MathForecastComponent implements OnInit, OnChanges, OnDestroy {
 
   test() {
     let macPokId = []
+    console.log('this.selectedMacro', this.selectedMacro)
+    console.log('this.macroPokList', this.macroPokList)
     if (this.selectedMacro.length !== 0 && this.checkedAutoRegression !== true) {
-      this.macroPokListUpdate = this.macroPokList.filter(val => this.selectedMacro.includes(val));
-      if (this.macroPokListUpdate.length !== 0) {
-        for (let item of this.macroPokListUpdate) {
-          macPokId.push(item.id)
+    //  this.macroPokListUpdate = this.macroPokList.filter(val => this.selectedMacro.includes(val));
+      for(let i = 0; i < this.selectedMacro.length; i++){
+        for(let x = 0; x < this.macroPokList.length; x++){
+          if(this.macroPokList[x].id === this.selectedMacro[i].id){
+            macPokId.push(this.selectedMacro[i].id)
+            continue
+          }
         }
       }
     }

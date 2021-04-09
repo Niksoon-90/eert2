@@ -1,6 +1,9 @@
 <div class="stepsdemo-content">
   <p-card>
     <ng-template pTemplate="content">
+<!--      <button pButton type="button" label="Очистить буфер" icon="pi pi-refresh"-->
+<!--              class="p-mr-2 p-button-raised p-button-warning"-->
+<!--              (click)="deleteForecast()"></button>-->
       <ng-container *ngIf="this.user.authorities.includes('P_P_p10') === true">
         <div class="p-justify-between p-d-flex">
           <div><h3>Работа с ИАС Маршруты</h3></div>
@@ -91,6 +94,10 @@
         </div>
       </ng-container>
 
+      <ng-container *ngIf="this.indexCoeff">
+        Коэффициент:  {{this.indexCoeff | json}}
+      </ng-container>
+
       <ng-container *ngIf="this.loading === false">
         <h4>№1 Форма корреспонденций</h4>
         <ng-container *ngIf="this.loadingOne === false; else Loader">
@@ -104,7 +111,7 @@
             styleClass=" p-datatable-gridlines" dataKey="corr_id"
             [resizableColumns]="true" columnResizeMode="expand" editMode="row"
             [paginator]="true"
-            [rows]="500"
+            [rows]="50"
             [filterDelay]="0"
             [autoLayout]="true"
             [rowsPerPageOptions]="[50,100,150]"
@@ -200,8 +207,8 @@
                     <!--                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать(ст)"-->
                     <!--                            class="p-button-success p-mr-2 p-button p-component" (click)="downloadIas()"-->
                     <!--                            style="margin-right: 0.5em;"></button>-->
-                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать(новый Основные)"
-                            class="p-button-success p-mr-2 p-button p-component" (click)="exportToExcelTwo(this.form.controls.forecastCorrespondence.value.var_id, this.form.controls.forecastCorrespondence.value.descr)"
+                    <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать"
+                            class="p-button-success p-mr-2 p-button p-component" (click)="exportToExcelTwo(this.form.controls.forecastCorrespondence.value.var_id, this.form.controls.forecastCorrespondence.value.descr, 'downloadIasLoading')"
                             style="margin-right: 0.5em;"></button>
 
                   </ng-container>
@@ -212,15 +219,15 @@
                       <!--                              label="Участки (мелкие)" class="p-button-success p-mr-2 p-button p-component"-->
                       <!--                              (click)="downTotalSmallloadIas()" style="margin-right: 0.5em;"></button>-->
                       <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать(новый мелкие)"
-                              class="p-button-success p-mr-2 p-button p-component" (click)="exportToExcelTwo(this.form.controls.smallCorrespondence.value.var_id, this.form.controls.smallCorrespondence.value.descr)"
+                              class="p-button-success p-mr-2 p-button p-component" (click)="exportToExcelTwo(this.form.controls.smallCorrespondence.value.var_id, this.form.controls.smallCorrespondence.value.descr, 'downloadTotalSmallIasLoading')"
                               style="margin-right: 0.5em;"></button>
                     </ng-container>
                     <ng-container *ngIf="this.downloadTotalIasLoading === false; else DownloadLoading">
                       <!--                      <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left"-->
                       <!--                              label="Участки (мелкие + основные)" class="p-button-success p-mr-2 p-button p-component"-->
                       <!--                              (click)="downTotalloadIas()" style="margin-right: 0.5em;"></button>-->
-                      <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать(новый Основные + мел)"
-                              class="p-button-success p-mr-2 p-button p-component" (click)="testttt()"
+                      <button type="button" pButton pRipple icon="pi pi-file-excel" iconPos="left" label="Скачать(новый Основные + мелкие)"
+                              class="p-button-success p-mr-2 p-button p-component" (click)="mainSmall()"
                               style="margin-right: 0.5em;"></button>
                     </ng-container>
                   </ng-container>

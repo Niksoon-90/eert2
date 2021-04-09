@@ -2,62 +2,72 @@
           [(visible)]="displayModal"
           [modal]="true"
           [style]="{width: '70vw'}"
-          [contentStyle]="{height: '34vh', padding: '0 1.5rem 0rem 1.5rem'}"
+          [contentStyle]="{height: '35vh', padding: '0 1.5rem 1.5rem 1.5rem'}"
           [closeOnEscape]="false"
           [closable]="false"
           [baseZIndex]="2"
           [draggable]="false"
           [resizable]="false">
-  <form [formGroup]="dynamicForm" (ngSubmit)="createNewRowShip();">
+  <ng-container *ngIf="this.optimalProgressBar === true">
+    <ul *ngFor="let item of this.infoBarProgress">
+      <li>{{item}}</li>
+    </ul>
+    <div>
+      <p>{{'Загрузка данных...'}}</p>
+      <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+    </div>
+  </ng-container>
+
+  <form [formGroup]="dynamicForm" (ngSubmit)="createNewRowShip();" *ngIf="this.optimalProgressBar === false">
     <div class="p-grid p-fluid">
-      <div class="p-col-12 p-md-4">
+      <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
         <p-dropdown [options]="cargoGroupNci" optionLabel="name" [showClear]="true" formControlName="cargoGroup"
                     placeholder="Группа груза:"></p-dropdown>
       </div>
-      <div class="p-col-12 p-md-4">
-        <span class="p-float-label" style="padding-right: 10px;">
+      <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
+        <span class="p-float-label">
               <input id="cargoSubGroup" formControlName="cargoSubGroup" type="text" pInputText>
               <label for="cargoSubGroup">Подгруппа груза</label>
           </span>
       </div>
-      <div class="p-col-12 p-md-4">
+      <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
         <p-dropdown [options]="shipmentTypNci" appendTo="body" optionLabel="name" [showClear]="true"
                     formControlName="shipmentType" placeholder="Вид перевозки:"></p-dropdown>
       </div>
-      <div class="p-col-12 p-md-4">
+      <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
         <p-dropdown [options]="primary" appendTo="body" placeholder="Выберете вариант" formControlName="primary"
                     optionLabel="label"></p-dropdown>
       </div>
-      <div class="p-col-12 p-md-4">
+      <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
         <p-dropdown [options]="dorogyNci" appendTo="body" optionLabel="name" [showClear]="true"
                     formControlName="fromRoad" placeholder="Дорога отправления:" (onChange)="fromRoad()"></p-dropdown>
       </div>
-      <div class="p-col-12 p-md-4">
+      <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
         <p-dropdown [options]="fromstationNci" appendTo="body" optionLabel="name" formControlName="fromStation"
                     placeholder="Станция отправления РФ:"
                     [disabled]="this.dynamicForm.controls.fromRoad.invalid"></p-dropdown>
       </div>
-      <div class="p-col-12 p-md-4">
+      <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
         <p-dropdown [options]="cargoNci" appendTo="body" optionLabel="name" [showClear]="true"
                     formControlName="senderName" placeholder="Грузоотправитель:"></p-dropdown>
       </div>
-      <div class="p-col-12 p-md-4">
+      <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
         <p-dropdown [options]="dorogyNci" appendTo="body" optionLabel="name" [showClear]="true" formControlName="toRoad"
                     placeholder="Дорога назначения:" (onChange)="toRoad()"></p-dropdown>
       </div>
-      <div class="p-col-12 p-md-4">
+      <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
         <p-dropdown [options]="tostationNci" appendTo="body" optionLabel="name" [showClear]="true"
                     formControlName="toStation" placeholder="Станция назначения РФ:"
                     [disabled]="this.dynamicForm.controls.toRoad.invalid"></p-dropdown>
       </div>
-      <div class="p-col-12 p-md-4">
+      <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
         <p-dropdown [options]="cargoNci" appendTo="body" optionLabel="name" [showClear]="true"
                     formControlName="receiverName" placeholder="Грузополучатель:"></p-dropdown>
       </div>
       <ng-container *ngFor="let shipmentYearValuePair of t.controls; let i = index" class="list-group list-group-flush">
-        <div class="p-col-12 p-md-4">
+        <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
           <form [formGroup]="shipmentYearValuePair">
-              <span class="p-float-label" style="padding-right: 10px;">
+              <span class="p-float-label">
                 <input id="{{'value'+i}}" formControlName="value" type="number" pInputText>
                 <label
                   for="{{'value'+i}}">{{this.mathematicalForecastContent[0].shipmentYearValuePairs[i].year}}</label>
@@ -72,4 +82,6 @@
   <ng-template pTemplate="footer">
     <p-button icon="pi pi-check" (click)="closeCreateRowDialog()" label="Закрыть" styleClass="p-button-text"></p-button>
   </ng-template>
+
+
 </p-dialog>

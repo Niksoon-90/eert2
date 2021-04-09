@@ -31,6 +31,10 @@ export class DataShipmentsComponent implements OnInit, OnDestroy {
   doenloadItemId: number [] = []
   opimalItemId: number [] = []
   subscriptions: Subscription = new Subscription();
+  displayModal: boolean = false
+  shipmentHistoricalYears: any[] = []
+  selectedShipmentHistoricalYears: [];
+  shipmentItemId: number
 
   constructor(
     private messageService: MessageService,
@@ -206,8 +210,7 @@ export class DataShipmentsComponent implements OnInit, OnDestroy {
     )
     )
   }
-
-  opimal(id: number) {
+  opimalOld(id: number) {
     this.opimalItemId.push(id)
     this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(id).subscribe(
       () => console.log(),
@@ -228,5 +231,44 @@ export class DataShipmentsComponent implements OnInit, OnDestroy {
         ))
       }
     ))
+  }
+
+  opimal() {
+        this.opimalItemId.push(this.shipmentItemId)
+        this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(this.shipmentItemId).subscribe(
+          () => console.log(),
+          error => {
+            this.modalService.open(error.error.message)
+            this.opimalItemId = this.opimalItemId.filter(item => item !== this.shipmentItemId)
+          },
+          () => {
+            this.subscriptions.add(this.calculationsService.postHierarchicalShipment(this.shipmentItemId).subscribe(
+              () => console.log(),
+              error => {
+                this.modalService.open(error.error.message)
+                this.opimalItemId = this.opimalItemId.filter(item => item !== this.shipmentItemId)
+              },
+              () => {
+                this.opimalItemId = this.opimalItemId.filter(item => item !== this.shipmentItemId)
+              }
+            ))
+          }
+        ))
+      }
+
+  showModalDialog(id: number, year: string) {
+    this.selectedShipmentHistoricalYears = []
+    this.shipmentHistoricalYears  = year.split(',')
+    this.shipmentItemId = id
+    this.displayModal = true;
+  }
+
+  closedisplayModal() {
+    this.selectedShipmentHistoricalYears = []
+    this.displayModal = false;
+  }
+
+  checkShipmentHistoricalYearsLenght(item: number) {
+    return this.selectedShipmentHistoricalYears.length === this.shipmentHistoricalYears.length - 1 ?   item :  false
   }
 }

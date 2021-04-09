@@ -121,13 +121,14 @@ export class StationComponent implements OnInit, OnDestroy {
   }
 
   createStatioNci() {
+    console.log('station', this.form.controls.road.value)
     const station: IStationNci = {
       border: null,
       code: this.form.controls.code.value,
       ferry: null,
       land: null,
       name: this.form.controls.nameStation.value,
-      road: this.form.controls.road.value.name,
+      road: this.form.controls.road.value.shortname,
       subjectGvc: this.form.controls.subjectGvc.value.name,
       transmissionPoint: null,
       type: null

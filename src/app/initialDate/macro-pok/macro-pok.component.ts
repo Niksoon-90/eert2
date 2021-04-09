@@ -24,12 +24,14 @@ export class MacroPokComponent implements OnInit, OnDestroy {
   macroPokList: IMacroPokModel[];
   form: FormGroup
   years = [];
+  selectedmacroPokList: any;
 
   constructor(
     private shipmentsService: ShipmentsService,
     private modalService:ModalService,
     private authenticationService: AuthenticationService,
     private confirmationService: ConfirmationService,
+    private messageService: MessageService
   ) {
     this.user = this.authenticationService.userValue;
   }
@@ -146,5 +148,34 @@ export class MacroPokComponent implements OnInit, OnDestroy {
         ))
       }
     })
+  }
+//TODO comm
+  deleteMacroPokList() {
+    this.confirmationService.confirm({
+      message: `Удалить ${this.selectedmacroPokList.length} макроэкономическ(ий)их показател(ей)я?`,
+      header: 'Удаление макроэкономических показателей.',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        let massId = []
+        for(let item of this.selectedmacroPokList){
+          massId.push(item.id)
+        }
+        this.subscriptions.add(this.shipmentsService.deleteMackPokList(massId).subscribe(
+          () => {
+          //  this.macroPokList = this.macroPokList.filter(macroPokItem => macroPokItem.id !== id)
+            this.macroPokList = this.macroPokList.filter( ( el ) => !massId.includes( el.id ) );
+          },
+          error => this.modalService.open(error.error.message),
+          () => {
+            this.selectedmacroPokList = []
+            this.messageService.add({severity:'success', summary: 'Успешно!', detail: 'Макроэкономический показатель удален!', life: 6000});
+        }
+        ))
+      }
+    });
+  }
+
+  clearSelectedMacroPokList() {
+    this.selectedmacroPokList = [];
   }
 }

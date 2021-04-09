@@ -138,12 +138,12 @@ export class ExportExcelService {
     workbook.xlsx.writeBuffer().then((data) => {
       let blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       fs.saveAs(blob, title + '.xlsx');
+      return false
     })
+    return false
   }
 
   exportExcelTwo(excelData) {
-
-
     //Title, Header & Data
     const title = excelData.title;
     const topHeaderInfo = excelData.topHeaderInfo;
@@ -665,7 +665,6 @@ export class ExportExcelService {
           }
           result.push(data[i].no !== null ? data[i].no : 0)
         }
-
         let rowDataI = worksheet.addRow(result);
         rowDataI.eachCell((cell) => {
           cell.fill = {type: 'pattern', pattern: 'solid', fgColor: {argb: 'FFFFFF'}, bgColor: {argb: 'FFFFFF'}}
@@ -674,7 +673,7 @@ export class ExportExcelService {
 
       } else {
         let result = []
-        if(headerRodGr.length === 1){
+        if(headerRodGr.length === 1) {
           result.push(
             `${data[i].st1_p_name} - ${data[i].st2_p_name}`,
             data[i].year,
@@ -685,36 +684,37 @@ export class ExportExcelService {
             data[i].no !== null ? data[i].no : 0,
             data[i].no !== null ? data[i].no : 0,
           )
-        }else if (headerRodGr.length > 1){
-          result.push(
-            `${data[i].st1_p_name} - ${data[i].st2_p_name}`,
-            data[i].year,
-            data[i].len !== null ? data[i].len : 'нет данных',
-            data[i].nt + data[i].no !== null ? data[i].nt + data[i].no : 0,
-          )
-
-          for(let i =0; i < headerRodGr.length; i++){
-            if(i !== indexCol){
-              if(i === headerRodGr.length - 1){
-                result.push(data[i].nt !== null ? data[i].nt : 0)
-              }else{
-                result.push(0)
-              }
-            }
-          }
-          result.push(data[i].nt !== null ? data[i].nt : 0)
-
-          for(let i =0; i < headerRodGr.length; i++){
-            if(i !== indexCol){
-              if(i === headerRodGr.length - 1){
-                result.push(data[i].no !== null ? data[i].no : 0)
-              }else{
-                result.push(0)
-              }
-            }
-          }
-          result.push(data[i].no !== null ? data[i].no : 0)
         }
+        // }else if (headerRodGr.length > 1){
+        //   result.push(
+        //     `${data[i].st1_p_name} - ${data[i].st2_p_name}`,
+        //     data[i].year,
+        //     data[i].len !== null ? data[i].len : 'нет данных',
+        //     data[i].nt + data[i].no !== null ? data[i].nt + data[i].no : 0,
+        //   )
+        //
+        //   for(let i =0; i < headerRodGr.length; i++){
+        //     if(i !== indexCol){
+        //       if(i === headerRodGr.length - 1){
+        //         result.push(data[i].nt !== null ? data[i].nt : 0)
+        //       }else{
+        //         result.push(0)
+        //       }
+        //     }
+        //   }
+        //   result.push(data[i].nt !== null ? data[i].nt : 0)
+        //
+        //   for(let i =0; i < headerRodGr.length; i++){
+        //     if(i !== indexCol){
+        //       if(i === headerRodGr.length - 1){
+        //         result.push(data[i].no !== null ? data[i].no : 0)
+        //       }else{
+        //         result.push(0)
+        //       }
+        //     }
+        //   }
+        //   result.push(data[i].no !== null ? data[i].no : 0)
+        // }
 
         let rowDataI = worksheet.addRow(result);
         rowDataI.eachCell((cell) => {
@@ -731,10 +731,13 @@ export class ExportExcelService {
     worksheet.addRow([]);
 
     //Generate & Save Excel File
-    workbook.xlsx.writeBuffer().then((data) => {
-      let blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-      fs.saveAs(blob, title + '.xlsx');
+    workbook.xlsx.writeBuffer().then(
+      (data) => {
+        let blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+        fs.saveAs(blob, title + '.xlsx');
+        return false
     })
+    return false
   }
 
 

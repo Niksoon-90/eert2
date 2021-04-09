@@ -64,7 +64,7 @@
           <ng-container *ngIf="this.opimalItemId.includes(itemShipmentsSession.id) === false; else loader">
           <button pButton pRipple icon="pi pi-chart-line" class="p-button-rounded p-button-text" type="button"
                   pTooltip="Оптимальный" tooltipPosition="bottom"
-                  (click)="opimal(itemShipmentsSession.id)"></button>
+                  (click)="opimalOld(itemShipmentsSession.id)"></button>
           </ng-container>
           <ng-template #loader>
             <p-progressSpinner [style]="{width: '25px', height: '25px'}" styleClass="custom-spinner" strokeWidth="8"
@@ -118,4 +118,16 @@
   </p-footer>
 </p-confirmDialog>
 
+<!--<p-dialog header="Header" [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}" [baseZIndex]="10000"-->
+<!--          [draggable]="false" [resizable]="false">-->
 
+<!--  <div *ngFor="let item of shipmentHistoricalYears; let idx = index" class="p-field-checkbox">-->
+<!--    <p-checkbox name="group2" value="category" [value]="item"  [(ngModel)]="selectedShipmentHistoricalYears" [inputId]="item" [disabled]="item === checkShipmentHistoricalYearsLenght(item)"></p-checkbox>-->
+<!--    <label >{{item}}</label>-->
+<!--  </div>-->
+
+<!--  <ng-template pTemplate="footer">-->
+<!--    <p-button icon="pi pi-check" (click)="opimal()" label="Расчитать" class="p-button-text"></p-button>-->
+<!--    <p-button icon="pi pi-times" (click)="closedisplayModal()" label="Отмена"></p-button>-->
+<!--  </ng-template>-->
+<!--</p-dialog>-->
