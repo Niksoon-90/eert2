@@ -65,6 +65,7 @@ export class ShipmentTypeComponent implements OnInit, OnDestroy {
 
   onRowEditInit() {
 
+
   }
 
   onRowEditSave(rowData) {
