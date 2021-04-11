@@ -1,0 +1,148 @@
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-template pTemplate="title">
+      Прогноз корреспонденций
+    </ng-template>
+
+
+    <ng-template pTemplate="body">
+      <ng-container *ngIf="this.monoCargo === true; else tablemathematicalForecastTableSession">
+        <app-mono-cargo
+          [sessionId]="this.sessionId"
+        ></app-mono-cargo>
+      </ng-container>
+
+      <ng-template #tablemathematicalForecastTableSession>
+        <ng-container
+          *ngIf="this.forecastModelService.getTicketInformation().stepOne.Session !== null; else sessionIdnull">
+          <div class="p-d-flex">
+            <div class="p-field p-col-12">
+              <div class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col">
+                  <label>Стратегия прогнозирования (устойчивые):</label>
+                  <p-dropdown [options]="methodUsers" optionLabel="name"
+                              [(ngModel)]="stepThree.forecastingStrategySustainable"
+                              placeholder="Укажите стратегию:"></p-dropdown>
+                </div>
+                <div class="p-field p-col">
+                  <ng-container *ngIf="this.stepThree.forecastingStrategySustainable.type === 'FISCAL_YEAR'">
+                    <label>Укажите год (устойчивые):</label>
+                    <p-dropdown [options]="this.reportingYears" optionLabel="name"
+                                [(ngModel)]="stepThree.primaryForecastFiscalYear"
+                                placeholder="Укажите год:"></p-dropdown>
+                  </ng-container>
+
+                </div>
+              </div>
+              <div class="p-fluid p-formgrid p-grid">
+                <div class="p-field p-col">
+                  <label>Стратегия прогнозирования (мелкие):</label>
+                  <p-dropdown [options]="methodUsers" optionLabel="name"
+                              [(ngModel)]="stepThree.forecastingStrategySmall"
+                              placeholder="Укажите стратегию:"></p-dropdown>
+                </div>
+                <div class="p-field p-col">
+                  <ng-container *ngIf="this.stepThree.forecastingStrategySmall.type === 'FISCAL_YEAR'">
+                    <label>Укажите год (мелкие):</label>
+                    <p-dropdown [options]="this.reportingYears" optionLabel="name"
+                                [(ngModel)]="stepThree.secondaryForecastFiscalYear"
+                                placeholder="Укажите год:"></p-dropdown>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="p-d-flex p-jc-between">
+            <div>
+              <button pButton pRipple type="button" label="Расчитать" class="p-button-success p-mr-2 p-button-lg"
+                      (click)="calculateForecastingStrategyAll()"></button>
+
+              <ng-container *ngIf="this.calculated === false">
+                <button pButton pRipple type="button" label="Применить" class="p-button-success p-button-lg"
+                        (click)="toApplyOptimalShipment()"></button>
+              </ng-container>
+
+            </div>
+            <div>
+              <button pButton pRipple type="button" label="Увязать " class="p-button-success" (click)="correlation()"
+                      [disabled]="disableCorrelation" style="margin-right: 10px"></button>
+              <button pButton pRipple type="button" label="Учесть заявки грузоотправителей" class="p-button-success"
+                      (click)="cargoSessionSenders()" [disabled]="disableCorrelation"
+                      style="margin-right: 10px"></button>
+              <button pButton pRipple type="button" label="Учесть заявки грузополучателей" class="p-button-success"
+                      [disabled]="disableCorrelation" (click)="cargoSessionReceivers()"
+                      style="margin-right: 10px"></button>
+              <button pButton pRipple type="button" label="Учесть перспективные корреспонденции"
+                      class="p-button-success"
+                      (click)="corresponTie(); " [disabled]="disableCorrelation"></button>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-template #sessionIdnull>
+          <!--          <button pButton pRipple type="button" label="Учесть перспективные корреспонденции" class="p-button-success"-->
+          <!--                  (click)="corresponTiers();"></button>-->
+        </ng-template>
+        <ng-container *ngIf="this.calculated === true">
+          <ng-container *ngIf="this.loading === true; else LoaderMathematical">
+            <app-mathematical-forecast-table
+              [forecastingStrategySustainable]="this.stepThree.forecastingStrategySustainable.type"
+              [forecastingStrategySmall]="this.stepThree.forecastingStrategySmall.type"
+              [settlemenType]="this.settlemenType"
+            >
+            </app-mathematical-forecast-table>
+          </ng-container>
+        </ng-container>
+        <ng-template #LoaderMathematical>
+          <div class="p-d-flex p-jc-center" style="height: 40vh">
+            <div class="p-grid p-ai-center vertical-container ">
+              <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+                                 fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-container *ngIf="this.calculated === false">
+          <ng-container *ngIf="this.loadingHistoryShipment === false; else LoadingHistoryShipment">
+            <app-history-shipment
+              [sessionId]="this.sessionId"
+            >
+            </app-history-shipment>
+          </ng-container>
+        </ng-container>
+        <ng-template #LoadingHistoryShipment>
+          <div class="p-d-flex p-jc-center" style="height: 40vh">
+            <div class="p-grid p-ai-center vertical-container ">
+              <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+                                 fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+            </div>
+          </div>
+        </ng-template>
+
+      </ng-template>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <div class="p-grid p-nogutter p-justify-between">
+        <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left" class="p-button-sm"></p-button>
+        <div>
+          <p-button *ngIf="this.forecastModelService.getTicketInformation().stepOne.Session === null"
+                    label="взаимодействие с ИАС Моногрузы" (onClick)="monoCargoDialog()"
+                    class="p-button-sm" [ngStyle]="{'margin-right': '10px'}"></p-button>
+          <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+            <p-button label="Выгрузить в ИАС Маршруты" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"
+                      class="p-button-sm"></p-button>
+          </ng-container>
+        </div>
+      </div>
+    </ng-template>
+  </p-card>
+</div>
+<p-confirmDialog #cd icon="pi pi-exclamation-triangle" [style]="{width: 'auto'}" [baseZIndex]="10000">
+  <p-footer>
+    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()"
+            class="p-button-danger"></button>
+    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"
+            class="p-button-secondary"></button>
+  </p-footer>
+</p-confirmDialog>

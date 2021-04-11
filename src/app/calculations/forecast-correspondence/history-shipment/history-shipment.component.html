@@ -1,0 +1,118 @@
+<div class="stepsdemo-content">
+  <div class="card" >
+  <p-table
+    #dt
+    *ngIf="mathematicalForecastTable"
+    [value]="mathematicalForecastTable"
+    [(first)]="first"
+    [lazy]="true"
+    [columns]="cols"
+    (onLazyLoad)="loadCustomers($event)"
+    [paginator]="true"
+    [rows]="50"
+    [rowsPerPageOptions]="[50,100,150]"
+    [totalRecords]="totalRecords"
+    [loading]="loadingTable"
+    [scrollable]="true"
+    scrollHeight="70vh"
+    [style]="{width:'94.7vw'}"
+    dataKey="id"
+    [resizableColumns]="true"
+    editMode="row"
+    columnResizeMode="expand"
+    styleClass="p-datatable-customers p-datatable-gridlines"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Отображено с {first} по {last} запись. Всего: {totalRecords}"
+  >
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col style="width:80px">
+        <col *ngFor="let col of columns" [style.width]="col.width">
+      </colgroup>
+    </ng-template>
+
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th pResizableColumn>№</th>
+        <ng-container *ngFor="let col of columns;let idx = index;">
+          <ng-container *ngIf="idx< 15; else NotSort">
+            <th pResizableColumn [pSortableColumn]="col.field">
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+              {{col.header}}
+            </th>
+          </ng-container>
+          <ng-template #NotSort>
+            <th pResizableColumn>
+              {{col.header}}
+            </th>
+          </ng-template>
+        </ng-container>
+      </tr>
+      <tr>
+        <th></th>
+        <th *ngFor="let col of columns;let idx = index;">
+          <ng-container *ngIf="col['field'] === 'primary' || col['field'] === 'forecastType'; else primeCol">
+            <ng-container *ngIf="col['field'] === 'primary'">
+              <p-dropdown appendTo="body" [options]="primeryBol" [(ngModel)]="selectedPrimery"
+                          (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>
+            </ng-container>
+            <ng-container *ngIf="col['field'] === 'forecastType'">
+              <p-dropdown appendTo="body" [options]="typeCalculation" [(ngModel)]="selectedForecastType"
+                          (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>
+            </ng-container>
+          </ng-container>
+
+
+          <ng-template #primeCol>
+            <ng-container *ngIf=" idx < 15; else yearsCol">
+              <input pInputText type="text" (click)="$event.stopPropagation()"
+                     (keyup.enter)="dt.filter($event.target.value, col.field, 'contains')"
+                     class="p-column-filter">
+            </ng-container>
+            <ng-template #yearsCol>
+              <input pInputText type="text" (click)="$event.stopPropagation()"
+                     (keyup.enter)="dt.filter($event.target.value, col.header, 'contains')"
+                     class="p-column-filter">
+            </ng-template>
+          </ng-template>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+      <tr [pEditableRow]="rowData">
+        <td>{{ri + 1}}</td>
+        <td *ngFor="let col of this.cols; let idx = index">
+          <p-cellEditor>
+            <ng-template pTemplate="output">
+              <div *ngIf="col['field'] !== 'primary' && idx < 15 && col['field'] !== 'forecastType'">
+                {{rowData[col.field]}}
+              </div>
+              <div *ngIf="col['field'] === 'forecastType'">
+                {{this.sdsd(rowData[col.field])}}
+              </div>
+              <div *ngIf="col['field'] === 'primary'">
+                <ng-container *ngIf="rowData[col.field] === true; else primaryFalse">
+                  да
+                </ng-container>
+                <ng-template #primaryFalse>
+                  нет
+                </ng-template>
+              </div>
+              <div *ngIf="idx > 14" [ngStyle]="{'color': colorYears(rowData, col) == true ? '#c54747' : '#4d7d4d' }">
+                {{rowData | field:col}}
+              </div>
+            </ng-template>
+          </p-cellEditor>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <tr>
+        <td colspan="16" class="p-text-right">Итого:</td>
+        <td *ngFor="let item of this.massSummYear | keyvalue">{{item.value | number}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  </div>
+</div>

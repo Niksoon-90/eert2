@@ -1,0 +1,40 @@
+<div class="p-d-flex p-justify-between p-col-6">
+  <div *ngIf="!checked; else synTable">
+    Грузовладельцы
+  </div>
+  <ng-template #synTable>
+    <div>
+      Поиск синонимов
+    </div>
+  </ng-template>
+  <p-inputSwitch [(ngModel)]="checked"></p-inputSwitch>
+</div>
+<div class="p-grid" style="margin: 0">
+  <ng-container *ngIf="!checked; else synonym">
+    <div class="p-col-6">
+      <app-cargo-nci></app-cargo-nci>
+    </div>
+  </ng-container>
+  <ng-template #synonym>
+    <div class="p-col-6">
+      <app-search-synonym></app-search-synonym>
+    </div>
+  </ng-template>
+  <div class="p-col-6">
+    <app-influence-factor></app-influence-factor>
+  </div>
+  <div class="p-col-12">
+    <app-cargo-owner-influence-factor></app-cargo-owner-influence-factor>
+  </div>
+</div>
+<p-confirmDialog #cd icon="pi pi-exclamation-triangle" [style]="{width: 'auto'}" [baseZIndex]="10000">
+  <p-footer>
+    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()"
+            class="p-button-danger"></button>
+    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"
+            class="p-button-secondary"></button>
+  </p-footer>
+</p-confirmDialog>
+
+
+

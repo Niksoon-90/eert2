@@ -1,0 +1,87 @@
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-template pTemplate="title">
+    </ng-template>
+    <ng-template pTemplate="body">
+      <ng-container *ngIf="this.user.authorities.includes('P_P_p10') === true">
+        <h3>Работа с ИАС Маршруты</h3>
+        <div>
+          <div class="p-col-12 p-md-4" *ngIf="this.selectedPrimery !== true">
+            <form [formGroup]="formTwo" (ngSubmit)="download(); formTwo.reset()">
+              <div class="p-inputgroup">
+                <button pButton type="submit" label="Загрузить" class="p-button-raised p-button-secondary "
+                        [disabled]="this.formTwo.invalid"></button>
+                <span class="p-float-label">
+                        <input id="float-input" type="text" pInputText formControlName="name">
+                        <label for="float-input">Коэффициент</label>
+                      </span>
+              </div>
+            </form>
+          </div>
+          <div class="p-col-12 p-md-4">
+            <form [formGroup]="form" (ngSubmit)="unload(); form.reset()">
+              <div class="p-d-flex p-flex-column" [style]="{'minWidth':'100%'}">
+                <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="forecastCorrespondence"
+                            optionLabel="descr" [showClear]="true" formControlName="forecastCorrespondence"
+                            placeholder="Выгрузить загрузку участков прогнозными корреспонденциями:"></p-dropdown>
+                <ng-container *ngIf="this.selectedPrimery === true">
+                  <p-dropdown [style]="{'minWidth':'100%', 'margin-bottom':'10px'}" [options]="smallCorrespondence"
+                              optionLabel="descr" [showClear]="true" formControlName="smallCorrespondence"
+                              placeholder="Выгрузить загрузку участков мелкими корреспонденциями:"></p-dropdown>
+                </ng-container>
+              </div>
+            </form>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
+        <h3>Экспорт в EXCEL</h3>
+        <div class="p-d-flex p-flex-wrap">
+          <div class="p-mr-2 p-mb-2">
+            <p-card header="Дорога-Дорога" subheader="примечание" [style]="{width: '300px'}" styleClass="p-card-shadow">
+              <p>Отчет по всем корреспонденциям в разрезе дорога-дорога!</p>
+              <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" label="Скачать" class="p-button-success"
+                        (click)="downloadRoad()"></button>
+              </ng-template>
+            </p-card>
+          </div>
+          <div class="p-mr-2 p-mb-2">
+            <p-card header="Прогноз по участкам" subheader="примечание" [style]="{width: '300px'}"
+                    styleClass="p-card-shadow">
+              <p>Сводный отчет прогноза по участкам!</p>
+              <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" label="Скачать" class="p-button-success"
+                        (click)="downloadIasRoutes()"
+                        [disabled]="this.form.controls.forecastCorrespondence.invalid"></button>
+              </ng-template>
+            </p-card>
+          </div>
+          <div class="p-mr-2 p-mb-2">
+            <p-card header="Отчет прогноза" subheader="примечание" [style]="{width: '300px'}"
+                    styleClass="p-card-shadow">
+              <p>Отчет прогноза по всем корреспонденциям!</p>
+              <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" label="Скачать" class="p-button-success" disabled></button>
+              </ng-template>
+            </p-card>
+          </div>
+          <div class="p-mr-2 p-mb-2">
+            <p-card header="Отчет прогноза" subheader="примечание" [style]="{width: '300px'}"
+                    styleClass="p-card-shadow">
+              <p>Отчет прогноза по основным корреспонденциям!</p>
+              <ng-template pTemplate="footer">
+                <button pButton pRipple type="button" label="Скачать" class="p-button-success" disabled></button>
+              </ng-template>
+            </p-card>
+          </div>
+        </div>
+      </ng-container>
+
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
+    </ng-template>
+  </p-card>
+</div>
+

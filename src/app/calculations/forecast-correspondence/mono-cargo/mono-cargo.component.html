@@ -1,0 +1,111 @@
+<p-toast></p-toast>
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-container *ngIf="this.forecastModelService.getTicketInformation().stepOne.oilCargo !== null">
+      <div class="p-d-flex p-jc-center">
+        <form class="p-col-6" [formGroup]="formOil" (ngSubmit)="monoCargiOutput('oil'); formOil.reset()">
+          <div class="p-fluid">
+            <div class="p-field p-col-12">
+              <label>Перспективые корреспонденции система "Нефтегрузы":</label>
+              <p-dropdown formControlName="parentCalculationOil" optionLabel="title" [options]="oil" [showClear]="true"
+                          placeholder="Выберите один из вариантов:"></p-dropdown>
+            </div>
+          </div>
+          <div class="p-d-flex p-col-12 p-p-0">
+            <div class="p-col-4 p-d-flex p-flex-column">
+             <span class="p-float-label">
+              <input formControlName="nameOil" id="float-input-oil-name" type="text" pInputText
+                     [style]="{'width': '100%'}">
+              <label for="float-input-oil-name">Наименование</label>
+             </span>
+              <div class="demo-container" [ngStyle]="{'padding' : '1rem 0 0'}">
+                <p-button [style]="{'width': '100%'}" label="Передать информацию"
+                          type="submit" [disabled]="this.formOil.invalid"></p-button>
+              </div>
+            </div>
+            <div class="p-col-8">
+            <span class="p-float-label" [style]="{'height': '100%'}">
+              <textarea formControlName="descriptionOil" id="float-input-oil" pInputTextarea
+                        [ngStyle]="{'width': '100%', 'height': '100%'}"></textarea>
+              <label for="float-input-oil">Примечание: </label>
+          </span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+
+
+    <ng-container *ngIf="this.forecastModelService.getTicketInformation().stepOne.ore !== null">
+      <div class="p-d-flex p-jc-center">
+        <form class="p-col-6" [formGroup]="formOre" (ngSubmit)="monoCargiOutput('ruda'); formOre.reset()">
+          <div class="p-fluid">
+            <div class="p-field p-col-12">
+              <label>Перспективые корреспонденции система "Руда":</label>
+              <p-dropdown formControlName="parentCalculationOre" optionLabel="title" [options]="ore" [showClear]="true"
+                          placeholder="Выберите один из вариантов:"></p-dropdown>
+            </div>
+          </div>
+          <div class="p-d-flex p-col-12 p-p-0">
+            <div class="p-col-4 p-d-flex p-flex-column">
+             <span class="p-float-label">
+              <input formControlName="nameOre" id="float-input-ore-name" type="text" pInputText
+                     [style]="{'width': '100%'}">
+              <label for="float-input-ore-name">Наименование</label>
+             </span>
+              <div class="demo-container" [ngStyle]="{'padding' : '1rem 0 0'}">
+                <p-button [style]="{'width': '100%'}" label="Передать информацию"
+                          type="submit" [disabled]="this.formOre.invalid"></p-button>
+              </div>
+
+            </div>
+            <div class="p-col-8">
+            <span class="p-float-label" [style]="{'height': '100%'}">
+              <textarea formControlName="descriptionOre" id="float-input-ore" pInputTextarea
+                        [ngStyle]="{'width': '100%', 'height': '100%'}"></textarea>
+              <label for="float-input-ore">Примечание: </label>
+          </span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="this.forecastModelService.getTicketInformation().stepOne.metallurgy !== null">
+      <div class="p-d-flex p-jc-center">
+        <form class="p-col-6" [formGroup]="formMetallurgy"
+              (ngSubmit)="monoCargiOutput('metal'); formMetallurgy.reset()">
+          <div class="p-fluid">
+            <div class="p-field p-col-12">
+              <label>Перспективые корреспонденции система "Металлургия":</label>
+              <p-dropdown formControlName="parentCalculationMetallurgy" optionLabel="title" [options]="metallurgy"
+                          [showClear]="true"
+                          placeholder="Выберите один из вариантов:"></p-dropdown>
+            </div>
+          </div>
+          <div class="p-d-flex p-col-12 p-p-0">
+            <div class="p-col-4 p-d-flex p-flex-column">
+             <span class="p-float-label">
+              <input formControlName="nameMetallurgy" id="float-input-metallurgy" type="text" pInputText
+                     [style]="{'width': '100%'}">
+              <label for="float-input-metallurgy">Наименование</label>
+             </span>
+              <div class="demo-container" [ngStyle]="{'padding' : '1rem 0 0'}">
+                <p-button [style]="{'width': '100%'}" label="Передать информацию"
+                          type="submit" [disabled]="this.formMetallurgy.invalid"></p-button>
+              </div>
+
+            </div>
+            <div class="p-col-8">
+            <span class="p-float-label" [style]="{'height': '100%'}">
+              <textarea formControlName="descriptionMetallurgy" id="float-input-metallurgy-name" pInputTextarea
+                        [ngStyle]="{'width': '100%', 'height': '100%'}"></textarea>
+              <label for="float-input-metallurgy-name">Примечание: </label>
+          </span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+  </p-card>
+</div>

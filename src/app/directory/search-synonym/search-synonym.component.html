@@ -1,0 +1,62 @@
+<div class="p-grid p-jc-end" style="padding: 15px">
+      <span class="p-float-label" style="padding-right: 10px;">
+        <input id="searchSynonym" type="text" pInputText [(ngModel)]="nameSearchSynonym">
+        <label for="searchSynonym">Синоним</label>
+      </span>
+  <button pButton pRipple type="button" label="Найти" class="p-button-raised p-button-secondary "
+          (click)="searchSynonym()" [disabled]="nameSearchSynonym=== ''"></button>
+</div>
+<div class="card" *ngIf="synonymNci; else Loader">
+  <p-table #dt
+           [style]="{width:'auto'}"
+           [value]="synonymNci"
+           [scrollable]="true" scrollHeight="25vh"
+           styleClass="p-datatable-sm p-datatable-gridlines" dataKey="id"
+           [resizableColumns]="true" editMode="row" columnResizeMode="expand"
+           [paginator]="true"
+           [rows]="500"
+           [filterDelay]="0"
+  >
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col>
+        <col>
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th pResizableColumn pSortableColumn="ownerName">Наименование Грузовладельца
+          <p-sortIcon field="ownerName"></p-sortIcon>
+        </th>
+        <th pResizableColumn pSortableColumn="synonymName">Синоним
+          <p-sortIcon field="synonymName"></p-sortIcon>
+        </th>
+      </tr>
+      <tr>
+        <th>
+          <input pInputText type="text"  (input)="dt.filter($event.target.value, 'ownerName', 'contains')" class="p-column-filter">
+        </th>
+        <th>
+          <input pInputText type="text"  (input)="dt.filter($event.target.value, 'synonymName', 'contains')" class="p-column-filter">
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+      <tr>
+        <td>{{rowData.ownerName}}</td>
+        <td>{{rowData.synonymName}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<ng-template #Loader>
+  <ng-container *ngIf="loadingSynonymTable">
+    <div class="p-d-flex p-jc-center" style="height: 30vh">
+      <div class="p-grid p-ai-center vertical-container ">
+        <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+                           fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+      </div>
+    </div>
+  </ng-container>
+
+</ng-template>

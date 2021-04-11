@@ -1,0 +1,65 @@
+<div style="background-color: #fff">
+  <h3>Список раcчетных сессий</h3>
+</div>
+<ng-container *ngIf="!this.loading; else shipSession">
+  <p-table [value]="historical"
+           styleClass="p-datatable-sm p-datatable-gridlines"
+           [scrollable]="true" scrollHeight="flex" scrollHeight="75vh"
+           [paginator]="true" [rows]="rows"
+           [showCurrentPageReport]="true" [(first)]="first"
+           currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
+           [resizableColumns]="true">
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col style="width:80px">
+        <col>
+        <col>
+        <col>
+        <col>
+        <col>
+        <col style="width:110px">
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr >
+        <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userLogin">Логин<p-sortIcon field="userLogin"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userFio">ФИО<p-sortIcon field="userFio"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
+        <th> Действия</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-itemShipmentsSession >
+      <tr  [ngStyle]="{'background-color': itemShipmentsSession.forecastConfirmed === true ? '#9bd4b2' : '#fff' }">
+        <td>{{itemShipmentsSession.id}}</td>
+        <td>{{itemShipmentsSession.name}}</td>
+        <td>{{itemShipmentsSession.historicalYears}}</td>
+        <td>{{itemShipmentsSession.userLogin}}</td>
+        <td>{{itemShipmentsSession.userFio}}</td>
+        <td>{{itemShipmentsSession.dateWrite | date:'full' }}</td>
+        <td>
+          <button pButton pRipple icon="pi pi-arrow-circle-right"  class="p-button-rounded p-button-text p-button-plain" type="button"  pTooltip="Перейти" tooltipPosition="bottom"  (click)="openThreeStep(itemShipmentsSession.id, itemShipmentsSession.name, itemShipmentsSession.historicalYears, itemShipmentsSession.forecastConfirmed, itemShipmentsSession.firstRouteId, itemShipmentsSession.secondRouteId, itemShipmentsSession.allCorrespondensRouteId)"></button>
+          <ng-container *ngIf="itemShipmentsSession.forecastConfirmed !== true">
+            <ng-container *ngIf="this.user.authorities.includes('P_P_p11') === true">
+              <button pButton pRipple icon="pi pi-star"  class="p-button-rounded p-button-warning p-button-text" type="button"  pTooltip="Утвердить" tooltipPosition="bottom"  (click)="confirmSession(itemShipmentsSession.id)"></button>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngIf="this.user.authorities.includes('P_P_p3') === true">
+            <button pButton pRipple icon="pi pi-times"  class="p-button-rounded p-button-danger p-button-text" type="button"  pTooltip="Удалить" tooltipPosition="bottom"  (click)="deletedThreeStep(itemShipmentsSession.id, itemShipmentsSession.name)"></button>
+          </ng-container>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-container>
+
+<ng-template #shipSession>
+<div class="p-d-flex p-jc-center" style="height: 80vh">
+  <div class="p-grid p-ai-center vertical-container ">
+    <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+  </div>
+</div>
+</ng-template>
+

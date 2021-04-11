@@ -1,0 +1,99 @@
+<ng-container *ngIf="this.user.authorities.includes('P_P_p7') === true">
+  <form [formGroup]="form" (ngSubmit)="creategetInfluenceNci(); form.reset()">
+    <div class="p-grid p-jc-end" [style]="{padding: '15px'}">
+      <div style="padding-right: 10px;">
+         <span class="p-float-label">
+          <input id="nameFactor" formControlName="name" type="text" pInputText>
+          <label for="nameFactor">Наименование Фактора</label>
+        </span>
+      </div>
+      <div style="padding-right: 10px;">
+        <span class="p-float-label">
+            <input id="weight" formControlName="weight" type="number" pInputText>
+            <label for="weight">Коэффициент</label>
+          </span>
+      </div>
+      <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary"
+              [disabled]="this.form.invalid"></button>
+    </div>
+  </form>
+</ng-container>
+<div class="card" *ngIf="influenceNci; else Loader">
+  <p-table #dt
+           [style]="{width:'auto'}"
+           [columns]="cols"
+           [value]="influenceNci"
+           [scrollable]="true" scrollHeight="25vh"
+           styleClass="p-datatable-sm p-datatable-gridlines" dataKey="id"
+           [resizableColumns]="true" editMode="row" columnResizeMode="expand"
+           [paginator]="true"
+           [rows]="500"
+           [totalRecords]="totalRecords"
+           [filterDelay]="0"
+  >
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col *ngFor="let col of columns" [style.width]="col.width">
+        <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
+          <col style="width:120px">
+        </ng-container>
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field">
+          <p-sortIcon [field]="col.field"></p-sortIcon>
+          {{col.header}}
+        </th>
+        <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
+          <th pResizableColumn>Действия</th>
+        </ng-container>
+      </tr>
+      <tr>
+        <th *ngFor="let col of columns;">
+          <input pInputText type="text" (input)="dt.filter($event.target.value, col['field'], 'contains')"
+                 class="p-column-filter">
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
+      <tr [pEditableRow]="rowData">
+        <td *ngFor="let col of this.cols;">
+          <p-cellEditor *ngIf="!col.isStatic;else staticTemplate">
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="rowData[col.field]">
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{rowData[col.field]}}
+            </ng-template>
+          </p-cellEditor>
+          <ng-template #staticTemplate>
+            {{ rowData[col.field] }}
+          </ng-template>
+        </td>
+        <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
+          <td style="text-align:center">
+            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                    (click)="onRowEditInit()" class="p-button-rounded p-button-text"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                    (click)="onRowEditSave(rowData)"
+                    class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                    (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
+            <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash"
+                    (click)="deleteInfluenceNci(rowData.id, rowData.name)"
+                    class="p-button-rounded p-button-text p-button-danger"></button>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<ng-template #Loader>
+  <div class="p-d-flex p-jc-center" style="height: 30vh">
+    <div class="p-grid p-ai-center vertical-container ">
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+                         fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+    </div>
+  </div>
+</ng-template>

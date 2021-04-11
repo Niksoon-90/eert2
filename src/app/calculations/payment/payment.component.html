@@ -1,0 +1,24 @@
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-template pTemplate="content">
+      <h3>Работа с ИАС Маршруты</h3>
+      <p-tabView>
+        <p-tabPanel header="Все">
+          <app-ias-route
+            [primeryBolChange]="false"
+          ></app-ias-route>
+        </p-tabPanel>
+        <p-tabPanel header="Основные + мелике">
+          <app-ias-route
+            [primeryBolChange]="true"
+          ></app-ias-route>
+        </p-tabPanel>
+      </p-tabView>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <div class="p-grid p-nogutter p-justify-between">
+        <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left"></p-button>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

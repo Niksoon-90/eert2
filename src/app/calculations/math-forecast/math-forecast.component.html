@@ -1,0 +1,291 @@
+<div class="stepsdemo-content">
+  <p-card>
+    <ng-template pTemplate="title">
+      Математический прогноз с учетом макропоказателей
+      <ng-container *ngIf="this.lastGroupVolumesByYearsTotal">
+        <ng-container *ngIf="this.lastGroupVolumesByYearsTotal.length < 5">
+          <p>для получения метрик множественной регрессии глубина исторических данных должна быть >= 5 лет</p>
+        </ng-container>
+      </ng-container>
+    </ng-template>
+
+    <ng-template pTemplate="body">
+      <div class="card">
+        <p-tabView>
+          <p-tabPanel header="Учет макропоказателя">
+            <ng-template #Loader>
+              <div class="p-d-flex p-jc-center" style="height: 40vh">
+                <div class="p-grid p-ai-center vertical-container ">
+                  <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner"
+                                     strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+                </div>
+              </div>
+            </ng-template>
+            <ng-container *ngIf="macroPokList; else Loader">
+              <p-table #dtMacro [value]="macroPokList" [scrollable]="true"
+                       scrollHeight="30vh" dataKey="id"
+                       styleClass="p-datatable-sm p-datatable-gridlines"
+                       selectionMode="multiple" [(selection)]="selectedMacro"
+                       [showCurrentPageReport]="true" [resizableColumns]="true"
+                       [loading]="loadingTableMacroPokList">
+                <ng-template pTemplate="caption">
+                  <div class="p-d-flex p-justify-between">
+                    <div class="p-field-checkbox">
+                      <p-checkbox [(ngModel)]="checkedAutoRegression" binary="true" inputId="binary"></p-checkbox>
+                      <label for="binary">Разрешить Авторегрессию</label>
+                    </div>
+                    <div class="p-d-flex">
+                      <p-button label="Фильтр" icon="pi pi-filter" styleClass="p-button-warning p-mr-2"
+                                [badge]="this.selectedMacro.length" badgeClass="p-badge-danger"
+                                (click)="filterSelectedMacro()"></p-button>
+                      <p-button label="Очистить" (click)="clearfilterSelectedMacro()"></p-button>
+                    </div>
+                  </div>
+
+                </ng-template>
+                <ng-template pTemplate="colgroup" let-columns>
+                  <colgroup>
+                    <col style="width: 100px">
+                    <col>
+                    <col>
+                    <col>
+                  </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th pResizableColumn pSortableColumn="id">id
+                      <p-sortIcon field="id"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn pSortableColumn="cargoGroup">Номенклатура грузов
+                      <p-sortIcon field="cargoGroup"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn pSortableColumn="shipmentType">Тип
+                      <p-sortIcon field="shipmentType"></p-sortIcon>
+                    </th>
+                    <th pResizableColumn pSortableColumn="macroIndex">Макро
+                      <p-sortIcon field="macroIndex"></p-sortIcon>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th><input pInputText type="text" (input)="dtMacro.filter($event.target.value, 'id', 'contains')"
+                               placeholder="Фильтр" class="p-column-filter"></th>
+                    <th><input pInputText type="text"
+                               (input)="dtMacro.filter($event.target.value, 'cargoGroup', 'contains')"
+                               placeholder="Фильтр" class="p-column-filter"></th>
+                    <th><input pInputText type="text"
+                               (input)="dtMacro.filter($event.target.value, 'shipmentType', 'contains')"
+                               placeholder="Фильтр" class="p-column-filter"></th>
+                    <th><input pInputText type="text"
+                               (input)="dtMacro.filter($event.target.value, 'macroIndex', 'contains')"
+                               placeholder="Фильтр" class="p-column-filter"></th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowData let-columns="columns">
+                  <tr [pSelectableRow]="rowData">
+                    <td>{{rowData.id}}</td>
+                    <td>{{rowData.cargoGroup}}</td>
+                    <td>{{rowData.shipmentType}}</td>
+                    <td>{{rowData.macroIndex}}</td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                  <tr>
+                    <td>
+                      <button type="button" pButton pRipple label="Скачать" (click)="multipleDownload()"
+                              class="p-button-info p-ml-auto" pTooltip="Скачать" tooltipPosition="bottom"></button>
+                    </td>
+                    <td colspan="3" class="p-text-right">
+                      <button type="button" pButton pRipple icon="pi pi-cog" label="Наилучший"
+                              (click)="optionalCalculatedMakro()"
+                              class="p-button-info p-ml-auto p-mr-2" pTooltip="Наилучший"
+                              tooltipPosition="bottom"></button>
+                      <button type="button" pButton pRipple icon="pi pi-cog" label="Расчитать" (click)="test()"
+                              class="p-button-info p-ml-auto" pTooltip="Расчитать" tooltipPosition="bottom"></button>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </ng-container>
+          </p-tabPanel>
+          <ng-container *ngIf="this.lastGroupVolumesByYearsTotal">
+            <ng-container *ngIf="this.lastGroupVolumesByYearsTotal.length >= 5">
+              <p-tabPanel [disabled]="tbViewRegressionMultiMetrics" header="Получение метрик множественной регрессии">
+                <ng-container *ngIf="macroPokListReg">
+                  <p-table [value]="macroPokListReg"
+                           [scrollable]="true"
+                           scrollHeight="30vh"
+                           dataKey="id"
+                           styleClass="p-datatable-sm p-datatable-gridlines">
+                    <colgroup>
+                      <col style="width:100px">
+                      <col style="width:100px">
+                      <col>
+                      <col>
+                      <col>
+                      <col>
+                      <col>
+                    </colgroup>
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th pSortableColumn="cargoGroup">Номенклатура грузов
+                          <p-sortIcon field="cargoGroup"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="shipmentType">Тип
+                          <p-sortIcon field="shipmentType"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="meanAbsoluteError">MAE (MAE=0)
+                          <p-sortIcon field="meanAbsoluteError"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="meanAbsolutePercentageError">MAPE (MAPE=0)
+                          <p-sortIcon field="meanAbsolutePercentageError"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="meanSquaredError">MSE (MSE=0)
+                          <p-sortIcon field="meanSquaredError"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="r2Score">R2 (R2=1)
+                          <p-sortIcon field="r2Score"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="fisherFTest">F-test
+                          <p-sortIcon field="fisherFTest"></p-sortIcon>
+                        </th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowData>
+                      <tr [pSelectableRow]="rowData">
+                        <td>{{rowData.cargoGroup}}</td>
+                        <td>{{rowData.shipmentType}}</td>
+                        <td>{{rowData.meanAbsoluteError}}</td>
+                        <td>{{rowData.meanAbsolutePercentageError}}</td>
+                        <td>{{rowData.meanSquaredError}}</td>
+                        <td>{{rowData.r2Score}}</td>
+                        <td>{{rowData.fisherFTest}}</td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="footer">
+                      <tr>
+                        <td colspan="2">
+                          <button type="button" pButton pRipple label="Скачать" (click)="multipleDownload()"
+                                  class="p-button-info p-ml-auto" pTooltip="Применить"
+                                  tooltipPosition="bottom"></button>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </ng-container>
+              </p-tabPanel>
+            </ng-container>
+          </ng-container>
+        </p-tabView>
+
+        <p-table
+          *ngIf="mathematicalForecastTable"
+          [value]="mathematicalForecastTable" dataKey="id"
+          [scrollable]="true"
+          styleClass="p-datatable-sm p-datatable-gridlines" dataKey="id"
+          [resizableColumns]="true" editMode="row"
+          scrollHeight="flex"
+        >
+          <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+              <col style="width:100px">
+              <col style="width:100px">
+              <ng-container *ngIf="this.mathematicalForecastTable.length !== 0">
+                <ng-container *ngIf="mathematicalForecastTable">
+                  <col style="width:100px"
+                       *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears| keyvalue">
+                </ng-container>
+                <ng-container *ngIf="mathematicalForecastTable">
+                  <col style="width:100px" *ngFor="let data2 of mathematicalForecastTable[0].forecastValues">
+                </ng-container>
+                <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+                  <col style="width:50px">
+                </ng-container>
+              </ng-container>
+            </colgroup>
+          </ng-template>
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Группа груза</th>
+              <th>Вид сообщения</th>
+              <ng-container *ngIf="this.mathematicalForecastTable.length !== 0">
+                <ng-container *ngIf="mathematicalForecastTable">
+                  <th style="text-align: center"
+                      *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears | keyvalue">
+                    {{data.key}}
+                  </th>
+                  <th style="text-align: center" *ngFor="let data2 of mathematicalForecastTable[0].forecastValues">
+                    {{data2.year}}
+                  </th>
+                </ng-container>
+                <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+                  <th>Действия</th>
+                </ng-container>
+              </ng-container>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-item let-ri="rowIndex" let-editing="editing">
+            <tr [pEditableRow]="item">
+              <td>{{item.cargoGroup}}</td>
+              <td>{{item.shipmentType}}</td>
+              <td *ngFor="let year of item.groupVolumesByYears  | keyvalue; let idx = index"
+                  style="background-color: rgba(0,64,255,0.07); text-align: right">
+                {{year.value | number}}
+              </td>
+              <td *ngFor="let data of item.forecastValues; let idx = index"
+                  style="background-color: rgba(68,255,0,0.29); text-align: right">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input pInputText type="text" [(ngModel)]="data.value">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{data.value | number}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+                <td style="text-align:center">
+                  <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                          (click)="onRowEditInit(item)" class="p-button-rounded p-button-text"></button>
+                  <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                          (click)="onRowEditSave(item)"
+                          class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+                  <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                          class="p-button-rounded p-button-text p-button-danger"></button>
+                </td>
+              </ng-container>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <td [attr.colspan]="2" [attr.align]="'center'">Нет данных</td>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <tr>
+              <ng-container *ngIf="this.mathematicalForecastTable.length !== 0">
+                <td colspan="2" class="p-text-right">Сумма:</td>
+                <ng-container *ngFor="let item of this.lastGroupVolumesByYearsTotal">
+                  <td style="text-align: right">{{item | number}}</td>
+                </ng-container>
+                <ng-container *ngFor="let item of this.lastCalculatedVolumesTotal">
+                  <td style="text-align: right">{{item | number}}</td>
+                </ng-container>
+              </ng-container>
+            </tr>
+
+          </ng-template>
+
+        </p-table>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <div class="p-grid p-nogutter p-justify-between">
+        <p-button label="Назад" (onClick)="prevPage()" icon="pi pi-angle-left" [disabled]="true"></p-button>
+        <p-button label="Вперед" (onClick)="nextPage()" icon="pi pi-angle-right" iconPos="right"
+                  [disabled]="!mathematicalForecastTable"></p-button>
+      </div>
+    </ng-template>
+
+  </p-card>
+</div>

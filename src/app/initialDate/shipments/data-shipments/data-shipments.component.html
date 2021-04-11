@@ -1,0 +1,133 @@
+<ng-container *ngIf="!this.loading; else shipSession">
+  <div class="p-mb-3" style="margin: 20px 0 0 0 !important;">
+    <p-button type="button" icon="pi pi-chevron-left" (click)="prev()" [disabled]="isFirstPage()"
+              styleClass="p-button-text"></p-button>
+    <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить"
+              tooltipPosition="bottom"></p-button>
+    <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()"
+              styleClass="p-button-text"></p-button>
+  </div>
+  <p-table [value]="shipmentsSession"
+           styleClass="p-datatable-sm p-datatable-gridlines"
+           [scrollable]="true" scrollHeight="flex" scrollHeight="75vh"
+           [paginator]="true" [rows]="rows"
+           [showCurrentPageReport]="true" [(first)]="first"
+           currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
+           [resizableColumns]="true">
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col style="width:80px">
+        <col>
+        <col>
+        <col>
+        <col>
+        <col>
+        <col style="width:150px">
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th pResizableColumn pSortableColumn="id">id
+          <p-sortIcon field="id"></p-sortIcon>
+        </th>
+        <th pResizableColumn pSortableColumn="name">Наименование
+          <p-sortIcon field="name"></p-sortIcon>
+        </th>
+        <th pResizableColumn pSortableColumn="year">Года
+          <p-sortIcon field="year"></p-sortIcon>
+        </th>
+        <th pResizableColumn pSortableColumn="userLogin">Логин
+          <p-sortIcon field="userLogin"></p-sortIcon>
+        </th>
+        <th pResizableColumn pSortableColumn="userFio">ФИО
+          <p-sortIcon field="userFio"></p-sortIcon>
+        </th>
+        <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки
+          <p-sortIcon field="endDate"></p-sortIcon>
+        </th>
+        <th> Действия</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-itemShipmentsSession let-editing="editing" let-rowIndex="rowIndex">
+      <tr [pContextMenuRow]="itemShipmentsSession">
+        <td>{{itemShipmentsSession.id}}</td>
+        <td>{{itemShipmentsSession.name}}</td>
+        <td>{{itemShipmentsSession.historicalYears}}</td>
+        <td>{{itemShipmentsSession.userLogin}}</td>
+        <td>{{itemShipmentsSession.userFio}}</td>
+        <td>{{itemShipmentsSession.dateWrite | date:'d MMMM, (EEEE), y, HH:mm:ss' }}</td>
+        <td [style]="{'text-align':'center'}">
+
+          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-text" type="button"
+                  icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom"
+                  (click)="openShipItemSession(itemShipmentsSession.id)"></button>
+          <ng-container *ngIf="this.opimalItemId.includes(itemShipmentsSession.id) === false; else loader">
+          <button pButton pRipple icon="pi pi-chart-line" class="p-button-rounded p-button-text" type="button"
+                  pTooltip="Оптимальный" tooltipPosition="bottom"
+                  (click)="opimalOld(itemShipmentsSession.id)"></button>
+          </ng-container>
+          <ng-template #loader>
+            <p-progressSpinner [style]="{width: '25px', height: '25px'}" styleClass="custom-spinner" strokeWidth="8"
+                               fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+          </ng-template>
+          <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+            <button pButton pRipple class="p-button-rounded p-button-text p-button-danger"
+                    type="button" icon="pi pi-trash" pTooltip="Удалить" tooltipPosition="bottom"
+                    (click)="removeShipSession(itemShipmentsSession.id, itemShipmentsSession.name)"></button>
+          </ng-container>
+          <ng-container *ngIf="this.user.authorities.includes('P_P_p8') === true">
+            <ng-container *ngIf="this.doenloadItemId.includes(itemShipmentsSession.id) === false; else loader">
+              <button pButton pRipple class="p-button-rounded p-button-success p-button-text"
+                      type="button" icon="pi pi-copy" pTooltip="Скачать" tooltipPosition="bottom"
+                      (click)="downloadAbsentcargo(itemShipmentsSession.id)"></button>
+            </ng-container>
+            <ng-template #loader>
+              <p-progressSpinner [style]="{width: '25px', height: '25px'}" styleClass="custom-spinner" strokeWidth="8"
+                                 fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+            </ng-template>
+          </ng-container>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-container>
+<ng-template #shipSession>
+  <div class="p-d-flex p-jc-center" style="height: 80vh">
+    <div class="p-grid p-ai-center vertical-container ">
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8"
+                         fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+    </div>
+  </div>
+</ng-template>
+<ng-container *ngIf="mathematicalForecastTable">
+  <app-list-shipment
+    [sessionId]="this.sessionId"
+    [mathematicalForecastTable]="this.mathematicalForecastTable"
+    [dialogVisible]="this.dialogVisible"
+    [loading]="this.loading"
+    (change)="loadingChange($event)"
+    (changes)="CloseModalChange($event)"
+  ></app-list-shipment>
+</ng-container>
+<p-confirmDialog #cd icon="pi pi-exclamation-triangle" [style]="{width: 'auto'}" [baseZIndex]="10000">
+  <p-footer>
+    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()"
+            class="p-button-danger"></button>
+    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"
+            class="p-button-secondary"></button>
+  </p-footer>
+</p-confirmDialog>
+
+<!--<p-dialog header="Header" [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}" [baseZIndex]="10000"-->
+<!--          [draggable]="false" [resizable]="false">-->
+
+<!--  <div *ngFor="let item of shipmentHistoricalYears; let idx = index" class="p-field-checkbox">-->
+<!--    <p-checkbox name="group2" value="category" [value]="item"  [(ngModel)]="selectedShipmentHistoricalYears" [inputId]="item" [disabled]="item === checkShipmentHistoricalYearsLenght(item)"></p-checkbox>-->
+<!--    <label >{{item}}</label>-->
+<!--  </div>-->
+
+<!--  <ng-template pTemplate="footer">-->
+<!--    <p-button icon="pi pi-check" (click)="opimal()" label="Расчитать" class="p-button-text"></p-button>-->
+<!--    <p-button icon="pi pi-times" (click)="closedisplayModal()" label="Отмена"></p-button>-->
+<!--  </ng-template>-->
+<!--</p-dialog>-->

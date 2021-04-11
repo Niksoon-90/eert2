@@ -1,0 +1,34 @@
+<app-modal></app-modal>
+<ng-container *ngIf="this.user !== null">
+  <div class="logo-nav">
+    <div class="p-d-flex p-jc-between">
+      <div class="p-d-flex p-ai-center">
+        <div class="logo">
+          <img height="55" class="p-mr-2" src="assets/logo1.jpg">
+        </div>
+        <div class="name-platform">
+          <h3>ИАС «Грузопотоки»</h3>
+        </div>
+      </div>
+      <div class="p-d-flex p-ai-center">
+<!--        <h3 style="padding-right: 10px">{{this.user.fio}}</h3>-->
+        <p-button  pRipple type="button" label="Выход" (click)="logout()"></p-button>
+      </div>
+    </div>
+  </div>
+  <p-sidebar [(visible)]="visibleSidebar1" [baseZIndex]="10000" class="p0" >
+    <p-panelMenu [model]="sidebar"></p-panelMenu>
+  </p-sidebar>
+  <div class="p-grid" style="margin: 0;">
+    <p-button type="button" (click)="visibleSidebar1 = true" icon="pi pi-bars"></p-button>
+    <div class="p-col" style="padding: 0">
+      <router-outlet>
+      </router-outlet>
+    </div>
+  </div>
+</ng-container>
+<ng-template>
+  Вы не зарегистрированны в системе!
+</ng-template>
+
+

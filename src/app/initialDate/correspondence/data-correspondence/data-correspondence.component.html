@@ -1,0 +1,89 @@
+<div class="p-mb-3" style="margin: 20px 0 0 0 !important;">
+  <p-button type="button" icon="pi pi-chevron-left" (click)="prev()" [disabled]="isFirstPage()" styleClass="p-button-text"></p-button>
+  <p-button type="button" icon="pi pi-refresh" (click)="reset()" styleClass="p-button-text" pTooltip="Обновить" tooltipPosition="bottom"></p-button>
+  <p-button type="button" icon="pi pi-chevron-right" (click)="next()" [disabled]="isLastPage()" styleClass="p-button-text"></p-button>
+</div>
+
+<ng-template #corresp>
+  <div class="p-d-flex p-jc-center" style="height: 80vh">
+    <div class="p-grid p-ai-center vertical-container ">
+      <p-progressSpinner [style]="{width: '50px', height: '50px'}" styleClass="custom-spinner" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+    </div>
+  </div>
+</ng-template>
+<ng-container *ngIf="!this.loading; else corresp">
+  <p-table #dt [value]="correspondenceSession" styleClass="p-datatable-sm p-datatable-gridlines" [paginator]="true" [rows]="rows"
+           [showCurrentPageReport]="true" [(first)]="first"
+           currentPageReportTemplate=" {first} из {last}  ({totalRecords})" [rowsPerPageOptions]="[25,50]" dataKey="id"
+           [resizableColumns]="true">
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col style="width:80px">
+        <col>
+        <col>
+        <col>
+        <col>
+        <col>
+          <col style="width:100px">
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr >
+        <th pResizableColumn pSortableColumn="id">id<p-sortIcon field="id"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="name">Наименование<p-sortIcon field="name"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="year">Года<p-sortIcon field="year"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userLogin">Логин<p-sortIcon field="userLogin"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="userFio">ФИО<p-sortIcon field="userFio"></p-sortIcon></th>
+        <th pResizableColumn pSortableColumn="dateWrite">Дата загрузки<p-sortIcon field="endDate"></p-sortIcon></th>
+          <th> Действия</th>
+      </tr>
+      <tr>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'id', 'startsWith')" placeholder="id" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'name', 'contains')" placeholder="Наименование" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'year', 'contains')" placeholder="Года" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userLogin', 'contains')" placeholder="Логин" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'userFio', 'contains')" placeholder="ФИО" class="p-column-filter"></th>
+        <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'dateWrite', 'contains')" placeholder="Дата загрузки" class="p-column-filter"></th>
+          <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-itemCorrespondenceSession >
+      <tr>
+        <td>{{itemCorrespondenceSession.id}}</td>
+        <td>{{itemCorrespondenceSession.name}}</td>
+        <td>{{itemCorrespondenceSession.historicalYears}}</td>
+        <td>{{itemCorrespondenceSession.userLogin}}</td>
+        <td>{{itemCorrespondenceSession.userFio}}</td>
+        <td>{{itemCorrespondenceSession.dateWrite | date:'full' }}</td>
+          <td>
+            <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text" type="button" icon="pi pi-pencil" pTooltip="Редактировать" tooltipPosition="bottom" (click)="openShipItemSession(itemCorrespondenceSession.id)"></button>
+            <ng-container *ngIf="this.user.authorities.includes('P_P_p9') !== true">
+              <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded p-button-text p-button-danger" type="button" icon="pi pi-trash"  pTooltip="Удалить" tooltipPosition="bottom" (click)="removeShipSession(itemCorrespondenceSession.id, itemCorrespondenceSession.name)"></button>
+            </ng-container>
+          </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-container>
+<ng-container *ngIf="mathematicalForecastTable">
+<!--  <app-list-chipment-data-->
+<!--    [dialogVisible]="this.dialogVisible"-->
+<!--    [mathematicalForecastTable]="this.mathematicalForecastTable"-->
+<!--    [loading]="this.loading"-->
+<!--    (change)="loadingChange($event)"-->
+<!--    (changes)="CloseModalChange($event)"-->
+<!--    [carrgoTypes] = "null"-->
+<!--    [sessionId]="this.sessionId"-->
+<!--    (changesNewRow)="updateRowTable($event)"-->
+<!--  >-->
+<!--  </app-list-chipment-data>-->
+  <app-list-shipment
+    [sessionId]="this.sessionId"
+    [mathematicalForecastTable]="this.mathematicalForecastTable"
+    [dialogVisible]="this.dialogVisible"
+    [loading]="this.loading"
+    (change)="loadingChange($event)"
+    (changes)="CloseModalChange($event)"
+  ></app-list-shipment>
+</ng-container>
+

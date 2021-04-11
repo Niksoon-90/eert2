@@ -1,0 +1,25 @@
+<div class="p-grid" style="margin: 0">
+  <div class="p-col-6">
+    <app-cargo-group></app-cargo-group>
+  </div>
+  <div class="p-col-6">
+    <app-dorogy></app-dorogy>
+  </div>
+  <div class="p-col-6">
+    <app-shipment-type></app-shipment-type>
+  </div>
+  <div class="p-col-6">
+    <app-subject></app-subject>
+  </div>
+</div>
+<p-confirmDialog #cd icon="pi pi-exclamation-triangle" [style]="{width: 'auto'}" [baseZIndex]="10000">
+  <p-footer>
+    <button type="button" pButton icon="pi pi-check" label="Удалить" (click)="cd.accept()"
+            class="p-button-danger"></button>
+    <button type="button" pButton icon="pi pi-times" label="Отмена" (click)="cd.reject()"
+            class="p-button-secondary"></button>
+  </p-footer>
+</p-confirmDialog>
+
+
+
