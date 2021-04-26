@@ -34,6 +34,8 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
 
   @ViewChild("dropdownForecastType", {static: false}) dropdownForecastType: Dropdown
 
+  @ViewChild("dropdownIsUpdatedByClaim", {static: false}) dropdownIsUpdatedByClaim: Dropdown
+
   @Input() settlemenType;
 
   @Input() forecastingStrategySustainable;
@@ -53,6 +55,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
   downloadRoadLoading: boolean = false
   primeryBol = [{label: 'Все', value: ''}, {label: 'Да', value: true}, {label: 'Нет', value: false}]
   selectedPrimery: any;
+  selectedIsUpdatedByClaim: any;
   sessionId: number
   primary2 = [{label: 'Да', value: true}, {label: 'Нет', value: false}]
   first: number = 0;
@@ -210,6 +213,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
       {field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false},
       {field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false},
       {field: 'primary', header: 'Уст.', width: '80px', keyS: false},
+      {field: 'updatedByClaim', header: 'На основе заявок', width: '100px', keyS: false},
     ];
     for (let i = 0; i < this.columsYears; i++) {
       this.cols.push({
@@ -289,6 +293,9 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
 
   filterFieldHeaders(name: string, value: string) {
     switch (name) {
+      case 'updatedByClaim':
+        this.filters = ',' + 'isUpdatedByClaim' + ':' + value;
+        break;
       case 'forecastType':
         this.filters = ',' + name + ':' + value;
         break;
@@ -589,6 +596,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
   clearfilter() {
     this.dropdownPrimary.clear(null);
     this.dropdownForecastType.clear(null);
+    this.dropdownIsUpdatedByClaim.clear(null);
     this.table.reset();
   }
 }

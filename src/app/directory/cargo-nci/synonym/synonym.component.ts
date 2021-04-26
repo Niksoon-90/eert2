@@ -75,7 +75,7 @@ export class SynonymComponent implements OnInit, OnChanges {
   }
 
   createSysonym() {
-    this.subscriptions.add(this.shipmentsService.postSynonym(this.cargoOwnerId, this.nameNewSysonym).subscribe(
+    this.subscriptions.add(this.shipmentsService.postSynonym(this.cargoOwnerId, this.nameNewSysonym.replace(/\s+/g, ' ').trim()).subscribe(
       () => console.log(),
       error => this.modalService.open(error.error.message),
       () => {

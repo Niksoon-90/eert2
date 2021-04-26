@@ -46,7 +46,11 @@ export class CreateRowShipmentComponent implements OnInit, OnDestroy {
   optimalProgressBar: boolean = true
   infoBarProgress: any[] = []
   loadingNci = 0
-
+  selectedfromStation: any;
+  selectedfromCargoNci: any;
+  selectedtoCargoNci: any;
+  selectedtoStationNci: any;
+  createShipItem: boolean = false
   constructor(
     private formBuilder: FormBuilder,
     private modalService: ModalService,
@@ -161,6 +165,7 @@ export class CreateRowShipmentComponent implements OnInit, OnDestroy {
     ))
   }
 //TODO sort station
+
   getStationNci() {
     this.subscriptions.add(this.shipmentsService.getDictionaryDictionaryStation().subscribe(
       res => this.stationNci = res.sort((a, b) => a.name > b.name ? 1 : -1),
@@ -193,6 +198,7 @@ export class CreateRowShipmentComponent implements OnInit, OnDestroy {
     if (this.dynamicForm.invalid) {
       return;
     }
+    this.createShipItem = true
     const shipment: IShipment = {
       cargoGroup: this.dynamicForm.controls.cargoGroup.value.name,
       cargoSubGroup: this.dynamicForm.controls.cargoSubGroup.value,
@@ -212,8 +218,12 @@ export class CreateRowShipmentComponent implements OnInit, OnDestroy {
     }
     this.subscriptions.add(this.shipmentsService.postCreateRowShip(this.sessionId, shipment).subscribe(
       () => console.log(),
-      error => this.modalService.open(error.error.message),
+      error => {
+        this.modalService.open(error.error.message)
+        this.createShipItem = true
+      },
       () => {
+        this.createShipItem = true
         this.clearFormNewRowShip()
         this.createdNewRow = true
         this.closeCreateRowDialog()

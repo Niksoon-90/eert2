@@ -6,9 +6,28 @@
       <form [formGroup]="form" (ngSubmit)="createcargoOwnerInfluenceFactor(); form.reset()">
         <div class="p-d-flex p-jc-end">
           <div style="padding-right: 10px;">
-            <p-dropdown [style]="{'minWidth':'100%'}" [options]="cargoNci" optionLabel="name" [showClear]="true"
-                        [virtualScroll]="true" itemSize="10" formControlName="cargoOwnerId"
-                        placeholder="Грузовладелец:"></p-dropdown>
+            <p-dropdown [options]="cargoNci"
+                        [(ngModel)]="selectedCountry"
+                        optionLabel="name"
+                        formControlName="cargoOwnerId"
+                        [filter]="true" filterBy="label"
+                        [showClear]="true"
+                        [virtualScroll]="true" itemSize="10"
+                        placeholder="Грузовладелец:"
+                        emptyFilterMessage="нет данных"
+                        autoWidth="true"
+                        [style]="{'width': '100%'}">
+              <ng-template pTemplate="selectedItem" >
+                <div class="country-item country-item-value" *ngIf="selectedCountry">
+                  <div>{{selectedCountry.name}}</div>
+                </div>
+              </ng-template>
+              <ng-template let-country pTemplate="item">
+                <div class="country-item-value" >
+                  <div>{{country.value.name}}</div>
+                </div>
+              </ng-template>
+            </p-dropdown>
           </div>
           <div style="padding-right: 10px;">
             <p-dropdown [options]="influenceNci" optionLabel="name" [showClear]="true"

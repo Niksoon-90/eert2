@@ -162,30 +162,8 @@ export class UploadFileComponent implements OnInit, OnDestroy {
           this.clearForm();
           this.modalService.open(error.error.message)
         }, () => {
-          if (this.initialDateType === 'cargoUpload'){
             this.clearForm();
             this.showModalDialog();
-          }
-          if (this.initialDateType === 'shipmentsUpload') {
-            this.clearForm();
-            this.showModalDialog();
-            // this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(this.fileId).subscribe(
-            //   () => console.log(),
-            //   error => this.modalService.open(error.error.message),
-            //   () => {
-            //     this.subscriptions.add(this.calculationsService.postHierarchicalShipment(this.fileId).subscribe(
-            //       () => console.log(),
-            //       error => {
-            //         this.modalService.open(error.error.message)
-            //       },
-            //       () => {
-            //         this.clearForm();
-            //         this.showModalDialog();
-            //       },
-            //     ))
-            //   }
-            // ))
-          }
         }));
   }
 
@@ -311,28 +289,44 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   }
 
   Optional() {
-    this.textOptimal = 'Поиск наиболее оптимальных прогнозов для корреспонденций..'
+    this.textOptimal = 'Поиск наиболее оптимальных прогнозов.. Иерархический прогноз.. '
     this.optimalProgressBar = true;
-    this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(this.fileId).subscribe(
+    this.subscriptions.add(this.calculationsService.postoptimalAndHierarchical(this.fileId).subscribe(
       () => console.log(),
-      error => this.modalService.open(error.error.message),
-      () => {
-        this.test.push(`Подобраны наиболее оптимальные прогнозы для корреспонденций`)
-        this.textOptimal = 'Иерархический прогноз..'
-        this.subscriptions.add(this.calculationsService.postHierarchicalShipment(this.fileId).subscribe(
-          () => console.log(),
-          error => {
-            this.modalService.open(error.error.message)
-            this.optimalProgressBar = false
-          },
-          () => {
-            this.test.push(`Применен иерархический прогноз`)
-            this.optimalProgressBar = false
-            this.clearForm();
-            this.showModalDialog();
-          },
-        ))
-      }
+            error => {
+              this.modalService.open(error.error.message)
+              this.optimalProgressBar = false
+            },
+            () => {
+              this.test.push(`Подобраны наиболее оптимальные прогнозы для корреспонденций`)
+              this.test.push(`Применен иерархический прогноз`)
+              this.optimalProgressBar = false
+              this.clearForm();
+              this.showModalDialog();
+            }
     ))
+    // this.textOptimal = 'Поиск наиболее оптимальных прогнозов для корреспонденций..'
+    // this.optimalProgressBar = true;
+    // this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(this.fileId).subscribe(
+    //   () => console.log(),
+    //   error => this.modalService.open(error.error.message),
+    //   () => {
+    //     this.test.push(`Подобраны наиболее оптимальные прогнозы для корреспонденций`)
+    //     this.textOptimal = 'Иерархический прогноз..'
+    //     this.subscriptions.add(this.calculationsService.postHierarchicalShipment(this.fileId).subscribe(
+    //       () => console.log(),
+    //       error => {
+    //         this.modalService.open(error.error.message)
+    //         this.optimalProgressBar = false
+    //       },
+    //       () => {
+    //         this.test.push(`Применен иерархический прогноз`)
+    //         this.optimalProgressBar = false
+    //         this.clearForm();
+    //         this.showModalDialog();
+    //       },
+    //     ))
+    //   }
+    // ))
   }
 }

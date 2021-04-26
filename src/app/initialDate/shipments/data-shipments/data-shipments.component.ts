@@ -212,25 +212,36 @@ export class DataShipmentsComponent implements OnInit, OnDestroy {
   }
   opimalOld(id: number) {
     this.opimalItemId.push(id)
-    this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(id).subscribe(
+    this.subscriptions.add(this.calculationsService.postoptimalAndHierarchical(id).subscribe(
       () => console.log(),
       error => {
         this.modalService.open(error.error.message)
         this.opimalItemId = this.opimalItemId.filter(item => item !== id)
       },
       () => {
-        this.subscriptions.add(this.calculationsService.postHierarchicalShipment(id).subscribe(
-          () => console.log(),
-          error => {
-            this.modalService.open(error.error.message)
-            this.opimalItemId = this.opimalItemId.filter(item => item !== id)
-          },
-          () => {
-            this.opimalItemId = this.opimalItemId.filter(item => item !== id)
-          }
-        ))
+        this.opimalItemId = this.opimalItemId.filter(item => item !== id)
       }
     ))
+    // this.opimalItemId.push(id)
+    // this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(id).subscribe(
+    //   () => console.log(),
+    //   error => {
+    //     this.modalService.open(error.error.message)
+    //     this.opimalItemId = this.opimalItemId.filter(item => item !== id)
+    //   },
+    //   () => {
+    //     this.subscriptions.add(this.calculationsService.postHierarchicalShipment(id).subscribe(
+    //       () => console.log(),
+    //       error => {
+    //         this.modalService.open(error.error.message)
+    //         this.opimalItemId = this.opimalItemId.filter(item => item !== id)
+    //       },
+    //       () => {
+    //         this.opimalItemId = this.opimalItemId.filter(item => item !== id)
+    //       }
+    //     ))
+    //   }
+    // ))
   }
 
   opimal() {

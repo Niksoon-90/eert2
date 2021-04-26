@@ -45,7 +45,7 @@
     <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
       <tr [pEditableRow]="rowData">
         <td *ngFor="let col of this.cols;">
-          {{rowData[col.field]}}
+          <span style = 'white-space: pre'> {{rowData[col.field]}} </span>
         </td>
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
           <td style="text-align:center">

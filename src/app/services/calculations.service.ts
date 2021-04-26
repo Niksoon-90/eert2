@@ -42,6 +42,10 @@ export class CalculationsService {
     return this.http.post(this.urlCalc + `api/calc/correspondence/optimal/${sessionId}?calculatedYears=15&probeYears=2`, {})
   }
 
+  postoptimalAndHierarchical(sessionId: number){
+    return this.http.post(this.urlCalc + `api/calc/correspondence/optimalAndHierarchical/${sessionId}?calculatedYears=15&probeYears=2`, {})
+  }
+
   getDivideSum(sessionId: number, filters: string, summ: number, year: string) {
     return this.http.get(this.urlCalc + `api/calc/correspondence/divideSum/filter?search=sessionId:${sessionId}${filters}&sum=${summ}&year=${year}`)
   }
@@ -88,6 +92,9 @@ export class CalculationsService {
   postHierarchicalShipment(sessionId: number){
     return this.http.post(this.urlCalc + `api/calc/correspondence/hierarchical/${sessionId}`, {})
   }
+
+
+
 
   getPerspective(sessionId: number, iasMetalForecastId?: number, iasOilForecastId?: number, iasRudaForecastId?: number, perspectiveSessionId?: number): Observable<IShipment[]> {
     let params = new HttpParams()

@@ -56,9 +56,9 @@ export class DorogyComponent implements OnInit {
   createDorogyNci() {
     if(this.form.valid){
       const neDor: IDorogyNci = {
-        name: this.form.controls.name.value,
-        code: this.form.controls.code.value,
-        shortname: this.form.controls.shortname.value
+        name: this.form.controls.name.value.replace(/\s+/g, ' ').trim(),
+        code: this.form.controls.code.value.trim(),
+        shortname: this.form.controls.shortname.value.replace(/\s+/g, ' ').trim()
       }
       this.subscriptions.add(this.shipmentsService.postDictionaryRailway(neDor).subscribe(
         () => console.log(),
@@ -78,9 +78,9 @@ export class DorogyComponent implements OnInit {
   onRowEditSave(rowData) {
     const dorogyNci: IDorogyNci =  {
       id: rowData.id,
-      name: rowData.name,
-      code: rowData.code,
-      shortname: rowData.shortname
+      name: rowData.name.replace(/\s+/g, ' ').trim(),
+      code: rowData.code.trim(),
+      shortname: rowData.shortname.replace(/\s+/g, ' ').trim()
     }
     this.subscriptions.add(this.shipmentsService.putDictionaryRailway(dorogyNci).subscribe(
       () => console.log(),

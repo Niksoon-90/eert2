@@ -60,7 +60,7 @@ export class InfluenceFactorComponent implements OnInit, OnDestroy {
 
   creategetInfluenceNci() {
     const createInfluence:IInfluenceNci  = {
-      name: this.form.controls.name.value,
+      name: this.form.controls.name.value.replace(/\s+/g, ' ').trim(),
       weight: Number(this.form.controls.weight.value)
     }
     this.subscriptions.add(this.calculationsService.postInfluenceNci(createInfluence).subscribe(
@@ -95,7 +95,7 @@ export class InfluenceFactorComponent implements OnInit, OnDestroy {
   onRowEditSave(rowData) {
     const influenceItemNci: IInfluenceNci = {
       id: rowData.id,
-      name: rowData.name,
+      name: rowData.name.replace(/\s+/g, ' ').trim(),
       weight: rowData.weight
     }
     this.subscriptions.add(this.calculationsService.putInfluenceNci(influenceItemNci).subscribe(

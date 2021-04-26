@@ -43,26 +43,115 @@
                     formControlName="fromRoad" placeholder="Дорога отправления:" (onChange)="fromRoad()"></p-dropdown>
       </div>
       <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
-        <p-dropdown [options]="fromstationNci" appendTo="body" optionLabel="name" formControlName="fromStation"
+        <p-dropdown [options]="fromstationNci"
+                    appendTo="body"
+                    [(ngModel)]="selectedfromStation"
+                    optionLabel="name"
+                    formControlName="fromStation"
+                    [filter]="true" filterBy="label"
+                    [showClear]="true"
+                    [virtualScroll]="true" itemSize="10"
                     placeholder="Станция отправления РФ:"
-                    [disabled]="this.dynamicForm.controls.fromRoad.invalid"></p-dropdown>
+                    [disabled]="this.dynamicForm.controls.fromRoad.invalid"
+                    emptyFilterMessage="нет данных">
+          <ng-template pTemplate="selectedItem" >
+            <div class="country-item country-item-value" *ngIf="selectedfromStation">
+              <div>{{selectedfromStation.name}}</div>
+            </div>
+          </ng-template>
+          <ng-template let-country pTemplate="item">
+            <div class="country-item-value" >
+              <div>{{country.value.name}}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+
+<!--        <p-dropdown [options]="fromstationNci" appendTo="body" optionLabel="name" formControlName="fromStation"-->
+<!--                    placeholder="Станция отправления РФ:"-->
+<!--                    [disabled]="this.dynamicForm.controls.fromRoad.invalid"></p-dropdown>-->
       </div>
       <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
-        <p-dropdown [options]="cargoNci" appendTo="body" optionLabel="name" [showClear]="true"
-                    formControlName="senderName" placeholder="Грузоотправитель:"></p-dropdown>
+        <p-dropdown [options]="cargoNci"
+                    appendTo="body"
+                    [(ngModel)]="selectedfromCargoNci"
+                    optionLabel="name"
+                    formControlName="senderName"
+                    [filter]="true" filterBy="label"
+                    [showClear]="true"
+                    [virtualScroll]="true" itemSize="10"
+                    placeholder="Грузоотправитель:"
+                    emptyFilterMessage="нет данных">
+          <ng-template pTemplate="selectedItem" >
+            <div class="country-item country-item-value" *ngIf="selectedfromCargoNci">
+              <div>{{selectedfromCargoNci.name}}</div>
+            </div>
+          </ng-template>
+          <ng-template let-country pTemplate="item">
+            <div class="country-item-value" >
+              <div>{{country.value.name}}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+
+<!--        <p-dropdown [options]="cargoNci" appendTo="body" optionLabel="name" [showClear]="true"-->
+<!--                    formControlName="senderName" placeholder="Грузоотправитель:"></p-dropdown>-->
       </div>
       <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
         <p-dropdown [options]="dorogyNci" appendTo="body" optionLabel="name" [showClear]="true" formControlName="toRoad"
                     placeholder="Дорога назначения:" (onChange)="toRoad()"></p-dropdown>
       </div>
       <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
-        <p-dropdown [options]="tostationNci" appendTo="body" optionLabel="name" [showClear]="true"
-                    formControlName="toStation" placeholder="Станция назначения РФ:"
-                    [disabled]="this.dynamicForm.controls.toRoad.invalid"></p-dropdown>
+        <p-dropdown [options]="tostationNci"
+                    appendTo="body"
+                    [(ngModel)]="selectedtoStationNci"
+                    optionLabel="name"
+                    formControlName="toStation"
+                    [filter]="true" filterBy="label"
+                    [showClear]="true"
+                    [virtualScroll]="true" itemSize="10"
+                    placeholder="Станция назначения РФ:"
+                    [disabled]="this.dynamicForm.controls.toRoad.invalid"
+                    emptyFilterMessage="нет данных">
+          <ng-template pTemplate="selectedItem" >
+            <div class="country-item country-item-value" *ngIf="selectedtoStationNci">
+              <div>{{selectedtoStationNci.name}}</div>
+            </div>
+          </ng-template>
+          <ng-template let-country pTemplate="item">
+            <div class="country-item-value" >
+              <div>{{country.value.name}}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+<!--        <p-dropdown [options]="tostationNci" appendTo="body" optionLabel="name" [showClear]="true"-->
+<!--                    formControlName="toStation" placeholder="Станция назначения РФ:"-->
+<!--                    [disabled]="this.dynamicForm.controls.toRoad.invalid"></p-dropdown>-->
       </div>
       <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
-        <p-dropdown [options]="cargoNci" appendTo="body" optionLabel="name" [showClear]="true"
-                    formControlName="receiverName" placeholder="Грузополучатель:"></p-dropdown>
+        <p-dropdown [options]="cargoNci"
+                    appendTo="body"
+                    [(ngModel)]="selectedtoCargoNci"
+                    optionLabel="name"
+                    formControlName="receiverName"
+                    [filter]="true" filterBy="label"
+                    [showClear]="true"
+                    [virtualScroll]="true" itemSize="10"
+                    placeholder="Грузополучатель:"
+                    emptyFilterMessage="нет данных">
+          <ng-template pTemplate="selectedItem" >
+            <div class="country-item country-item-value" *ngIf="selectedtoCargoNci">
+              <div>{{selectedtoCargoNci.name}}</div>
+            </div>
+          </ng-template>
+          <ng-template let-country pTemplate="item">
+            <div class="country-item-value" >
+              <div>{{country.value.name}}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+
+<!--        <p-dropdown [options]="cargoNci" appendTo="body" optionLabel="name" [showClear]="true"-->
+<!--                    formControlName="receiverName" placeholder="Грузополучатель:"></p-dropdown>-->
       </div>
       <ng-container *ngFor="let shipmentYearValuePair of t.controls; let i = index" class="list-group list-group-flush">
         <div class="p-col-12 p-md-4" style="margin-bottom: 5px; margin-top: 5px;">
@@ -76,7 +165,7 @@
         </div>
       </ng-container>
       <button pButton pRipple type="submit" label="Сохранить" class="p-button-raised p-button-secondary "
-              [disabled]="this.dynamicForm.invalid"></button>
+              [disabled]="this.dynamicForm.invalid || this.createShipItem === true"></button>
     </div>
   </form>
   <ng-template pTemplate="footer">

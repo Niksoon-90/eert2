@@ -64,7 +64,7 @@
               <input pInputText type="text" [(ngModel)]="rowData[col.field]">
             </ng-template>
             <ng-template pTemplate="output">
-              {{rowData[col.field]}}
+              <span style = 'white-space: pre'> {{rowData[col.field]}} </span>
             </ng-template>
           </p-cellEditor>
           <ng-template #staticTemplate>

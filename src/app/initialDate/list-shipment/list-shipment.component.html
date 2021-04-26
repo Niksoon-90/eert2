@@ -113,7 +113,7 @@
               </ng-template>
               <ng-template pTemplate="output">
                 <div *ngIf="col['field'] !== 'primary' && idx < 14">
-                  {{rowData[col.field]}}
+                  <span style = 'white-space: pre'> {{rowData[col.field]}} </span>
                 </div>
                 <div *ngIf="col['field'] === 'primary'">
                   <ng-container *ngIf="rowData[col.field] === true; else primaryFalse">

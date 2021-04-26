@@ -68,7 +68,7 @@ export class SubjectComponent implements OnInit, OnDestroy {
   onRowEditSave(rowData) {
     const subjectNci: ISubjectNci = {
       id: rowData.id,
-      name: rowData.name
+      name: rowData.name.replace(/\s+/g, ' ').trim()
     }
     this.subscriptions.add(this.shipmentsService.putSubject(subjectNci).subscribe(
       () => console.log(),
@@ -86,7 +86,7 @@ export class SubjectComponent implements OnInit, OnDestroy {
     if (this.nameNewSubjectNci !== '') {
       const item: ISubjectNci = {
         id: null,
-        name: this.nameNewSubjectNci
+        name: this.nameNewSubjectNci.replace(/\s+/g, ' ').trim()
       }
       this.subscriptions.add(this.shipmentsService.postCreateSubject(item).subscribe(
         () => console.log(),

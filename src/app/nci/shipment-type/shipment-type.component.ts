@@ -41,7 +41,7 @@ export class ShipmentTypeComponent implements OnInit, OnDestroy {
 
   createShipmentTypNci() {
     if (this.nameNewShipmentTypeNci !== '') {
-      this.subscriptions.add(this.shipmentsService.postDictionaryShipmenttype(this.nameNewShipmentTypeNci).subscribe(
+      this.subscriptions.add(this.shipmentsService.postDictionaryShipmenttype(this.nameNewShipmentTypeNci.replace(/\s+/g, ' ').trim()).subscribe(
         () => console.log(),
         error => this.modalService.open(error.error.message),
         () => {
@@ -68,7 +68,7 @@ export class ShipmentTypeComponent implements OnInit, OnDestroy {
   onRowEditSave(rowData) {
     const dictionaryShipmenttype: IShipmentTypNci = {
       id: rowData.id,
-      name: rowData.name
+      name: rowData.name.replace(/\s+/g, ' ').trim()
     }
     this.subscriptions.add(this.shipmentsService.putDictionaryShipmenttype(dictionaryShipmenttype).subscribe(
       () => console.log(),

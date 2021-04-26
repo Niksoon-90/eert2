@@ -43,7 +43,7 @@ export class CargoGroupComponent implements OnInit, OnDestroy {
 
   createCargoGroupNci() {
     if(this.nameNewCargoGroupNci !== ''){
-      this.subscriptions.add(this.shipmentsService.postDictionaryCargo(this.nameNewCargoGroupNci).subscribe(
+      this.subscriptions.add(this.shipmentsService.postDictionaryCargo(this.nameNewCargoGroupNci.replace(/\s+/g, ' ').trim()).subscribe(
         () => console.log(),
         error => this.modalService.open(error.error.message),
         () => {
@@ -69,7 +69,7 @@ export class CargoGroupComponent implements OnInit, OnDestroy {
   onRowEditSave(rowData) {
     const cargoGroupNci: ICargoGroupNci = {
      id: rowData.id,
-     name: rowData.name
+     name: rowData.name.replace(/\s+/g, ' ').trim()
     }
     this.subscriptions.add(this.shipmentsService.putDictionaryCargo(cargoGroupNci).subscribe(
       () => console.log(),

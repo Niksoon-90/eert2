@@ -28,6 +28,7 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
   user: IAuthModel
   loading: boolean = false
   subscriptions: Subscription = new Subscription();
+  selectedCountry: any;
 
   constructor(
     private calculationsService: CalculationsService,
@@ -71,13 +72,15 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
   }
   getCargoNci(){
     this.subscriptions.add(this.calculationsService.getAllCargoNci().subscribe(
-      res => this.cargoNci = res,
+      res => {
+        this.cargoNci = res
+      },
       error => this.modalService.open(error.error.message),
     ))
   }
   getInfluenceNci(){
     this.subscriptions.add(this.calculationsService.getInfluenceNci().subscribe(
-      res => {this.influenceNci = res;},
+      res => {this.influenceNci = res; console.log(res)},
       error => this.modalService.open(error.error.message),
     ))
   }
@@ -145,5 +148,9 @@ export class CargoOwnerInfluenceFactorComponent implements OnInit {
 
   downAll() {
     this.getAllCargoOwnerInfluenceFactor();
+  }
+
+  filterCargo(event: any) {
+    console.log(event)
   }
 }

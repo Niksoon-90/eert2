@@ -69,7 +69,7 @@ export class CargoNciComponent implements OnInit, OnDestroy {
   onRowEditSave(rowData) {
     const itemCargoNci: ICargoNci = {
       id: rowData.id,
-      name: rowData.name,
+      name: rowData.name.replace(/\s+/g, ' ').trim(),
       initialVerificationCoeff: rowData.initialVerificationCoeff
     }
     this.subscriptions.add(this.calculationsService.putCargoNci(itemCargoNci).subscribe(
@@ -97,7 +97,7 @@ export class CargoNciComponent implements OnInit, OnDestroy {
   }
   createCargoNci(){
     if(this.nameNewCargoNci != '') {
-      this.subscriptions.add(this.calculationsService.getCreateCargoNci(this.nameNewCargoNci).subscribe(
+      this.subscriptions.add(this.calculationsService.getCreateCargoNci(this.nameNewCargoNci.replace(/\s+/g, ' ').trim()).subscribe(
         () => console.log(),
         error => {
           this.modalService.open(error.error.message);
@@ -149,9 +149,7 @@ export class CargoNciComponent implements OnInit, OnDestroy {
   }
 
   clearSelectedCargoNci() {
-    console.log( this.selectedCargoNci)
     this.selectedCargoNci = []
-    console.log( this.selectedCargoNci)
   }
 //TODO comm
   deleteCargoNciList() {
