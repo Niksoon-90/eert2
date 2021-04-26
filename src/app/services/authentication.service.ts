@@ -26,6 +26,7 @@ export class AuthenticationService {
   private hostAuth = environment.hostAuth;
 
    getMe(): Observable<IAuthModel>{
+
     // const users: IAuthModel  = {
     //    fio: "Степанюк Гаврилий Метрофанович",
     //    iss: "http://192.168.11.180:8081/oauth/token",

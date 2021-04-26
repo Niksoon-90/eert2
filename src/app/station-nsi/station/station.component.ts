@@ -6,7 +6,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ShipmentsService} from "../../services/shipments.service";
 import {ModalService} from "../../services/modal.service";
 import {ConfirmationService} from "primeng/api";
-import {Subscribable, Subscription} from "rxjs";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-station',

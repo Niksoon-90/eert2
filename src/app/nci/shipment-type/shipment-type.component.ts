@@ -7,6 +7,7 @@ import {ShipmentsService} from "../../services/shipments.service";
 import {ConfirmationService} from "primeng/api";
 import {Subscription} from "rxjs";
 
+
 @Component({
   selector: 'app-shipment-type',
   templateUrl: './shipment-type.component.html',
@@ -35,6 +36,7 @@ export class ShipmentTypeComponent implements OnInit, OnDestroy {
       {field: 'name', header: 'Вид сообщения', width: 'auto', isStatic: true}
     ]
   }
+
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }

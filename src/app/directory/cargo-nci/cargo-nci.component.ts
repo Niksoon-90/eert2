@@ -9,6 +9,7 @@ import {ConfirmationService, MessageService} from "primeng/api";
 import {Subscription} from "rxjs";
 
 
+
 @Component({
   selector: 'app-cargo-nci',
   templateUrl: './cargo-nci.component.html',
@@ -57,12 +58,14 @@ export class CargoNciComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+
   getCargoNci(){
     this.subscriptions.add(this.calculationsService.getAllCargoNci().subscribe(
         res => this.cargoNci = res,
         error => this.modalService.open(error.error.message),
       ))
   }
+
   onRowEditInit() {
   }
 

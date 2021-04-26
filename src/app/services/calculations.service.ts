@@ -42,6 +42,7 @@ export class CalculationsService {
     return this.http.post(this.urlCalc + `api/calc/correspondence/optimal/${sessionId}?calculatedYears=15&probeYears=2`, {})
   }
 
+
   postoptimalAndHierarchical(sessionId: number){
     return this.http.post(this.urlCalc + `api/calc/correspondence/optimalAndHierarchical/${sessionId}?calculatedYears=15&probeYears=2`, {})
   }
@@ -92,6 +93,7 @@ export class CalculationsService {
   postHierarchicalShipment(sessionId: number){
     return this.http.post(this.urlCalc + `api/calc/correspondence/hierarchical/${sessionId}`, {})
   }
+
 
 
 

@@ -72,6 +72,7 @@ export class ShipmentsService {
   }
 
   deleteShipSession(id: number) {
+
     return this.http.delete(this.url + `api/session/${id}`)
   }
 
@@ -258,6 +259,7 @@ export class ShipmentsService {
 
   postSearchSynonym(name: string) {
     return this.http.get(this.url + `api/catalog/cargo/synonyms/${name}`)
+
   }
   //TODO
   deleteShipment(id: number){
