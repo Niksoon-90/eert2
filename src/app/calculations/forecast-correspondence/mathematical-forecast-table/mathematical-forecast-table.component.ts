@@ -380,7 +380,15 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
         resultFilterUrl.push(this.filters)
       }
     }
-    event.sortField === 'primary' ? sortField = 'isPrimary' : sortField = event.sortField
+    if(event.sortField === 'primary'){
+      sortField = 'isPrimary'
+    }else if(event.sortField === 'updatedByClaim'){
+      sortField = 'isUpdatedByClaim'
+    }else{
+      sortField = event.sortField;
+    }
+    // event.sortField === 'primary' ? sortField = 'isPrimary' : sortField = event.sortField;
+    // event.sortField === 'updatedByClaim' ? sortField = 'isUpdatedByClaim' : sortField = event.sortField;
     event.sortOrder === 1 ? sortOrder = 'asc' : sortOrder = 'desc'
 
     this.filterTableEvant = {
