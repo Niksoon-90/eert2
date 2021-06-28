@@ -21,7 +21,6 @@ export class DataCorrespondenceComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   user: IAuthModel
   sessionId: number = 0
-  mathematicalForecastTable: IShipmentPagination;
   dialogVisible: boolean;
   subscriptions: Subscription = new Subscription();
 
@@ -90,16 +89,7 @@ export class DataCorrespondenceComponent implements OnInit, OnDestroy {
   openShipItemSession(id: any) {
     this.sessionId = id
     this.loading = true
-    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(id, 0).subscribe(
-      res => {
-        this.mathematicalForecastTable = res
-        this.showDialog();
-      },
-      error => {
-        this.modalService.open(error.error.message);
-      },
-      () => console.log('sdsds')
-    ))
+    this.showDialog();
   }
 
   showDialog() {
@@ -112,7 +102,6 @@ export class DataCorrespondenceComponent implements OnInit, OnDestroy {
   }
 
   CloseModalChange(event: boolean) {
-    this.mathematicalForecastTable = null
     this.dialogVisible = event;
   }
 

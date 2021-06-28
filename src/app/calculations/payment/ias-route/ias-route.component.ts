@@ -431,7 +431,6 @@ export class IasRouteComponent implements OnInit, OnDestroy {
     }
     this.subscriptions.add(this.calculationsService.getIasForecastId(this.form.controls.forecastCorrespondence.value.var_id).subscribe(
       res => {
-        console.log('formate', res)
         this.correspondencesIiasForecast = res
       },
       error => this.modalService.open(error.error.message),

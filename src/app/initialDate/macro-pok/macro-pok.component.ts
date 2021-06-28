@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ShipmentsService} from "../../services/shipments.service";
 import {IMacroPokModel} from "../../models/macroPok.model";
 import {ConfirmationService, MessageService} from "primeng/api";
@@ -8,6 +8,7 @@ import {AuthenticationService} from "../../services/authentication.service";
 import {IAuthModel} from "../../models/auth.model";
 import {ICargoGroupNci, IShipmentTypNci} from "../../models/calculations.model";
 import {Subscription} from "rxjs";
+import {Table} from "primeng/table";
 
 @Component({
   selector: 'app-macro-pok',
@@ -16,6 +17,9 @@ import {Subscription} from "rxjs";
   providers: [MessageService]
 })
 export class MacroPokComponent implements OnInit, OnDestroy {
+
+  @ViewChild('dt') table: Table;
+
   loading: boolean = true;
   user: IAuthModel
   cargoGroups: ICargoGroupNci[]
@@ -25,6 +29,7 @@ export class MacroPokComponent implements OnInit, OnDestroy {
   form: FormGroup
   years = [];
   selectedmacroPokList: any;
+  macroPokListFiltersItemRow: IMacroPokModel;
 
   constructor(
     private shipmentsService: ShipmentsService,
@@ -177,5 +182,14 @@ export class MacroPokComponent implements OnInit, OnDestroy {
 
   clearSelectedMacroPokList() {
     this.selectedmacroPokList = [];
+  }
+
+  checkedFilterAll() {
+    this.table.hasFilter() === false ? this.modalService.open('Примените фильтр') : this.selectedmacroPokList = this.macroPokListFiltersItemRow;
+  }
+
+
+  onFilter(event: any, dt: Table) {
+    this.macroPokListFiltersItemRow = event.filteredValue;
   }
 }

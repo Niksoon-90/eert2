@@ -65,21 +65,9 @@
     </ng-template>
   </p-table>
 </ng-container>
-<ng-container *ngIf="mathematicalForecastTable">
-<!--  <app-list-chipment-data-->
-<!--    [dialogVisible]="this.dialogVisible"-->
-<!--    [mathematicalForecastTable]="this.mathematicalForecastTable"-->
-<!--    [loading]="this.loading"-->
-<!--    (change)="loadingChange($event)"-->
-<!--    (changes)="CloseModalChange($event)"-->
-<!--    [carrgoTypes] = "null"-->
-<!--    [sessionId]="this.sessionId"-->
-<!--    (changesNewRow)="updateRowTable($event)"-->
-<!--  >-->
-<!--  </app-list-chipment-data>-->
+<ng-container *ngIf="this.dialogVisible">
   <app-list-shipment
     [sessionId]="this.sessionId"
-    [mathematicalForecastTable]="this.mathematicalForecastTable"
     [dialogVisible]="this.dialogVisible"
     [loading]="this.loading"
     (change)="loadingChange($event)"

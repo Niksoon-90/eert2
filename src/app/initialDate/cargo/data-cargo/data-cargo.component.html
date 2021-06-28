@@ -109,10 +109,9 @@
     </ng-template>
   </p-table>
 </ng-container>
-<ng-container *ngIf="mathematicalForecastTable">
+<ng-container *ngIf="this.dialogVisible">
   <app-list-shipment
     [sessionId]="this.sessionId"
-    [mathematicalForecastTable]="this.mathematicalForecastTable"
     [dialogVisible]="this.dialogVisible"
     [loading]="this.loading"
     (change)="loadingChange($event)"

@@ -1,5 +1,6 @@
 <div class="card">
-  <p-dialog header="Загруженные данные"
+
+  <p-dialog header="Загруженные данные "
             [(visible)]="dialogVisible"
             [style]="{width: '70vw'}"
             [baseZIndex]="1"
@@ -33,6 +34,9 @@
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Отображено с {first} по {last} запись. Всего: {totalRecords}"
     >
+      <ng-template pTemplate="caption">
+        <p-button icon="pi pi-refresh" (onClick)="clearfilter()" label="Очистить фильтры" class="p-mr-2"></p-button>
+      </ng-template>
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
           <col style="width:80px">
@@ -66,19 +70,22 @@
         <tr>
           <th></th>
           <th *ngFor="let col of columns;let idx = index;">
-            <ng-container *ngIf="col['field'] === 'primary'; else primeCol">
-              <p-dropdown appendTo="body" [options]="primeryBol" [(ngModel)]="selectedPrimery"
-                          (onChange)="dt.filter($event.value, col.field, 'equals')"></p-dropdown>
+            <ng-container *ngIf="col['field'] === 'primary' else primeCol">
+              <p-dropdown appendTo="body" #dropdownPrimary [options]="primeryBol" [(ngModel)]="selectedPrimery"
+                          (onChange)="dt.filter($event.value, col.field, 'equals')"
+                          [ngModelOptions]="{standalone: true}"></p-dropdown>
             </ng-container>
             <ng-template #primeCol>
               <ng-container *ngIf=" idx < 14; else yearsCol">
                 <input pInputText type="text" (click)="$event.stopPropagation()"
                        (keyup.enter)="dt.filter($event.target.value, col.field, 'contains')"
+                       [value]="dt.filters[col.field] ? dt.filters[col.field].value : ''"
                        class="p-column-filter">
               </ng-container>
               <ng-template #yearsCol>
                 <input pInputText type="text" (click)="$event.stopPropagation()"
                        (keyup.enter)="dt.filter($event.target.value, col.header, 'contains')"
+                       [value]="dt.filters[col.header] ? dt.filters[col.header].value : ''"
                        class="p-column-filter">
               </ng-template>
             </ng-template>

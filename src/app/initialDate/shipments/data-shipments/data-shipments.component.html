@@ -99,10 +99,9 @@
     </div>
   </div>
 </ng-template>
-<ng-container *ngIf="mathematicalForecastTable">
+<ng-container *ngIf="this.dialogVisible">
   <app-list-shipment
     [sessionId]="this.sessionId"
-    [mathematicalForecastTable]="this.mathematicalForecastTable"
     [dialogVisible]="this.dialogVisible"
     [loading]="this.loading"
     (change)="loadingChange($event)"
@@ -117,17 +116,3 @@
             class="p-button-secondary"></button>
   </p-footer>
 </p-confirmDialog>
-
-<!--<p-dialog header="Header" [(visible)]="displayModal" [modal]="true" [style]="{width: '50vw'}" [baseZIndex]="10000"-->
-<!--          [draggable]="false" [resizable]="false">-->
-
-<!--  <div *ngFor="let item of shipmentHistoricalYears; let idx = index" class="p-field-checkbox">-->
-<!--    <p-checkbox name="group2" value="category" [value]="item"  [(ngModel)]="selectedShipmentHistoricalYears" [inputId]="item" [disabled]="item === checkShipmentHistoricalYearsLenght(item)"></p-checkbox>-->
-<!--    <label >{{item}}</label>-->
-<!--  </div>-->
-
-<!--  <ng-template pTemplate="footer">-->
-<!--    <p-button icon="pi pi-check" (click)="opimal()" label="Расчитать" class="p-button-text"></p-button>-->
-<!--    <p-button icon="pi pi-times" (click)="closedisplayModal()" label="Отмена"></p-button>-->
-<!--  </ng-template>-->
-<!--</p-dialog>-->

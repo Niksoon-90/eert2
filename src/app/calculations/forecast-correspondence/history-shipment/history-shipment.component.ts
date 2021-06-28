@@ -2,7 +2,7 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ModalService} from "../../../services/modal.service";
 import {ShipmentsService} from "../../../services/shipments.service";
 import {IShipment} from "../../../models/shipmenst.model";
-import {Subscription} from "rxjs";
+import {forkJoin, Subscription} from "rxjs";
 import {LazyLoadEvent} from "primeng/api";
 
 @Component({
@@ -34,7 +34,6 @@ export class HistoryShipmentComponent implements OnInit, OnDestroy {
   columsYears: number = 0;
   cols: any[];
   first: number = 0;
-  sub: Subscription
   filterTableEvant: any
   subscriptions: Subscription = new Subscription();
 
@@ -45,7 +44,7 @@ export class HistoryShipmentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.openShipItemSession()
+    this.mathematicalForecastTable = []
   }
 
   ngOnDestroy() {
@@ -80,19 +79,9 @@ export class HistoryShipmentComponent implements OnInit, OnDestroy {
         keyS: true
       })
     }
+    this.loadingTable = false
   }
 
-  openShipItemSession() {
-    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, 0).subscribe(
-      res => this.mathematicalForecastTable = res.content,
-      error => {
-        this.modalService.open(error.error.message);
-      },
-      () => {
-        this.createColumnTable()
-      }
-    ))
-  }
 
   filterFieldHeaders(name: string, value: string) {
     switch (name) {
@@ -146,6 +135,7 @@ export class HistoryShipmentComponent implements OnInit, OnDestroy {
     }
   }
 
+
   parseFiltersYears(name: string, value: string) {
     if (value.match(/^[><=]/)) {
       return value[0] === '=' ? this.filters = ',' + name + ':' + value.trim().slice(1) : this.filters = ',' + name + value
@@ -183,21 +173,29 @@ export class HistoryShipmentComponent implements OnInit, OnDestroy {
       sortOrder: sortOrder,
       resultFilterUrl: resultFilterUrl.join('')
     }
-    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
-      .subscribe(
-        res => {
-          res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
-          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
-        },
-        error => {
+    this.shipmentPagination()
+  }
+
+  shipmentPagination() {
+    this.loadingTable = true
+    this.subscriptions.add(
+      forkJoin(
+        this.shipmentsService.getShipmetsPaginations(this.filterTableEvant.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl),
+        this.shipmentsService.getSummFooter(this.filterTableEvant.sessionId, this.filterTableEvant.resultFilterUrl)
+      ).subscribe(([mathematicalForecast, massSummYear]) =>
+        {
+          mathematicalForecast === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = mathematicalForecast.content
+          mathematicalForecast === null ? this.totalRecords = 0 : this.totalRecords = mathematicalForecast.totalElements
+          this.massSummYear = massSummYear;
+        },error => {
           this.modalService.open(error.error.message)
           this.loadingTable = false
         },
         () => {
           this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
-          this.summFooter(this.sessionId)
         }
-      ))
+      )
+    )
   }
 
 
@@ -206,12 +204,12 @@ export class HistoryShipmentComponent implements OnInit, OnDestroy {
     return rowData.shipmentYearValuePairs[mass[1]].calculated === true ? true : false
   }
 
-  summFooter(sessionId: number) {
-    this.subscriptions.add(this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
-      res => this.massSummYear = res,
-      error => this.modalService.open(error.error.message)
-    ))
-  }
+  // summFooter(sessionId: number) {
+  //   this.subscriptions.add(this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
+  //     res => this.massSummYear = res,
+  //     error => this.modalService.open(error.error.message)
+  //   ))
+  // }
 
   sdsd(name: string) {
     switch (name) {

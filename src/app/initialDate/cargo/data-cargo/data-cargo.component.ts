@@ -21,7 +21,6 @@ export class DataCargoComponent implements OnInit, OnDestroy {
   rows = 25;
   loading: boolean = true;
   checkTypeCargo: boolean = true;
-  mathematicalForecastTable: IShipmentPagination;
   dialogVisible: boolean;
   carrgoTypes: string;
   user: IAuthModel
@@ -97,13 +96,7 @@ export class DataCargoComponent implements OnInit, OnDestroy {
 
   openShipItemSession(id: any) {
     this.sessionId = id
-    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(id, 0).subscribe(
-      res => {
-        this.mathematicalForecastTable = res
-        this.showDialog();
-      },
-      error => this.modalService.open(error.error.message)
-    ))
+    this.showDialog();
   }
 
   showDialog() {
@@ -116,7 +109,6 @@ export class DataCargoComponent implements OnInit, OnDestroy {
   }
 
   CloseModalChange(event: boolean) {
-    this.mathematicalForecastTable = null
     this.dialogVisible = event;
   }
 

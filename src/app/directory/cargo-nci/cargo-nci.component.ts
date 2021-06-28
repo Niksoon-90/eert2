@@ -50,7 +50,6 @@ export class CargoNciComponent implements OnInit, OnDestroy {
     this.cols = [
       { field: 'id', header: 'id', width: '120px', isStatic :true},
       { field: 'name', header: 'Грузовладельцы', width: 'auto', },
-      { field: 'initialVerificationCoeff', header: 'Коэффициент ', width: '150px', isStatic :true}
     ]
   }
 

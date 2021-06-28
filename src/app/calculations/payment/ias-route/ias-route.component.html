@@ -1,9 +1,6 @@
 <div class="stepsdemo-content">
   <p-card>
     <ng-template pTemplate="content">
-<!--      <button pButton type="button" label="Очистить буфер" icon="pi pi-refresh"-->
-<!--              class="p-mr-2 p-button-raised p-button-warning"-->
-<!--              (click)="deleteForecast()"></button>-->
       <ng-container *ngIf="this.user.authorities.includes('P_P_p10') === true">
         <div>
           <div class="p-col-12 p-md-6">
@@ -69,7 +66,8 @@
             [style]="{width:'94.7vw'}"
             [columns]="cols"
             [value]="correspondencesIiasForecast"
-            [scrollable]="true" scrollHeight="18vh"
+            [scrollable]="true"
+            scrollHeight="70vh"
             styleClass=" p-datatable-gridlines" dataKey="corr_id"
             [resizableColumns]="true" columnResizeMode="expand" editMode="row"
             [paginator]="true"
@@ -156,9 +154,8 @@
             (onFilter)="loadCustomers($event)"
             [resizableColumns]="true"
             styleClass="p-datatable-gridlines"
-
             [scrollable]="true"
-            scrollHeight="15vh"
+            scrollHeight="70vh"
             [columnResizeMode]="'expand'"
             [autoLayout]="true"
             [paginator]="true"

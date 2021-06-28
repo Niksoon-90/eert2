@@ -149,8 +149,6 @@ export class MathForecastComponent implements OnInit, OnChanges, OnDestroy {
 
   test() {
     let macPokId = []
-    console.log('this.selectedMacro', this.selectedMacro)
-    console.log('this.macroPokList', this.macroPokList)
     if (this.selectedMacro.length !== 0 && this.checkedAutoRegression !== true) {
     //  this.macroPokListUpdate = this.macroPokList.filter(val => this.selectedMacro.includes(val));
       for(let i = 0; i < this.selectedMacro.length; i++){

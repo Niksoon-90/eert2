@@ -9,7 +9,42 @@ export class ExportExcelService {
 
   constructor() {
   }
+  exportExcelStation(excelData){
+    const title = excelData.title;
+    const header = excelData.headers
+    const data = excelData.data;
+    //Create a workbook with a worksheet
+    let workbook = new Workbook();
+    let worksheet = workbook.addWorksheet('station');
 
+    //Adding Header Row
+    let headerRow = worksheet.addRow(header);
+    headerRow.eachCell((cell, number) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: {argb: 'FFFFFF'},
+        bgColor: {argb: 'FFFFFF'}
+      }
+      cell.border = {top: {style: 'thin'}, left: {style: 'thin'}, bottom: {style: 'thin'}, right: {style: 'thin'}}
+    });
+
+
+    // Adding Data with Conditional Formatting
+    data.forEach(d => {
+        worksheet.addRow(d);
+      }
+    );
+
+    worksheet.getColumn(1).width = 24;
+    worksheet.addRow([]);
+
+    //Generate & Save Excel File
+    workbook.xlsx.writeBuffer().then((data) => {
+      let blob = new Blob([data], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      fs.saveAs(blob, title + '.xlsx');
+    })
+  }
   exportExcel(excelData) {
     //Title, Header & Data
     const title = excelData.title;

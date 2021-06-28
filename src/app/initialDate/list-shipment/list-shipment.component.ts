@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {AuthenticationService} from "../../services/authentication.service";
 import {ModalService} from "../../services/modal.service";
 import {ShipmentsService} from "../../services/shipments.service";
@@ -7,7 +7,9 @@ import {IAuthModel} from "../../models/auth.model";
 import {ConfirmationService, LazyLoadEvent} from "primeng/api";
 import {CalculationsService} from "../../services/calculations.service";
 import {IShipmentInfo, TestService} from "../../services/test.service";
-import {Subscription} from "rxjs";
+import {forkJoin, Subscription} from "rxjs";
+import {Table} from "primeng/table";
+import {Dropdown} from "primeng/dropdown";
 
 
 @Component({
@@ -17,7 +19,9 @@ import {Subscription} from "rxjs";
 })
 export class ListShipmentComponent implements OnInit, OnChanges, OnDestroy {
 
-  @Input() mathematicalForecastTable;
+  @ViewChild('dt') table: Table;
+
+  @ViewChild("dropdownPrimary", {static: false}) dropdownPrimary: Dropdown
 
   @Input() dialogVisible;
 
@@ -63,9 +67,9 @@ export class ListShipmentComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.mathematicalForecastContent = this.mathematicalForecastTable.content;
-    this.totalRecords = this.mathematicalForecastTable.totalElements
-    this.createColumnTable();
+    this.mathematicalForecastContent = [];
+    this.totalRecords = 0
+
   }
 
   ngOnDestroy() {
@@ -101,6 +105,7 @@ export class ListShipmentComponent implements OnInit, OnChanges, OnDestroy {
         keyS: true
       })
     }
+    this.loadingTable = false
   }
 
 
@@ -116,49 +121,71 @@ export class ListShipmentComponent implements OnInit, OnChanges, OnDestroy {
   filterFieldHeaders(name: string, value: string) {
     switch (name) {
       case 'cargoGroup':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'cargoSubGroup':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'shipmentType':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromRoad':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromStation':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromStationCode':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromSubject':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'senderName':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toRoad':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toStation':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toStationCode':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toSubject':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'receiverName':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'primary':
-        this.filters = ',' + 'isPrimary' + '~' + value;
+        this.filters = ',' + 'isPrimary' + ':' + value;
         break;
       default:
         this.parseFiltersYears(name, value);
+    }
+  }
+
+  parseFilterColumn(name: string, value: string){
+    console.log(value.match(/^[@]/))
+    if (value.match(/^[@]/)) {
+      return value[0] === '@' ? this.filters = ',' + name + ':' + value.trim().slice(1) : this.filters = ',' + name + value
+    }else{
+      return this.filters = ',' + name + '~' + value;
     }
   }
 
@@ -198,40 +225,29 @@ export class ListShipmentComponent implements OnInit, OnChanges, OnDestroy {
       sortOrder: sortOrder,
       resultFilterUrl: resultFilterUrl.join('')
     }
-    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
-      .subscribe(
-        res => {
-          res === null ? this.mathematicalForecastContent = [] : this.mathematicalForecastContent = res.content
-          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
-        },
-        error => {
-          this.modalService.open(error.error.message)
-          this.loadingTable = false
-        },
-        () => {
-          this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
-          this.summFooter(this.sessionId)
-        }
-      ))
+    this.shipmentPagination()
   }
 
   shipmentPagination() {
     this.loadingTable = true
-    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl)
-      .subscribe(
-        res => {
-          res === null ? this.mathematicalForecastContent = [] : this.mathematicalForecastContent = res.content
-          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
-        },
-        error => {
+    this.subscriptions.add(
+      forkJoin(
+        this.shipmentsService.getShipmetsPaginations(this.filterTableEvant.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl),
+        this.shipmentsService.getSummFooter(this.filterTableEvant.sessionId, this.filterTableEvant.resultFilterUrl)
+      ).subscribe(([mathematicalForecast, massSummYear]) =>
+        {
+          mathematicalForecast === null ? this.mathematicalForecastContent = [] : this.mathematicalForecastContent = mathematicalForecast.content
+          mathematicalForecast === null ? this.totalRecords = 0 : this.totalRecords = mathematicalForecast.totalElements
+          this.massSummYear = massSummYear;
+        },error => {
           this.modalService.open(error.error.message)
           this.loadingTable = false
         },
         () => {
           this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
-          this.summFooter(this.sessionId)
         }
-      ))
+      )
+    )
   }
 
   colorYears(rowData, col: any) {
@@ -271,29 +287,14 @@ export class ListShipmentComponent implements OnInit, OnChanges, OnDestroy {
 
   updateListShipmentTable(event: boolean) {
     if (event === true) {
-      this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.filterTableEvant.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl)
-        .subscribe(
-          res => {
-            console.log(res)
-            res === null ? this.mathematicalForecastContent = [] : this.mathematicalForecastContent = res.content
-            res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
-          },
-          error => {
-            this.modalService.open(error.error.message)
-            this.loadingTable = false
-          },
-          () => {
-            this.loadingTable = false,
-              this.summFooter(this.filterTableEvant.sessionId)
-          }
-        ))
+      this.shipmentPagination()
     }
   }
 
   summFooter(sessionId: number) {
+    this.massSummYear= {}
     this.subscriptions.add(this.shipmentsService.getSummFooter(sessionId, this.filterTableEvant.resultFilterUrl).subscribe(
       res => {
-        console.log(res)
         this.massSummYear = res
       },
       error => this.modalService.open(error.error.message)
@@ -313,5 +314,10 @@ export class ListShipmentComponent implements OnInit, OnChanges, OnDestroy {
         ))
       }
     });
+  }
+
+  clearfilter() {
+    this.dropdownPrimary.clear(null);
+    this.table.reset();
   }
 }

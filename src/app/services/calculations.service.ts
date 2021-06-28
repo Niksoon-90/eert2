@@ -47,8 +47,8 @@ export class CalculationsService {
     return this.http.post(this.urlCalc + `api/calc/correspondence/optimalAndHierarchical/${sessionId}?calculatedYears=15&probeYears=2`, {})
   }
 
-  getDivideSum(sessionId: number, filters: string, summ: number, year: string) {
-    return this.http.get(this.urlCalc + `api/calc/correspondence/divideSum/filter?search=sessionId:${sessionId}${filters}&sum=${summ}&year=${year}`)
+  getDivideSum(sessionId: number, filters: string, summ: number, year: string, includeUpdatedByClaims: boolean) {
+    return this.http.get(this.urlCalc + `api/calc/correspondence/divideSum/filter?includeUpdatedByClaims=${includeUpdatedByClaims}&search=sessionId:${sessionId}${filters}&sum=${summ}&year=${year}`)
   }
 
   getOptimalMacro(sessionId: number, macroScenarioType: string): Observable<IMacroIndexesIds> {

@@ -22,12 +22,18 @@
               </div>
             </ng-template>
             <ng-container *ngIf="macroPokList; else Loader">
-              <p-table #dtMacro [value]="macroPokList" [scrollable]="true"
-                       scrollHeight="30vh" dataKey="id"
+              <p-table #dtMacro
+                       [value]="macroPokList"
+                       [scrollable]="true"
+                       scrollHeight="30vh"
+                       dataKey="id"
                        styleClass="p-datatable-sm p-datatable-gridlines"
-                       selectionMode="multiple" [(selection)]="selectedMacro"
-                       [showCurrentPageReport]="true" [resizableColumns]="true"
-                       [loading]="loadingTableMacroPokList">
+                       selectionMode="multiple"
+                       [(selection)]="selectedMacro"
+                       [showCurrentPageReport]="true"
+                       [resizableColumns]="true"
+                       [loading]="loadingTableMacroPokList"
+              >
                 <ng-template pTemplate="caption">
                   <div class="p-d-flex p-justify-between">
                     <div class="p-field-checkbox">
@@ -46,9 +52,9 @@
                 <ng-template pTemplate="colgroup" let-columns>
                   <colgroup>
                     <col style="width: 100px">
-                    <col>
-                    <col>
-                    <col>
+                    <col style="width: 220px">
+                    <col style="width: 220px">
+                    <col >
                   </colgroup>
                 </ng-template>
                 <ng-template pTemplate="header">
@@ -115,7 +121,8 @@
                            [scrollable]="true"
                            scrollHeight="30vh"
                            dataKey="id"
-                           styleClass="p-datatable-sm p-datatable-gridlines">
+                           styleClass="p-datatable-sm p-datatable-gridlines"
+                           [style]="{width:'50vw'}" >
                     <colgroup>
                       <col style="width:100px">
                       <col style="width:100px">

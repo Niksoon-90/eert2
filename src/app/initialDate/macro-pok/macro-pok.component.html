@@ -108,8 +108,8 @@
              [showCurrentPageReport]="true"
              [(selection)]="selectedmacroPokList"
              [rowHover]="true"
+             (onFilter)="onFilter($event, dt)"
              currentPageReportTemplate="Отображено с {first} по {last} запись. Всего: {totalRecords}">
-      >
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
           <col style="width: 60px">
@@ -158,7 +158,9 @@
           </ng-container>
         </tr>
         <tr>
-          <th></th>
+          <th style="text-align: center; padding: 0">
+            <button pButton pRipple type="button" label="Все" class="p-button-outlined p-button-info" (click)="checkedFilterAll()"></button>
+          </th>
           <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'id', 'contains')"
                      placeholder="Фильтр" class="p-column-filter"></th>
           <th><input pInputText type="text" (input)="dt.filter($event.target.value, 'cargoGroup', 'contains')"

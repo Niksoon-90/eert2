@@ -21,7 +21,6 @@ export class DataShipmentsComponent implements OnInit, OnDestroy {
 
   shipmentsSession: ISession[];
   customers: any[];
-  mathematicalForecastTable: IShipmentPagination;
   loading: boolean = true;
   first = 0;
   rows = 25;
@@ -132,16 +131,7 @@ export class DataShipmentsComponent implements OnInit, OnDestroy {
 
   openShipItemSession(id: number) {
     this.sessionId = id
-    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(id, 0).subscribe(
-      res => {
-        this.mathematicalForecastTable = res
-        this.showDialog();
-      },
-      error => {
-        this.modalService.open(error.error.message);
-      },
-    )
-    )
+    this.showDialog();
   }
 
   showDialog() {
@@ -154,7 +144,6 @@ export class DataShipmentsComponent implements OnInit, OnDestroy {
   }
 
   CloseModalChange(event: boolean) {
-    this.mathematicalForecastTable = null
     this.dialogVisible = event;
   }
 
@@ -222,26 +211,6 @@ export class DataShipmentsComponent implements OnInit, OnDestroy {
         this.opimalItemId = this.opimalItemId.filter(item => item !== id)
       }
     ))
-    // this.opimalItemId.push(id)
-    // this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(id).subscribe(
-    //   () => console.log(),
-    //   error => {
-    //     this.modalService.open(error.error.message)
-    //     this.opimalItemId = this.opimalItemId.filter(item => item !== id)
-    //   },
-    //   () => {
-    //     this.subscriptions.add(this.calculationsService.postHierarchicalShipment(id).subscribe(
-    //       () => console.log(),
-    //       error => {
-    //         this.modalService.open(error.error.message)
-    //         this.opimalItemId = this.opimalItemId.filter(item => item !== id)
-    //       },
-    //       () => {
-    //         this.opimalItemId = this.opimalItemId.filter(item => item !== id)
-    //       }
-    //     ))
-    //   }
-    // ))
   }
 
   opimal() {

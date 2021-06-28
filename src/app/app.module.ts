@@ -125,7 +125,7 @@ const appRoutes: Routes = [
   {path: 'station', component: StationNsiComponent},
   {path: 'payments', component: PaymentHistoryComponent, children: itemRoutesHistoricalSteps},
   {path: '', component: CalculationsComponent},
-  {path: 'logOut', canActivate: [RedirectGuard], component: RedirectGuard,  data: {  externalUrl: 'http://192.168.11.180:8080/logout' }}
+  {path: 'logOut', canActivate: [RedirectGuard], component: RedirectGuard,  data: {  externalUrl: 'http://192.168.11.191:8080/logout' }}
 ]
 registerLocaleData(localeRu, 'ru');
 @NgModule({

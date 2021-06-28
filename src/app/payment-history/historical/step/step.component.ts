@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {Subscription} from "rxjs";
+import {forkJoin, Subscription} from "rxjs";
 import {IAuthModel} from "../../../models/auth.model";
 import {CalculationsService} from "../../../services/calculations.service";
 import {ModalService} from "../../../services/modal.service";
@@ -11,6 +11,7 @@ import {HttpResponse} from "@angular/common/http";
 import {UploadFileService} from "../../../services/upload-file.service";
 import {Table} from "primeng/table";
 import {ForecastingModelService} from "../../../services/forecasting-model.service";
+import {Dropdown} from "primeng/dropdown";
 
 
 @Component({
@@ -21,6 +22,12 @@ import {ForecastingModelService} from "../../../services/forecasting-model.servi
 export class StepComponent implements OnInit, OnDestroy {
 
   @ViewChild('dt') table: Table;
+
+  @ViewChild("dropdownPrimary", {static: false}) dropdownPrimary: Dropdown
+
+  @ViewChild("dropdownForecastType", {static: false}) dropdownForecastType: Dropdown
+
+  @ViewChild("dropdownIsUpdatedByClaim", {static: false}) dropdownIsUpdatedByClaim: Dropdown
 
   mathematicalForecastTable: IShipment[]
   loading: boolean;
@@ -45,6 +52,17 @@ export class StepComponent implements OnInit, OnDestroy {
   nameSession: string
   mathematicalForecastTableShipmentYearCalculated = []
   subscriptions: Subscription = new Subscription();
+  selectedIsUpdatedByClaim: any;
+  typeCalculation = [
+    {label: 'Все', value: ''},
+    {label: 'по методу наименьших квадратов', value: 'LESS_SQUARE'},
+    {label: 'по отчётному году', value: 'FISCAL_YEAR'},
+    {label: 'по тенденции (по фиксированным промежуткам)', value: 'TENDENCY_FIXED_DELTA'},
+    {label: 'по тенденции (по увеличивающимся промежуткам)', value: 'TENDENCY_INCREASING_DELTA'},
+    {label: 'по среднему арифметическому (по фиксированным промежуткам)', value: 'AVERAGE_FIXED_INTERVAL'},
+    {label: 'по среднему арифметическому (по увеличивающимся промежуткам)', value: 'AVERAGE_INCREASING_INTERVAL'},
+  ]
+  selectedForecastType: any;
 
   constructor(
     private router: Router,
@@ -64,31 +82,14 @@ export class StepComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.allShipItemSession();
+    this.mathematicalForecastTable = [];
   }
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
 
-  allShipItemSession() {
-    this.loader = true
-    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId)
-      .subscribe(
-        res => {
-          res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
-          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
-        },
-        error => {
-          this.modalService.open(error.error.message)
-          this.loader = false
-        },
-        () => {
-          this.createColumnTable()
-          this.loader = false
-        }
-      ))
-  }
+
 
   createColumnTable() {
     this.mathematicalForecastTable.length === 0 ? this.columsYears = 0 : this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
@@ -96,6 +97,7 @@ export class StepComponent implements OnInit, OnDestroy {
     this.mathematicalForecastTableShipmentYearCalculated.length !== 0 ? this.forecastingModelService.setTicketInformationMathematicalForecastTable(this.mathematicalForecastTableShipmentYearCalculated) : this.forecastingModelService.setTicketInformationMathematicalForecastTable(null)
 
     this.cols = [
+      {field: 'forecastType', header: 'Оптимальный по умолчанию (до балансировки)', width: '100px', keyS: false},
       {field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
       {field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false},
       {field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false},
@@ -110,6 +112,7 @@ export class StepComponent implements OnInit, OnDestroy {
       {field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false},
       {field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false},
       {field: 'primary', header: 'Уст.', width: '80px', keyS: false},
+      {field: 'updatedByClaim', header: 'На основе заявок', width: '100px', keyS: false},
     ];
     for (let i = 0; i < this.columsYears; i++) {
       this.cols.push({
@@ -119,6 +122,7 @@ export class StepComponent implements OnInit, OnDestroy {
         keyS: true
       })
     }
+    this.loadingTable = false
 
   }
 
@@ -218,50 +222,78 @@ export class StepComponent implements OnInit, OnDestroy {
 
   filterFieldHeaders(name: string, value: string) {
     switch (name) {
+      case 'forecastType':
+        this.filters = ',' + name + ':' + value;
+        break;
+      case 'updatedByClaim':
+        this.filters = ',' + 'isUpdatedByClaim' + ':' + value;
+        break;
       case 'cargoGroup':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'cargoSubGroup':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'shipmentType':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromRoad':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromStation':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromStationCode':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromSubject':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'senderName':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toRoad':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toStation':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toStationCode':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toSubject':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'receiverName':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'primary':
-        this.filters = ',' + 'isPrimary' + '~' + value;
+        this.filters = ',' + 'isPrimary' + ':' + value;
         break;
       default:
         this.parseFiltersYears(name, value);
+    }
+  }
+
+  parseFilterColumn(name: string, value: string){
+    console.log(value.match(/^[@]/))
+    if (value.match(/^[@]/)) {
+      return value[0] === '@' ? this.filters = ',' + name + ':' + value.trim().slice(1) : this.filters = ',' + name + value
+    }else{
+      return this.filters = ',' + name + '~' + value;
     }
   }
 
@@ -291,7 +323,13 @@ export class StepComponent implements OnInit, OnDestroy {
         resultFilterUrl.push(this.filters)
       }
     }
-    event.sortField === 'primary' ? sortField = 'isPrimary' : sortField = event.sortField
+    if (event.sortField === 'primary') {
+      sortField = 'isPrimary'
+    } else if (event.sortField === 'updatedByClaim') {
+      sortField = 'isUpdatedByClaim'
+    } else {
+      sortField = event.sortField;
+    }
     event.sortOrder === 1 ? sortOrder = 'asc' : sortOrder = 'desc'
 
     this.filterTableEvant = {
@@ -302,24 +340,31 @@ export class StepComponent implements OnInit, OnDestroy {
       sortOrder: sortOrder,
       resultFilterUrl: resultFilterUrl.join('')
     }
-    this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(this.sessionId, currentPage, event.rows, sortField, sortOrder, resultFilterUrl.join(''))
-      .subscribe(
-        res => {
-          console.log(res)
-          res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
-          res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
-        },
-        error => {
+    this.shipmentPagination();
+  }
+
+  shipmentPagination() {
+    this.loadingTable = true
+    this.subscriptions.add(
+      forkJoin(
+        this.shipmentsService.getShipmetsPaginations(this.filterTableEvant.sessionId, this.filterTableEvant.currentPage, this.filterTableEvant.rows, this.filterTableEvant.sortField, this.filterTableEvant.sortOrder, this.filterTableEvant.resultFilterUrl),
+        this.shipmentsService.getSummFooter(this.filterTableEvant.sessionId, this.filterTableEvant.resultFilterUrl)
+      ).subscribe(([mathematicalForecast, massSummYear]) =>
+        {
+          mathematicalForecast === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = mathematicalForecast.content
+          mathematicalForecast === null ? this.totalRecords = 0 : this.totalRecords = mathematicalForecast.totalElements
+          this.massSummYear = massSummYear;
+        },error => {
           this.modalService.open(error.error.message)
           this.loadingTable = false
         },
         () => {
           this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
-          this.summFooter(this.sessionId)
-          this.loadingTable = false
         }
-      ))
+      )
+    )
   }
+
 
 
   prevPage() {
@@ -338,6 +383,39 @@ export class StepComponent implements OnInit, OnDestroy {
           this.router.navigate(['payments/ias/', this.sessionId, this.nameSession]);
         }
       ))
+    }
+  }
+
+  clearfilter() {
+    this.dropdownPrimary.clear(null);
+    this.dropdownIsUpdatedByClaim.clear(null);
+    this.dropdownForecastType.clear(null);
+    this.table.reset();
+  }
+
+  forecastTypeInString(name: any) {
+    switch (name) {
+      case 'LESS_SQUARE':
+        return 'по методу наименьших квадратов'
+        break;
+      case 'FISCAL_YEAR':
+        return 'по отчётному году'
+        break;
+      case 'TENDENCY_FIXED_DELTA':
+        return 'по тенденции (по фиксированным промежуткам)'
+        break;
+      case 'TENDENCY_INCREASING_DELTA':
+        return 'по тенденции (по увеличивающимся промежуткам)'
+        break;
+      case 'AVERAGE_FIXED_INTERVAL':
+        return 'по среднему арифметическому (по фиксированным промежуткам)'
+        break;
+      case 'AVERAGE_INCREASING_INTERVAL':
+        return 'по среднему арифметическому (по увеличивающимся промежуткам)'
+        break;
+      default:
+        return ''
+        break;
     }
   }
 }

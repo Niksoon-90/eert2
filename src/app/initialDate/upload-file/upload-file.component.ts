@@ -8,6 +8,7 @@ import {IAuthModel} from "../../models/auth.model";
 import {AuthenticationService} from "../../services/authentication.service";
 import {CalculationsService} from "../../services/calculations.service";
 import {Subscription} from "rxjs";
+import {ExportExcelService} from "../../services/export-excel.service";
 
 @Component({
   selector: 'app-upload-file',
@@ -54,7 +55,8 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     private modalService: ModalService,
     private authenticationService: AuthenticationService,
     private fb: FormBuilder,
-    private calculationsService: CalculationsService
+    private calculationsService: CalculationsService,
+    private ete: ExportExcelService
   ) {
     this.user = this.authenticationService.userValue;
     this.initialDateType = activateRoute.snapshot.params['initialDateType'];
@@ -160,7 +162,21 @@ export class UploadFileComponent implements OnInit, OnDestroy {
         },
         error => {
           this.clearForm();
-          this.modalService.open(error.error.message)
+          let numberStation = []
+          if(error.error.invalidStations?.length > 0){
+            for(const item in error.error.invalidStations){
+              numberStation.push([error.error.invalidStations[item].code, error.error.invalidStations[item].name])
+            }
+            let reportData = {
+                      title: `station`,
+                      data: numberStation,
+                      headers: ['Код станции', 'Наименование станции']
+                    }
+                    this.ete.exportExcelStation(reportData);
+              this.modalService.open(error.error.message.replace(/[a-z]/g, '').substring(error.error.message.replace(/[a-z]/g, '').indexOf(": [") + 3, error.error.message.replace(/[a-z]/g, '').indexOf("],")))
+          }else{
+            this.modalService.open(error.error.message)
+          }
         }, () => {
             this.clearForm();
             this.showModalDialog();
@@ -231,23 +247,6 @@ export class UploadFileComponent implements OnInit, OnDestroy {
 
   downloadAbsentcargo() {
     if (this.fileId !== 0) {
-      // this.subscriptions.add(this.shipmentsService.getDownloadAbsentcargo(this.fileId).subscribe(
-      //   (response: HttpResponse<Blob>) => {
-      //     let filename: string = 'absentcargo.xlsx'
-      //     let binaryData = [];
-      //     binaryData.push(response.body);
-      //     let downloadLink = document.createElement('a');
-      //     downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: 'blob'}));
-      //     downloadLink.setAttribute('download', filename);
-      //     document.body.appendChild(downloadLink);
-      //     downloadLink.click();
-      //   },
-      //   async (error) => {
-      //     const message = JSON.parse(await error.error.text()).message;
-      //     this.modalService.open(message)
-      //   }
-      // ))
-
       this.subscriptions.add(this.shipmentsService.getDownloadAbsentcargo(this.fileId).subscribe(
         result => {
           switch (result.type) {
@@ -305,28 +304,5 @@ export class UploadFileComponent implements OnInit, OnDestroy {
               this.showModalDialog();
             }
     ))
-    // this.textOptimal = 'Поиск наиболее оптимальных прогнозов для корреспонденций..'
-    // this.optimalProgressBar = true;
-    // this.subscriptions.add(this.calculationsService.postCorrespondenceOptimal(this.fileId).subscribe(
-    //   () => console.log(),
-    //   error => this.modalService.open(error.error.message),
-    //   () => {
-    //     this.test.push(`Подобраны наиболее оптимальные прогнозы для корреспонденций`)
-    //     this.textOptimal = 'Иерархический прогноз..'
-    //     this.subscriptions.add(this.calculationsService.postHierarchicalShipment(this.fileId).subscribe(
-    //       () => console.log(),
-    //       error => {
-    //         this.modalService.open(error.error.message)
-    //         this.optimalProgressBar = false
-    //       },
-    //       () => {
-    //         this.test.push(`Применен иерархический прогноз`)
-    //         this.optimalProgressBar = false
-    //         this.clearForm();
-    //         this.showModalDialog();
-    //       },
-    //     ))
-    //   }
-    // ))
   }
 }

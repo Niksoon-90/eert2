@@ -56,9 +56,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
   downloadRoadLoading: boolean = false
   primeryBol = [{label: 'Все', value: ''}, {label: 'Да', value: true}, {label: 'Нет', value: false}]
   selectedPrimery: any;
-
   selectedIsUpdatedByClaim: any;
-
   sessionId: number
   primary2 = [{label: 'Да', value: true}, {label: 'Нет', value: false}]
   first: number = 0;
@@ -85,6 +83,8 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
   ]
   selectedForecastType: any;
   subscriptions: Subscription = new Subscription();
+  inputSwitchRequest: boolean = false
+  selectedValues: IShipment[];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -201,7 +201,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
     this.mathematicalForecastTable.length === 0 ? this.columsYears = 0 : this.columsYears = this.mathematicalForecastTable[0].shipmentYearValuePairs.length
     this.onChangeTickets()
     this.cols = [
-      {field: 'forecastType', header: 'Текущий метод', width: '100px', keyS: false},
+      {field: 'forecastType', header: 'Оптимальный по умолчанию (до балансировки)', width: '100px', keyS: false},
       {field: 'cargoGroup', header: 'Группа груза', width: '100px', keyS: false},
       {field: 'cargoSubGroup', header: 'Подгруппа груза', width: '100px', keyS: false},
       {field: 'shipmentType', header: 'Вид перевозки', width: '100px', keyS: false},
@@ -216,7 +216,6 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
       {field: 'toSubject', header: 'Субъект назначения', width: '100px', keyS: false},
       {field: 'receiverName', header: 'Грузополучатель', width: '100px', keyS: false},
       {field: 'primary', header: 'Уст.', width: '80px', keyS: false},
-
       {field: 'updatedByClaim', header: 'На основе заявок', width: '100px', keyS: false},
 
     ];
@@ -298,52 +297,63 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
 
   filterFieldHeaders(name: string, value: string) {
     switch (name) {
-
-      case 'updatedByClaim':
-        this.filters = ',' + 'isUpdatedByClaim' + ':' + value;
-        break;
-
       case 'forecastType':
         this.filters = ',' + name + ':' + value;
         break;
+      case 'updatedByClaim':
+        this.filters = ',' + 'isUpdatedByClaim' + ':' + value;
+        break;
       case 'cargoGroup':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'cargoSubGroup':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'shipmentType':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromRoad':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromStation':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromStationCode':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'fromSubject':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'senderName':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toRoad':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toStation':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toStationCode':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'toSubject':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'receiverName':
-        this.filters = ',' + name + '~' + value;
+        this.parseFilterColumn(name, value)
+        //this.filters = ',' + name + '~' + value;
         break;
       case 'primary':
         this.filters = ',' + 'isPrimary' + ':' + value;
@@ -353,6 +363,14 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
     }
   }
 
+  parseFilterColumn(name: string, value: string){
+    console.log(value.match(/^[@]/))
+    if (value.match(/^[@]/)) {
+      return value[0] === '@' ? this.filters = ',' + name + ':' + value.trim().slice(1) : this.filters = ',' + name + value
+    }else{
+      return this.filters = ',' + name + '~' + value;
+    }
+  }
 
   parseFiltersYears(name: string, value: string) {
     if (value.match(/^[><=]/)) {
@@ -380,15 +398,13 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
         resultFilterUrl.push(this.filters)
       }
     }
-    if(event.sortField === 'primary'){
+    if (event.sortField === 'primary') {
       sortField = 'isPrimary'
-    }else if(event.sortField === 'updatedByClaim'){
+    } else if (event.sortField === 'updatedByClaim') {
       sortField = 'isUpdatedByClaim'
-    }else{
+    } else {
       sortField = event.sortField;
     }
-    // event.sortField === 'primary' ? sortField = 'isPrimary' : sortField = event.sortField;
-    // event.sortField === 'updatedByClaim' ? sortField = 'isUpdatedByClaim' : sortField = event.sortField;
     event.sortOrder === 1 ? sortOrder = 'asc' : sortOrder = 'desc'
 
     this.filterTableEvant = {
@@ -418,33 +434,34 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
 
 
   particalListFilter() {
-    if (this.forecastingStrategyFilter.type === 'FISCAL_YEAR' && (this.forecastFiscalYear === null || this.forecastFiscalYear === undefined)) {
-      this.modalService.open('Стратегия прогнозирования корреспонденций. Укажите год!');
-    } else {
-      //this.loadingMathematicalForecastTable = false
-      this.subscriptions.add(this.calculationsService.getPartialListFilter(
-        this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
-        this.forecastingStrategyFilter.type,
-        this.sessionId,
-        this.forecastingStrategyFilter.type === 'FISCAL_YEAR' ? this.forecastFiscalYear['name'] : null,
-        this.filterTableEvant.currentPage,
-        this.filterTableEvant.rows,
-        this.filterTableEvant.sortField,
-        this.filterTableEvant.sortOrder,
-        this.filterTableEvant.resultFilterUrl
-      )
-        .subscribe(
-          res => console.log(res),
-          error => {
-            this.modalService.open(error.error.message)
-            //this.loadingMathematicalForecastTable = true
-          },
-          () => {
-            //this.loadingMathematicalForecastTable = true
-            this.shipmentPagination()
-          }
-        ))
-    }
+    console.log(this.selectedValues.map(a=>a.id))
+    // if (this.forecastingStrategyFilter.type === 'FISCAL_YEAR' && (this.forecastFiscalYear === null || this.forecastFiscalYear === undefined)) {
+    //   this.modalService.open('Стратегия прогнозирования корреспонденций. Укажите год!');
+    // } else {
+    //   //this.loadingMathematicalForecastTable = false
+    //   this.subscriptions.add(this.calculationsService.getPartialListFilter(
+    //     this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
+    //     this.forecastingStrategyFilter.type,
+    //     this.sessionId,
+    //     this.forecastingStrategyFilter.type === 'FISCAL_YEAR' ? this.forecastFiscalYear['name'] : null,
+    //     this.filterTableEvant.currentPage,
+    //     this.filterTableEvant.rows,
+    //     this.filterTableEvant.sortField,
+    //     this.filterTableEvant.sortOrder,
+    //     this.filterTableEvant.resultFilterUrl
+    //   )
+    //     .subscribe(
+    //       res => console.log(res),
+    //       error => {
+    //         this.modalService.open(error.error.message)
+    //         //this.loadingMathematicalForecastTable = true
+    //       },
+    //       () => {
+    //         //this.loadingMathematicalForecastTable = true
+    //         this.shipmentPagination()
+    //       }
+    //     ))
+    // }
   }
 
   divideSum(idx: number, value: any) {
@@ -452,24 +469,25 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
     let yearSumm: null;
     this.mathematicalForecastTable.length !== 0 ? yearSumm = this.mathematicalForecastTable[0].shipmentYearValuePairs[idxYear.toString()].year : yearSumm = null
     if (value !== '') {
-      this.loadingTable = true
-      this.subscriptions.add(this.calculationsService.getDivideSum(this.sessionId, this.filterTableEvant.resultFilterUrl, value, yearSumm)
-        .subscribe(
-          () => console.log(),
-          error => {
-            this.modalService.open(error.error.message)
-            this.loadingTable = false
-          },
-          () => {
-            this.t.reset();
-            this.shipmentPagination()
-          }
-        ))
+      if (this.inputSwitchRequest === false && this.filterTableEvant.resultFilterUrl.indexOf('isUpdatedByClaim:true') !== -1) {
+        this.modalService.open('Изменение суммы не может быть выполнено. Добавьте в отфильтрованную выборку корреспонденции без заявок или переведите слайдер в положение "Все"')
+      } else {
+        this.loadingTable = true
+        this.subscriptions.add(this.calculationsService.getDivideSum(this.sessionId, this.filterTableEvant.resultFilterUrl, value, yearSumm, this.inputSwitchRequest)
+          .subscribe(
+            () => console.log(),
+            error => {
+              this.modalService.open(error.error.message)
+              this.loadingTable = false
+            },
+            () => {
+              this.t.reset();
+              this.shipmentPagination()
+            }
+          ))
+      }
     }
   }
-
-
-
 
 
   summFooter(sessionId: number) {
@@ -564,7 +582,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
   shipmentPagination() {
     this.loadingTable = true
     this.mathematicalForecastTable = []
-    console.log(this.filterTableEvant)
+
     this.subscriptions.add(this.shipmentsService.getShipmetsPaginations(
       this.sessionId,
       this.filterTableEvant.currentPage,
@@ -574,6 +592,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
       this.filterTableEvant.resultFilterUrl)
       .subscribe(
         res => {
+
           res === null ? this.mathematicalForecastTable = [] : this.mathematicalForecastTable = res.content
           res === null ? this.totalRecords = 0 : this.totalRecords = res.totalElements
         },
@@ -582,7 +601,7 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
           this.loadingTable = false
         },
         () => {
-          this.columsYears === 0 ? this.createColumnTable() : this.loadingTable = false
+          this.createColumnTable()
           this.summFooter(this.sessionId)
         }
       ))
