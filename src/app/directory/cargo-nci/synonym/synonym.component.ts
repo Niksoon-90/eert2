@@ -19,6 +19,7 @@ export class SynonymComponent implements OnInit, OnChanges {
   synonym: ISynonym[]
   user: IAuthModel
   nameNewSysonym: string;
+  nameNewSysonymInfo: string;
   cols: any;
   subscriptions: Subscription = new Subscription();
 
@@ -36,7 +37,8 @@ export class SynonymComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.cols = [
-      { field: 'name', header: 'Синонимы', width: 'auto', isStatic :true}
+      { field: 'name', header: 'Синонимы', width: 'auto', isStatic :true},
+      { field: 'additionalInfo', header: 'Коды станций', width: 'auto', isStatic :false}
     ]
     this.getSynonymAll(this.cargoOwnerId);
   }
@@ -75,11 +77,25 @@ export class SynonymComponent implements OnInit, OnChanges {
   }
 
   createSysonym() {
-    this.subscriptions.add(this.shipmentsService.postSynonym(this.cargoOwnerId, this.nameNewSysonym.replace(/\s+/g, ' ').trim()).subscribe(
+    this.subscriptions.add(this.shipmentsService.postSynonym(this.cargoOwnerId, this.nameNewSysonym.replace(/\s+/g, ' ').trim(), {
+      additionalInfo: this.nameNewSysonymInfo
+    }).subscribe(
       () => console.log(),
       error => this.modalService.open(error.error.message),
       () => {
         this.nameNewSysonym = ''
+        this.nameNewSysonymInfo = ''
+        this.getSynonymAll(this.cargoOwnerId)
+      }
+    ))
+  }
+
+  onRowEditSave(item: any) {
+    console.log(item)
+    this.subscriptions.add(this.shipmentsService.puttEditSynonym(item.id, {additionalInfo: item.additionalInfo}).subscribe(
+      () => console.log(),
+      error => this.modalService.open(error.error.message),
+      () => {
         this.getSynonymAll(this.cargoOwnerId)
       }
     ))

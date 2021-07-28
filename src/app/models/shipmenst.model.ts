@@ -68,7 +68,8 @@ interface ISort {
 export interface ISynonym{
   cargoOwnerId?: number,
   id?: number,
-  name?: string
+  name?: string,
+  additionalInfo?: string
 }
 
 export interface FbCreateResponse {

@@ -31,7 +31,6 @@
                    styleClass="p-datatable-customers p-datatable-gridlines"
                    [showCurrentPageReport]="true"
                    currentPageReportTemplate="Отображено с {first} по {last} запись. Всего: {totalRecords}"
-
           >
 
             <ng-template pTemplate="caption">
@@ -105,21 +104,28 @@
                     *ngIf="col['field'] === 'primary' || col['field'] === 'forecastType' || col['field'] === 'updatedByClaim'; else primeCol">
 
                     <ng-container *ngIf="col['field'] === 'primary'">
-                      <p-dropdown appendTo="body" #dropdownPrimary [options]="primeryBol" [(ngModel)]="selectedPrimery"
+                      <p-dropdown appendTo="body"
+                                  [options]="primeryBol"
+                                  [ngModel]="dt.filters[col.field]? dt.filters[col.field].value: []"
+                                  (ngModelChange)="selectedPrimery = $event"
                                   (onChange)="dt.filter($event.value, col.field, 'equals')"
                                   [ngModelOptions]="{standalone: true}"></p-dropdown>
                     </ng-container>
                     <ng-container *ngIf="col['field'] === 'forecastType'">
-                      <p-dropdown appendTo="body" #dropdownForecastType [options]="typeCalculation"
-                                  [(ngModel)]="selectedForecastType"
+                      <p-dropdown appendTo="body"
+                                  [options]="typeCalculation"
+                                  [ngModel]="dt.filters[col.field]? dt.filters[col.field].value: []"
+                                  (ngModelChange)="selectedForecastType = $event"
                                   (onChange)="dt.filter($event.value, col.field, 'equals')"
                                   [ngModelOptions]="{standalone: true}"
                       ></p-dropdown>
                     </ng-container>
 
                     <ng-container *ngIf="col['field'] === 'updatedByClaim'">
-                      <p-dropdown appendTo="body" #dropdownIsUpdatedByClaim [options]="primeryBol"
-                                  [(ngModel)]="selectedIsUpdatedByClaim"
+                      <p-dropdown appendTo="body"
+                                  [options]="primeryBol"
+                                  [ngModel]="dt.filters[col.field]? dt.filters[col.field].value: []"
+                                  (ngModelChange)="selectedIsUpdatedByClaim = $event"
                                   (onChange)="dt.filter($event.value, col.field, 'equals')"
                                   [ngModelOptions]="{standalone: true}"></p-dropdown>
                     </ng-container>

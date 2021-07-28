@@ -30,13 +30,6 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
 
   @ViewChild('dt') table: Table;
 
-  @ViewChild("dropdownPrimary", {static: false}) dropdownPrimary: Dropdown
-
-  @ViewChild("dropdownForecastType", {static: false}) dropdownForecastType: Dropdown
-
-  @ViewChild("dropdownIsUpdatedByClaim", {static: false}) dropdownIsUpdatedByClaim: Dropdown
-
-
   @Input() settlemenType;
 
   @Input() forecastingStrategySustainable;
@@ -84,7 +77,9 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
   selectedForecastType: any;
   subscriptions: Subscription = new Subscription();
   inputSwitchRequest: boolean = false
-  selectedValues: IShipment[];
+  selectedValues: IShipment[] = [];
+  checkedRowTable: boolean = false;
+  messageButtonSortCheckedRow = 'Показать'
 
   constructor(
     private formBuilder: FormBuilder,
@@ -363,11 +358,10 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
     }
   }
 
-  parseFilterColumn(name: string, value: string){
-    console.log(value.match(/^[@]/))
+  parseFilterColumn(name: string, value: string) {
     if (value.match(/^[@]/)) {
       return value[0] === '@' ? this.filters = ',' + name + ':' + value.trim().slice(1) : this.filters = ',' + name + value
-    }else{
+    } else {
       return this.filters = ',' + name + '~' + value;
     }
   }
@@ -434,34 +428,53 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
 
 
   particalListFilter() {
-    console.log(this.selectedValues.map(a=>a.id))
-    // if (this.forecastingStrategyFilter.type === 'FISCAL_YEAR' && (this.forecastFiscalYear === null || this.forecastFiscalYear === undefined)) {
-    //   this.modalService.open('Стратегия прогнозирования корреспонденций. Укажите год!');
-    // } else {
-    //   //this.loadingMathematicalForecastTable = false
-    //   this.subscriptions.add(this.calculationsService.getPartialListFilter(
-    //     this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
-    //     this.forecastingStrategyFilter.type,
-    //     this.sessionId,
-    //     this.forecastingStrategyFilter.type === 'FISCAL_YEAR' ? this.forecastFiscalYear['name'] : null,
-    //     this.filterTableEvant.currentPage,
-    //     this.filterTableEvant.rows,
-    //     this.filterTableEvant.sortField,
-    //     this.filterTableEvant.sortOrder,
-    //     this.filterTableEvant.resultFilterUrl
-    //   )
-    //     .subscribe(
-    //       res => console.log(res),
-    //       error => {
-    //         this.modalService.open(error.error.message)
-    //         //this.loadingMathematicalForecastTable = true
-    //       },
-    //       () => {
-    //         //this.loadingMathematicalForecastTable = true
-    //         this.shipmentPagination()
-    //       }
-    //     ))
-    // }
+    if (this.forecastingStrategyFilter.type === 'FISCAL_YEAR' && (this.forecastFiscalYear === null || this.forecastFiscalYear === undefined)) {
+      this.modalService.open('Стратегия прогнозирования корреспонденций. Укажите год!');
+    } else {
+      this.loadingTable = true
+      if(this.mathematicalForecastTable === this.selectedValues){
+        this.subscriptions.add(this.calculationsService.postPartialList(
+          this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
+          this.forecastingStrategyFilter.type,
+          this.forecastingStrategyFilter.type === 'FISCAL_YEAR' ? this.forecastFiscalYear['name'] : null,
+          this.selectedValues.map(a => a.id)
+        ).subscribe(
+          res => console.log(res),
+          error => {
+            this.modalService.open(error.error.message)
+          },() => {
+            this.checkedRowTable = false;
+            this.selectedValues = [];
+            this.shipmentPagination()
+        }
+        ))
+      }else{
+        this.subscriptions.add(this.calculationsService.getPartialListFilter(
+          this.forecastModelService.getTicketInformation().stepOne.calcYearsNumber['name'],
+          this.forecastingStrategyFilter.type,
+          this.sessionId,
+          this.forecastingStrategyFilter.type === 'FISCAL_YEAR' ? this.forecastFiscalYear['name'] : null,
+          this.filterTableEvant.currentPage,
+          this.filterTableEvant.rows,
+          this.filterTableEvant.sortField,
+          this.filterTableEvant.sortOrder,
+          this.filterTableEvant.resultFilterUrl
+        )
+          .subscribe(
+            res => console.log(res),
+            error => {
+              this.modalService.open(error.error.message)
+              //this.loadingMathematicalForecastTable = true
+            },
+            () => {
+              //this.loadingMathematicalForecastTable = true
+              this.checkedRowTable = false;
+              this.selectedValues = [];
+              this.shipmentPagination()
+            }
+          ))
+      }
+    }
   }
 
   divideSum(idx: number, value: any) {
@@ -473,18 +486,37 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
         this.modalService.open('Изменение суммы не может быть выполнено. Добавьте в отфильтрованную выборку корреспонденции без заявок или переведите слайдер в положение "Все"')
       } else {
         this.loadingTable = true
-        this.subscriptions.add(this.calculationsService.getDivideSum(this.sessionId, this.filterTableEvant.resultFilterUrl, value, yearSumm, this.inputSwitchRequest)
-          .subscribe(
-            () => console.log(),
-            error => {
-              this.modalService.open(error.error.message)
-              this.loadingTable = false
-            },
-            () => {
-              this.t.reset();
-              this.shipmentPagination()
-            }
-          ))
+        if(this.mathematicalForecastTable === this.selectedValues){
+          this.subscriptions.add(this.calculationsService.postDivideSum(value, yearSumm, this.inputSwitchRequest, this.selectedValues.map(a => a.id))
+            .subscribe(
+              () => console.log(),
+              error => {
+                this.modalService.open(error.error.message)
+                this.loadingTable = false
+              },
+              () => {
+                this.checkedRowTable = false;
+                this.selectedValues = [];
+                this.t.reset();
+                this.shipmentPagination()
+              }
+            ))
+        }else{
+          this.subscriptions.add(this.calculationsService.getDivideSum(this.sessionId, this.filterTableEvant.resultFilterUrl, value, yearSumm, this.inputSwitchRequest)
+            .subscribe(
+              () => console.log(),
+              error => {
+                this.modalService.open(error.error.message)
+                this.loadingTable = false
+              },
+              () => {
+                this.checkedRowTable = false;
+                this.selectedValues = [];
+                this.t.reset();
+                this.shipmentPagination()
+              }
+            ))
+        }
       }
     }
   }
@@ -628,10 +660,33 @@ export class MathematicalForecastTableComponent implements OnInit, OnDestroy {
   }
 
   clearfilter() {
-    this.dropdownPrimary.clear(null);
-    this.dropdownForecastType.clear(null);
-    this.dropdownIsUpdatedByClaim.clear(null);
+    this.checkedRowTable = false;
+    this.selectedValues = [];
     this.table.reset();
   }
+
+  sortCheckedRow() {
+    if (this.checkedRowTable === true) {
+      this.shipmentPagination();
+      this.checkedRowTable = false;
+      this.selectedValues = [];
+    } else {
+      let summFooter = {}
+      for(let i = 0; i < this.selectedValues[0].shipmentYearValuePairs.length; i++) {
+        let summFooterOneYears = 0
+        for (let x = 0; x < this.selectedValues.length; x++) {
+          summFooterOneYears += this.selectedValues[x].shipmentYearValuePairs[i].value
+          if(x === this.selectedValues.length - 1){
+            summFooter[this.selectedValues[x].shipmentYearValuePairs[i].year] = summFooterOneYears
+          }
+        }
+      }
+      this.totalRecords = this.selectedValues.length
+      this.massSummYear = summFooter
+      this.mathematicalForecastTable = this.selectedValues;
+      this.checkedRowTable = true;
+    }
+  }
+
 }
 

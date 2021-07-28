@@ -50,6 +50,9 @@ export class CalculationsService {
   getDivideSum(sessionId: number, filters: string, summ: number, year: string, includeUpdatedByClaims: boolean) {
     return this.http.get(this.urlCalc + `api/calc/correspondence/divideSum/filter?includeUpdatedByClaims=${includeUpdatedByClaims}&search=sessionId:${sessionId}${filters}&sum=${summ}&year=${year}`)
   }
+  postDivideSum(summ: number, year: string, includeUpdatedByClaims: boolean, rowIdList: number[]){
+    return this.http.post(this.urlCalc + `api/calc/correspondence/divideSum/list?includeUpdatedByClaims=${includeUpdatedByClaims}&sum=${summ}&year=${year}`, rowIdList)
+  }
 
   getOptimalMacro(sessionId: number, macroScenarioType: string): Observable<IMacroIndexesIds> {
     return this.http.get<IMacroIndexesIds>(this.urlCalc + `api/calc/regression/multiple/${sessionId}/optimal?macroScenarioType=${macroScenarioType}`)
@@ -66,6 +69,13 @@ export class CalculationsService {
       params = params.set('sort', sortColumn + ',' + sortOrder);
     }
     return this.http.get(this.urlCalc + `api/calc/correspondence/partial/filter?calcYearsNumber=${calcYearsNumber}&forecastType=${forecastType}&search=sessionId:${sessionId}${filters}`, {params})
+  }
+  postPartialList(calcYearsNumber: number, forecastType: string, forecastFiscalYear: string, rowIdList: number[]){
+    let params = new HttpParams()
+    if (forecastFiscalYear !== null) {
+      params = params.set('forecastFiscalYear', forecastFiscalYear)
+    }
+    return this.http.post(this.urlCalc + `api/calc/correspondence/partial/list?calcYearsNumber=${calcYearsNumber}&forecastType=${forecastType}`, rowIdList,{params})
   }
 
   getRegressionMetrics(sessionId: number): Observable<IMultipleMakpok[]> {
@@ -93,8 +103,6 @@ export class CalculationsService {
   postHierarchicalShipment(sessionId: number){
     return this.http.post(this.urlCalc + `api/calc/correspondence/hierarchical/${sessionId}`, {})
   }
-
-
 
 
 

@@ -44,7 +44,7 @@
                 <ng-container *ngIf="this.forecastingStrategyFilter">
                   <ng-container *ngIf="this.forecastingStrategyFilter.type === 'FISCAL_YEAR'">
                     <p-dropdown [options]="this.reportingYears" optionLabel="name" [(ngModel)]="forecastFiscalYear"
-                                placeholder="Укажите год:" [ngModelOptions]="{standalone: true}"></p-dropdown>
+                                  class="p-mr-2" placeholder="Укажите год:" [ngModelOptions]="{standalone: true}"></p-dropdown>
                   </ng-container>
                 </ng-container>
                 <button type="button" pButton pRipple label="Применить"
@@ -100,7 +100,7 @@
 
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
-              <col style="width:80px">
+              <col style="width:160px">
               <col style="width:80px">
               <col *ngFor="let col of columns" [style.width]="col.width">
               <col style="width:160px">
@@ -108,6 +108,7 @@
           </ng-template>
           <ng-template pTemplate="header" let-columns>
             <tr>
+              <th pResizableColumn style="text-align: center"></th>
               <th pResizableColumn style="text-align: center">№</th>
               <ng-container *ngFor="let col of columns;let idx = index;">
                 <ng-container *ngIf="idx< 16; else NotSort">
@@ -127,30 +128,46 @@
               </ng-container>
             </tr>
             <tr>
-              <th>
-
+              <th style="text-align: center; padding: 0">
+                <p-button [label]="this.messageButtonSortCheckedRow" icon="pi pi-check"
+                          styleClass="p-button-success" [badge]="this.selectedValues.length"
+                          (onClick)="sortCheckedRow()"
+                          badgeClass="p-badge-secondary"></p-button>
               </th>
+              <th></th>
               <th *ngFor="let col of columns;let idx = index;">
                 <ng-container
                   *ngIf="col['field'] === 'primary' || col['field'] === 'forecastType' || col['field'] === 'updatedByClaim'; else primeCol">
                   <ng-container *ngIf="col['field'] === 'primary'">
-                    <p-dropdown appendTo="body" #dropdownPrimary [options]="primeryBol" [(ngModel)]="selectedPrimery"
+                    <p-dropdown appendTo="body"
+                                #dropdownPrimary
+                                [options]="primeryBol"
+                                [ngModel]="dt.filters[col.field]? dt.filters[col.field].value: []"
+                                (ngModelChange)="selectedPrimery = $event"
                                 (onChange)="dt.filter($event.value, col.field, 'equals')"
                                 [ngModelOptions]="{standalone: true}"></p-dropdown>
                   </ng-container>
                   <ng-container *ngIf="col['field'] === 'forecastType'">
-                    <p-dropdown appendTo="body" #dropdownForecastType [options]="typeCalculation"
-                                [(ngModel)]="selectedForecastType"
+                    <p-dropdown appendTo="body"
+                                #dropdownForecastType
+                                [options]="typeCalculation"
+                                [ngModel]="dt.filters[col.field]? dt.filters[col.field].value: []"
+                                (ngModelChange)="selectedForecastType = $event"
                                 (onChange)="dt.filter($event.value, col.field, 'equals')"
                                 [ngModelOptions]="{standalone: true}"
                     ></p-dropdown>
                   </ng-container>
 
                   <ng-container *ngIf="col['field'] === 'updatedByClaim'">
-                    <p-dropdown appendTo="body" #dropdownIsUpdatedByClaim [options]="primeryBol"
-                                [(ngModel)]="selectedIsUpdatedByClaim"
+                    <p-dropdown appendTo="body"
+                                #dropdownIsUpdatedByClaim
+                                [options]="primeryBol"
+                                [ngModel]="dt.filters[col.field]? dt.filters[col.field].value: []"
+                                (ngModelChange)="selectedIsUpdatedByClaim = $event"
                                 (onChange)="dt.filter($event.value, col.field, 'equals')"
-                                [ngModelOptions]="{standalone: true}"></p-dropdown>
+                                [ngModelOptions]="{standalone: true}">
+
+                    </p-dropdown>
                   </ng-container>
                 </ng-container>
 
@@ -274,11 +291,11 @@
           <ng-template pTemplate="footer" let-columns>
             <tr>
 
-              <td colspan="17" class="p-text-right">Итого:</td>
+              <td colspan="18" class="p-text-right">Итого:</td>
               <td *ngFor="let item of this.massSummYear | keyvalue">{{item.value | number}}</td>
             </tr>
             <tr>
-              <td [attr.colspan]="17" class="p-text-right">Сумма:</td>
+              <td [attr.colspan]="18" class="p-text-right">Сумма:</td>
               <td *ngFor="let years of arrayHstoriYears(this.numberHistroricalYears);"
                   class="list-group list-group-flush">
                 {{years}}

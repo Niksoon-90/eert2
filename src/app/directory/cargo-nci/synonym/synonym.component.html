@@ -4,6 +4,10 @@
         <input id="createSynonym" type="text" pInputText [(ngModel)]="nameNewSysonym">
         <label for="createSynonym">Синоним</label>
       </span>
+    <span class="p-float-label" style="padding-right: 10px;">
+        <input id="createSynonymInfo" type="text" pInputText [(ngModel)]="nameNewSysonymInfo">
+        <label for="createSynonymInfo">Коды станций</label>
+      </span>
     <button pButton pRipple type="button" label="Сохранить" class="p-button-raised p-button-secondary "
             (click)="createSysonym()" [disabled]="this.nameNewSysonym === ''"></button>
   </div>
@@ -13,8 +17,8 @@
            [style]="{width:'auto'}"
            [columns]="cols"
            [value]="synonym"
-           [scrollable]="true" scrollHeight="30vh"
-           styleClass="p-datatable-sm p-datatable-gridlines" dataKey="id"
+           [scrollable]="true" scrollHeight="60vh"
+           editMode="row"  styleClass="p-datatable-sm p-datatable-gridlines" dataKey="id"
            [resizableColumns]="true" columnResizeMode="expand"
   >
     <ng-template pTemplate="colgroup" let-columns>
@@ -45,10 +49,27 @@
     <ng-template pTemplate="body" let-rowData let-columns="columns" let-ri="rowIndex" let-editing="editing">
       <tr [pEditableRow]="rowData">
         <td *ngFor="let col of this.cols;">
-          <span style = 'white-space: pre'> {{rowData[col.field]}} </span>
+          <p-cellEditor *ngIf="!col.isStatic;else staticTemplate">
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="rowData[col.field]">
+            </ng-template>
+            <ng-template pTemplate="output">
+              <span style = 'white-space: pre'> {{rowData[col.field]}} </span>
+            </ng-template>
+          </p-cellEditor>
+          <ng-template #staticTemplate>
+            {{ rowData[col.field] }}
+          </ng-template>
         </td>
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
           <td style="text-align:center">
+            <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil"
+                    class="p-button-rounded p-button-text"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check"
+                    (click)="onRowEditSave(rowData)"
+                    class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
+            <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
+                    class="p-button-rounded p-button-text p-button-danger"></button>
             <button pButton pRipple type="button" pCancelEditableRow icon="pi pi-trash" pTooltip="Удалить"
                     (click)="deleteSynonymItem(rowData.id, rowData.name)"
                     class="p-button-rounded p-button-text p-button-danger"></button>

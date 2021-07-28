@@ -59,8 +59,6 @@ export class AppComponent implements OnInit{
       ]
   }
   test(){
-    console.log(this.user.authorities)
-    console.log(this.user.authorities.includes('P_P_p3') === true)
     if(this.user.authorities.includes('P_P_p3') === true){
       this.sidebar.splice(1, 0,
         {

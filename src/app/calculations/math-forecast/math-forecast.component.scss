@@ -1,3 +1,8 @@
 :host ::ng-deep .p-tabview .p-tabview-panels{
 padding: 0;
 }
+.ui-table table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}

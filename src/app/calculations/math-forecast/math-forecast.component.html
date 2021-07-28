@@ -51,17 +51,13 @@
                 </ng-template>
                 <ng-template pTemplate="colgroup" let-columns>
                   <colgroup>
-                    <col style="width: 100px">
                     <col style="width: 220px">
                     <col style="width: 220px">
-                    <col >
+                    <col>
                   </colgroup>
                 </ng-template>
                 <ng-template pTemplate="header">
                   <tr>
-                    <th pResizableColumn pSortableColumn="id">id
-                      <p-sortIcon field="id"></p-sortIcon>
-                    </th>
                     <th pResizableColumn pSortableColumn="cargoGroup">Номенклатура грузов
                       <p-sortIcon field="cargoGroup"></p-sortIcon>
                     </th>
@@ -73,8 +69,6 @@
                     </th>
                   </tr>
                   <tr>
-                    <th><input pInputText type="text" (input)="dtMacro.filter($event.target.value, 'id', 'contains')"
-                               placeholder="Фильтр" class="p-column-filter"></th>
                     <th><input pInputText type="text"
                                (input)="dtMacro.filter($event.target.value, 'cargoGroup', 'contains')"
                                placeholder="Фильтр" class="p-column-filter"></th>
@@ -88,7 +82,6 @@
                 </ng-template>
                 <ng-template pTemplate="body" let-rowData let-columns="columns">
                   <tr [pSelectableRow]="rowData">
-                    <td>{{rowData.id}}</td>
                     <td>{{rowData.cargoGroup}}</td>
                     <td>{{rowData.shipmentType}}</td>
                     <td>{{rowData.macroIndex}}</td>
@@ -118,41 +111,47 @@
               <p-tabPanel [disabled]="tbViewRegressionMultiMetrics" header="Получение метрик множественной регрессии">
                 <ng-container *ngIf="macroPokListReg">
                   <p-table [value]="macroPokListReg"
+                           [resizableColumns]="true"
                            [scrollable]="true"
                            scrollHeight="30vh"
                            dataKey="id"
                            styleClass="p-datatable-sm p-datatable-gridlines"
-                           [style]="{width:'50vw'}" >
-                    <colgroup>
-                      <col style="width:100px">
-                      <col style="width:100px">
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                      <col>
-                    </colgroup>
+                           [style]="{width:'50vw'}"
+                           [autoLayout]="true"
+                           columnResizeMode="expand"
+                  >
+                    <ng-template pTemplate="colgroup" let-columns>
+                      <colgroup>
+                        <col style="width:100px">
+                        <col style="width:100px">
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                      </colgroup>
+                    </ng-template>
                     <ng-template pTemplate="header">
                       <tr>
-                        <th pSortableColumn="cargoGroup">Номенклатура грузов
+                        <th pResizableColumn pSortableColumn="cargoGroup">Номенклатура грузов
                           <p-sortIcon field="cargoGroup"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="shipmentType">Тип
+                        <th pResizableColumn pSortableColumn="shipmentType">Тип
                           <p-sortIcon field="shipmentType"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="meanAbsoluteError">MAE (MAE=0)
+                        <th pResizableColumn pSortableColumn="meanAbsoluteError">MAE (MAE=0)
                           <p-sortIcon field="meanAbsoluteError"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="meanAbsolutePercentageError">MAPE (MAPE=0)
+                        <th pResizableColumn pSortableColumn="meanAbsolutePercentageError">MAPE (MAPE=0)
                           <p-sortIcon field="meanAbsolutePercentageError"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="meanSquaredError">MSE (MSE=0)
+                        <th pResizableColumn pSortableColumn="meanSquaredError">MSE (MSE=0)
                           <p-sortIcon field="meanSquaredError"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="r2Score">R2 (R2=1)
+                        <th pResizableColumn pSortableColumn="r2Score">R2 (R2=1)
                           <p-sortIcon field="r2Score"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="fisherFTest">F-test
+                        <th pResizableColumn pSortableColumn="fisherFTest">F-test
                           <p-sortIcon field="fisherFTest"></p-sortIcon>
                         </th>
                       </tr>
@@ -186,11 +185,13 @@
 
         <p-table
           *ngIf="mathematicalForecastTable"
+          [style]="{width:'94.7vw'}"
           [value]="mathematicalForecastTable" dataKey="id"
           [scrollable]="true"
           styleClass="p-datatable-sm p-datatable-gridlines" dataKey="id"
           [resizableColumns]="true" editMode="row"
           scrollHeight="flex"
+          columnResizeMode="expand"
         >
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -217,11 +218,11 @@
               <th>Вид сообщения</th>
               <ng-container *ngIf="this.mathematicalForecastTable.length !== 0">
                 <ng-container *ngIf="mathematicalForecastTable">
-                  <th style="text-align: center"
+                  <th pResizableColumn style="text-align: center"
                       *ngFor="let data of mathematicalForecastTable[0].groupVolumesByYears | keyvalue">
                     {{data.key}}
                   </th>
-                  <th style="text-align: center" *ngFor="let data2 of mathematicalForecastTable[0].forecastValues">
+                  <th pResizableColumn style="text-align: center" *ngFor="let data2 of mathematicalForecastTable[0].forecastValues">
                     {{data2.year}}
                   </th>
                 </ng-container>

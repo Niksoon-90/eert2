@@ -53,6 +53,9 @@ export class ShipmentsService {
       observe: "events"
     });
   }
+  puttEditSynonym(cargoOwnerSynonymId: number, additionalInfo: {}){
+    return this.http.put(this.url + `api/catalog/cargo/synonym/${cargoOwnerSynonymId}`, additionalInfo)
+  }
 
 
   postStationploadFile(fd) {
@@ -245,8 +248,8 @@ export class ShipmentsService {
   }
 
   //TODO 8
-  postSynonym(cargoOwnerId: number, name: string) {
-    return this.http.post(this.url + `api/catalog/cargo/owner/${cargoOwnerId}/synonym/${name}`, {})
+  postSynonym(cargoOwnerId: number, name: string, additionalInfo: {}) {
+    return this.http.post(this.url + `api/catalog/cargo/owner/${cargoOwnerId}/synonym/${name}`, additionalInfo)
   }
 
   getSynonym(cargoOwnerId: number): Observable<ISynonym[]> {

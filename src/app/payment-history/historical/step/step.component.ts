@@ -23,12 +23,6 @@ export class StepComponent implements OnInit, OnDestroy {
 
   @ViewChild('dt') table: Table;
 
-  @ViewChild("dropdownPrimary", {static: false}) dropdownPrimary: Dropdown
-
-  @ViewChild("dropdownForecastType", {static: false}) dropdownForecastType: Dropdown
-
-  @ViewChild("dropdownIsUpdatedByClaim", {static: false}) dropdownIsUpdatedByClaim: Dropdown
-
   mathematicalForecastTable: IShipment[]
   loading: boolean;
   columsYears: number = 0;
@@ -372,6 +366,7 @@ export class StepComponent implements OnInit, OnDestroy {
   }
 
   nextPage() {
+    console.log(this.selectedPrimery)
     if (this.selectedPrimery !== null) {
       this.subscriptions.add(this.shipmentsService.putTransformFile(this.sessionId, true).subscribe(
         () => console.log(),
@@ -387,9 +382,6 @@ export class StepComponent implements OnInit, OnDestroy {
   }
 
   clearfilter() {
-    this.dropdownPrimary.clear(null);
-    this.dropdownIsUpdatedByClaim.clear(null);
-    this.dropdownForecastType.clear(null);
     this.table.reset();
   }
 

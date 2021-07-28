@@ -19,9 +19,7 @@ import {Dropdown} from "primeng/dropdown";
 })
 export class ListShipmentComponent implements OnInit, OnChanges, OnDestroy {
 
-  @ViewChild('dt') table: Table;
-
-  @ViewChild("dropdownPrimary", {static: false}) dropdownPrimary: Dropdown
+  @ViewChild('dt', {static: false}) table: Table;
 
   @Input() dialogVisible;
 
@@ -317,7 +315,6 @@ export class ListShipmentComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   clearfilter() {
-    this.dropdownPrimary.clear(null);
     this.table.reset();
   }
 }

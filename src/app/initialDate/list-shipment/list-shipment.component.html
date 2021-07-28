@@ -71,9 +71,12 @@
           <th></th>
           <th *ngFor="let col of columns;let idx = index;">
             <ng-container *ngIf="col['field'] === 'primary' else primeCol">
-              <p-dropdown appendTo="body" #dropdownPrimary [options]="primeryBol" [(ngModel)]="selectedPrimery"
+              <p-dropdown appendTo="body"
+                          [options]="primeryBol"
+                          [ngModel]="dt.filters[col.field]? dt.filters[col.field].value: []"
                           (onChange)="dt.filter($event.value, col.field, 'equals')"
-                          [ngModelOptions]="{standalone: true}"></p-dropdown>
+                          [ngModelOptions]="{standalone: true}"
+              ></p-dropdown>
             </ng-container>
             <ng-template #primeCol>
               <ng-container *ngIf=" idx < 14; else yearsCol">
