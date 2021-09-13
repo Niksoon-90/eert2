@@ -26,15 +26,15 @@ export class AppComponent implements OnInit{
 
 
   ngOnInit(): void {
-      // this.authenticationService.getMe().subscribe(
-      //   res => console.log('res', res),
-      //   error => this.modalService.open(error.error.message),
-      //   () => this.test());
-      // this.authenticationService.user.subscribe(
-      //   res => this.user = res,
-      //   error => this.modalService.open(error.error.message),
-      //   () => this.test());
-      //  this.user = this.authenticationService.userValue;
+      this.authenticationService.getMe().subscribe(
+        res => console.log('res', res),
+        error => this.modalService.open(error.error.message),
+        () => this.test());
+      this.authenticationService.user.subscribe(
+        res => this.user = res,
+        error => this.modalService.open(error.error.message),
+        () => this.test());
+       this.user = this.authenticationService.userValue;
 
     this.sidebar = [
       {

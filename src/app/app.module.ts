@@ -82,6 +82,7 @@ import {SplitButtonModule} from "primeng/splitbutton";
 import {ContextMenuModule} from "primeng/contextmenu";
 
 
+
 const itemRoutesShipments: Routes = [
   {path: 'data', component: DataShipmentsComponent},
   {path: ':initialDateType', component: UploadFileComponent}

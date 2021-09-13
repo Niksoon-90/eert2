@@ -29,8 +29,6 @@ export class CalculationsService {
 
   private urlCalc = environment.hostCalc;
 
-
-
   putUpdateMacroForecast(id: number, value: number) {
     return this.http.put(this.urlCalc + `api/calc/forecast/value/${id}?newValue=${value}`, {})
   }
@@ -186,7 +184,6 @@ getIasForTest(id: number): Observable<IIasForecast[]> {
     return this.http.post(this.urlCalc + `api/external/${type}/forecast`, mongo)
   }
 
-  //TODO 5
 
   putCargoNci(cargoNci: ICargoNci) {
     return this.http.put(this.urlCalc + `api/catalog/cargo`, cargoNci)

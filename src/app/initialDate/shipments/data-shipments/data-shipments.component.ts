@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit,} from '@angular/core';
 import {ShipmentsService} from "../../../services/shipments.service";
-import {ISession, IShipmentPagination} from "../../../models/shipmenst.model";
-
+import {ISession} from "../../../models/shipmenst.model";
 import {ModalService} from "../../../services/modal.service";
 import {IAuthModel} from "../../../models/auth.model";
 import {AuthenticationService} from "../../../services/authentication.service";

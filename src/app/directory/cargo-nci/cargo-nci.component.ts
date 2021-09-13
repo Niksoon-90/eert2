@@ -33,6 +33,7 @@ export class CargoNciComponent implements OnInit, OnDestroy {
   influenceNci: ICargoOwnerInfluenceFactor[];
   subscriptions: Subscription = new Subscription();
   selectedCargoNci: any;
+  cargoNciTable: boolean = false;
 
   constructor(
     private modalService: ModalService,
@@ -153,7 +154,7 @@ export class CargoNciComponent implements OnInit, OnDestroy {
   clearSelectedCargoNci() {
     this.selectedCargoNci = []
   }
-//TODO comm
+
   deleteCargoNciList() {
     this.confirmationService.confirm({
       message: `Удалить ${this.selectedCargoNci.length} грузовладельц(ев)а?`,
@@ -161,6 +162,7 @@ export class CargoNciComponent implements OnInit, OnDestroy {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         let massId = []
+        this.cargoNciTable = true;
         for(let item of this.selectedCargoNci){
           massId.push(item.id)
         }
@@ -171,10 +173,15 @@ export class CargoNciComponent implements OnInit, OnDestroy {
           error => this.modalService.open(error.error.message),
           () => {
             this.selectedCargoNci = []
+            this.cargoNciTable = false;
             this.messageService.add({severity:'success', summary: 'Успешно!', detail: 'Грузовладелец удален!', life: 6000});
         }
         ))
       }
     });
+  }
+
+  highlightAll() {
+    this.selectedCargoNci = this.cargoNci;
   }
 }

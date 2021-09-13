@@ -23,10 +23,11 @@
            [filterDelay]="0"
            [(selection)]="selectedCargoNci"
            [rowHover]="true"
+           [loading]="cargoNciTable"
   >
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
-        <col style="width:120px">
+        <col style="width:160px">
         <col *ngFor="let col of columns" [style.width]="col.width">
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
           <col style="width:120px">
@@ -54,13 +55,15 @@
             <button pButton pRipple [label]="" icon="pi pi-refresh" class="p-button-secondary p-mr-2"
                     (click)="clearSelectedCargoNci()"
                     [disabled]="!selectedCargoNci || !selectedCargoNci.length"></button>
+<!--            <button pButton pRipple [label]="" icon="pi pi-list" class="p-button-primary p-mr-2"-->
+<!--                    (click)="highlightAll()"></button>-->
             <button pButton pRipple [label]="" icon="pi pi-trash" class="p-button-danger" (click)="deleteCargoNciList()"
                     [disabled]="!selectedCargoNci || !selectedCargoNci.length"></button>
           </ng-container>
         </th>
         <th *ngFor="let col of columns;">
           <input pInputText type="text" (input)="dt.filter($event.target.value, col['field'], 'contains')"
-                 class="p-column-filter">
+                 class="p-column-filter" style="width: 100%">
         </th>
         <ng-container *ngIf="this.user.authorities.includes('P_P_p6') === true">
           <th>

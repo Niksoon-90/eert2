@@ -1,5 +1,4 @@
 <div class="card">
-
   <p-dialog header="Загруженные данные "
             [(visible)]="dialogVisible"
             [style]="{width: '70vw'}"
@@ -28,6 +27,7 @@
       [style]="{width:'auto'}"
       dataKey="id"
       [resizableColumns]="true"
+      [autoLayout]="true"
       editMode="row"
       columnResizeMode="expand"
       styleClass="p-datatable-customers p-datatable-gridlines"
@@ -80,16 +80,31 @@
             </ng-container>
             <ng-template #primeCol>
               <ng-container *ngIf=" idx < 14; else yearsCol">
-                <input pInputText type="text" (click)="$event.stopPropagation()"
-                       (keyup.enter)="dt.filter($event.target.value, col.field, 'contains')"
-                       [value]="dt.filters[col.field] ? dt.filters[col.field].value : ''"
-                       class="p-column-filter">
+                <div class="p-inputgroup">
+                  <span class="p-inputgroup-addon">
+                      <i class="pi pi-user"></i>
+                  </span>
+                  <input pInputText type="text" (click)="$event.stopPropagation()"
+                         (keyup.enter)="dt.filter($event.target.value, col.field, 'contains')"
+                         [value]="dt.filters[col.field] ? dt.filters[col.field].value : ''"
+                         class="p-column-filter"
+                         style="width: 100%"
+                  >
+                </div>
+                <!--                <input pInputText type="text" (click)="$event.stopPropagation()"-->
+                <!--                       (keyup.enter)="dt.filter($event.target.value, col.field, 'contains')"-->
+                <!--                       [value]="dt.filters[col.field] ? dt.filters[col.field].value : ''"-->
+                <!--                       class="p-column-filter"-->
+                <!--                       style="width: 100%"-->
+                <!--                >-->
               </ng-container>
               <ng-template #yearsCol>
                 <input pInputText type="text" (click)="$event.stopPropagation()"
                        (keyup.enter)="dt.filter($event.target.value, col.header, 'contains')"
                        [value]="dt.filters[col.header] ? dt.filters[col.header].value : ''"
-                       class="p-column-filter">
+                       class="p-column-filter"
+                       style="width: 100%"
+                >
               </ng-template>
             </ng-template>
           </th>
@@ -123,7 +138,7 @@
               </ng-template>
               <ng-template pTemplate="output">
                 <div *ngIf="col['field'] !== 'primary' && idx < 14">
-                  <span style = 'white-space: pre'> {{rowData[col.field]}} </span>
+                  <span style='white-space: pre'> {{rowData[col.field]}} </span>
 
                 </div>
                 <div *ngIf="col['field'] === 'primary'">
@@ -149,7 +164,9 @@
                       class="p-button-rounded p-button-text p-button-success p-mr-2"></button>
               <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times"
                       (click)="onRowEditCancel()" class="p-button-rounded p-button-text p-button-danger"></button>
-              <button  pButton pRipple type="button"  icon="pi pi-trash" pTooltip="Удалить" (click)="deleteShipments(rowData.id)" class="p-button-rounded p-button-text p-button-danger"></button>
+              <button pButton pRipple type="button" icon="pi pi-trash" pTooltip="Удалить"
+                      (click)="deleteShipments(rowData.id)"
+                      class="p-button-rounded p-button-text p-button-danger"></button>
             </td>
           </ng-container>
         </tr>
